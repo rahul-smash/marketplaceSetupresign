@@ -1,7 +1,7 @@
 {
-  "store_id": "393",
-  "primary_store_id": "811",
-  "isGroceryApp": "true",
+  "store_id": "7",
+  "primary_store_id": "7",
+  "isGroceryApp": "false",
   "isAdminLogin": "false",
   "isMultiStore": false,
   "currency": "\u20B9",
