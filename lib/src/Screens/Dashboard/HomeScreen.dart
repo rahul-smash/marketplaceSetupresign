@@ -63,6 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading;
   CategoryResponse categoryResponse;
 
+  int _current = 0;
+
   _HomeScreenState(this.store);
 
   @override
@@ -89,6 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 imageUrl.isEmpty ? AppConstant.placeholderImageUrl : imageUrl),
           );
         }
+        print(
+            "---------------------------banner size----------${imgList.length}");
       }
       if (widget.showForceUploadAlert) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -121,38 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: _key,
       appBar: getAppBar(),
-      body: Column(
-        children: <Widget>[
-          addBanners(),
-          Expanded(
-            child: isLoading
-                ? Center(child: CircularProgressIndicator())
-                : categoryResponse == null
-                    ? SingleChildScrollView(child: Center(child: Text("")))
-                    : Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("images/backgroundimg.png"),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                        child: GridView.count(
-                            crossAxisCount: 2,
-                            childAspectRatio: 1.1,
-                            padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
-                            mainAxisSpacing: 5.0,
-                            crossAxisSpacing: 8.0,
-                            shrinkWrap: true,
-                            children: categoryResponse.categories
-                                .map((CategoryModel model) {
-                              return GridTile(
-                                  child: CategoryView(model, store, false, 0));
-                            }).toList()),
-                      ),
-          ),
-        ],
-      ),
+      body: _newBody(),
       drawer: NavDrawerMenu(store, user == null ? "" : user.fullName),
       bottomNavigationBar: SafeArea(
         child: addBottomBar(),
@@ -161,19 +134,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget addBanners() {
-    return Stack(
-      children: <Widget>[
-        Center(
-          child: SizedBox(
-            height: 200.0,
-            width: Utils.getDeviceWidth(context),
-            child: _CarouselView(),
-          ),
-        ),
-      ],
+    return Center(
+      child: SizedBox(
+        height: 200.0,
+        width: Utils.getDeviceWidth(context),
+        child: _CarouselView(),
+      ),
     );
   }
-  Widget _CarouselView(){
+
+  Widget _CarouselView() {
 //    Carousel(
 //      boxFit: BoxFit.fitWidth,
 //      autoplay: true,
@@ -198,7 +168,12 @@ class _HomeScreenState extends State<HomeScreen> {
         initialPage: 0,
         enableInfiniteScroll: true,
         reverse: false,
-        autoPlay: true,
+        autoPlay: false,
+        onPageChanged: (index, reason) {
+          setState(() {
+            _current = index;
+          });
+        },
         enlargeCenterPage: false,
         autoPlayInterval: Duration(seconds: 3),
         autoPlayAnimationDuration: Duration(milliseconds: 800),
@@ -210,28 +185,30 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
   Widget _makeBanner(BuildContext context, int _index) {
     return InkWell(
-      onTap: () {},
+      onTap: () => _onBannerTap(_index),
       child: Container(
           margin:
-          EdgeInsets.only(top: 15.0, bottom: 15.0, left: 7.5, right: 7.5),
-          width: Utils.getDeviceWidth(context) - (Utils.getDeviceWidth(context) / 4),
+              EdgeInsets.only(top: 0.0, bottom: 15.0, left: 7.5, right: 7.5),
+          width: Utils.getDeviceWidth(context) -
+              (Utils.getDeviceWidth(context) / 4),
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10.0)),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
             child: CachedNetworkImage(
               imageUrl: "${imgList[_index].url}",
-              fit: BoxFit.fitWidth,
-              placeholder: (context, url) =>
-                  CircularProgressIndicator(),
-              errorWidget: (context, url, error) =>
-                  Icon(Icons.error),
+              fit: BoxFit.fill,
+//              placeholder: (context, url) =>
+//                  CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           )),
     );
   }
+
   void _onBannerTap(position) {
     print("onImageTap ${position}");
     print("linkTo=${store.banners[position].linkTo}");
@@ -256,32 +233,23 @@ class _HomeScreenState extends State<HomeScreen> {
           //here open the banner sub category
           print("open the subCategory ${position}");
 
-          for (int i = 0;
-          i < categoryResponse.categories.length;
-          i++) {
-            CategoryModel categories =
-            categoryResponse.categories[i];
-            if (store.banners[position].categoryId ==
-                categories.id) {
+          for (int i = 0; i < categoryResponse.categories.length; i++) {
+            CategoryModel categories = categoryResponse.categories[i];
+            if (store.banners[position].categoryId == categories.id) {
               print(
                   "title ${categories.title} and ${categories.id} and ${store.banners[position].categoryId}");
               if (categories.subCategory != null) {
-                for (int j = 0;
-                j < categories.subCategory.length;
-                j++) {
-                  SubCategory subCategory =
-                  categories.subCategory[j];
+                for (int j = 0; j < categories.subCategory.length; j++) {
+                  SubCategory subCategory = categories.subCategory[j];
 
-                  if (subCategory.id ==
-                      store.banners[position].subCategoryId) {
+                  if (subCategory.id == store.banners[position].subCategoryId) {
                     print(
                         "open the subCategory ${subCategory.title} and ${subCategory.id} = ${store.banners[position].subCategoryId}");
 
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) {
-                        return SubCategoryProductScreen(
-                            categories, true, j);
+                        return SubCategoryProductScreen(categories, true, j);
                       }),
                     );
 
@@ -297,20 +265,15 @@ class _HomeScreenState extends State<HomeScreen> {
             store.banners[position].productId == "0") {
           print("open the Category ${position}");
 
-          for (int i = 0;
-          i < categoryResponse.categories.length;
-          i++) {
-            CategoryModel categories =
-            categoryResponse.categories[i];
-            if (store.banners[position].categoryId ==
-                categories.id) {
+          for (int i = 0; i < categoryResponse.categories.length; i++) {
+            CategoryModel categories = categoryResponse.categories[i];
+            if (store.banners[position].categoryId == categories.id) {
               print(
                   "title ${categories.title} and ${categories.id} and ${store.banners[position].categoryId}");
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                  return SubCategoryProductScreen(
-                      categories, true, 0);
+                  return SubCategoryProductScreen(categories, true, 0);
                 }),
               );
               break;
@@ -779,5 +742,208 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  Widget _oldBody() {
+    return Column(
+      children: <Widget>[
+        addBanners(),
+        Expanded(
+          child: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : categoryResponse == null
+                  ? SingleChildScrollView(child: Center(child: Text("")))
+                  : Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("images/backgroundimg.png"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                      child: GridView.count(
+                          crossAxisCount: 2,
+                          childAspectRatio: 1.1,
+                          padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
+                          mainAxisSpacing: 5.0,
+                          crossAxisSpacing: 8.0,
+                          shrinkWrap: true,
+                          children: categoryResponse.categories
+                              .map((CategoryModel model) {
+                            return GridTile(
+                                child: CategoryView(model, store, false, 0));
+                          }).toList()),
+                    ),
+        ),
+      ],
+    );
+  }
+
+  Widget _newBody() {
+    return Stack(
+      overflow: Overflow.visible,
+      children: <Widget>[
+        _addSearchView(),
+        Padding(
+            padding: EdgeInsets.only(top: 60),
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  addBanners(),
+                  Visibility(
+                      visible: imgList.length > 1,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: imgList.map((url) {
+                            int index = imgList.indexOf(url);
+                            return _current == index
+                                ? Container(
+                                    width: 7.0,
+                                    height: 7.0,
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 2.0),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: dotIncreasedColor,
+                                    ),
+                                  )
+                                : Container(
+                                    width: 6.0,
+                                    height: 6.0,
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 2.0),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color.fromRGBO(0, 0, 0, 0.4),
+                                    ),
+                                  );
+                          }).toList(),
+                        ),
+                      )),
+                  isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : categoryResponse == null
+                          ? Center(child: Text(""))
+                          : Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage("images/backgroundimg.png"),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                              child: GridView.count(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 1.1,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  padding: EdgeInsets.fromLTRB(
+                                      10.0, 20.0, 10.0, 0.0),
+                                  mainAxisSpacing: 5.0,
+                                  crossAxisSpacing: 8.0,
+                                  shrinkWrap: true,
+                                  children: categoryResponse.categories
+                                      .map((CategoryModel model) {
+                                    return GridTile(
+                                        child: CategoryView(
+                                            model, store, false, 0));
+                                  }).toList()),
+                            ),
+                ],
+              ),
+            )),
+      ],
+    );
+
+//    return Column(
+//      children: <Widget>[
+//        _addSearchView(),
+//        SingleChildScrollView(
+//          child: Column(
+//            children: <Widget>[
+//              addBanners(),
+//              isLoading
+//                  ? Center(child: CircularProgressIndicator())
+//                  : categoryResponse == null
+//                      ? Center(child: Text(""))
+//                      : Container(
+//                          decoration: BoxDecoration(
+//                            image: DecorationImage(
+//                              image: AssetImage("images/backgroundimg.png"),
+//                              fit: BoxFit.cover,
+//                            ),
+//                          ),
+//                          padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+//                          child: GridView.count(
+//                              crossAxisCount: 2,
+//                              childAspectRatio: 1.1,
+//                              physics: NeverScrollableScrollPhysics(),
+//                              padding:
+//                                  EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
+//                              mainAxisSpacing: 5.0,
+//                              crossAxisSpacing: 8.0,
+//                              shrinkWrap: true,
+//                              children: categoryResponse.categories
+//                                  .map((CategoryModel model) {
+//                                return GridTile(
+//                                    child:
+//                                        CategoryView(model, store, false, 0));
+//                              }).toList()),
+//                        ),
+//            ],
+//          ),
+//        )
+//      ],
+//    );
+  }
+
+  Widget _addSearchView() {
+    return Container(
+      height: 40,
+      margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+      //padding: EdgeInsets.all(5.0),
+      decoration: BoxDecoration(
+          color: searchGrayColor,
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          border: Border.all(
+            color: searchGrayColor,
+          )),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: Center(
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.search,
+                size: 30,
+                color: appTheme,
+              ),
+            ),
+            Flexible(
+              child: TextField(
+                textInputAction: TextInputAction.search,
+                onSubmitted: (value) {},
+                onChanged: (text) {
+                  print("onChanged ${text}");
+                },
+                //controller: controller,
+                cursorColor: Colors.black,
+                keyboardType: TextInputType.text,
+                decoration: new InputDecoration(
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    hintText: "Search Services"),
+              ),
+            ),
+          ]),
+        ),
+      ),
+    );
   }
 }
