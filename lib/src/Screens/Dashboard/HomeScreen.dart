@@ -4,11 +4,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:package_info/package_info.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/ContactScreen.dart';
 import 'package:restroapp/src/Screens/BookOrder/MyCartScreen.dart';
+import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/SideMenu.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
@@ -19,6 +20,7 @@ import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/ConfigModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
@@ -62,8 +64,13 @@ class _HomeScreenState extends State<HomeScreen> {
   BranchData branchData;
   bool isLoading;
   CategoryResponse categoryResponse;
-
+  List<SubCategoryModel> subCategoryList = List();
+  List<Product> productsList = List();
   int _current = 0;
+
+  final _controller = TextEditingController();
+
+  bool isCategoryViewSelected = true;
 
   _HomeScreenState(this.store);
 
@@ -122,15 +129,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _key,
-      appBar: getAppBar(),
-      body: _newBody(),
-      drawer: NavDrawerMenu(store, user == null ? "" : user.fullName),
-      bottomNavigationBar: SafeArea(
-        child: addBottomBar(),
-      ),
-    );
+    return this.keyboardDismisser(
+        context: context,
+        child: WillPopScope(
+          child: Scaffold(
+            key: _key,
+            appBar: getAppBar(),
+            body: _newBody(),
+            drawer: NavDrawerMenu(store, user == null ? "" : user.fullName),
+            bottomNavigationBar: SafeArea(
+              child: addBottomBar(),
+            ),
+          ),
+          onWillPop: () {
+            if (productsList.length > 0) {
+              setState(() {
+                _controller.text='';
+                productsList.clear();
+              });
+              return new Future(() => false);
+            } else
+              return new Future(() => true);
+          },
+        ));
   }
 
   Widget addBanners() {
@@ -144,22 +165,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _CarouselView() {
-//    Carousel(
-//      boxFit: BoxFit.fitWidth,
-//      autoplay: true,
-//      animationCurve: Curves.ease,
-//      autoplayDuration: Duration(milliseconds: 5000),
-//      animationDuration: Duration(milliseconds: 3000),
-//      dotSize: 6.0,
-//      dotIncreasedColor: dotIncreasedColor,
-//      dotBgColor: Colors.transparent,
-//      dotPosition: DotPosition.bottomCenter,
-//      dotVerticalPadding: 10.0,
-//      showIndicator: imgList.length == 1 ? false : true,
-//      indicatorBgPadding: 7.0,
-//      images: imgList,
-//      onImageTap: _onBannerTap,
-//    )
     return CarouselSlider.builder(
       itemCount: imgList.length,
       options: CarouselOptions(
@@ -168,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
         initialPage: 0,
         enableInfiniteScroll: true,
         reverse: false,
-        autoPlay: false,
+        autoPlay: true,
         onPageChanged: (index, reason) {
           setState(() {
             _current = index;
@@ -300,27 +305,24 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: onTabTapped,
           items: [
             BottomNavigationBarItem(
+              icon: Image.asset('images/homeicon.png',
+                  width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
+              title: Text('Home', style: TextStyle(color: bottomBarTextColor)),
+            ),
+            BottomNavigationBarItem(
               icon: Image.asset('images/contacticon.png',
                   width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
               title:
                   Text('Contact', style: TextStyle(color: bottomBarTextColor)),
             ),
             BottomNavigationBarItem(
-              icon: Image.asset('images/searchcion.png',
+              icon: Image.asset('images/unselectedexploreicon.png',
                   width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
               title:
                   Text('Search', style: TextStyle(color: bottomBarTextColor)),
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.shopping_cart,
-                color: Colors.white,
-                size: 0,
-              ),
-              title: Text(''),
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset('images/historyicon.png',
+              icon: Image.asset('images/unselectedmyordericon.png',
                   width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
               title: Text('My Orders',
                   style: TextStyle(color: bottomBarTextColor)),
@@ -330,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 showBadge: cartBadgeCount == 0 ? false : true,
                 badgeContent: Text('${cartBadgeCount}',
                     style: TextStyle(color: Colors.white)),
-                child: Image.asset('images/carticon.png',
+                child: Image.asset('images/unselectedcarticon.png',
                     width: 24,
                     fit: BoxFit.scaleDown,
                     color: bottomBarIconColor),
@@ -343,21 +345,21 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        Container(
-          padding: EdgeInsets.all(10.0),
-          decoration: BoxDecoration(shape: BoxShape.circle, color: appTheme),
-          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-          //padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-          child: widget.configObject.isGroceryApp == "true"
-              ? Image.asset(
-                  "images/groceryicon.png",
-                  height: 40,
-                  width: 40,
-                  color: whiteColor,
-                )
-              : Image.asset("images/restauranticon.png",
-                  height: 40, width: 40, color: whiteColor),
-        ),
+//        Container(
+//          padding: EdgeInsets.all(10.0),
+//          decoration: BoxDecoration(shape: BoxShape.circle, color: appTheme),
+//          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+//          //padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+//          child: widget.configObject.isGroceryApp == "true"
+//              ? Image.asset(
+//                  "images/groceryicon.png",
+//                  height: 40,
+//                  width: 40,
+//                  color: whiteColor,
+//                )
+//              : Image.asset("images/restauranticon.png",
+//                  height: 40, width: 40, color: whiteColor),
+//        ),
       ],
     );
   }
@@ -385,7 +387,7 @@ class _HomeScreenState extends State<HomeScreen> {
           attributeMap["ScreenName"] = "MyCartScreen";
           Utils.sendAnalyticsEvent("Clicked MyCartScreen", attributeMap);
         }
-        if (_currentIndex == 1) {
+        if (_currentIndex == 2) {
           if (AppConstant.isLoggedIn) {
             Navigator.push(
               context,
@@ -411,7 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Utils.showLoginDialog(context);
           }
         }
-        if (_currentIndex == 0) {
+        if (_currentIndex == 1) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ContactScreen(store)),
@@ -419,6 +421,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Map<String, dynamic> attributeMap = new Map<String, dynamic>();
           attributeMap["ScreenName"] = "ContactScreen";
           Utils.sendAnalyticsEvent("Clicked ContactScreen", attributeMap);
+        }
+        if (_currentIndex == 0) {
+          //show categories
         }
       });
     }
@@ -783,119 +788,21 @@ class _HomeScreenState extends State<HomeScreen> {
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
-        _addSearchView(),
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("images/backgroundimg.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
         Padding(
-            padding: EdgeInsets.only(top: 60),
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  addBanners(),
-                  Visibility(
-                      visible: imgList.length > 1,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: imgList.map((url) {
-                            int index = imgList.indexOf(url);
-                            return _current == index
-                                ? Container(
-                                    width: 7.0,
-                                    height: 7.0,
-                                    margin: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 2.0),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: dotIncreasedColor,
-                                    ),
-                                  )
-                                : Container(
-                                    width: 6.0,
-                                    height: 6.0,
-                                    margin: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 2.0),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Color.fromRGBO(0, 0, 0, 0.4),
-                                    ),
-                                  );
-                          }).toList(),
-                        ),
-                      )),
-                  isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : categoryResponse == null
-                          ? Center(child: Text(""))
-                          : Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage("images/backgroundimg.png"),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                              child: GridView.count(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 1.1,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.fromLTRB(
-                                      10.0, 20.0, 10.0, 0.0),
-                                  mainAxisSpacing: 5.0,
-                                  crossAxisSpacing: 8.0,
-                                  shrinkWrap: true,
-                                  children: categoryResponse.categories
-                                      .map((CategoryModel model) {
-                                    return GridTile(
-                                        child: CategoryView(
-                                            model, store, false, 0));
-                                  }).toList()),
-                            ),
-                ],
-              ),
-            )),
+          padding: EdgeInsets.only(top: 60),
+          child: _getCurrentBody(),
+        ),
+        _addSearchView(),
       ],
     );
-
-//    return Column(
-//      children: <Widget>[
-//        _addSearchView(),
-//        SingleChildScrollView(
-//          child: Column(
-//            children: <Widget>[
-//              addBanners(),
-//              isLoading
-//                  ? Center(child: CircularProgressIndicator())
-//                  : categoryResponse == null
-//                      ? Center(child: Text(""))
-//                      : Container(
-//                          decoration: BoxDecoration(
-//                            image: DecorationImage(
-//                              image: AssetImage("images/backgroundimg.png"),
-//                              fit: BoxFit.cover,
-//                            ),
-//                          ),
-//                          padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-//                          child: GridView.count(
-//                              crossAxisCount: 2,
-//                              childAspectRatio: 1.1,
-//                              physics: NeverScrollableScrollPhysics(),
-//                              padding:
-//                                  EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
-//                              mainAxisSpacing: 5.0,
-//                              crossAxisSpacing: 8.0,
-//                              shrinkWrap: true,
-//                              children: categoryResponse.categories
-//                                  .map((CategoryModel model) {
-//                                return GridTile(
-//                                    child:
-//                                        CategoryView(model, store, false, 0));
-//                              }).toList()),
-//                        ),
-//            ],
-//          ),
-//        )
-//      ],
-//    );
   }
 
   Widget _addSearchView() {
@@ -925,11 +832,17 @@ class _HomeScreenState extends State<HomeScreen> {
             Flexible(
               child: TextField(
                 textInputAction: TextInputAction.search,
-                onSubmitted: (value) {},
+                onSubmitted: (value) {
+                  if (value.trim().isEmpty) {
+                    Utils.showToast("Please enter some valid keyword", false);
+                  } else {
+                    callSearchAPI();
+                  }
+                },
                 onChanged: (text) {
                   print("onChanged ${text}");
                 },
-                //controller: controller,
+                controller: _controller,
                 cursorColor: Colors.black,
                 keyboardType: TextInputType.text,
                 decoration: new InputDecoration(
@@ -938,12 +851,151 @@ class _HomeScreenState extends State<HomeScreen> {
                     enabledBorder: InputBorder.none,
                     errorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
-                    hintText: "Search Services"),
+                    hintText: "Search for products"),
               ),
             ),
+            Visibility(
+                visible: _controller.text.isNotEmpty,
+                child: IconButton(
+                    icon: Icon(
+                      Icons.clear,
+                      color: appTheme,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _controller.text = "";
+                        setState(() {
+                          subCategoryList.clear();
+                          productsList.clear();
+                        });
+                      });
+                    }))
           ]),
         ),
       ),
     );
+  }
+
+  Widget keyboardDismisser({BuildContext context, Widget child}) {
+    final gesture = GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: child,
+    );
+    return gesture;
+  }
+
+  Widget _getCurrentBody() {
+    if (productsList.length > 0) {
+      return HomeSearchView(productsList);
+    } else {
+      if (isCategoryViewSelected)
+        return SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              addBanners(),
+              Visibility(
+                  visible: imgList.length > 1,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: imgList.map((url) {
+                        int index = imgList.indexOf(url);
+                        return _current == index
+                            ? Container(
+                                width: 7.0,
+                                height: 7.0,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 0.0, horizontal: 2.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: dotIncreasedColor,
+                                ),
+                              )
+                            : Container(
+                                width: 6.0,
+                                height: 6.0,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 0.0, horizontal: 2.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color.fromRGBO(0, 0, 0, 0.4),
+                                ),
+                              );
+                      }).toList(),
+                    ),
+                  )),
+              isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : categoryResponse == null
+                      ? Center(child: Text(""))
+                      : Container(
+                          padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                          child: GridView.count(
+                              crossAxisCount: 3,
+                              childAspectRatio: .8,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding:
+                                  EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+                              mainAxisSpacing: 1.0,
+                              crossAxisSpacing: 0.0,
+                              shrinkWrap: true,
+                              children: categoryResponse.categories
+                                  .map((CategoryModel model) {
+                                return GridTile(
+                                    child:
+                                        CategoryView(model, store, false, 0));
+                              }).toList()),
+                        ),
+            ],
+          ),
+        );
+//      return GridView.count(
+//          crossAxisCount: 3,
+//          childAspectRatio: .8,
+//          physics: NeverScrollableScrollPhysics(),
+//          padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+//          mainAxisSpacing: 1.0,
+//          crossAxisSpacing: 0.0,
+//          shrinkWrap: true,
+//          children: categoryResponse.categories.map((CategoryModel model) {
+//            return GridTile(child: CategoryView(model, store, false, 0));
+//          }).toList());
+    }
+  }
+
+  void callSearchAPI() {
+    Utils.hideKeyboard(context);
+    Utils.isNetworkAvailable().then((isNetworkAvailable) async {
+      if (isNetworkAvailable) {
+        Utils.sendSearchAnalyticsEvent(_controller.text);
+        Utils.showProgressDialog(context);
+        SubCategoryResponse subCategoryResponse =
+            await ApiController.getSearchResults(_controller.text);
+        Utils.hideKeyboard(context);
+        Utils.hideProgressDialog(context);
+        if (subCategoryResponse == null ||
+            subCategoryResponse.subCategories.isEmpty) {
+          Utils.showToast("No result found.", false);
+          setState(() {
+            subCategoryList.clear();
+            productsList.clear();
+          });
+        } else {
+          //print("==subCategories= ${subCategoryResponse.subCategories.length}");
+          setState(() {
+            subCategoryList = subCategoryResponse.subCategories;
+            productsList.clear();
+            for (int i = 0; i < subCategoryList.length; i++) {
+              productsList.addAll(subCategoryList[i].products);
+            }
+          });
+        }
+      } else {
+        Utils.showToast(AppConstant.noInternet, false);
+      }
+    });
   }
 }
