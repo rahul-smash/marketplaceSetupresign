@@ -47,7 +47,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(widget.categoryModel.title),
-          centerTitle: true,
+          centerTitle: false,
         ),
         body: Column(children: <Widget>[
           TabBar(

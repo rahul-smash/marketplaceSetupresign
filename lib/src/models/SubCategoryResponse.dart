@@ -105,6 +105,7 @@ class Product {
   bool deleted;
   String image10080;
   String image300200;
+  String tags;
 
   List<Variant> variants;
   SelectedVariant selectedVariant;
@@ -151,6 +152,7 @@ class Product {
     this.isUnitType,
     this.variants,
     this.selectedVariant,
+    this.tags
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -175,7 +177,7 @@ class Product {
     product.deleted = json["deleted"];
     product.image10080 = json["image_100_80"] ?? "";
     product.image300200 = json["image_300_200"] ?? "";
-
+    product.tags =  json["tags"] ?? "";
     product.variants =
     List<Variant>.from(json["variants"].map((x) => Variant.fromJson(x)));
     product.selectedVariant = SelectedVariant.fromJson(json["selectedVariant"]);
@@ -222,6 +224,7 @@ class Product {
     map["price"] = variants.first.price;
     map["discount"] = variants.first.discount;
     map["isUnitType"] = variants.first.unitType;
+    map["tags"] = tags;
 
     return map;
   }
@@ -250,6 +253,7 @@ class Product {
         "image_300_200": image300200,
         "variants": List<dynamic>.from(variants.map((x) => x.toJson())),
         "selectedVariant": selectedVariant.toJson(),
+        "tags":tags
       };
 
   static List encodeToJson(List<Product> list) {

@@ -420,7 +420,7 @@ class DatabaseHelper {
         product.price = row["price"];
         product.discount = row["discount"];
         product.isUnitType = row["isUnitType"];
-
+        product.tags = row["tags"];
         productList.add(product);
       });
     }

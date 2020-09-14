@@ -41,6 +41,10 @@ Color lightRed = Color(0xFFFBF1F0);
 
 Color darkRed = Color(0xFFDA1C1B);
 
+Color darkGrey = Color(0xFF444E58);
+Color darkGrey2 = Color(0xFF25323A);
+
+
 
 
 

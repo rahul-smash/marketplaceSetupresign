@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/rich_text_parser.dart';
 import 'package:restroapp/src/Screens/Dashboard/ProductDetailScreen.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/models/CartTableData.dart';
@@ -96,8 +99,11 @@ class _pState extends State<p> {
     }
 
     return Container(
+      padding: EdgeInsets.only(top: 15),
       color: Colors.white,
-      child: Column(children: [
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
         InkWell(
           onTap: () async {
             //print("----print-----");
@@ -151,74 +157,80 @@ class _pState extends State<p> {
                   children: <Widget>[
                     Flexible(
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(width: 10),
 //                            Visibility(
 //                              visible: AppConstant.isRestroApp,
 //                              child: addVegNonVegOption(),
 //                            ),
-                            Stack(
-                              children: <Widget>[
-                                imageUrl == ""
-                                    ? Container(
-                                  width: 70.0,
-                                  height: 80.0,
-                                  child: Utils.getImgPlaceHolder(),
-                                )
-                                    : Padding(
-                                    padding:
-                                    EdgeInsets.only(left: 7, right: 20,top: 5),
-                                    child: Container(
-                                      padding: EdgeInsets.only(left: 2,top: 2,right: 2,bottom: 2),
-                                      decoration: new BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(2.0)),
-                                        border : Border.all(
-                                        color: Colors.grey, //                   <--- border color
-                                        width: 1.0,
-                                      ),
-                                      ),
-                                      width: 70.0,
-                                      height: 80.0,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(2.0),
-                                        child: CachedNetworkImage(
-                                            imageUrl: "${imageUrl}",
-                                            fit: BoxFit.fill
-                                          //placeholder: (context, url) => CircularProgressIndicator(),
-                                          //errorWidget: (context, url, error) => Icon(Icons.error),
-                                        ),
-                                      )
-                                      /*child: Image.network(imageUrl,width: 60.0,height: 60.0,
+
+                          Padding(
+                              padding: EdgeInsets.only(top: 5),
+                             child: Stack(
+                               children: <Widget>[
+                                 imageUrl == ""
+                                     ? Container(
+                                   width: 70.0,
+                                   height: 80.0,
+                                   child: Utils.getImgPlaceHolder(),
+                                 )
+                                     : Padding(
+                                     padding:
+                                     EdgeInsets.only(left: 7, right: 20,top: 5),
+                                     child: Container(
+                                         padding: EdgeInsets.only(left: 2,top: 2,right: 2,bottom: 2),
+                                         decoration: new BoxDecoration(
+                                           borderRadius: BorderRadius.all(Radius.circular(2.0)),
+                                           border : Border.all(
+                                             color: Colors.grey, //                   <--- border color
+                                             width: 1.0,
+                                           ),
+                                         ),
+                                         width: 70.0,
+                                         height: 80.0,
+                                         child: ClipRRect(
+                                           borderRadius: BorderRadius.circular(2.0),
+                                           child: CachedNetworkImage(
+                                               imageUrl: "${imageUrl}",
+                                               fit: BoxFit.fill
+                                             //placeholder: (context, url) => CircularProgressIndicator(),
+                                             //errorWidget: (context, url, error) => Icon(Icons.error),
+                                           ),
+                                         )
+                                       /*child: Image.network(imageUrl,width: 60.0,height: 60.0,
                                       fit: BoxFit.cover),*/
-                                    )),
-                                Visibility(
-                                  visible: (discount == "0.00" ||
-                                      discount == "0" ||
-                                      discount == "0.0")
-                                      ? false
-                                      : true,
-                                  child: Container(
-                                    child: Text(
-                                      "${discount.contains(".00") ? discount.replaceAll(".00", "") : discount}% OFF",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 10.0),
-                                    ),
-                                    margin: EdgeInsets.only(left: 0),
-                                    padding: EdgeInsets.all(5),
-                                    decoration: new BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      color: yellow,
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(15.0),
-                                          bottomRight: Radius.circular(15.0)),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                                     )),
+                                 Visibility(
+                                   visible: (discount == "0.00" ||
+                                       discount == "0" ||
+                                       discount == "0.0")
+                                       ? false
+                                       : true,
+                                   child: Container(
+                                     child: Text(
+                                       "${discount.contains(".00") ? discount.replaceAll(".00", "") : discount}% OFF",
+                                       style: TextStyle(
+                                           color: Colors.white, fontSize: 10.0),
+                                     ),
+                                     margin: EdgeInsets.only(left: 0),
+                                     padding: EdgeInsets.all(5),
+                                     decoration: new BoxDecoration(
+                                       shape: BoxShape.rectangle,
+                                       color: yellow,
+                                       borderRadius: BorderRadius.only(
+                                           topLeft: Radius.circular(15.0),
+                                           bottomRight: Radius.circular(15.0)),
+                                     ),
+                                   ),
+                                 ),
+                               ],
+                             ),
+                           ),
+
                             Flexible(
                                 child: Padding(
-                                    padding: EdgeInsets.only(top: 20),
+                                    padding: EdgeInsets.only(top: 0),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -235,10 +247,10 @@ class _pState extends State<p> {
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                   fontSize: 14.0,
-                                                  color: Colors.black,
+                                                  color: darkGrey2,
+                                                  fontWeight: FontWeight.bold,
                                                 )),
                                           ),
-
 
                                               Align(
                                                 alignment: Alignment.centerRight,
@@ -340,88 +352,88 @@ class _pState extends State<p> {
                                       SizedBox(
                                         height: variantsVisibility == true ? 0 : 20,
                                       ),
-//                                      Visibility(
-//                                        visible: variantsVisibility,
-//                                        child: Padding(
-//                                          padding: EdgeInsets.only(top: 20, bottom: 3),
-//                                          child: InkWell(
-//                                            onTap: () async {
-//                                              //print("-variants.length--${widget.product.variants.length}");
-//                                              if (widget.product.variants.length !=
-//                                                  null) {
-//                                                if (widget.product.variants.length == 1) {
-//                                                  return;
-//                                                }
-//                                              }
-//                                              variant =
-//                                              await DialogUtils.displayVariantsDialog(
-//                                                  context,
-//                                                  "${widget.product.title}",
-//                                                  widget.product.variants);
-//                                              if (variant != null) {
-//                                                /*print("variant.weight= ${variant.weight}");
-//                                                  print("variant.discount= ${variant.discount}");
-//                                                  print("variant.mrpPrice= ${variant.mrpPrice}");
-//                                                  print("variant.price= ${variant.price}");*/
-//                                                databaseHelper
-//                                                    .getProductQuantitiy(variant.id)
-//                                                    .then((cartDataObj) {
-//                                                  //print("QUANTITY= ${cartDataObj.QUANTITY}");
-//                                                  cartData = cartDataObj;
-//                                                  counter = int.parse(cartData.QUANTITY);
-//                                                  showAddButton =
-//                                                  counter == 0 ? true : false;
-//                                                  setState(() {});
-//                                                });
-//                                              }
-//                                            },
-//                                            child: Container(
-//                                              padding: EdgeInsets.fromLTRB(10, 0, 5, 0),
-//                                              decoration: BoxDecoration(
-//                                                border: Border.all(
-//                                                  color: weight.trim() == ""
-//                                                      ? whiteColor
-//                                                      : orangeColor,
-//                                                  width: 1,
-//                                                ),
-//                                                borderRadius: BorderRadius.all(
-//                                                    Radius.circular(5.0)),
-//                                              ),
-//                                              child: Wrap(
-//                                                children: <Widget>[
-//                                                  Padding(
-//                                                    padding: EdgeInsets.only(
-//                                                        top: 5,
-//                                                        right: 5,
-//                                                        bottom: widget.classType ==
-//                                                            ClassType.CART
-//                                                            ? 5
-//                                                            : 0),
-//                                                    child: Text(
-//                                                      "${weight}",
-//                                                      textAlign: TextAlign.center,
-//                                                      style:
-//                                                      TextStyle(color: orangeColor),
-//                                                    ),
-//                                                  ),
-//                                                  Visibility(
-//                                                    visible:
-//                                                    widget.classType == ClassType.CART
-//                                                        ? false
-//                                                        : true,
-//                                                    child: Padding(
-//                                                      padding: EdgeInsets.only(left: 10),
-//                                                      child: Utils.showVariantDropDown(
-//                                                          widget.classType,
-//                                                          widget.product),
-//                                                    ),
-//                                                  ),
-//                                                ],
-//                                              ),
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ),
+                                      Visibility(
+                                        visible: false,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(top: 20, bottom: 3),
+                                          child: InkWell(
+                                            onTap: () async {
+                                              //print("-variants.length--${widget.product.variants.length}");
+                                              if (widget.product.variants.length !=
+                                                  null) {
+                                                if (widget.product.variants.length == 1) {
+                                                  return;
+                                                }
+                                              }
+                                              variant =
+                                              await DialogUtils.displayVariantsDialog(
+                                                  context,
+                                                  "${widget.product.title}",
+                                                  widget.product.variants);
+                                              if (variant != null) {
+                                                /*print("variant.weight= ${variant.weight}");
+                                                  print("variant.discount= ${variant.discount}");
+                                                  print("variant.mrpPrice= ${variant.mrpPrice}");
+                                                  print("variant.price= ${variant.price}");*/
+                                                databaseHelper
+                                                    .getProductQuantitiy(variant.id)
+                                                    .then((cartDataObj) {
+                                                  //print("QUANTITY= ${cartDataObj.QUANTITY}");
+                                                  cartData = cartDataObj;
+                                                  counter = int.parse(cartData.QUANTITY);
+                                                  showAddButton =
+                                                  counter == 0 ? true : false;
+                                                  setState(() {});
+                                                });
+                                              }
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.fromLTRB(10, 0, 5, 0),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: weight.trim() == ""
+                                                      ? whiteColor
+                                                      : orangeColor,
+                                                  width: 1,
+                                                ),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5.0)),
+                                              ),
+                                              child: Wrap(
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 5,
+                                                        right: 5,
+                                                        bottom: widget.classType ==
+                                                            ClassType.CART
+                                                            ? 5
+                                                            : 0),
+                                                    child: Text(
+                                                      "${weight}",
+                                                      textAlign: TextAlign.center,
+                                                      style:
+                                                      TextStyle(color: orangeColor),
+                                                    ),
+                                                  ),
+                                                  Visibility(
+                                                    visible:
+                                                    widget.classType == ClassType.CART
+                                                        ? false
+                                                        : true,
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(left: 10),
+                                                      child: Utils.showVariantDropDown(
+                                                          widget.classType,
+                                                          widget.product),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
@@ -456,36 +468,28 @@ class _pState extends State<p> {
                                           ),
                                         ],
                                       ),
+
                                        Container(
                                         // color: Colors.blue,
                                          child: Row(
                                          mainAxisAlignment: MainAxisAlignment.start,
                                          children: <Widget>[
-                                           Expanded(
-                                               child: Padding(
-                                                 padding: EdgeInsets.only(right: 5),
-                                                 child: Text.rich(
-                                                   TextSpan(
-                                                   text: 'Special vegitable falvoured with hot spicies Special vegitable falvoured with',
-                                                   style: TextStyle(fontSize: 12),
-                                                   children: <TextSpan>[
-                                                     TextSpan(
-                                                         text: ' read more',
-                                                         style: TextStyle(
-                                                           decoration: TextDecoration.underline,
-                                                           color: Colors.red
-                                                         )),
-                                                     // can add more TextSpans here...
-                                                   ],
-                                                 ),
-                                                 )
-
-
-
-
-//                                                 Text("Special vegitable falvoured with hot spicies Special vegitable falvoured with hot spicies",style: TextStyle(color: Colors.black),maxLines: 3,),
-                                               )
-
+                                         Flexible(
+                                                   child: Container(
+                                                     child: Column(
+                                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                                       children: <Widget>[
+                                                         Padding(
+                                                             padding: EdgeInsets.only(right: 5),
+                                                             child: Html(
+                                                               data: (widget.product.description.length) > 30 ? widget.product.description.replaceRange(30, widget.product.description.length, '...') : widget.product.description,
+                                                               padding: EdgeInsets.all(0.0),
+                                                             )
+                                                         ),
+                                                         Text( (widget.product.description.trim() == "" || widget.product.description == null) ? "" : "Read more",style: TextStyle(color: darkRed,decoration: TextDecoration.underline),),
+                                                       ],
+                                                     ),
+                                                   )
                                            ),
                                            Align(
                                              alignment: Alignment.bottomRight,
@@ -503,12 +507,177 @@ class _pState extends State<p> {
                         )),
                   ])),
         ),
+
+        Visibility(
+            visible: false,
+            child: Padding(
+              padding: EdgeInsets.only(top: 5,bottom: 15,left: 20),
+              child: Row(
+                children: <Widget>[
+                  Image.asset("images/starIcon.png",width: 20,height: 20,),
+                  Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: Text("sdfsd",style: TextStyle(color:darkRed,fontWeight: FontWeight.w600)),
+                  )
+
+                ],
+              ),
+            ),
+        ),
+
+        Visibility(
+          visible: variantsVisibility,
+            child:  Padding(
+                       padding: EdgeInsets.only(bottom: 10,left: 15),
+                       child:  Wrap(
+                         children:  widget.product.variants.map((f) => GestureDetector(
+                           child: Container(
+                             height: 35,
+                             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 3.0),
+                             margin: EdgeInsets.only(
+                                 left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
+                             decoration: BoxDecoration(
+                               border: Border.all(color: (f.id == (variant == null ? widget.product.variantId : variant.id)) ? Colors.transparent : Colors.grey, width: 1.0),
+                               borderRadius: BorderRadius.all(Radius.circular(
+                                   20.0) //                 <--- border radius here
+                               ),
+                               color: (f.id == (variant == null ? widget.product.variantId : variant.id)) ? darkRed : whiteColor
+                             ),
+                             child: priceContainer(f),
+                           ),
+                           onTap: () {
+                             if (widget.product.variants.length !=
+                                 null) {
+                               if (widget.product.variants.length == 1) {
+                                 return;
+                               }
+                             }
+
+                             variant = f;
+                             if (variant != null) {
+                               /*print("variant.weight= ${variant.weight}");
+                                                  print("variant.discount= ${variant.discount}");
+                                                  print("variant.mrpPrice= ${variant.mrpPrice}");
+                                                  print("variant.price= ${variant.price}");*/
+                               databaseHelper
+                                   .getProductQuantitiy(variant.id)
+                                   .then((cartDataObj) {
+                                 //print("QUANTITY= ${cartDataObj.QUANTITY}");
+                                 cartData = cartDataObj;
+                                 counter = int.parse(cartData.QUANTITY);
+                                 showAddButton =
+                                 counter == 0 ? true : false;
+                                 setState(() {});
+                               });
+                             }
+                           },
+                         )).toList(),
+                       ),
+           )
+        ),
         Container(
             height: 1,
             width: MediaQuery.of(context).size.width,
             color: Color(0xFFBDBDBD))
       ]),
     );
+  }
+
+
+  priceContainer(Variant v){
+    print("this is weightttt ${widget.product.tags}");
+    var weight = (v.weight == null || v.weight == " " || v.weight == "") ? "" : "${v.weight} -";
+    return  Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Padding(padding: EdgeInsets.only(right: 8),
+        child : Text("$weight",
+            style: TextStyle(color: (v.id == (variant == null ? widget.product.variantId : variant.id)) ? whiteColor : darkGrey))
+        ),
+        (v.discount == "0.00" ||
+            v.discount == "0" ||
+            v.discount == "0.0")
+            ? Text(
+          "${AppConstant.currency}${v.price}",
+          style: TextStyle(
+              color: (v.id == (variant == null ? widget.product.variantId : variant.id)) ? whiteColor : darkRed,
+              fontWeight: FontWeight.w600),
+        )
+            : Row(
+          children: <Widget>[
+            Text(
+                "${AppConstant.currency}${v.mrpPrice}",
+                style: TextStyle(
+                    decoration: TextDecoration
+                        .lineThrough,
+                    color: (v.id == (variant == null ? widget.product.variantId : variant.id)) ? whiteColor : darkRed,
+                    fontWeight: FontWeight.w400)),
+            Text(" "),
+            Text(
+              "${AppConstant.currency}${v.price}",
+              style: TextStyle(
+                  color: (v.id == (variant == null ? widget.product.variantId : variant.id)) ? whiteColor : darkRed,
+                  fontWeight: FontWeight.w700),
+            )
+            ,
+          ],
+        ),
+      ],
+    );
+
+
+
+
+
+
+//      Row(
+//        crossAxisAlignment: CrossAxisAlignment.start,
+//        mainAxisAlignment: MainAxisAlignment.start,
+//        children: <Widget>[
+//          Expanded(
+//            child: Text(v.weight,
+//                style: TextStyle(color: Colors.black)),
+//          ),
+//          Flexible(
+//            child: Align(
+//              alignment: Alignment.center,
+//              child: RichText(
+//                  overflow: TextOverflow.visible,
+//                  text: (v.discount == "0.00" ||
+//                      v.discount == "0" ||
+//                      v.discount == "0.0")
+//                      ? TextSpan(
+//                    text:
+//                    "${AppConstant.currency}${v.price}",
+//                    style: TextStyle(
+//                        color: grayColorTitle,
+//                        fontWeight: FontWeight.w700),
+//                  )
+//                      : TextSpan(
+//                    text:
+//                    "${AppConstant.currency}${v.price}",
+//                    style: TextStyle(
+//                        color: grayColorTitle,
+//                        fontWeight: FontWeight.w700),
+//                    children: <TextSpan>[
+//                      TextSpan(text: " "),
+//                      TextSpan(
+//                          text:
+//                          "${AppConstant.currency}${v.mrpPrice}",
+//                          style: TextStyle(
+//                              decoration: TextDecoration
+//                                  .lineThrough,
+//                              color: grayColorTitle,
+//                              fontWeight:
+//                              FontWeight.w400)),
+//                    ],
+//                  )),
+//            ),
+//          )
+////
+//        ]
+//    );
   }
 
   Widget addQuantityView() {
@@ -640,7 +809,7 @@ class _pState extends State<p> {
 
   Widget addVegNonVegOption() {
     Color foodOption =
-    widget.product.nutrient == "Non Veg" ? Colors.red : Colors.green;
+    widget.product.nutrient.toLowerCase() == "Non Veg".toLowerCase() ? Colors.red : Colors.green;
     return Padding(
       padding: EdgeInsets.only(left: 0, right: 7),
       child: widget.product.nutrient == "None"

@@ -279,6 +279,7 @@ class ApiController {
             options: new Options(
                 contentType: "application/json",
                 responseType: ResponseType.plain));
+        print("this is responseeee $response");
         //print(response.data);
         subCategoryResponse =
             SubCategoryResponse.fromJson(json.decode(response.data));
