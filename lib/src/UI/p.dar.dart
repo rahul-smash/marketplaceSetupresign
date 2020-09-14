@@ -591,8 +591,12 @@ class _pState extends State<p> {
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        Visibility(
+          visible: (v.id == (variant == null ? widget.product.variantId : variant.id)) ? true : false,
+            child: Image.asset("images/tickicon.png",width: 15,height: 15,),
+        ),
         Padding(padding: EdgeInsets.only(right: 8),
-        child : Text("$weight",
+             child : Text("$weight",
             style: TextStyle(color: (v.id == (variant == null ? widget.product.variantId : variant.id)) ? whiteColor : darkGrey))
         ),
         (v.discount == "0.00" ||
