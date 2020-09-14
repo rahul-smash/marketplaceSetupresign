@@ -30,6 +30,7 @@ import 'package:restroapp/src/utils/Utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'ForceUpdate.dart';
+import 'HomeCategoryListView.dart';
 import 'SearchScreen.dart';
 import 'dart:io';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
@@ -371,7 +372,6 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _currentIndex = index;
         if (_currentIndex == 4) {
-//          if (AppConstant.isLoggedIn) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -379,9 +379,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       getCartCount();
                     })),
           );
-//          }else{
-//            Utils.showLoginDialog(context);
-//          }
 
           Map<String, dynamic> attributeMap = new Map<String, dynamic>();
           attributeMap["ScreenName"] = "MyCartScreen";
@@ -749,41 +746,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget _oldBody() {
-    return Column(
-      children: <Widget>[
-        addBanners(),
-        Expanded(
-          child: isLoading
-              ? Center(child: CircularProgressIndicator())
-              : categoryResponse == null
-                  ? SingleChildScrollView(child: Center(child: Text("")))
-                  : Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("images/backgroundimg.png"),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                      child: GridView.count(
-                          crossAxisCount: 2,
-                          childAspectRatio: 1.1,
-                          padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
-                          mainAxisSpacing: 5.0,
-                          crossAxisSpacing: 8.0,
-                          shrinkWrap: true,
-                          children: categoryResponse.categories
-                              .map((CategoryModel model) {
-                            return GridTile(
-                                child: CategoryView(model, store, false, 0));
-                          }).toList()),
-                    ),
-        ),
-      ],
-    );
-  }
-
   Widget _newBody() {
     return Stack(
       overflow: Overflow.visible,
@@ -931,7 +893,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? Center(child: CircularProgressIndicator())
                   : categoryResponse == null
                       ? Center(child: Text(""))
-                      : Container(
+                      :
+//              HomeCategoryListView(categoryResponse,store),
+
+              Container(
                           padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                           child: GridView.count(
                               crossAxisCount: 3,
@@ -948,7 +913,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child:
                                         CategoryView(model, store, false, 0));
                               }).toList()),
-                        ),
+                        )
             ],
           ),
         );

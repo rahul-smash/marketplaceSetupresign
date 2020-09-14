@@ -14,8 +14,6 @@ class CategoryView extends StatelessWidget {
   int index;
   bool isComingFromBaner;
 
-  bool _imageError = false;
-
   CategoryView(
       this.categoryModel, this.store, this.isComingFromBaner, this.index);
 
@@ -48,6 +46,7 @@ class CategoryView extends StatelessWidget {
       },
       child: Container(
 //        color: Colors.red,
+//        width: 90,
         margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,6 +57,7 @@ class CategoryView extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10.0)),
                   height: 75,
+//                  width: 75,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
                   child: categoryModel.image300200.isNotEmpty
                       ? ClipRRect(
@@ -68,8 +68,8 @@ class CategoryView extends StatelessWidget {
                             fit: BoxFit.cover,
                             //placeholder: (context, url) => CircularProgressIndicator(),
                             errorWidget: (context, url, error) {
-                              _imageError = true;
                               print('image error ${url}');
+                              return Container();
                             },
                           ),
                         )
@@ -80,11 +80,13 @@ class CategoryView extends StatelessWidget {
 //              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
               padding: EdgeInsets.only(top: 10.0),
               child: Center(
-                child: Text(categoryModel.title,
-//                    'hdshfg hjsgj hjs gjsd js hjgh fhjsj gf hjsgf jhgsj hfghs fgs fg jhg ghgj sfgj gsgf j ',
+                child: Text(
+                    categoryModel.title,
+//                    'hdshfghjsgjhjsgjsd js hjgh fhjsj gf hjsgf jhgsj hfghs fgs fg jhg ghgj sfgj gsgf j ',
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
+                    softWrap: true,
                     style: new TextStyle(
                       color: Colors.black,
                       fontSize: 16.0,
