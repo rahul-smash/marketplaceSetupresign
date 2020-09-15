@@ -53,7 +53,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> wit
           TabBar(
             controller: _tabController,
             isScrollable: widget.categoryModel.subCategory.length == 1 ? false : true,
-            labelColor: Colors.red,
+            labelColor:appTheme,
             unselectedLabelColor: grayColorTitle,
             indicatorColor: whiteColor,
 //            indicatorColor:
@@ -73,7 +73,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> wit
                     padding: EdgeInsets.only(left: 4,right: 4),
                     height: 30,
                     decoration: BoxDecoration(
-                      color: index == initialIndex ? lightRed : grey2,
+                      color: index == initialIndex ? appThemeLight : grey2,
                         borderRadius: BorderRadius.circular(4),
                         ),
                     child: Align(
