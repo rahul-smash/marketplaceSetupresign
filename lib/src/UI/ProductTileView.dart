@@ -529,7 +529,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                 visible: variantsVisibility,
                 child:  Padding(
                   padding: EdgeInsets.only(bottom: 10,left: 15),
-                  child:  Wrap(
+                  child: widget.product.variants!=null?
+                  Wrap(
                     children:  widget.product.variants.map((f) => GestureDetector(
                       child: Container(
                         height: 35,
@@ -572,7 +573,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                         }
                       },
                     )).toList(),
-                  ),
+                  )
+                      :Container(),
                 )
             ),
             Container(
@@ -585,7 +587,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
 
 
   priceContainer(Variant v){
-    print("this is weightttt ${widget.product.tags}");
     var weight = (v.weight == null || v.weight == " " || v.weight == "") ? "" : "${v.weight} -";
     return  Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -629,11 +630,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
         ),
       ],
     );
-
-
-
-
-
 
 //      Row(
 //        crossAxisAlignment: CrossAxisAlignment.start,

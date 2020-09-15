@@ -138,9 +138,6 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
                        itemCount: subCategory.products.length,
                        itemBuilder: (context, index) {
                          Product product = subCategory.products[index];
-//                         return p(product, () {
-//                           bottomBar.state.updateTotalPrice();
-//                         }, ClassType.SubCategory);
                     return ProductTileItem(product, () {
                       bottomBar.state.updateTotalPrice();
                     }, ClassType.SubCategory);

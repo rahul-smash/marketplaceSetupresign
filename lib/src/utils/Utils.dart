@@ -549,6 +549,14 @@ print(id);
     }
     return addressList;
   }
+
+ static bool checkIfStoreClosed(StoreModel store) {
+    if (store.storeStatus == "0") {
+      //0 mean Store close
+      return true;
+    } else {
+      return false;
+    }}
 }
 
 enum ClassType { CART, SubCategory, Favourites, Search }
