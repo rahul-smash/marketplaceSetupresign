@@ -242,7 +242,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                       maxLines: 2,
                                                       overflow: TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                        fontSize: 14.0,
+                                                        fontSize: 16.0,
                                                         color: darkGrey2,
                                                         fontWeight: FontWeight.bold,
                                                       )),
@@ -508,17 +508,18 @@ class _ProductTileItemState extends State<ProductTileItem> {
             ),
 
             Visibility(
-              visible: false,
+              visible: (widget.product.tags == null || widget.product.tags.trim() == "") ? false : true,
               child: Padding(
                 padding: EdgeInsets.only(top: 5,bottom: 15,left: 20),
                 child: Row(
                   children: <Widget>[
                     Image.asset("images/starIcon.png",width: 20,height: 20,),
-                    Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: Text("sdfsd",style: TextStyle(color:darkRed,fontWeight: FontWeight.w600)),
+                    Flexible(
+                        child:  Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Text(widget.product.tags,style: TextStyle(color:darkRed,fontWeight: FontWeight.w600)),
+                        )
                     )
-
                   ],
                 ),
               ),
@@ -585,7 +586,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
 
 
   priceContainer(Variant v){
-   // print("this is weightttt ${widget.product.tags}");
+
     var weight = (v.weight == null || v.weight == " " || v.weight == "") ? "" : "${v.weight} -";
     return  Row(
       mainAxisAlignment: MainAxisAlignment.start,
