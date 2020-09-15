@@ -201,7 +201,7 @@ class Utils {
     if (isFav == "1") {
       favIcon = Icon(
         Icons.favorite,
-        color: orangeColor,
+        color: darkRed,
       );
     } else if (isFav == "0") {
       favIcon = Icon(Icons.favorite_border);
