@@ -42,7 +42,6 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> wit
   @override
   Widget build(BuildContext context) {
     //print("---subCategory.length--=${categoryModel.subCategory.length}");
-    print("reloadddddd");
     return  Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
