@@ -73,6 +73,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isCategoryViewSelected = false;
 
+  SubCategoryModel subCategory;
+
+  String selectedSubCategoryId;
+  CategoryModel selectedCategory;
+
   _HomeScreenState(this.store);
 
   @override
@@ -99,8 +104,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 imageUrl.isEmpty ? AppConstant.placeholderImageUrl : imageUrl),
           );
         }
-        print(
-            "---------------------------banner size----------${imgList.length}");
       }
       if (widget.showForceUploadAlert) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -214,8 +217,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: CachedNetworkImage(
               imageUrl: "${imgList[_index].url}",
               fit: BoxFit.fill,
-//              placeholder: (context, url) =>
-//                  CircularProgressIndicator(),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           )),
@@ -293,12 +294,8 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           }
         }
-        //-----------------------------------------------
       }
     }
-    /*print("categoryId=${store.banners[position].categoryId}");
-                print("subCategoryId=${store.banners[position].subCategoryId}");
-                print("productId=${store.banners[position].productId}");*/
   }
 
   Widget addBottomBar() {
@@ -359,21 +356,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-//        Container(
-//          padding: EdgeInsets.all(10.0),
-//          decoration: BoxDecoration(shape: BoxShape.circle, color: appTheme),
-//          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-//          //padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-//          child: widget.configObject.isGroceryApp == "true"
-//              ? Image.asset(
-//                  "images/groceryicon.png",
-//                  height: 40,
-//                  width: 40,
-//                  color: whiteColor,
-//                )
-//              : Image.asset("images/restauranticon.png",
-//                  height: 40, width: 40, color: whiteColor),
-//        ),
       ],
     );
   }
@@ -449,7 +431,6 @@ class _HomeScreenState extends State<HomeScreen> {
             context, store.storeName, store.storeMsg);
       } else {
         _key.currentState.openDrawer();
-        //print("------_handleDrawer-------");
         if (AppConstant.isLoggedIn) {
           user = await SharedPrefs.getUser();
           if (user != null) setState(() {});
@@ -544,7 +525,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void listenCartChanges() {
     eventBus.on<updateCartCount>().listen((event) {
-      //print("<---Home----updateCartCount------->");
       getCartCount();
     });
   }
@@ -554,7 +534,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (widget.configObject.isMultiStore) {
       ApiController.multiStoreApiRequest(widget.configObject.primaryStoreId)
           .then((response) {
-        //print("${storeBranchesModel.data.length}");
         setState(() {
           this.storeBranchesModel = response;
           if (storeBranchesModel != null) {
@@ -593,7 +572,6 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         cartBadgeCount = value;
       });
-      //print("--getCARTCount---${value}------");
     });
   }
 
@@ -603,8 +581,36 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         isLoading = false;
         this.categoryResponse = response;
+        getHomeCategoryProductApi();
       });
     });
+  }
+
+  void getHomeCategoryProductApi() {
+    if (categoryResponse != null &&
+        categoryResponse.categories != null &&
+        categoryResponse.categories.isNotEmpty) {
+      String subCategoryId =
+          categoryResponse.categories.first.subCategory[0].id;
+      if (selectedCategory == null)
+        selectedCategory = categoryResponse.categories.first;
+
+      if (selectedSubCategoryId != null && selectedSubCategoryId.isNotEmpty) {
+        subCategoryId = selectedSubCategoryId;
+      }
+      ApiController.getSubCategoryProducts(subCategoryId).then((response) {
+        if (response != null && response.success) {
+          subCategory = SubCategoryModel();
+          selectedSubCategoryId = subCategoryId;
+          for (int i = 0; i < response.subCategories.length; i++) {
+            if (subCategoryId == response.subCategories[i].id) {
+              subCategory = response.subCategories[i];
+              break;
+            }
+          }
+        }
+      });
+    }
   }
 
   Future logout(BuildContext context, BranchData selectedStore) async {
@@ -913,9 +919,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? HomeCategoryListView(
                             categoryResponse,
                             store,
-                            callback: () => setState(() =>
-                                isCategoryViewSelected =
-                                    !isCategoryViewSelected),
+                            subCategory,
+                            callback: <Object>({value}) {
+                              setState(() {
+                                selectedCategory = value as CategoryModel;
+                                this.selectedSubCategoryId =
+                                    selectedCategory.subCategory.first.id;
+                                subCategory = null;
+                                getHomeCategoryProductApi();
+                              });
+                              return;
+                            },
+                            selectedCategoryId: selectedSubCategoryId,
+                            selectedCategory: selectedCategory,
                           )
                         : Container(
                             padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
@@ -938,17 +954,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       );
-//      return GridView.count(
-//          crossAxisCount: 3,
-//          childAspectRatio: .8,
-//          physics: NeverScrollableScrollPhysics(),
-//          padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-//          mainAxisSpacing: 1.0,
-//          crossAxisSpacing: 0.0,
-//          shrinkWrap: true,
-//          children: categoryResponse.categories.map((CategoryModel model) {
-//            return GridTile(child: CategoryView(model, store, false, 0));
-//          }).toList());
     }
   }
 
@@ -970,7 +975,6 @@ class _HomeScreenState extends State<HomeScreen> {
             productsList.clear();
           });
         } else {
-          //print("==subCategories= ${subCategoryResponse.subCategories.length}");
           setState(() {
             subCategoryList = subCategoryResponse.subCategories;
             productsList.clear();

@@ -4,8 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/rich_text_parser.dart';
 import 'package:restroapp/src/Screens/Dashboard/ProductDetailScreen.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/models/CartTableData.dart';
@@ -13,9 +11,7 @@ import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
-import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
-import 'package:flutter/gestures.dart';
 
 class ProductTileItem extends StatefulWidget {
   Product product;
@@ -246,7 +242,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                       maxLines: 2,
                                                       overflow: TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                        fontSize: 14.0,
+                                                        fontSize: 16.0,
                                                         color: darkGrey2,
                                                         fontWeight: FontWeight.bold,
                                                       )),
@@ -262,7 +258,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                           widget.product.id);
 
                                                       Product product = widget.product;
-                                                      print("--product.count-- ${count}");
+//                                                      print("--product.count-- ${count}");
                                                       if (count == 1) {
                                                         product.isFav = "0";
                                                         await databaseHelper.deleteFav(
@@ -512,17 +508,18 @@ class _ProductTileItemState extends State<ProductTileItem> {
             ),
 
             Visibility(
-              visible: false,
+              visible: (widget.product.tags == null || widget.product.tags.trim() == "") ? false : true,
               child: Padding(
                 padding: EdgeInsets.only(top: 5,bottom: 15,left: 20),
                 child: Row(
                   children: <Widget>[
                     Image.asset("images/starIcon.png",width: 20,height: 20,),
-                    Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: Text("sdfsd",style: TextStyle(color:darkRed,fontWeight: FontWeight.w600)),
+                    Flexible(
+                        child:  Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Text(widget.product.tags,style: TextStyle(color:darkRed,fontWeight: FontWeight.w600)),
+                        )
                     )
-
                   ],
                 ),
               ),
@@ -589,7 +586,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
 
 
   priceContainer(Variant v){
-   // print("this is weightttt ${widget.product.tags}");
+
     var weight = (v.weight == null || v.weight == " " || v.weight == "") ? "" : "${v.weight} -";
     return  Row(
       mainAxisAlignment: MainAxisAlignment.start,
