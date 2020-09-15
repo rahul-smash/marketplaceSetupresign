@@ -125,6 +125,12 @@ flutter:
     - images/whatsapp.png
     - images/starIcon.png
     - images/tickicon.png
+    - images/homeicon.png
+    - images/unselectedcarticon.png
+    - images/unselectedcategoryicon.png
+    - images/unselectedexploreicon.png
+    - images/unselectedmyordericon.png
+    - images/menuicon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
