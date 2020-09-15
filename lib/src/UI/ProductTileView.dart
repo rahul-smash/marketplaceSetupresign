@@ -529,7 +529,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                 visible: variantsVisibility,
                 child:  Padding(
                   padding: EdgeInsets.only(bottom: 10,left: 15),
-                  child:  Wrap(
+                  child: widget.product.variants!=null?
+                  Wrap(
                     children:  widget.product.variants.map((f) => GestureDetector(
                       child: Container(
                         height: 35,
@@ -552,13 +553,12 @@ class _ProductTileItemState extends State<ProductTileItem> {
                             return;
                           }
                         }
-
                         variant = f;
                         if (variant != null) {
                           /*print("variant.weight= ${variant.weight}");
-                                                  print("variant.discount= ${variant.discount}");
-                                                  print("variant.mrpPrice= ${variant.mrpPrice}");
-                                                  print("variant.price= ${variant.price}");*/
+                                      print("variant.discount= ${variant.discount}");
+                                      print("variant.mrpPrice= ${variant.mrpPrice}");
+                                      print("variant.price= ${variant.price}");*/
                           databaseHelper
                               .getProductQuantitiy(variant.id)
                               .then((cartDataObj) {
@@ -572,7 +572,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                         }
                       },
                     )).toList(),
-                  ),
+                  )
+                      :Container(),
                 )
             ),
             Container(

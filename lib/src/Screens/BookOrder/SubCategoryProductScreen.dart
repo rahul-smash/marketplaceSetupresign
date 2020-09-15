@@ -23,27 +23,29 @@ class SubCategoryProductScreen extends StatefulWidget {
   _SubCategoryProductScreenState createState() => _SubCategoryProductScreenState();
 }
 
-class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
+class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> with SingleTickerProviderStateMixin {
   final CartTotalPriceBottomBar bottomBar =
       CartTotalPriceBottomBar(ParentInfo.productList);
 
- // TabController _tabController;
+ TabController _tabController;
+ int initialIndex = 0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-//    _tabController = new TabController(vsync: this, initialIndex: 0, length: widget.categoryModel.subCategory.length);
-
+    _tabController = new TabController(vsync: this, initialIndex: widget.isComingFromBaner ? widget.index : widget.index, length: widget.categoryModel.subCategory.length);
+    _tabController.addListener(() {
+      setState(() {
+        initialIndex = _tabController.index;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     //print("---subCategory.length--=${categoryModel.subCategory.length}");
     print("reloadddddd");
-    return DefaultTabController(
-      length: widget.categoryModel.subCategory.length,
-      initialIndex: widget.isComingFromBaner ? widget.index : widget.index,
-      child: Scaffold(
+    return  Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(widget.categoryModel.title),
@@ -51,6 +53,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
         ),
         body: Column(children: <Widget>[
           TabBar(
+            controller: _tabController,
             isScrollable: widget.categoryModel.subCategory.length == 1 ? false : true,
             labelColor: Colors.red,
             unselectedLabelColor: grayColorTitle,
@@ -72,7 +75,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
                     padding: EdgeInsets.only(left: 4,right: 4),
                     height: 30,
                     decoration: BoxDecoration(
-                      color: grey2,
+                      color: index == initialIndex ? lightRed : grey2,
                         borderRadius: BorderRadius.circular(4),
                         ),
                     child: Align(
@@ -87,6 +90,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
           ),
           Expanded(
               child: TabBarView(
+                controller: _tabController,
             children:
                 List.generate(widget.categoryModel.subCategory.length, (int index) {
               return getProductsWidget(widget.categoryModel.subCategory[index].id);
@@ -94,8 +98,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
           ))
         ]),
         bottomNavigationBar: bottomBar,
-      ),
-    );
+      );
   }
 
   Widget getProductsWidget(String subCategoryId) {
