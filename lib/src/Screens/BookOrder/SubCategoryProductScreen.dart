@@ -54,9 +54,10 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
             isScrollable: widget.categoryModel.subCategory.length == 1 ? false : true,
             labelColor: Colors.red,
             unselectedLabelColor: grayColorTitle,
-            indicatorColor:
-                widget.categoryModel.subCategory.length == 1 ? appTheme : orangeColor,
-            indicatorWeight: 1,
+            indicatorColor: whiteColor,
+//            indicatorColor:
+//                widget.categoryModel.subCategory.length == 1 ? appTheme : orangeColor,
+            indicatorWeight: 0.1,
             tabs: List.generate(widget.categoryModel.subCategory.length, (int index) {
               bool isTabVisible;
               if (widget.categoryModel.subCategory.length == 1) {
@@ -139,12 +140,12 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen> {
                        itemCount: subCategory.products.length,
                        itemBuilder: (context, index) {
                          Product product = subCategory.products[index];
-                         return p(product, () {
-                           bottomBar.state.updateTotalPrice();
-                         }, ClassType.SubCategory);
-//                    return ProductTileItem(product, () {
-//                      bottomBar.state.updateTotalPrice();
-//                    }, ClassType.SubCategory);
+//                         return p(product, () {
+//                           bottomBar.state.updateTotalPrice();
+//                         }, ClassType.SubCategory);
+                    return ProductTileItem(product, () {
+                      bottomBar.state.updateTotalPrice();
+                    }, ClassType.SubCategory);
                        },
                      ))
 
