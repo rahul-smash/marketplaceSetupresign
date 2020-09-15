@@ -116,7 +116,9 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
       );
     } else {
       //print("products.length= ${subCategory.products.length}");
-      if (widget.subCategory.products.length == 0) {
+      if (widget.subCategory.products == null) {
+        return Utils.getEmptyView2("No Products found!");
+      } else if (widget.subCategory.products.length == 0) {
         return Utils.getEmptyView2("No Products found!");
       } else {
         return Column(
