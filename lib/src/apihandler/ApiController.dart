@@ -300,7 +300,7 @@ class ApiController {
         subCategoryResponse.success = false;
         return subCategoryResponse;
       } else {
-        print("database has values");
+        print("database has SubCategories");
         subCategoryResponse = SubCategoryResponse();
         //prepare model object
         List<SubCategoryModel> categoryList =

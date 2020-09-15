@@ -297,6 +297,7 @@ class DatabaseHelper {
   }
 
   Future<List<SubCategoryModel>> getSubCategoriesFromID(String subCategoriesID) async {
+//    print("getSubCategoriesFromID ${DateTime.now().millisecondsSinceEpoch}");
     List<SubCategoryModel> subCategoryList = new List();
     var dbClient = await db;
     List<String> columnsToSelect = [
@@ -308,6 +309,7 @@ class DatabaseHelper {
       "deleted",
       "sort"
     ];
+//    print("getSubCategoriesFromID start query ${DateTime.now().millisecondsSinceEpoch}");
 
     List<Map> resultList =
         await dbClient.query(Sub_Categories_Table, columns: columnsToSelect,
@@ -329,6 +331,8 @@ class DatabaseHelper {
     } else {
       //print("-empty cart-in db--");
     }
+//    print("getSubCategoriesFromID end query ${DateTime.now().millisecondsSinceEpoch}");
+
     return subCategoryList;
   }
 
