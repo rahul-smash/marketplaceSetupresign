@@ -57,11 +57,16 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.parent == ParentInfo.productList ||
-            widget.parent == ParentInfo.favouritesList ||
-            widget.parent == ParentInfo.searchList
-        ? addProductScreenBottom()
-        : addMyCartScreenBottom();
+    if (totalPrice > 0) {
+      return widget.parent == ParentInfo.productList ||
+              widget.parent == ParentInfo.favouritesList ||
+              widget.parent == ParentInfo.searchList
+          ? addProductScreenBottom()
+          : addMyCartScreenBottom();
+    }
+    return Container(
+      height: 1,
+    );
   }
 
   Widget addProductScreenBottom() {
@@ -172,52 +177,60 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                       builder: (BuildContext context) =>
                           OrderSelectionScreen(pickupfacility, delieveryAdress),
                     );
-                  }else if(pickupfacility=="1"){
+                  } else if (pickupfacility == "1") {
                     StoreModel storeObject = await SharedPrefs.getStore();
-                    bool status = Utils.checkStoreOpenTime(storeObject,OrderType.Delivery);
-                    if(!status){
-                      Utils.showToast("${storeObject.closehoursMessage}", false);
+                    bool status = Utils.checkStoreOpenTime(
+                        storeObject, OrderType.Delivery);
+                    if (!status) {
+                      Utils.showToast(
+                          "${storeObject.closehoursMessage}", false);
                       return;
                     }
 
                     Utils.showProgressDialog(context);
-                    ApiController.getStorePickupAddress().then((response){
-
+                    ApiController.getStorePickupAddress().then((response) {
                       Utils.hideProgressDialog(context);
                       PickUpModel storeArea = response;
 
                       print('---PickUpModel---${storeArea.data.length}--');
-                      if(storeArea != null && storeArea.data.isNotEmpty){
-                        if(storeArea.data.length == 1 && storeArea.data[0].area.length == 1){
+                      if (storeArea != null && storeArea.data.isNotEmpty) {
+                        if (storeArea.data.length == 1 &&
+                            storeArea.data[0].area.length == 1) {
                           Area areaObject = storeArea.data[0].area[0];
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => StoreLocationScreen(areaObject,OrderType.PickUp)),
+                                builder: (context) => StoreLocationScreen(
+                                    areaObject, OrderType.PickUp)),
                           );
-                        }else{
-                          Navigator.push(context,
+                        } else {
+                          Navigator.push(
+                            context,
                             MaterialPageRoute(
-                                builder: (context) => PickUpOrderScreen(storeArea,OrderType.PickUp)),
+                                builder: (context) => PickUpOrderScreen(
+                                    storeArea, OrderType.PickUp)),
                           );
                         }
-                      }else{
+                      } else {
                         Utils.showToast("No pickup data found!", true);
                       }
                     });
-                  }else {
+                  } else {
                     //by default delivery
                     //issue reported :=When both delivery address and pickup address are off then user is not able to place order
                     StoreModel storeObject = await SharedPrefs.getStore();
-                    bool status = Utils.checkStoreOpenTime(storeObject,OrderType.Delivery);
-                    if(!status){
-                      Utils.showToast("${storeObject.closehoursMessage}", false);
+                    bool status = Utils.checkStoreOpenTime(
+                        storeObject, OrderType.Delivery);
+                    if (!status) {
+                      Utils.showToast(
+                          "${storeObject.closehoursMessage}", false);
                       return;
                     }
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => DeliveryAddressList(true,OrderType.Delivery)),
+                          builder: (context) =>
+                              DeliveryAddressList(true, OrderType.Delivery)),
                     );
                   }
                 }
@@ -226,12 +239,14 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
               }
             },
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center ,//Center Row contents horizontally,
-              crossAxisAlignment: CrossAxisAlignment.center, //Center Row contents vertically,
+              mainAxisAlignment: MainAxisAlignment.center,
+              //Center Row contents horizontally,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              //Center Row contents vertically,
               //crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 5, 0,10),
+                  padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
                   child: Text(
                     "Place Order",
                     style: TextStyle(color: Colors.white, fontSize: 18.0),

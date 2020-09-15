@@ -106,7 +106,10 @@ class _FavouritesState extends State<Favourites> {
             return new Future(() => false);
           }),
       bottomNavigationBar: SafeArea(
-        child: Container(
+        child:
+        Visibility(
+          visible: totalPrice>0,
+            child: Container(
           height: 55,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -156,7 +159,7 @@ class _FavouritesState extends State<Favourites> {
                   ))
             ],
           ),
-        ),
+        )),
       ),
     );
   }

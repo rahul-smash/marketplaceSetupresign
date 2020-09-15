@@ -317,13 +317,14 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                     backgroundColor: Colors.black26,
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.black26)),
               ),
+        !widget.isApiLoading?
         Padding(
           padding: const EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
           child: Html(
             data: "${widget.product.description}",
             padding: EdgeInsets.all(10.0),
           ),
-        ),
+        ):Container(),
       ],
     );
   }
