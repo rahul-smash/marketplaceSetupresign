@@ -13,9 +13,11 @@ class CategoryView extends StatelessWidget {
   StoreModel store;
   int index;
   bool isComingFromBaner;
+  bool isListView;
 
   CategoryView(
-      this.categoryModel, this.store, this.isComingFromBaner, this.index);
+      this.categoryModel, this.store, this.isComingFromBaner, this.index,
+      {this.isListView = false});
 
   Widget build(BuildContext context) {
     return InkWell(
@@ -45,8 +47,7 @@ class CategoryView extends StatelessWidget {
         }
       },
       child: Container(
-//        color: Colors.red,
-//        width: 90,
+        width: isListView ? 90 : null,
         margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +58,6 @@ class CategoryView extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10.0)),
                   height: 75,
-//                  width: 75,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
                   child: categoryModel.image300200.isNotEmpty
                       ? ClipRRect(
@@ -80,8 +80,7 @@ class CategoryView extends StatelessWidget {
 //              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
               padding: EdgeInsets.only(top: 10.0),
               child: Center(
-                child: Text(
-                    categoryModel.title,
+                child: Text(categoryModel.title,
 //                    'hdshfghjsgjhjsgjsd js hjgh fhjsj gf hjsgf jhgsj hfghs fgs fg jhg ghgj sfgj gsgf j ',
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,

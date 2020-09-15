@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final _controller = TextEditingController();
 
-  bool isCategoryViewSelected = true;
+  bool isCategoryViewSelected = false;
 
   _HomeScreenState(this.store);
 
@@ -145,12 +145,19 @@ class _HomeScreenState extends State<HomeScreen> {
           onWillPop: () {
             if (productsList.length > 0) {
               setState(() {
-                _controller.text='';
+                _controller.text = '';
                 productsList.clear();
               });
               return new Future(() => false);
-            } else
-              return new Future(() => true);
+            } else {
+              if (isCategoryViewSelected) {
+                setState(() {
+                  isCategoryViewSelected = !isCategoryViewSelected;
+                });
+                return new Future(() => false);
+              } else
+                return new Future(() => true);
+            }
           },
         ));
   }
@@ -306,9 +313,15 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: onTabTapped,
           items: [
             BottomNavigationBarItem(
-              icon: Image.asset('images/homeicon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
-              title: Text('Home', style: TextStyle(color: bottomBarTextColor)),
+              icon: Image.asset(
+                  isCategoryViewSelected
+                      ? 'images/homeicon.png'
+                      : 'images/unselectedcategoryicon.png',
+                  width: 24,
+                  fit: BoxFit.scaleDown,
+                  color: bottomBarIconColor),
+              title: Text(isCategoryViewSelected ? 'Home' : 'Category',
+                  style: TextStyle(color: bottomBarTextColor)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/contacticon.png',
@@ -421,6 +434,9 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         if (_currentIndex == 0) {
           //show categories
+          setState(() {
+            isCategoryViewSelected = !isCategoryViewSelected;
+          });
         }
       });
     }
@@ -698,7 +714,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
       centerTitle: widget.configObject.isMultiStore == true ? false : true,
       leading: new IconButton(
-        icon: Image.asset('images/hamburger.png', width: 25),
+        icon: Image.asset('images/menuicon.png', width: 25),
         onPressed: _handleDrawer,
       ),
       actions: <Widget>[
@@ -824,6 +840,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: appTheme,
                     ),
                     onPressed: () {
+                      FocusScope.of(context).unfocus();
                       setState(() {
                         _controller.text = "";
                         setState(() {
@@ -852,71 +869,75 @@ class _HomeScreenState extends State<HomeScreen> {
     if (productsList.length > 0) {
       return HomeSearchView(productsList);
     } else {
-      if (isCategoryViewSelected)
-        return SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              addBanners(),
-              Visibility(
-                  visible: imgList.length > 1,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: imgList.map((url) {
-                        int index = imgList.indexOf(url);
-                        return _current == index
-                            ? Container(
-                                width: 7.0,
-                                height: 7.0,
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 0.0, horizontal: 2.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: dotIncreasedColor,
-                                ),
-                              )
-                            : Container(
-                                width: 6.0,
-                                height: 6.0,
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 0.0, horizontal: 2.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Color.fromRGBO(0, 0, 0, 0.4),
-                                ),
-                              );
-                      }).toList(),
-                    ),
-                  )),
-              isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : categoryResponse == null
-                      ? Center(child: Text(""))
-                      :
-//              HomeCategoryListView(categoryResponse,store),
-
-              Container(
-                          padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                          child: GridView.count(
-                              crossAxisCount: 3,
-                              childAspectRatio: .8,
-                              physics: NeverScrollableScrollPhysics(),
-                              padding:
-                                  EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-                              mainAxisSpacing: 1.0,
-                              crossAxisSpacing: 0.0,
-                              shrinkWrap: true,
-                              children: categoryResponse.categories
-                                  .map((CategoryModel model) {
-                                return GridTile(
-                                    child:
-                                        CategoryView(model, store, false, 0));
-                              }).toList()),
-                        )
-            ],
-          ),
-        );
+      return SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            addBanners(),
+            Visibility(
+                visible: imgList.length > 1,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: imgList.map((url) {
+                      int index = imgList.indexOf(url);
+                      return _current == index
+                          ? Container(
+                              width: 7.0,
+                              height: 7.0,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 0.0, horizontal: 2.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: dotIncreasedColor,
+                              ),
+                            )
+                          : Container(
+                              width: 6.0,
+                              height: 6.0,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 0.0, horizontal: 2.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color.fromRGBO(0, 0, 0, 0.4),
+                              ),
+                            );
+                    }).toList(),
+                  ),
+                )),
+            isLoading
+                ? Center(child: CircularProgressIndicator())
+                : categoryResponse == null
+                    ? Center(child: Text(""))
+                    : !isCategoryViewSelected
+                        ? HomeCategoryListView(
+                            categoryResponse,
+                            store,
+                            callback: () => setState(() =>
+                                isCategoryViewSelected =
+                                    !isCategoryViewSelected),
+                          )
+                        : Container(
+                            padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                            child: GridView.count(
+                                crossAxisCount: 3,
+                                childAspectRatio: .8,
+                                physics: NeverScrollableScrollPhysics(),
+                                padding:
+                                    EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+                                mainAxisSpacing: 1.0,
+                                crossAxisSpacing: 0.0,
+                                shrinkWrap: true,
+                                children: categoryResponse.categories
+                                    .map((CategoryModel model) {
+                                  return GridTile(
+                                      child:
+                                          CategoryView(model, store, false, 0));
+                                }).toList()),
+                          )
+          ],
+        ),
+      );
 //      return GridView.count(
 //          crossAxisCount: 3,
 //          childAspectRatio: .8,

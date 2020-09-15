@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
+import 'package:restroapp/src/UI/ProductTileView.dart';
+import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
+import 'package:restroapp/src/utils/AppConstants.dart';
+import 'package:restroapp/src/utils/Utils.dart';
 
 class HomeCategoryListView extends StatelessWidget {
   final CategoryResponse categoryResponse;
   StoreModel store;
-  HomeCategoryListView(this.categoryResponse, this.store,);
+  VoidCallback callback;
+
+  HomeCategoryListView(this.categoryResponse, this.store, {this.callback});
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +22,11 @@ class HomeCategoryListView extends StatelessWidget {
   }
 
   Widget _makeView() {
-    return true
-        ? Container(
-            height: 170,
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Container(
+            height: 180,
             color: Colors.transparent,
             margin: EdgeInsets.only(left: 2.5),
             child: Column(
@@ -25,7 +34,7 @@ class HomeCategoryListView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                  padding: EdgeInsets.all(10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -36,79 +45,95 @@ class HomeCategoryListView extends StatelessWidget {
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),
-                      Text(
-                        "View All",
-                        style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: appTheme,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      InkWell(
+                        child: Text(
+                          "View All",
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              color: appTheme,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        onTap: () => callback(),
+                      )
                     ],
                   ),
                 ),
                 Flexible(
-                    child: ListView.builder(
-                  itemCount: categoryResponse.categories.length,
+                    child: ListView(
                   scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return CategoryView(
-                        categoryResponse.categories[index], store, false, index);
-//                    return _makeStaffCard(index, context);
-                  },
+                  children:
+                      categoryResponse.categories.map((CategoryModel model) {
+                    return GridTile(
+                        child: CategoryView(
+                      model,
+                      store,
+                      false,
+                      0,
+                      isListView: true,
+                    ));
+                  }).toList(),
                 ))
               ],
-            ))
-        : Container();
+            )),
+        getProductsWidget(categoryResponse.categories.first.subCategory[0].id)
+      ],
+    );
   }
 
-//  Widget _makeStaffCard(index, BuildContext context) {
-//    return Container(
-//      margin: EdgeInsets.only(top: 15.0, bottom: 15.0, left: 7.5, right: 7.5),
-//      width: Utils.deviceWidth(context) - (Utils.deviceWidth(context) / 1.5),
-//      decoration: BoxDecoration(
-//          color: Colors.white, borderRadius: BorderRadius.circular(10.0)),
-//      child: Column(
-//        crossAxisAlignment: CrossAxisAlignment.start,
-//        children: <Widget>[
-//          ClipRRect(
-//            borderRadius: BorderRadius.only(
-//                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-//            child: Image.network(
-//              _staffModelList[index].image,
-//              fit: BoxFit.fill,
-//              height: 130,
-//              errorBuilder: (context, error, stackTrace) {
-//                return Image.asset(
-//                  "images/dummyProfile.png",
-//                  height: 130,
-//                  fit: BoxFit.fill,
-//                );
-//              },
-//            ),
-//          ),
-//          Padding(
-//            padding: EdgeInsets.only(left: 10, right: 5, top: 10),
-//            child: Text(
-//              "${_staffModelList[index].name}",
-//              style: TextStyle(
-//                  color: gray1, fontSize: 16, fontWeight: FontWeight.bold),
-//              overflow: TextOverflow.ellipsis,
-//            ),
-//          ),
-//          Padding(
-//            padding: EdgeInsets.only(left: 10, right: 5, bottom: 10),
-//            child: Text(
-//              "${_staffModelList[index].services != null && _staffModelList[index].services.isNotEmpty ? _staffModelList[index].services.first.title : ''}",
-//              overflow: TextOverflow.ellipsis,
-//              style: TextStyle(
-//                color: pink1,
-//                fontSize: 14,
-//              ),
-//            ),
-//          ),
-//        ],
-//      ),
-//    );
-//  }
+  Widget getProductsWidget(String subCategoryId) {
+    return FutureBuilder(
+      future: ApiController.getSubCategoryProducts(subCategoryId),
+      builder: (context, projectSnap) {
+        if (projectSnap.connectionState == ConnectionState.none &&
+            projectSnap.hasData == null) {
+          return Container();
+        } else {
+          if (projectSnap.hasData) {
+            SubCategoryResponse response = projectSnap.data;
+            if (response.success) {
+              //Check
+              SubCategoryModel subCategory = SubCategoryModel();
+//              SubCategoryModel subCategory =response.subCategories.first;
+              for (int i = 0; i < response.subCategories.length; i++) {
+                if (subCategoryId == response.subCategories[i].id) {
+                  subCategory = response.subCategories[i];
+                  break;
+                }
+              }
+              if (subCategory.products == null) {
+                return Container();
+              }
+              //print("products.length= ${subCategory.products.length}");
+              if (subCategory.products.length == 0) {
+                return Utils.getEmptyView2("No Products found!");
+              } else {
+                return ListView.builder(
+                  itemCount: subCategory.products.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    Product product = subCategory.products[index];
+                    return ProductTileItem(product, () {
+//                      bottomBar.state.updateTotalPrice();
+                    }, ClassType.SubCategory);
+                  },
+                );
+              }
+            } else {
+              //print("no products.length=");
+              return Utils.getEmptyView2(AppConstant.noInternet);
+//                return Utils.getEmptyView2("No Products found!");
+            }
+          } else {
+            return Center(
+              child: CircularProgressIndicator(
+                  backgroundColor: Colors.black26,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black26)),
+            );
+          }
+        }
+      },
+    );
+  }
 }
