@@ -12,6 +12,9 @@ class updateCartCount {
 class onCartRemoved {
   onCartRemoved();
 }
+class onFavRemoved {
+  onFavRemoved();
+}
 
 class refreshOrderHistory {
   refreshOrderHistory();

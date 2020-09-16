@@ -559,7 +559,7 @@ print(id);
     }}
 }
 
-enum ClassType { CART, SubCategory, Favourites, Search }
+enum ClassType { CART, SubCategory, Favourites, Home,Search }
 
 enum OrderType { Delivery, PickUp, Menu }
 

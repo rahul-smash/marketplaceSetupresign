@@ -13,7 +13,7 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
-class ProductTileItem extends StatefulWidget{
+class ProductTileItem extends StatefulWidget {
   Product product;
   VoidCallback callback;
   ClassType classType;
@@ -61,13 +61,27 @@ class _ProductTileItemState extends State<ProductTileItem> {
       });
     });
   }
+
   void listenCartEvent() {
     eventBus.on<onCartRemoved>().listen((event) {
       setState(() {
-        counter=0;
+        counter = 0;
+      });
+    });
+    eventBus.on<onFavRemoved>().listen((event) {
+      databaseHelper
+          .checkProductsExistInFavTable(
+              DatabaseHelper.Favorite_Table, widget.product.id)
+          .then((favValue) {
+        setState(() {
+          widget.product.isFav = favValue.toString();
+          if (widget.favCallback != null)
+            widget.favCallback(value: widget.product.isFav);
+        });
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     String discount, price, variantId, weight, mrpPrice;
@@ -259,6 +273,10 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               Product product = widget.product;
                                               if (count == 1) {
                                                 product.isFav = "0";
+                                                if (widget.classType ==
+                                                    ClassType.Favourites) {
+                                                  eventBus.fire(onFavRemoved());
+                                                }
                                                 await databaseHelper.deleteFav(
                                                     DatabaseHelper
                                                         .Favorite_Table,
@@ -306,10 +324,20 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               setState(() {});
                                             },
                                             child: Visibility(
+                                              //TODO:uncomment this
+//                                              visible: widget.classType ==
+//                                                      ClassType.CART
+//                                                  ? false
+//                                                  : true,
                                               visible: widget.classType ==
-                                                      ClassType.CART
-                                                  ? false
-                                                  : true,
+                                                          ClassType
+                                                              .Favourites ||
+                                                      widget.classType ==
+                                                          ClassType.Home ||
+                                                      widget.classType ==
+                                                          ClassType.Search
+                                                  ? true
+                                                  : false,
                                               child: Container(
                                                 height: 30,
                                                 width: 30,

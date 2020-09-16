@@ -162,7 +162,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 Product product = widget.subCategory.products[index];
-                return ProductTileItem(product, () {}, ClassType.SubCategory);
+                return ProductTileItem(product, () {}, ClassType.Home);
               },
             )
           ],
