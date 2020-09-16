@@ -13,12 +13,14 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
-class ProductTileItem extends StatefulWidget {
+class ProductTileItem extends StatefulWidget{
   Product product;
   VoidCallback callback;
   ClassType classType;
+  CustomCallback favCallback;
 
-  ProductTileItem(this.product, this.callback, this.classType);
+  ProductTileItem(this.product, this.callback, this.classType,
+      {this.favCallback});
 
   @override
   _ProductTileItemState createState() => new _ProductTileItemState();
@@ -35,8 +37,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
   initState() {
     super.initState();
     showAddButton = false;
-    //print("--_ProductTileItemState-- initState ${widget.classType}");
     getDataFromDB();
+    listenCartEvent();
   }
 
   void getDataFromDB() {
@@ -46,7 +48,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
       cartData = cartDataObj;
       counter = int.parse(cartData.QUANTITY);
       showAddButton = counter == 0 ? true : false;
-      //print("-QUANTITY-${counter}=");
       setState(() {});
     });
     databaseHelper
@@ -55,23 +56,28 @@ class _ProductTileItemState extends State<ProductTileItem> {
         .then((favValue) {
       setState(() {
         widget.product.isFav = favValue.toString();
+        if (widget.favCallback != null)
+          widget.favCallback(value: widget.product.isFav);
       });
     });
   }
-
+  void listenCartEvent() {
+    eventBus.on<onCartRemoved>().listen((event) {
+      setState(() {
+        counter=0;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    print("onbuild called");
     String discount, price, variantId, weight, mrpPrice;
     variantId = variant == null ? widget.product.variantId : variant.id;
     if (variant == null) {
-      //print("====-variant == null====");
       discount = widget.product.discount.toString();
       price = widget.product.price.toString();
       weight = widget.product.weight;
       mrpPrice = widget.product.mrpPrice;
     } else {
-      //print("==else==-variant == null====");
       discount = variant.discount.toString();
       price = variant.price.toString();
       weight = variant.weight;
@@ -127,7 +133,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
                     cartData = cartDataObj;
                     counter = int.parse(cartData.QUANTITY);
                     showAddButton = counter == 0 ? true : false;
-                    //print("-QUANTITY-${counter}=");
                   });
                 });
                 databaseHelper
@@ -136,14 +141,13 @@ class _ProductTileItemState extends State<ProductTileItem> {
                     .then((favValue) {
                   setState(() {
                     widget.product.isFav = favValue.toString();
-                    print(
-                        "--ProductFavValue-- ${favValue} and ${widget.product.isFav}");
+                    if (widget.favCallback != null)
+                      widget.favCallback(value: widget.product.isFav);
                   });
                 });
                 widget.callback();
                 eventBus.fire(updateCartCount());
               });
-              //print("--ProductDetails--result---${result}");
             }
           },
           child: Padding(
@@ -156,11 +160,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(width: 10),
-//                            Visibility(
-//                              visible: AppConstant.isRestroApp,
-//                              child: addVegNonVegOption(),
-//                            ),
-
                         Padding(
                           padding: EdgeInsets.only(top: 5),
                           child: Stack(
@@ -185,7 +184,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                 Radius.circular(2.0)),
                                             border: Border.all(
                                               color: Colors.grey,
-                                              //                   <--- border color
                                               width: 1.0,
                                             ),
                                           ),
@@ -196,14 +194,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                 BorderRadius.circular(2.0),
                                             child: CachedNetworkImage(
                                                 imageUrl: "${imageUrl}",
-                                                fit: BoxFit.fill
-                                                //placeholder: (context, url) => CircularProgressIndicator(),
-                                                //errorWidget: (context, url, error) => Icon(Icons.error),
-                                                ),
-                                          )
-                                          /*child: Image.network(imageUrl,width: 60.0,height: 60.0,
-                                      fit: BoxFit.cover),*/
-                                          )),
+                                                fit: BoxFit.fill),
+                                          ))),
                               Visibility(
                                 visible: (discount == "0.00" ||
                                         discount == "0" ||
@@ -230,7 +222,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
                             ],
                           ),
                         ),
-
                         Flexible(
                             child: Padding(
                                 padding: EdgeInsets.only(top: 0),
@@ -266,7 +257,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                       widget.product.id);
 
                                               Product product = widget.product;
-//                                                      print("--product.count-- ${count}");
                                               if (count == 1) {
                                                 product.isFav = "0";
                                                 await databaseHelper.deleteFav(
@@ -309,7 +299,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                 insertInFavTable(
                                                     product, counter);
                                               }
-                                              //print("--product.isFav-- ${product.isFav}");
+                                              if (widget.favCallback != null)
+                                                widget.favCallback(
+                                                    value: product.isFav);
                                               widget.callback();
                                               setState(() {});
                                             },
@@ -490,14 +482,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                   }
                                   variant = f;
                                   if (variant != null) {
-                                    /*print("variant.weight= ${variant.weight}");
-                                      print("variant.discount= ${variant.discount}");
-                                      print("variant.mrpPrice= ${variant.mrpPrice}");
-                                      print("variant.price= ${variant.price}");*/
                                     databaseHelper
                                         .getProductQuantitiy(variant.id)
                                         .then((cartDataObj) {
-                                      //print("QUANTITY= ${cartDataObj.QUANTITY}");
                                       cartData = cartDataObj;
                                       counter = int.parse(cartData.QUANTITY);
                                       showAddButton =
@@ -597,7 +584,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
       height: 30,
       decoration: BoxDecoration(
           color: whiteColor,
-          //border: Border.all(color: showAddButton == false ? whiteColor : orangeColor, width: 0,),
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           border: Border.all(
             color: showAddButton ? grayColor : whiteColor,

@@ -61,6 +61,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                       databaseHelper.deleteTable(DatabaseHelper.CART_Table);
                       getCartListFromDB();
                       eventBus.fire(updateCartCount());
+                      eventBus.fire(onCartRemoved());
                       bottomBar.state.updateTotalPrice();
                       widget.callback();
                     });
