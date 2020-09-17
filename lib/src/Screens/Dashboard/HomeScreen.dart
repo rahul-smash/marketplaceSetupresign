@@ -140,7 +140,13 @@ class _HomeScreenState extends State<HomeScreen> {
             key: _key,
             appBar: getAppBar(),
             body: _newBody(),
-            drawer: NavDrawerMenu(store, user == null ? "" : user.fullName),
+            drawer: NavDrawerMenu(store, user == null ? "" : user.fullName, () {
+              if (isCategoryViewSelected) {
+                setState(() {
+                  isCategoryViewSelected = !isCategoryViewSelected;
+                });
+              }
+            }),
             bottomNavigationBar: SafeArea(
               child: addBottomBar(),
             ),
@@ -835,7 +841,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     enabledBorder: InputBorder.none,
                     errorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
-                    hintText: "Search for products"),
+                    hintText: "Search for dishes"),
               ),
             ),
             Visibility(

@@ -214,7 +214,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                 ),
               ),
             ),
-            favIcon(),
+//            favIcon(),
           ],
           overflow: Overflow.clip,
         ),

@@ -7,7 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:restroapp/src/Screens/Offers/AvailableOffersList.dart';
 import 'package:restroapp/src/Screens/Offers/RedeemPointsScreen.dart';
-import 'package:restroapp/src/apihandler/ApiConstants.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -74,6 +73,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   String comment = "";
 
+  bool isDeliveryResponseFalse=false;
+
   @override
   void initState() {
     super.initState();
@@ -116,8 +117,13 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           if (storeModel.deliverySlot == "1") {
             ApiController.deliveryTimeSlotApi().then((response) {
               setState(() {
+                if (!response.success) {
+                  isDeliveryResponseFalse = true;
+                  return;
+                }
                 deliverySlotModel = response;
-                print("deliverySlotModel.data.is24X7Open =${deliverySlotModel.data.is24X7Open}");
+                print(
+                    "deliverySlotModel.data.is24X7Open =${deliverySlotModel.data.is24X7Open}");
                 isInstantDelivery = deliverySlotModel.data.is24X7Open == "1";
                 for (int i = 0;
                     i < deliverySlotModel.data.dateTimeCollection.length;
@@ -285,6 +291,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             databaseHelper.deleteTable(DatabaseHelper.CART_Table);
             databaseHelper.deleteTable(DatabaseHelper.Products_Table);
             eventBus.fire(updateCartCount());
+            eventBus.fire(onCartRemoved());
             Navigator.of(context).popUntil((route) => route.isFirst);
           }
         }
@@ -859,6 +866,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                             databaseHelper
                                 .deleteTable(DatabaseHelper.Products_Table);
                             eventBus.fire(updateCartCount());
+                            eventBus.fire(onCartRemoved());
                             Navigator.of(context)
                                 .popUntil((route) => route.isFirst);
                           } else {
@@ -976,7 +984,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 } else {
                   //Store provides instant delivery of the orders.
                   print(isInstantDelivery);
-                  if (storeObject.deliverySlot == "1" && isInstantDelivery) {
+                  if (isDeliveryResponseFalse) {
+                    selectedDeliverSlotValue = "";
+                  } else if (storeObject.deliverySlot == "1" &&
+                      isInstantDelivery) {
                     //Store provides instant delivery of the orders.
                     selectedDeliverSlotValue = "";
                   } else if (storeObject.deliverySlot == "1" &&
@@ -1067,6 +1078,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           databaseHelper.deleteTable(DatabaseHelper.CART_Table);
           databaseHelper.deleteTable(DatabaseHelper.Products_Table);
           eventBus.fire(updateCartCount());
+          eventBus.fire(onCartRemoved());
           Navigator.of(context).popUntil((route) => route.isFirst);
         } else {
           await updateTaxDetails(response.taxCalculation);
@@ -1312,6 +1324,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               databaseHelper.deleteTable(DatabaseHelper.CART_Table);
               databaseHelper.deleteTable(DatabaseHelper.Products_Table);
               eventBus.fire(updateCartCount());
+              eventBus.fire(onCartRemoved());
               Navigator.of(context).popUntil((route) => route.isFirst);
               return;
             }
@@ -1350,6 +1363,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 return;
               }
               eventBus.fire(updateCartCount());
+              eventBus.fire(onCartRemoved());
               print("${widget.deliveryType}");
               //print("Location = ${storeModel.lat},${storeModel.lng}");
               if (widget.deliveryType == OrderType.PickUp) {
@@ -1360,12 +1374,14 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
                   Navigator.of(context).popUntil((route) => route.isFirst);
                   eventBus.fire(updateCartCount());
+                  eventBus.fire(onCartRemoved());
                   DialogUtils.openMap(storeModel, double.parse(storeModel.lat),
                       double.parse(storeModel.lng));
                 } else {
                   //print("==result== ${result}");
                   await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
                   eventBus.fire(updateCartCount());
+                  eventBus.fire(onCartRemoved());
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 }
               } else {
@@ -1378,6 +1394,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
                   Navigator.of(context).popUntil((route) => route.isFirst);
                   eventBus.fire(updateCartCount());
+                  eventBus.fire(onCartRemoved());
                 }
               }
             });

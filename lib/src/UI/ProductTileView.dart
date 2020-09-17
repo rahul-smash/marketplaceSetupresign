@@ -66,6 +66,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
     eventBus.on<onCartRemoved>().listen((event) {
       setState(() {
         counter = 0;
+        showAddButton=true;
       });
     });
     eventBus.on<onFavRemoved>().listen((event) {
@@ -329,15 +330,15 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //                                                      ClassType.CART
 //                                                  ? false
 //                                                  : true,
-                                              visible: widget.classType ==
+                                              visible: /*widget.classType ==
                                                           ClassType
                                                               .Favourites ||
                                                       widget.classType ==
                                                           ClassType.Home ||
                                                       widget.classType ==
                                                           ClassType.Search
-                                                  ? true
-                                                  : false,
+                                                  ? true:*/
+                                                   false,
                                               child: Container(
                                                 height: 30,
                                                 width: 30,
