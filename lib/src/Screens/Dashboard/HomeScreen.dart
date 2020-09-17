@@ -141,11 +141,12 @@ class _HomeScreenState extends State<HomeScreen> {
             appBar: getAppBar(),
             body: _newBody(),
             drawer: NavDrawerMenu(store, user == null ? "" : user.fullName, () {
-              if (isCategoryViewSelected) {
-                setState(() {
-                  isCategoryViewSelected = !isCategoryViewSelected;
-                });
-              }
+              FocusScope.of(context).unfocus();
+              _controller.text = "";
+              subCategoryList.clear();
+              productsList.clear();
+              isCategoryViewSelected = false;
+              setState(() {});
             }),
             bottomNavigationBar: SafeArea(
               child: addBottomBar(),

@@ -1353,7 +1353,7 @@ class DialogUtils {
               ),
               actions: <Widget>[
                 new FlatButton(
-                  child: new Text("Cancel"),
+                  child: new Text("Back"),
                   textColor: Colors.blue,
                   onPressed: () {
                     Navigator.pop(context, null);

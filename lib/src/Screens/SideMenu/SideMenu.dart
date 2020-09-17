@@ -166,8 +166,8 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
   _openPageForIndex(DrawerChildItem item, int pos, BuildContext context) async {
     switch (item.title) {
       case DrawerChildConstants.HOME:
-        Navigator.pop(context);
         widget.callback();
+        Navigator.pop(context);
         break;
       case DrawerChildConstants.MY_PROFILE:
         if (AppConstant.isLoggedIn) {
