@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
@@ -1199,34 +1201,35 @@ class DialogUtils {
                                   fontWeight: FontWeight.w500),
                             ),
                           ),
-                             Container(
-                              height: 120,
-                              margin: EdgeInsets.fromLTRB(20, 15, 20, 20),
-                              decoration: new BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: new BorderRadius.all(
-                                    new Radius.circular(5.0)),
-                                border: new Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
+                          Container(
+                            height: 120,
+                            margin: EdgeInsets.fromLTRB(20, 15, 20, 20),
+                            decoration: new BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: new BorderRadius.all(
+                                  new Radius.circular(5.0)),
+                              border: new Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
                               ),
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 3),
-                                child: TextField(
-                                  textAlign: TextAlign.left,
-                                  maxLength: 250,
-                                  keyboardType: TextInputType.multiline,
-                                  maxLines: null,
-                                  textCapitalization: TextCapitalization.sentences,
-                                  controller: commentController,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(10.0),
-                                    border: InputBorder.none,
-                                  ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 3),
+                              child: TextField(
+                                textAlign: TextAlign.left,
+                                maxLength: 250,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: null,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                controller: commentController,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(10.0),
+                                  border: InputBorder.none,
                                 ),
                               ),
                             ),
+                          ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Row(
@@ -1242,8 +1245,8 @@ class DialogUtils {
                                     textColor: Colors.white,
                                     onPressed: () {
                                       Utils.hideKeyboard(context);
-                                      Navigator.pop(
-                                          context, commentController.text.trim());
+                                      Navigator.pop(context,
+                                          commentController.text.trim());
                                     },
                                   ),
                                 )
@@ -1257,7 +1260,8 @@ class DialogUtils {
         });
   }
 
-  static Future<bool> showAreaRemovedDialog(BuildContext context,String area) async {
+  static Future<bool> showAreaRemovedDialog(
+      BuildContext context, String area) async {
     StoreModel storeModel = await SharedPrefs.getStore();
     String storeName = storeModel.storeName;
     return await showDialog<bool>(
@@ -1290,5 +1294,77 @@ class DialogUtils {
         );
       },
     );
+  }
+
+  static void displayMenuDialog(BuildContext context) async {
+    //prepare model object
+    DatabaseHelper databaseHelper = new DatabaseHelper();
+    List<CategoryModel> categoryList = await databaseHelper.getCategories();
+    CategoryResponse categoryResponse = CategoryResponse();
+    categoryResponse.categories = categoryList;
+    if (categoryResponse.categories != null &&
+        categoryResponse.categories.isNotEmpty) {
+//    for (var i = 0; i < categoryResponse.categories.length; i++) {
+//      String parent_id = categoryResponse.categories[i].id;
+//      categoryResponse.categories[i].subCategory =
+//      await databaseHelper.getSubCategories(parent_id);
+//    }
+      categoryResponse.success = true;
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return WillPopScope(
+            onWillPop: () {
+              return Future(() => true);
+            },
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              title: Text(
+                "Menu",
+                textAlign: TextAlign.center,
+              ),
+              content: Container(
+                width: double.maxFinite,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: categoryResponse.categories.length,
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider(
+                      color: Colors.transparent,
+                    );
+                  },
+                  itemBuilder: (context, index) {
+//                  Datum areaObject = storeArea.data[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 30,
+                        child: Text(
+                            "${categoryResponse.categories[index].title}",
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 14)),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("Cancel"),
+                  textColor: Colors.blue,
+                  onPressed: () {
+                    Navigator.pop(context, null);
+                    // true here means you clicked ok
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
   }
 }
