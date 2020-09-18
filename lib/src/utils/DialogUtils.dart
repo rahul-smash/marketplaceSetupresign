@@ -1296,7 +1296,7 @@ class DialogUtils {
     );
   }
 
-  static void displayMenuDialog(BuildContext context) async {
+  static Future<CategoryModel> displayMenuDialog(BuildContext context) async {
     //prepare model object
     DatabaseHelper databaseHelper = new DatabaseHelper();
     List<CategoryModel> categoryList = await databaseHelper.getCategories();
@@ -1304,13 +1304,13 @@ class DialogUtils {
     categoryResponse.categories = categoryList;
     if (categoryResponse.categories != null &&
         categoryResponse.categories.isNotEmpty) {
-//    for (var i = 0; i < categoryResponse.categories.length; i++) {
-//      String parent_id = categoryResponse.categories[i].id;
-//      categoryResponse.categories[i].subCategory =
-//      await databaseHelper.getSubCategories(parent_id);
-//    }
+    for (var i = 0; i < categoryResponse.categories.length; i++) {
+      String parent_id = categoryResponse.categories[i].id;
+      categoryResponse.categories[i].subCategory =
+      await databaseHelper.getSubCategories(parent_id);
+    }
       categoryResponse.success = true;
-      await showDialog<void>(
+     return await showDialog<CategoryModel>(
         context: context,
         builder: (BuildContext context) {
           return WillPopScope(
@@ -1335,10 +1335,16 @@ class DialogUtils {
                     );
                   },
                   itemBuilder: (context, index) {
-//                  Datum areaObject = storeArea.data[index];
                     return InkWell(
                       onTap: () {
-                        Navigator.pop(context);
+                       CategoryModel categoryModel= categoryList[index];
+                        if (categoryModel != null && categoryModel.subCategory != null) {
+                          if (categoryModel.subCategory.isEmpty) {
+                            Utils.showToast("No data found!", false);
+                          }else{
+                            Navigator.pop(context,categoryList[index]);
+                          }
+                        }
                       },
                       child: Container(
                         height: 30,
