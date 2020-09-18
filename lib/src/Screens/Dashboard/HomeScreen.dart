@@ -782,12 +782,15 @@ class _HomeScreenState extends State<HomeScreen> {
       overflow: Overflow.visible,
       children: <Widget>[
         Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("images/backgroundimg.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
+          decoration: isCategoryViewSelected
+              ? BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("images/backgroundimg.png"),
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : null,
+          color: !isCategoryViewSelected ? Colors.white : null,
         ),
         Padding(
           padding: EdgeInsets.only(top: 60),
@@ -931,6 +934,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             subCategory,
                             callback: <Object>({value}) {
                               setState(() {
+                                if(value is String){
+                                  setState(() {
+                                    isCategoryViewSelected=!isCategoryViewSelected;
+                                  });
+                                  return;
+                                }
                                 selectedCategory = value as CategoryModel;
                                 this.selectedSubCategoryId =
                                     selectedCategory.subCategory.first.id;

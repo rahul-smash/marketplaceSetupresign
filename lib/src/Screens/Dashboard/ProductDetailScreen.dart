@@ -159,7 +159,9 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
           onPressed: () async {
             CategoryModel result = await DialogUtils.displayMenuDialog(context);
             if (result != null) {
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.of(context).popUntil(
+                (route) => route.isFirst,
+              );
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {

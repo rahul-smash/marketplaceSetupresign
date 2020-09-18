@@ -57,17 +57,17 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),
-//                      InkWell(
-//                        child: Text(
-//                          "View All",
-//                          style: TextStyle(
-//                              decoration: TextDecoration.underline,
-//                              color: appTheme,
-//                              fontSize: 14,
-//                              fontWeight: FontWeight.bold),
-//                        ),
-//                        onTap: () => widget.callback(value: 'toggle'),
-//                      )
+                      InkWell(
+                        child: Text(
+                          "View All",
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              color: appTheme,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        onTap: () => widget.callback(value: 'toggle'),
+                      )
                     ],
                   ),
                 ),
@@ -123,14 +123,14 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
       } else {
         return Column(
           children: <Widget>[
-//            Container(
-//                height: 1,
-//                width: MediaQuery.of(context).size.width,
-//                color: Color(0xFFBDBDBD)),
+            Container(
+                height: 5,
+                width: MediaQuery.of(context).size.width,
+                color: appThemeLight),
             Container(
               color: Colors.transparent,
               child: Padding(
-                padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                padding: EdgeInsets.only(left: 10, right: 10, bottom: 5,top:10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[

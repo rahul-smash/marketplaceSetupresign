@@ -180,7 +180,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                       children: [
                         SizedBox(width: 10),
                         Padding(
-                          padding: EdgeInsets.only(top: 5),
+                          padding: EdgeInsets.only(top: 0),
                           child: Stack(
                             children: <Widget>[
                               imageUrl == ""
@@ -513,9 +513,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
                   : Container(),
             )),
         Container(
-            height: 1,
+            height: 5,
             width: MediaQuery.of(context).size.width,
-            color: Color(0xFFBDBDBD))
+            color: appThemeLight)
       ]),
     );
   }
@@ -533,11 +533,13 @@ class _ProductTileItemState extends State<ProductTileItem> {
                   (variant == null ? widget.product.variantId : variant.id))
               ? true
               : false,
-          child: Image.asset(
-            "images/tickicon.png",
-            width: 15,
-            height: 15,
-          ),
+          child: Padding(
+              padding: EdgeInsets.only(right: 5),
+              child: Image.asset(
+                "images/tickicon.png",
+                width: 15,
+                height: 15,
+              )),
         ),
         Padding(
             padding: EdgeInsets.only(right: 8),
@@ -852,11 +854,14 @@ class _ProductTileItemState extends State<ProductTileItem> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Image.asset(
-              "images/starIcon.png",
-              width: 20,
-              height: 20,
-              color: index % 2 != 0 ? yellow : appTheme,
+            Visibility(
+              visible: true,
+              child: Image.asset(
+                "images/starIcon.png",
+                width: 20,
+                height: 20,
+                color: index % 2 != 0 ? yellow : appTheme,
+              ),
             ),
             Flexible(
                 child: Padding(

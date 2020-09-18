@@ -9,31 +9,19 @@ import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
-class CategoryView extends StatelessWidget {
+class DialogCategoryView extends StatelessWidget {
   final CategoryModel categoryModel;
   StoreModel store;
-  int index;
-  bool isComingFromBaner;
-  bool isListView;
   CustomCallback callback;
-  String selectedSubCategoryId;
 
-  CategoryView(
-      this.categoryModel, this.store, this.isComingFromBaner, this.index,
-      {this.isListView = false,
-      this.selectedSubCategoryId = '',
-      this.callback});
+  DialogCategoryView(this.categoryModel, this.store, {this.callback});
 
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (isListView)
-          _onListTapHandle(context);
-        else
-          _onTapPressed(context);
+        _onTapPressed(context);
       },
       child: Container(
-        width: isListView ? 90 : null,
         margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,15 +29,12 @@ class CategoryView extends StatelessWidget {
             GestureDetector(
               child: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color:_isCategoryViewSelected() ? appTheme : Colors.white,width:_isCategoryViewSelected() ?2:0 ),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(10.0)),
-                  height: 75,
-//                  width: 75,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
                   child: categoryModel.image300200.isNotEmpty
                       ? Padding(
-                          padding:
-                              EdgeInsets.all(0),
+                          padding: EdgeInsets.all(0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10.0),
                             child: CachedNetworkImage(
@@ -64,8 +49,7 @@ class CategoryView extends StatelessWidget {
                             ),
                           ))
                       : Padding(
-                          padding:
-                              EdgeInsets.all(_isCategoryViewSelected() ? 4 : 0),
+                          padding: EdgeInsets.all(0),
                           child: Container(
                               decoration: BoxDecoration(
                                   color: Colors.white,
@@ -84,8 +68,7 @@ class CategoryView extends StatelessWidget {
                     maxLines: 2,
                     softWrap: true,
                     style: new TextStyle(
-                      color:
-                          _isCategoryViewSelected() ? appTheme : Colors.black,
+                      color: Colors.black,
                       fontSize: 16.0,
                     )),
               ),
@@ -101,13 +84,7 @@ class CategoryView extends StatelessWidget {
       DialogUtils.displayCommonDialog(context, store.storeName, store.storeMsg);
     } else {
       if (categoryModel != null && categoryModel.subCategory.isNotEmpty) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return SubCategoryProductScreen(
-                categoryModel, isComingFromBaner, index);
-          }),
-        );
+        callback();
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
         attributeMap["ScreenName"] = "${categoryModel.title}";
         Utils.sendAnalyticsEvent("Clicked category", attributeMap);
@@ -118,36 +95,6 @@ class CategoryView extends StatelessWidget {
           }
         }
       }
-    }
-  }
-
-  void _onListTapHandle(BuildContext context) {
-    if (Utils.checkIfStoreClosed(store)) {
-      DialogUtils.displayCommonDialog(context, store.storeName, store.storeMsg);
-    } else {
-      if (categoryModel != null && categoryModel.subCategory.isNotEmpty) {
-        callback(value: categoryModel);
-      } else {
-        if (categoryModel != null && categoryModel.subCategory != null) {
-          if (categoryModel.subCategory.isEmpty) {
-            Utils.showToast("No data found!", false);
-          }
-        }
-      }
-    }
-  }
-
-  bool _isCategoryViewSelected() {
-    if (isListView &&
-        selectedSubCategoryId != null &&
-        categoryModel != null &&
-        categoryModel.subCategory != null &&
-        categoryModel.subCategory.isNotEmpty) {
-      return selectedSubCategoryId
-              .compareTo(categoryModel.subCategory.first.id) ==
-          0;
-    } else {
-      return false;
     }
   }
 }
