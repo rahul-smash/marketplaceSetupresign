@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -1304,13 +1305,13 @@ class DialogUtils {
     categoryResponse.categories = categoryList;
     if (categoryResponse.categories != null &&
         categoryResponse.categories.isNotEmpty) {
-    for (var i = 0; i < categoryResponse.categories.length; i++) {
-      String parent_id = categoryResponse.categories[i].id;
-      categoryResponse.categories[i].subCategory =
-      await databaseHelper.getSubCategories(parent_id);
-    }
+      for (var i = 0; i < categoryResponse.categories.length; i++) {
+        String parent_id = categoryResponse.categories[i].id;
+        categoryResponse.categories[i].subCategory =
+            await databaseHelper.getSubCategories(parent_id);
+      }
       categoryResponse.success = true;
-     return await showDialog<CategoryModel>(
+      return await showDialog<CategoryModel>(
         context: context,
         builder: (BuildContext context) {
           return WillPopScope(
@@ -1322,6 +1323,7 @@ class DialogUtils {
                   borderRadius: BorderRadius.all(Radius.circular(10.0))),
               title: Text(
                 "Menu",
+                style: TextStyle(color: appTheme),
                 textAlign: TextAlign.center,
               ),
               content: Container(
@@ -1337,21 +1339,61 @@ class DialogUtils {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                       CategoryModel categoryModel= categoryList[index];
-                        if (categoryModel != null && categoryModel.subCategory != null) {
+                        CategoryModel categoryModel = categoryList[index];
+                        if (categoryModel != null &&
+                            categoryModel.subCategory != null) {
                           if (categoryModel.subCategory.isEmpty) {
                             Utils.showToast("No data found!", false);
-                          }else{
-                            Navigator.pop(context,categoryList[index]);
+                          } else {
+                            Navigator.pop(context, categoryList[index]);
                           }
                         }
                       },
                       child: Container(
-                        height: 30,
-                        child: Text(
-                            "${categoryResponse.categories[index].title}",
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 14)),
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(border: Border.all(
+                          color: appTheme.withOpacity(0.4),
+                          width: 2,
+                        ),
+                          borderRadius: BorderRadius.circular(10),),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Container(child:  categoryList[index].image300200.isNotEmpty
+                                ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                "${categoryList[index].image300200}",
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.contain,
+                                //placeholder: (context, url) => CircularProgressIndicator(),
+                                errorWidget: (context, url, error) {
+                                  print('image error ${url}');
+                                  return Container();
+                                },
+                              ),
+                            )
+                                : Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                    BorderRadius.circular(10.0))),),
+                            Expanded(
+                                child:
+                                Padding(padding: EdgeInsets.only(left: 10),
+                                    child:Text(
+                                    "${categoryResponse.categories[index].title}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                        color: Colors.black, fontSize: 14))))
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -1360,7 +1402,7 @@ class DialogUtils {
               actions: <Widget>[
                 new FlatButton(
                   child: new Text("Back"),
-                  textColor: Colors.blue,
+                  textColor: appTheme,
                   onPressed: () {
                     Navigator.pop(context, null);
                     // true here means you clicked ok
