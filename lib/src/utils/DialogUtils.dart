@@ -1369,7 +1369,7 @@ class DialogUtils {
                                 "${categoryList[index].image300200}",
                                 width: 80,
                                 height: 80,
-                                fit: BoxFit.contain,
+                                fit: BoxFit.scaleDown,
                                 //placeholder: (context, url) => CircularProgressIndicator(),
                                 errorWidget: (context, url, error) {
                                   print('image error ${url}');
