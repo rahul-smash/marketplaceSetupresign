@@ -5,12 +5,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/models/CartTableData.dart';
+import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -150,6 +153,27 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
               ],
             ),
           ),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: appTheme,
+          onPressed: () async {
+            CategoryModel result = await DialogUtils.displayMenuDialog(context);
+            if (result != null) {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return SubCategoryProductScreen(result, false, 0);
+                }),
+              );
+            }
+          },
+          icon: Image.asset(
+            'images/restauranticon.png',
+            width: 20,
+            color: Colors.white,
+          ),
+          label: Text("Menu"),
         ),
       ),
     );

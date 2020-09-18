@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:restroapp/src/UI/CartBottomView.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
+import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
@@ -12,7 +13,6 @@ import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class MyCartScreen extends StatefulWidget {
-
   final VoidCallback callback;
 
   MyCartScreen(this.callback);
@@ -22,8 +22,8 @@ class MyCartScreen extends StatefulWidget {
 }
 
 class _MyCartScreenState extends State<MyCartScreen> {
-
-  final CartTotalPriceBottomBar bottomBar = CartTotalPriceBottomBar(ParentInfo.cartList);
+  final CartTotalPriceBottomBar bottomBar =
+      CartTotalPriceBottomBar(ParentInfo.cartList);
   DatabaseHelper databaseHelper = new DatabaseHelper();
   List<Product> cartList = List();
   bool isLoading;
@@ -39,23 +39,23 @@ class _MyCartScreenState extends State<MyCartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text("MY CART"),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () => Navigator.pop(context),
-          ),
+        title: Text("MY CART"),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: <Widget>[
           Visibility(
-            visible: cartList.isEmpty ? false: true,
+            visible: cartList.isEmpty ? false : true,
             child: Padding(
               padding: EdgeInsets.only(right: 5),
               child: IconButton(
                 icon: Image.asset('images/cancel_cart.png', width: 25),
                 onPressed: () async {
-                  var result = await DialogUtils.displayCommonDialog2(context, "Clear Cart?",
-                      AppConstant.emptyCartMsg, "Cancel", "Yes");
-                  if(result == true){
+                  var result = await DialogUtils.displayCommonDialog2(context,
+                      "Clear Cart?", AppConstant.emptyCartMsg, "Cancel", "Yes");
+                  if (result == true) {
                     print("Yes");
                     setState(() {
                       databaseHelper.deleteTable(DatabaseHelper.CART_Table);
@@ -65,27 +65,42 @@ class _MyCartScreenState extends State<MyCartScreen> {
                       bottomBar.state.updateTotalPrice();
                       widget.callback();
                     });
-
                   }
                 },
               ),
             ),
           ),
+          Visibility(
+            visible: cartList.isNotEmpty,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child: Padding(
+                padding:
+                EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
+                child: Icon(
+                  Icons.home,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+            ),
+          ),
+
         ],
       ),
       body: WillPopScope(
           child: Column(
             children: <Widget>[
               Divider(color: Colors.white, height: 2.0),
-              isLoading ? Utils.getIndicatorView(): showCartList(),
+              isLoading ? Utils.getIndicatorView() : showCartList(),
               //TODO: add here
               Align(
                 alignment: Alignment.bottomCenter,
                 child: SafeArea(
                   child: Wrap(
-                    children: [
-                      bottomBar
-                    ],
+                    children: [bottomBar],
                   ),
                 ),
               )
@@ -95,15 +110,26 @@ class _MyCartScreenState extends State<MyCartScreen> {
             Navigator.pop(context);
             return new Future(() => false);
           }),
-//      bottomNavigationBar: SafeArea(
-//        child: bottomBar,maintainBottomViewPadding: true,
-//      ),
+      floatingActionButton: cartList.length == 0
+          ? FloatingActionButton.extended(
+              backgroundColor: appTheme,
+              onPressed: () async {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              icon: Image.asset(
+                'images/restauranticon.png',
+                width: 20,
+                color: Colors.white,
+              ),
+              label: Text("Home"),
+            )
+          : Container(),
     );
   }
 
   void getCartListFromDB() {
     isLoading = true;
-    databaseHelper.getCartItemList().then((response){
+    databaseHelper.getCartItemList().then((response) {
       setState(() {
         cartList = response;
         isLoading = false;
@@ -113,27 +139,34 @@ class _MyCartScreenState extends State<MyCartScreen> {
   }
 
   Widget showCartList() {
-    if(cartList.length == 0){
+    if (cartList.length == 0) {
       return Container(
         child: Expanded(
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image.asset("images/empty_cart.png",fit: BoxFit.fill,
-                  width: 100,height: 100,),
-                SizedBox(height: 10,),
+                Image.asset(
+                  "images/empty_cart.png",
+                  fit: BoxFit.fill,
+                  width: 100,
+                  height: 100,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
                 Text("Your Cart is Empty",
                     overflow: TextOverflow.ellipsis,
-                    style: new TextStyle(fontWeight: FontWeight.w500,fontSize: 18.0,
+                    style: new TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18.0,
                     )),
-
               ],
             ),
           ),
         ),
       );
-    }else{
+    } else {
       return Expanded(
         child: ListView.builder(
           shrinkWrap: true,
@@ -144,7 +177,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
               //print("----bottomBar.updateTotalPrice----");
               bottomBar.state.updateTotalPrice();
               widget.callback();
-            },ClassType.CART);
+            }, ClassType.CART);
           },
         ),
       );

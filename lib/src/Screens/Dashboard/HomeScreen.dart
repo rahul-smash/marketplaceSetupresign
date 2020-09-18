@@ -424,6 +424,8 @@ class _HomeScreenState extends State<HomeScreen> {
         if (_currentIndex == 0) {
           //show categories
           setState(() {
+            _controller.text = '';
+            productsList.clear();
             isCategoryViewSelected = !isCategoryViewSelected;
           });
         }
