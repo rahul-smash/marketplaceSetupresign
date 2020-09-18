@@ -18,6 +18,7 @@ class ProductTileItem extends StatefulWidget {
   VoidCallback callback;
   ClassType classType;
   CustomCallback favCallback;
+  List<String> tagsList = List();
 
   ProductTileItem(this.product, this.callback, this.classType,
       {this.favCallback});
@@ -66,7 +67,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
     eventBus.on<onCartRemoved>().listen((event) {
       setState(() {
         counter = 0;
-        showAddButton=true;
+        showAddButton = true;
       });
     });
     eventBus.on<onFavRemoved>().listen((event) {
@@ -114,6 +115,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
 
     if (weight.isEmpty) {
       variantsVisibility = false;
+    }
+    if (widget.product.tags != null && widget.product.tags.trim().length > 0) {
+      widget.tagsList = widget.product.tags.split(',');
     }
 
     return Container(
@@ -330,7 +334,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //                                                      ClassType.CART
 //                                                  ? false
 //                                                  : true,
-                                              visible: /*widget.classType ==
+                                              visible:
+                                                  /*widget.classType ==
                                                           ClassType
                                                               .Favourites ||
                                                       widget.classType ==
@@ -338,7 +343,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                       widget.classType ==
                                                           ClassType.Search
                                                   ? true:*/
-                                                   false,
+                                                  false,
                                               child: Container(
                                                 height: 30,
                                                 width: 30,
@@ -442,27 +447,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                   : true,
           child: Padding(
             padding: EdgeInsets.only(top: 5, bottom: 15, left: 20),
-            child: Row(
-              children: <Widget>[
-                Image.asset(
-                  "images/starIcon.png",
-                  width: 20,
-                  height: 20,
-                  color: appTheme,
-                ),
-                Flexible(
-                    child: Padding(
-                  padding: EdgeInsets.only(left: 5),
-                  child: Text(
-                      (widget.product.tags == null ||
-                              widget.product.tags.trim() == "")
-                          ? ''
-                          : widget.product.tags,
-                      style: TextStyle(
-                          color: appTheme, fontWeight: FontWeight.w600)),
-                ))
-              ],
-            ),
+            child: _makeTags(),
           ),
         ),
         Visibility(
@@ -857,5 +842,40 @@ class _ProductTileItemState extends State<ProductTileItem> {
     databaseHelper.addProductToFavTable(row).then((count) {
       //print("-------count--------${count}-----");
     });
+  }
+
+  _makeTags() {
+    List<Widget> widgetTagsList = List();
+    Widget tagView(String tag, int index) {
+      return Padding(
+        padding: EdgeInsets.only(left: 2),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Image.asset(
+              "images/starIcon.png",
+              width: 20,
+              height: 20,
+              color: index % 2 != 0 ? yellow : appTheme,
+            ),
+            Flexible(
+                child: Padding(
+              padding: EdgeInsets.only(left: 2),
+              child: Text(tag,
+                  style: TextStyle(
+                      color: index % 2 != 0 ? yellow : appTheme,
+                      fontWeight: FontWeight.w600)),
+            ))
+          ],
+        ),
+      );
+    }
+
+    for (int i = 0; i < widget.tagsList.length; i++) {
+      widgetTagsList.add(tagView(widget.tagsList[i], i));
+    }
+    return Wrap(
+      children: widgetTagsList,
+    );
   }
 }
