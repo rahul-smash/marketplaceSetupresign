@@ -13,6 +13,7 @@ import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
+import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
@@ -445,6 +446,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                   // insert/update to cart table
                   insertInCartTable(widget.product, counter);
                 });
+                eventBus.fire(onCounterUpdate(counter, widget.product.id));
               },
               child: Container(
                 child: Center(
@@ -476,6 +478,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                             }
                             //widget.callback();
                           }
+                          eventBus.fire(onCounterUpdate(counter, widget.product.id));
                         },
                         child: Container(
                           width: 35,

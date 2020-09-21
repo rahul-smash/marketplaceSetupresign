@@ -82,6 +82,16 @@ class _ProductTileItemState extends State<ProductTileItem> {
         });
       });
     });
+    eventBus.on<onCounterUpdate>().listen((event) {
+      setState(() {
+        if (widget.product.id.compareTo(event.productId) == 0) {
+          counter = event.counter;
+          if (counter == 0) {
+            showAddButton=true;
+          }
+        }
+      });
+    });
   }
 
   @override
@@ -612,6 +622,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                 //print("add onTap");
                 setState(() {});
                 counter++;
+                eventBus.fire(onCounterUpdate(counter, widget.product.id));
                 showAddButton = false;
                 insertInCartTable(widget.product, counter);
                 widget.callback();
@@ -638,6 +649,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                         onTap: () {
                           if (counter != 0) {
                             setState(() => counter--);
+                            eventBus.fire(
+                                onCounterUpdate(counter, widget.product.id));
                             if (counter == 0) {
                               // delete from cart table
                               removeFromCartTable(widget.product.variantId);
@@ -646,6 +659,10 @@ class _ProductTileItemState extends State<ProductTileItem> {
                               insertInCartTable(widget.product, counter);
                             }
                             widget.callback();
+                          } else {
+                            setState(() {
+                              showAddButton = true;
+                            });
                           }
                         },
                         child: Container(

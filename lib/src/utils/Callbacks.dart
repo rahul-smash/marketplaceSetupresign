@@ -12,9 +12,17 @@ class updateCartCount {
 class onCartRemoved {
   onCartRemoved();
 }
+
+class onCounterUpdate {
+  int counter;
+String productId;
+  onCounterUpdate(this.counter,this.productId);
+}
+
 class onOpenMenu {
   onOpenMenu();
 }
+
 class onFavRemoved {
   onFavRemoved();
 }
@@ -28,4 +36,3 @@ class onPageFinished {
 
   onPageFinished(this.url);
 }
-
