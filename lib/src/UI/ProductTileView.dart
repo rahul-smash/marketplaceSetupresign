@@ -266,13 +266,13 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                           child: addVegNonVegOption(),
                                         ),
                                         Expanded(
-                                          child: Text(widget.product.title,
+                                          child: Text("${widget.product.title}",
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                fontSize: 16.0,
+                                                fontSize: 18.0,
                                                 color: darkGrey2,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.w500,
                                               )),
                                         ),
                                         Align(
@@ -392,43 +392,44 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                         )
                                       ],
                                     ),
-                                    Row(
+                                    Padding(padding: EdgeInsets.only(top: 5),child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         (discount == "0.00" ||
-                                                discount == "0" ||
-                                                discount == "0.0")
+                                            discount == "0" ||
+                                            discount == "0.0")
                                             ? Text(
-                                                "${AppConstant.currency}${price}",
+                                          "${AppConstant.currency}${price}",
+                                          style: TextStyle(
+                                              color: grayColorTitle,
+                                              fontWeight:
+                                              FontWeight.w600),
+                                        )
+                                            : Row(
+                                          children: <Widget>[
+                                            Text(
+                                                "${AppConstant.currency}${mrpPrice}",
                                                 style: TextStyle(
+                                                    decoration:
+                                                    TextDecoration
+                                                        .lineThrough,
                                                     color: grayColorTitle,
                                                     fontWeight:
-                                                        FontWeight.w600),
-                                              )
-                                            : Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                      "${AppConstant.currency}${mrpPrice}",
-                                                      style: TextStyle(
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .lineThrough,
-                                                          color: grayColorTitle,
-                                                          fontWeight:
-                                                              FontWeight.w400)),
-                                                  Text(" "),
-                                                  Text(
-                                                    "${AppConstant.currency}${price}",
-                                                    style: TextStyle(
-                                                        color: grayColorTitle,
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                                  ),
-                                                ],
-                                              ),
+                                                    FontWeight.w400)),
+                                            Text(" "),
+                                            Text(
+                                              "${AppConstant.currency}${price}",
+                                              style: TextStyle(
+                                                  color: grayColorTitle,
+                                                  fontWeight:
+                                                  FontWeight.w700),
+                                            ),
+                                          ],
+                                        ),
                                       ],
-                                    ),
+                                    ) ,),
+
                                     Container(
                                         // color: Colors.blue,
                                         child: Row(
@@ -753,8 +754,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                   width: 1.0,
                 ),
               ),
-              width: 12,
-              height: 12,
+              width: 14,
+              height: 14,
               child: Padding(
                 padding: EdgeInsets.all(3),
                 child: Container(
