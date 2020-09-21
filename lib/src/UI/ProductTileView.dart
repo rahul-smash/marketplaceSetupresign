@@ -87,7 +87,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
         if (widget.product.id.compareTo(event.productId) == 0) {
           counter = event.counter;
           if (counter == 0) {
-            showAddButton=true;
+            showAddButton = true;
           }
         }
       });
@@ -110,9 +110,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
       mrpPrice = variant.mrpPrice;
     }
     String imageUrl = widget.product.imageType == "0"
-        ? widget.product.image != null
-            ? widget.product.image
-            : widget.product.image10080
+        ? widget.product.image == null
+            ? widget.product.image10080
+            : widget.product.image
         : widget.product.imageUrl;
     bool variantsVisibility;
     variantsVisibility = widget.classType == ClassType.CART
@@ -649,8 +649,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
                         onTap: () {
                           if (counter != 0) {
                             setState(() => counter--);
-                            eventBus.fire(
-                                onCounterUpdate(counter, widget.product.id));
                             if (counter == 0) {
                               // delete from cart table
                               removeFromCartTable(widget.product.variantId);
@@ -664,6 +662,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                               showAddButton = true;
                             });
                           }
+                          eventBus.fire(
+                              onCounterUpdate(counter, widget.product.id));
                         },
                         child: Container(
                           width: 35,
