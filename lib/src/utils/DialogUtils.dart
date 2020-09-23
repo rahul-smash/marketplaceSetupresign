@@ -1431,7 +1431,7 @@ class DialogUtils {
 //            await databaseHelper.getSubCategories(parent_id);
 //      }
 //      categoryResponse.success = true;
-//      StoreModel store= await SharedPrefs.getStore();
+//      StoreModel store = await SharedPrefs.getStore();
 //      return await showDialog<CategoryModel>(
 //        context: context,
 //        builder: (BuildContext context) {
@@ -1448,14 +1448,16 @@ class DialogUtils {
 //                textAlign: TextAlign.center,
 //              ),
 //              content: Container(
-//                width: double.maxFinite,
-//                child: GridView.count(
-//                  crossAxisCount: 2,
-//                  shrinkWrap: true,
-//                  children: categoryResponse.categories
-//                      .map((CategoryModel model) {
-//                    return GridTile(
-//                        child: DialogCategoryView(model, store,callback:<Object>({value}){
+//                  width: double.maxFinite,
+//                  child: GridView.count(
+//                      crossAxisCount: 2,
+//                      childAspectRatio: 1,
+//                      shrinkWrap: true,
+//                      children: categoryResponse.categories
+//                          .map((CategoryModel model) {
+//                        return GridTile(
+//                            child: DialogCategoryView(model, store,
+//                                callback: <Object>({value}) {
 //                          CategoryModel categoryModel = model;
 //                          if (categoryModel != null &&
 //                              categoryModel.subCategory != null) {
@@ -1467,8 +1469,7 @@ class DialogUtils {
 //                          }
 //                          return;
 //                        }));
-//                  }).toList())
-//              ),
+//                      }).toList())),
 //              actions: <Widget>[
 //                new FlatButton(
 //                  child: new Text("Back"),

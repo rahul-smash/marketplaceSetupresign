@@ -22,15 +22,18 @@ class DialogCategoryView extends StatelessWidget {
         _onTapPressed(context);
       },
       child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),border: Border.all(color: appTheme.withOpacity(.5),width: 1)),
         margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
+        padding: EdgeInsets.all(2),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             GestureDetector(
-              child: Container(
+              child: Center(child:
+              Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0)),
+                      borderRadius: BorderRadius.circular(10.0),),
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
                   child: categoryModel.image300200.isNotEmpty
                       ? Padding(
@@ -39,8 +42,9 @@ class DialogCategoryView extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10.0),
                             child: CachedNetworkImage(
                               imageUrl: "${categoryModel.image300200}",
-                              width: Utils.getDeviceWidth(context),
                               fit: BoxFit.cover,
+                              width: 70,
+                              height: 60,
                               //placeholder: (context, url) => CircularProgressIndicator(),
                               errorWidget: (context, url, error) {
                                 print('image error ${url}');
@@ -54,14 +58,15 @@ class DialogCategoryView extends StatelessWidget {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10.0))),
-                        )),
+                        ))),
             ),
             Expanded(
                 child: Padding(
 //              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-              padding: EdgeInsets.only(top: 10.0),
+              padding: EdgeInsets.only(top: 10.0,left: 2,right: 2),
               child: Center(
-                child: Text(categoryModel.title,
+                child: Text(
+                    categoryModel.title,
 //                    'hdshfghjsgjhjsgjsd js hjgh fhjsj gf hjsgf jhgsj hfghs fgs fg jhg ghgj sfgj gsgf j ',
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
@@ -69,7 +74,7 @@ class DialogCategoryView extends StatelessWidget {
                     softWrap: true,
                     style: new TextStyle(
                       color: Colors.black,
-                      fontSize: 16.0,
+                      fontSize: 15.0,
                     )),
               ),
             )),
