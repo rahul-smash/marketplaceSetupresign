@@ -528,6 +528,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                           // insert/update to cart table
                           insertInCartTable(widget.product, counter);
                         }
+                        eventBus.fire(onCounterUpdate(counter, widget.product.id));
                       },
                       child: Container(
                           width: 35,

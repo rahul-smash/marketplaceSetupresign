@@ -436,20 +436,37 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                         ],
                                       ),
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          right: 10, top: 5,bottom: 5),
-                                      child: Text(
-                                        removeAllHtmlTags(
-                                            "${widget.product.description}"),
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: grayColorDescription,
-                                            fontWeight: FontWeight.w500),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
+                                    Container(
+                                        // color: Colors.blue,
+                                        child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                right: 10, top: 5, bottom: 5),
+                                            child: Text(
+                                              removeAllHtmlTags(
+                                                  "${widget.product.description}"),
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: grayColorDescription,
+                                                  fontWeight: FontWeight.w500),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 10,
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: addQuantityView(),
+                                        ),
+                                      ],
+                                    ))
 //                                    Visibility(
 //                                      visible: (widget.product.tags == null ||
 //                                              widget.product.tags.trim() == "")
@@ -463,21 +480,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //                                        child: _makeTags(),
 //                                      ),
 //                                    ),
-                                    Container(
-                                        // color: Colors.blue,
-                                        child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Container(
-                                          width: 10,
-                                        ),
-                                        Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: addQuantityView(),
-                                        ),
-                                      ],
-                                    ))
                                   ],
                                 ))),
                       ],
@@ -563,7 +565,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-       /* Visibility(
+        /* Visibility(
           visible: (v.id ==
                   (variant == null ? widget.product.variantId : variant.id))
               ? true
@@ -587,7 +589,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                 : variant.id))
                         ? whiteColor
                         : darkGrey))),
-       /* (v.discount == "0.00" || v.discount == "0" || v.discount == "0.0")
+        /* (v.discount == "0.00" || v.discount == "0" || v.discount == "0.0")
             ? Text(
                 "${AppConstant.currency}${v.price}",
                 style: TextStyle(
@@ -650,10 +652,10 @@ class _ProductTileItemState extends State<ProductTileItem> {
                     //print("add onTap");
                     setState(() {});
                     counter++;
-                    eventBus.fire(onCounterUpdate(counter, widget.product.id));
                     showAddButton = false;
                     insertInCartTable(widget.product, counter);
                     widget.callback();
+                    eventBus.fire(onCounterUpdate(counter, widget.product.id));
                   },
                   child: Container(
                     padding: EdgeInsets.only(left: 15, right: 15),
@@ -691,8 +693,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                   showAddButton = true;
                                 });
                               }
-                              eventBus.fire(
-                                  onCounterUpdate(counter, widget.product.id));
+                              eventBus.fire(onCounterUpdate(counter, widget.product.id));
                             },
                             child: Container(
                               width: 35,
@@ -742,6 +743,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                               // insert/update to cart table
                               insertInCartTable(widget.product, counter);
                             }
+                            eventBus.fire(onCounterUpdate(counter, widget.product.id));
                           },
                           child: Container(
                               width: 35,

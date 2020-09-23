@@ -91,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     listenCartChanges();
     checkForMultiStore();
     getCategoryApi();
+    listenEvent();
     try {
       AppConstant.placeholderUrl = store.banner10080;
       //print("-----store.banners-----${store.banners.length}------");
@@ -129,6 +130,20 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       print(e);
     }
+  }
+
+  void listenEvent() {
+    eventBus.on<onCartRemoved>().listen((event) {
+      setState(() {
+        setState(() {
+          _controller.text = '';
+          productsList.clear();
+          if (isCategoryViewSelected) {
+            isCategoryViewSelected = !isCategoryViewSelected;
+          }
+        });
+      });
+    });
   }
 
   @override
@@ -934,9 +949,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             subCategory,
                             callback: <Object>({value}) {
                               setState(() {
-                                if(value is String){
+                                if (value is String) {
                                   setState(() {
-                                    isCategoryViewSelected=!isCategoryViewSelected;
+                                    isCategoryViewSelected =
+                                        !isCategoryViewSelected;
                                   });
                                   return;
                                 }
