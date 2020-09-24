@@ -53,7 +53,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                       Text(
                         "Categories",
                         style: TextStyle(
-                            color: Colors.grey,
+                            color: homeDescriptionColor,
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),
@@ -62,7 +62,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                           "View All",
                           style: TextStyle(
                               decoration: TextDecoration.underline,
-                              color: appTheme,
+                              color: appThemeSecondary,
                               fontSize: 14,
                               fontWeight: FontWeight.bold),
                         ),
@@ -126,7 +126,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
             Container(
                 height: 5,
                 width: MediaQuery.of(context).size.width,
-                color: appThemeLight),
+                color: listingBorderColor),
             Container(
               color: Colors.transparent,
               child: Padding(
@@ -137,7 +137,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                     Text(
                       widget.subCategory.title,
                       style: TextStyle(
-                          color: Colors.grey,
+                          color: homeDescriptionColor,
                           fontSize: 14,
                           fontWeight: FontWeight.bold),
                     ),
@@ -146,7 +146,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                         "View All",
                         style: TextStyle(
                             decoration: TextDecoration.underline,
-                            color: appTheme,
+                            color: appThemeSecondary,
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),

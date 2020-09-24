@@ -4,6 +4,7 @@ import 'dart:ui';
 //Green color - #75990B
 
 Color appTheme = Color(0xff75990B);
+//Color appThemeSecondary = Color(0xff75990B);
 Color appThemeLight = Color(0xff75990B);
 Color colorText = Color(0xff3e4a59);
 Color colorInputText = Color(0xff24272b);
@@ -26,7 +27,7 @@ Color dotIncreasedColor = Color(0xff777A18);
 //=================new added==========
 Color bottomBarBackgroundColor = Color(0xffffffff);
 Color gridBackgroundCOlor = Color(0xffECECEC);
-Color orangeColor = Color(0xffFF5400);
+Color appThemeSecondary = Color(0xffFF5400);
 Color yellow = Color(0xffFFAD01);
 Color grayColor = Color(0xffd3d3d3);
 Color favGrayColor = Color(0xfff3f3f3);
@@ -45,6 +46,18 @@ Color darkRed = Color(0xFFDA1C1B);
 
 Color darkGrey = Color(0xFF444E58);
 Color darkGrey2 = Color(0xFF25323A);
+
+/// new Color
+Color webThemeCategoryOpenColor= Color(0xFFFCF1F1);
+Color stripsColor= Color(0xFF080A10);
+Color footerColor= Color(0xFF12151c);
+Color listingBackgroundColor= Color(0xFFf0f0f0);
+Color listingBorderColor= Color(0xFFe5e5e5);
+Color listingBoxBackgroundColor= Color(0xFFfcfcfc);
+Color homeSubHeadingColor= Color(0xFF12151c);
+Color homeDescriptionColor= Color(0xFF70737b);
+Color categoryListingButtonBorderColor= Color(0xFFC5C6C9);
+Color categoryListingBoxBackgroundColor= Color(0xFFfcfcfc);
 
 
 

@@ -20,7 +20,6 @@ class HomeSearchView extends StatelessWidget {
                   child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: productsList.length,
-//                  physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     Product product = productsList[0];
                     return ProductTileItem(product, () {}, ClassType.Search);

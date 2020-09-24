@@ -56,7 +56,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen>
   Widget build(BuildContext context) {
     //print("---subCategory.length--=${categoryModel.subCategory.length}");
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: listingBackgroundColor,
       appBar: AppBar(
         title: Text(widget.categoryModel.title),
         centerTitle: false,
@@ -66,8 +66,8 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen>
           controller: _tabController,
           isScrollable:
               widget.categoryModel.subCategory.length == 1 ? false : true,
-          labelColor: appTheme,
-          unselectedLabelColor: grayColorTitle,
+          labelColor: appThemeSecondary,
+          unselectedLabelColor: homeDescriptionColor,
           indicatorColor: whiteColor,
 //            indicatorColor:
 //                widget.categoryModel.subCategory.length == 1 ? appTheme : orangeColor,
@@ -87,7 +87,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen>
                   padding: EdgeInsets.only(left: 4, right: 4),
                   height: 30,
                   decoration: BoxDecoration(
-                    color: index == initialIndex ? appThemeLight : grey2,
+                    color: index == initialIndex ? webThemeCategoryOpenColor : grey2,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Align(
@@ -115,7 +115,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen>
       ]),
       bottomNavigationBar: bottomBar,
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: appTheme,
+        backgroundColor: appThemeSecondary,
         onPressed: () async {
           CategoryModel result = await DialogUtils.displayMenuDialog(context);
           if (result != null) {
@@ -173,7 +173,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen>
                       padding: EdgeInsets.only(left: 10, top: 8),
                       height: 30,
                       width: Utils.getDeviceWidth(context),
-                      color: grey2,
+                      color: webThemeCategoryOpenColor,
                       child: Text(
                         "${subCategory.products.length} items",
                         style: TextStyle(

@@ -398,6 +398,7 @@ class StoreModel {
     data['about_us'] = this.aboutUs;
     data['otp_skip'] = this.otpSkip;
     data['app_theme_colors'] = this.appThemeColors;
+    data['web_app_theme_colors'] = this.webAppThemeColors;
     data['version'] = this.version;
     data['currency'] = this.currency;
     data['show_currency'] = this.showCurrency;

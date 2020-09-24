@@ -134,7 +134,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
 
     return Container(
       padding: EdgeInsets.only(top: 15),
-      color: Colors.white,
+      color: listingBoxBackgroundColor,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         InkWell(
           onTap: () async {
@@ -273,7 +273,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                 fontSize: 18.0,
-                                                color: darkGrey2,
+                                                color: homeSubHeadingColor,
                                                 fontWeight: FontWeight.w500,
                                               )),
                                         ),
@@ -406,7 +406,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               ? Text(
                                                   "${AppConstant.currency}${price}",
                                                   style: TextStyle(
-                                                      color: grayColorTitle,
+                                                      color: homeSubHeadingColor,
                                                       fontWeight:
                                                           FontWeight.w600),
                                                 )
@@ -419,7 +419,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                                 TextDecoration
                                                                     .lineThrough,
                                                             color:
-                                                                grayColorTitle,
+                                                                homeDescriptionColor,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w400)),
@@ -427,7 +427,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                     Text(
                                                       "${AppConstant.currency}${price}",
                                                       style: TextStyle(
-                                                          color: grayColorTitle,
+                                                          color: homeSubHeadingColor,
                                                           fontWeight:
                                                               FontWeight.w700),
                                                     ),
@@ -451,7 +451,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                   "${widget.product.description}"),
                                               style: TextStyle(
                                                   fontSize: 14,
-                                                  color: grayColorDescription,
+                                                  color: homeDescriptionColor,
                                                   fontWeight: FontWeight.w500),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
@@ -510,7 +510,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                       ? widget.product.variantId
                                                       : variant.id))
                                               ? Colors.transparent
-                                              : Colors.grey,
+                                              : categoryListingButtonBorderColor,
                                           width: 1.0),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(
@@ -520,8 +520,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               (variant == null
                                                   ? widget.product.variantId
                                                   : variant.id))
-                                          ? appTheme
-                                          : whiteColor),
+                                          ? appThemeSecondary
+                                          : categoryListingBoxBackgroundColor),
                                   child: priceContainer(f),
                                 ),
                                 onTap: () {
@@ -551,7 +551,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
         Container(
             height: 5,
             width: MediaQuery.of(context).size.width,
-            color: appThemeLight)
+            color: listingBorderColor)
       ]),
     );
   }
@@ -639,10 +639,10 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //      width: 90,
           height: 30,
           decoration: BoxDecoration(
-              color: whiteColor,
+              color: categoryListingBoxBackgroundColor,
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
               border: Border.all(
-                color: showAddButton ? grayColor : whiteColor,
+                color: showAddButton ? categoryListingButtonBorderColor : whiteColor,
                 width: 1,
               )),
           margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
@@ -663,14 +663,24 @@ class _ProductTileItemState extends State<ProductTileItem> {
                       child: Text(
                         "ADD +",
                         style: TextStyle(
-                            color: appTheme, fontWeight: FontWeight.w600),
+                            color: appThemeSecondary, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
                 )
               : Visibility(
                   visible: showAddButton == true ? false : true,
-                  child: Row(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: webThemeCategoryOpenColor,
+                      border: Border.all(
+                        color: categoryListingButtonBorderColor,
+                        width: 1,
+                      ),
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(5.0)),
+                    ),
+                    child:  Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Container(
@@ -699,16 +709,16 @@ class _ProductTileItemState extends State<ProductTileItem> {
                               width: 35,
                               height: 25,
                               decoration: BoxDecoration(
-                                color: grayColor,
+                                color: categoryListingBoxBackgroundColor,
                                 border: Border.all(
-                                  color: grayColor,
+                                  color: categoryListingBoxBackgroundColor,
                                   width: 1,
                                 ),
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0)),
+                                BorderRadius.only(topLeft:Radius.circular(5.0),bottomLeft: Radius.circular(5.0)),
                               ),
                               child: Icon(Icons.remove,
-                                  color: Colors.white, size: 20),
+                                  color: appThemeSecondary, size: 20),
                             )),
                       ),
                       Container(
@@ -716,19 +726,19 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //              width: 20.0,
                         height: 20.0,
                         decoration: new BoxDecoration(
-                          color: Colors.white,
+                          color: webThemeCategoryOpenColor,
                           borderRadius:
-                              new BorderRadius.all(new Radius.circular(15.0)),
+                          new BorderRadius.all(new Radius.circular(15.0)),
                           border: new Border.all(
-                            color: Colors.white,
+                            color: webThemeCategoryOpenColor,
                             width: 1.0,
                           ),
                         ),
                         child: Center(
                             child: Text(
-                          "$counter",
-                          style: TextStyle(fontSize: 18),
-                        )),
+                              "$counter",
+                              style: TextStyle(fontSize: 18,color: appThemeSecondary),
+                            )),
                       ),
                       Container(
                         padding: const EdgeInsets.all(0.0),
@@ -749,20 +759,20 @@ class _ProductTileItemState extends State<ProductTileItem> {
                               width: 35,
                               height: 25,
                               decoration: BoxDecoration(
-                                color: appTheme,
+                                color: categoryListingBoxBackgroundColor,
                                 border: Border.all(
-                                  color: appTheme,
+                                  color: categoryListingBoxBackgroundColor,
                                   width: 1,
                                 ),
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0)),
+                                BorderRadius.only(topRight:Radius.circular(5.0),bottomRight: Radius.circular(5.0)),
                               ),
                               child: Icon(Icons.add,
-                                  color: Colors.white, size: 20)),
+                                  color: appThemeSecondary, size: 20)),
                         ),
                       ),
                     ],
-                  ),
+                  ),),
                 ),
         )
       ],

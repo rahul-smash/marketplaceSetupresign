@@ -338,42 +338,43 @@ class _HomeScreenState extends State<HomeScreen> {
                       : 'images/unselectedcategoryicon.png',
                   width: 24,
                   fit: BoxFit.scaleDown,
-                  color: bottomBarIconColor),
+                  color: appThemeSecondary),
               title: Text(isCategoryViewSelected ? 'Home' : 'Category',
-                  style: TextStyle(color: bottomBarTextColor)),
+                  style: TextStyle(color: homeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/contacticon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
+                  width: 24, fit: BoxFit.scaleDown, color: homeDescriptionColor),
               title:
-                  Text('Contact', style: TextStyle(color: bottomBarTextColor)),
+                  Text('Contact', style: TextStyle(color: homeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedexploreicon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
+                  width: 24, fit: BoxFit.scaleDown, color: homeDescriptionColor),
               title:
-                  Text('Search', style: TextStyle(color: bottomBarTextColor)),
+                  Text('Search', style: TextStyle(color: homeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedmyordericon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
+                  width: 24, fit: BoxFit.scaleDown, color: homeDescriptionColor),
               title: Text('My Orders',
-                  style: TextStyle(color: bottomBarTextColor)),
+                  style: TextStyle(color: homeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Badge(
+                badgeColor: appThemeSecondary,
                 showBadge: cartBadgeCount == 0 ? false : true,
                 badgeContent: Text('${cartBadgeCount}',
                     style: TextStyle(color: Colors.white)),
                 child: Image.asset('images/unselectedcarticon.png',
                     width: 24,
                     fit: BoxFit.scaleDown,
-                    color: bottomBarIconColor),
+                    color: homeDescriptionColor),
               ),
               title: Padding(
                 padding: EdgeInsets.fromLTRB(0, 2, 0, 0),
                 child:
-                    Text('Cart', style: TextStyle(color: bottomBarTextColor)),
+                    Text('Cart', style: TextStyle(color: homeDescriptionColor)),
               ),
             ),
           ],

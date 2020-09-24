@@ -381,7 +381,7 @@ class DialogUtils {
                                 ),
                               ),
                               color: Colors.white,
-                              textColor: orangeColor,
+                              textColor: appThemeSecondary,
                               onPressed: () {
                                 Navigator.pop(context, true);
                               },
@@ -391,7 +391,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('OK'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, false);
@@ -462,7 +462,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('OK'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, true);
@@ -533,7 +533,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('OK'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, true);
@@ -605,7 +605,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
                             child: FlatButton(
                               child: Text('Cancel'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, false);
@@ -755,7 +755,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('${button1}'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, false);
@@ -766,7 +766,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('${button2}'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, true);
@@ -837,7 +837,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('OK'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 SystemNavigator.pop();
@@ -1244,7 +1244,7 @@ class DialogUtils {
                                   width: 130,
                                   child: FlatButton(
                                     child: Text('Submit'),
-                                    color: orangeColor,
+                                    color: appThemeSecondary,
                                     textColor: Colors.white,
                                     onPressed: () {
                                       Utils.hideKeyboard(context);

@@ -41,7 +41,7 @@ class CategoryView extends StatelessWidget {
             GestureDetector(
               child: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color:_isCategoryViewSelected() ? appTheme : Colors.white,width:_isCategoryViewSelected() ?2:0 ),
+                    border: Border.all(color:_isCategoryViewSelected() ? appThemeSecondary : Colors.white,width:_isCategoryViewSelected() ?2:0 ),
                       borderRadius: BorderRadius.circular(10.0)),
                   height: 75,
 //                  width: 75,
@@ -78,14 +78,13 @@ class CategoryView extends StatelessWidget {
               padding: EdgeInsets.only(top: 10.0),
               child: Center(
                 child: Text(categoryModel.title,
-//                    'hdshfghjsgjhjsgjsd js hjgh fhjsj gf hjsgf jhgsj hfghs fgs fg jhg ghgj sfgj gsgf j ',
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                     softWrap: true,
                     style: new TextStyle(
                       color:
-                          _isCategoryViewSelected() ? appTheme : Colors.black,
+                          _isCategoryViewSelected() ? appThemeSecondary : Colors.black,
                       fontSize: 16.0,
                     )),
               ),
