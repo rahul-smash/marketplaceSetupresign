@@ -134,7 +134,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
 
     return Container(
       padding: EdgeInsets.only(top: 15),
-      color: listingBoxBackgroundColor,
+//      color: listingBoxBackgroundColor,
+      color: Colors.white,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         InkWell(
           onTap: () async {
@@ -273,7 +274,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                 fontSize: 18.0,
-                                                color: homeSubHeadingColor,
+                                                color: productHeadingColor,
                                                 fontWeight: FontWeight.w500,
                                               )),
                                         ),
@@ -406,7 +407,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               ? Text(
                                                   "${AppConstant.currency}${price}",
                                                   style: TextStyle(
-                                                      color: homeSubHeadingColor,
+                                                      color: productHeadingColor,
                                                       fontWeight:
                                                           FontWeight.w600),
                                                 )
@@ -419,7 +420,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                                 TextDecoration
                                                                     .lineThrough,
                                                             color:
-                                                                homeDescriptionColor,
+                                                                staticHomeDescriptionColor,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w400)),
@@ -427,7 +428,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                     Text(
                                                       "${AppConstant.currency}${price}",
                                                       style: TextStyle(
-                                                          color: homeSubHeadingColor,
+                                                          color: productHeadingColor,
                                                           fontWeight:
                                                               FontWeight.w700),
                                                     ),
@@ -451,7 +452,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                   "${widget.product.description}"),
                                               style: TextStyle(
                                                   fontSize: 14,
-                                                  color: homeDescriptionColor,
+                                                  color: staticHomeDescriptionColor,
                                                   fontWeight: FontWeight.w500),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
@@ -510,7 +511,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                       ? widget.product.variantId
                                                       : variant.id))
                                               ? Colors.transparent
-                                              : categoryListingButtonBorderColor,
+                                              : staticCategoryListingButtonBorderColor,
                                           width: 1.0),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(
@@ -642,7 +643,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
               color: categoryListingBoxBackgroundColor,
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
               border: Border.all(
-                color: showAddButton ? categoryListingButtonBorderColor : whiteColor,
+                color: showAddButton ? staticCategoryListingButtonBorderColor : whiteColor,
                 width: 1,
               )),
           margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
@@ -674,7 +675,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                     decoration: BoxDecoration(
                       color: webThemeCategoryOpenColor,
                       border: Border.all(
-                        color: categoryListingButtonBorderColor,
+                        color: staticCategoryListingButtonBorderColor,
                         width: 1,
                       ),
                       borderRadius:

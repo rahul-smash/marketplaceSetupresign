@@ -56,7 +56,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen>
   Widget build(BuildContext context) {
     //print("---subCategory.length--=${categoryModel.subCategory.length}");
     return Scaffold(
-      backgroundColor: listingBackgroundColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.categoryModel.title),
         centerTitle: false,
@@ -173,7 +173,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen>
                       padding: EdgeInsets.only(left: 10, top: 8),
                       height: 30,
                       width: Utils.getDeviceWidth(context),
-                      color: webThemeCategoryOpenColor,
+                      color: listingBackgroundColor,
                       child: Text(
                         "${subCategory.products.length} items",
                         style: TextStyle(

@@ -340,25 +340,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   fit: BoxFit.scaleDown,
                   color: appThemeSecondary),
               title: Text(isCategoryViewSelected ? 'Home' : 'Category',
-                  style: TextStyle(color: homeDescriptionColor)),
+                  style: TextStyle(color: appThemeSecondary)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/contacticon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: homeDescriptionColor),
+                  width: 24, fit: BoxFit.scaleDown, color: staticHomeDescriptionColor),
               title:
-                  Text('Contact', style: TextStyle(color: homeDescriptionColor)),
+                  Text('Contact', style: TextStyle(color: staticHomeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedexploreicon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: homeDescriptionColor),
+                  width: 24, fit: BoxFit.scaleDown, color: staticHomeDescriptionColor),
               title:
-                  Text('Search', style: TextStyle(color: homeDescriptionColor)),
+                  Text('Search', style: TextStyle(color: staticHomeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedmyordericon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: homeDescriptionColor),
+                  width: 24, fit: BoxFit.scaleDown, color: staticHomeDescriptionColor),
               title: Text('My Orders',
-                  style: TextStyle(color: homeDescriptionColor)),
+                  style: TextStyle(color: staticHomeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Badge(
@@ -369,12 +369,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Image.asset('images/unselectedcarticon.png',
                     width: 24,
                     fit: BoxFit.scaleDown,
-                    color: homeDescriptionColor),
+                    color: staticHomeDescriptionColor),
               ),
               title: Padding(
                 padding: EdgeInsets.fromLTRB(0, 2, 0, 0),
                 child:
-                    Text('Cart', style: TextStyle(color: homeDescriptionColor)),
+                    Text('Cart', style: TextStyle(color: staticHomeDescriptionColor)),
               ),
             ),
           ],

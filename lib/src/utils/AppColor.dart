@@ -55,8 +55,12 @@ Color listingBackgroundColor= Color(0xFFf0f0f0);
 Color listingBorderColor= Color(0xFFe5e5e5);
 Color listingBoxBackgroundColor= Color(0xFFfcfcfc);
 Color homeSubHeadingColor= Color(0xFF12151c);
+Color productHeadingColor= Color(0xFF12151c);
 Color homeDescriptionColor= Color(0xFF70737b);
+Color staticHomeDescriptionColor= Color(0xFF70737F);
+Color staticBottomIcon= Color(0xFF939799);
 Color categoryListingButtonBorderColor= Color(0xFFC5C6C9);
+Color staticCategoryListingButtonBorderColor= Color(0xFFC5C6C9);
 Color categoryListingBoxBackgroundColor= Color(0xFFfcfcfc);
 
 

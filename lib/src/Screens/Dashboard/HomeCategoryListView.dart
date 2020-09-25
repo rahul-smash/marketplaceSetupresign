@@ -53,7 +53,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                       Text(
                         "Categories",
                         style: TextStyle(
-                            color: homeDescriptionColor,
+                            color: staticHomeDescriptionColor,
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),
@@ -137,7 +137,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                     Text(
                       widget.subCategory.title,
                       style: TextStyle(
-                          color: homeDescriptionColor,
+                          color: staticHomeDescriptionColor,
                           fontSize: 14,
                           fontWeight: FontWeight.bold),
                     ),
