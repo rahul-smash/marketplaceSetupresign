@@ -47,7 +47,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
   @override
   void didUpdateWidget(ProductTileItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-    showAddButton = false;
     getDataFromDB();
   }
 
