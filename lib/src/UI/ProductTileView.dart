@@ -44,6 +44,13 @@ class _ProductTileItemState extends State<ProductTileItem> {
     listenCartEvent();
   }
 
+  @override
+  void didUpdateWidget(ProductTileItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    showAddButton = false;
+    getDataFromDB();
+  }
+
   void getDataFromDB() {
     databaseHelper
         .getProductQuantitiy(widget.product.variantId)
