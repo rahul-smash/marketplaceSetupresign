@@ -153,7 +153,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) =>
-                        ProductDetailsScreen(widget.product),
+                        ProductDetailsScreen(widget.product,variant),
                     fullscreenDialog: true,
                   ));
               setState(() {

@@ -20,8 +20,9 @@ import 'package:restroapp/src/utils/Utils.dart';
 class ProductDetailsScreen extends StatefulWidget {
   Product product;
   bool isApiLoading = true, isFav = false;
+  Variant passedVariant;
 
-  ProductDetailsScreen(this.product);
+  ProductDetailsScreen(this.product,this.passedVariant);
 
   @override
   State<StatefulWidget> createState() {
@@ -46,6 +47,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
     super.initState();
     selctedTag = 0;
     showAddButton = false;
+    variant=widget.passedVariant;
     getDataFromDB();
     getProductDetail(widget.product.id);
   }
@@ -96,7 +98,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
     return WillPopScope(
       onWillPop: () {
         print("onWillPop onWillPop");
-        Navigator.pop(context, variant);
+        Navigator.pop(context, variant==null?widget.passedVariant:variant);
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -137,7 +139,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
-              return Navigator.pop(context, variant);
+              return Navigator.pop(context, variant==null?widget.passedVariant:variant);
             },
           ),
           title: Text("${widget.product.title}"),
