@@ -5,19 +5,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/models/CartTableData.dart';
+import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
+import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   Product product;
   bool isApiLoading = true, isFav = false;
+  Variant passedVariant;
 
-  ProductDetailsScreen(this.product);
+  ProductDetailsScreen(this.product,this.passedVariant);
 
   @override
   State<StatefulWidget> createState() {
@@ -42,6 +47,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
     super.initState();
     selctedTag = 0;
     showAddButton = false;
+    variant=widget.passedVariant;
     getDataFromDB();
     getProductDetail(widget.product.id);
   }
@@ -92,7 +98,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
     return WillPopScope(
       onWillPop: () {
         print("onWillPop onWillPop");
-        Navigator.pop(context, variant);
+        Navigator.pop(context, variant==null?widget.passedVariant:variant);
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -133,7 +139,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
-              return Navigator.pop(context, variant);
+              return Navigator.pop(context, variant==null?widget.passedVariant:variant);
             },
           ),
           title: Text("${widget.product.title}"),
@@ -150,6 +156,29 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
               ],
             ),
           ),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: appTheme,
+          onPressed: () async {
+            CategoryModel result = await DialogUtils.displayMenuDialog(context);
+            if (result != null) {
+              Navigator.of(context).popUntil(
+                (route) => route.isFirst,
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return SubCategoryProductScreen(result, false, 0);
+                }),
+              );
+            }
+          },
+          icon: Image.asset(
+            'images/restauranticon.png',
+            width: 20,
+            color: Colors.white,
+          ),
+          label: Text("Menu"),
         ),
       ),
     );
@@ -207,14 +236,14 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                 padding: EdgeInsets.all(10),
                 decoration: new BoxDecoration(
                   shape: BoxShape.rectangle,
-                  color: orangeColor,
+                  color: appThemeSecondary,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15.0),
                       bottomRight: Radius.circular(15.0)),
                 ),
               ),
             ),
-            favIcon(),
+//            favIcon(),
           ],
           overflow: Overflow.clip,
         ),
@@ -349,7 +378,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
           Variant tagName = variants[index];
           if (selctedTag == index) {
             chipSelectedColor =
-                variants[index].weight.trim() == "" ? whiteColor : orangeColor;
+                variants[index].weight.trim() == "" ? whiteColor : appThemeSecondary;
             textColor = Color(0xFFFFFFFF);
           } else {
             chipSelectedColor = Color(0xFFBDBDBD);
@@ -405,7 +434,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       width: 100,
       height: 30,
       decoration: BoxDecoration(
-        color: showAddButton == false ? whiteColor : orangeColor,
+        color: showAddButton == false ? whiteColor : appThemeSecondary,
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
       ),
       margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
@@ -419,6 +448,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                   // insert/update to cart table
                   insertInCartTable(widget.product, counter);
                 });
+                eventBus.fire(onCounterUpdate(counter, widget.product.id,variantId));
               },
               child: Container(
                 child: Center(
@@ -450,6 +480,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                             }
                             //widget.callback();
                           }
+                          eventBus.fire(onCounterUpdate(counter, widget.product.id,variantId));
                         },
                         child: Container(
                           width: 35,
@@ -499,14 +530,15 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                           // insert/update to cart table
                           insertInCartTable(widget.product, counter);
                         }
+                        eventBus.fire(onCounterUpdate(counter, widget.product.id,variantId));
                       },
                       child: Container(
                           width: 35,
                           height: 25,
                           decoration: BoxDecoration(
-                            color: orangeColor,
+                            color: appThemeSecondary,
                             border: Border.all(
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               width: 1,
                             ),
                             borderRadius:

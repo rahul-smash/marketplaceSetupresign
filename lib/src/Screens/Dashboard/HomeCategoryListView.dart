@@ -53,21 +53,23 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                       Text(
                         "Categories",
                         style: TextStyle(
-                            color: Colors.grey,
+                            color: staticHomeDescriptionColor,
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),
-//                      InkWell(
-//                        child: Text(
-//                          "View All",
-//                          style: TextStyle(
-//                              decoration: TextDecoration.underline,
-//                              color: appTheme,
-//                              fontSize: 14,
-//                              fontWeight: FontWeight.bold),
-//                        ),
-//                        onTap: () => widget.callback(value: 'toggle'),
-//                      )
+                      Visibility(visible: widget.categoryResponse.categories.length>4,
+                        child: InkWell(
+                        child: Text(
+                          "View All",
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              color: appThemeSecondary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        onTap: () => widget.callback(value: 'toggle'),
+                      )
+                        ,)
                     ],
                   ),
                 ),
@@ -104,7 +106,10 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
   }
 
   Widget getProductsWidget() {
-    //TODO: Check all possible case here
+    if((widget.categoryResponse.categories!=null&&widget.categoryResponse.categories.length==0)){
+      return Utils.getEmptyView2("No Categories available");
+    }
+
     if (widget.subCategory == null) {
       return Container(
         height: 200,
@@ -123,21 +128,21 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
       } else {
         return Column(
           children: <Widget>[
-//            Container(
-//                height: 1,
-//                width: MediaQuery.of(context).size.width,
-//                color: Color(0xFFBDBDBD)),
+            Container(
+                height: 5,
+                width: MediaQuery.of(context).size.width,
+                color: listingBorderColor),
             Container(
               color: Colors.transparent,
               child: Padding(
-                padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                padding: EdgeInsets.only(left: 10, right: 10, bottom: 5,top:10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
                       widget.subCategory.title,
                       style: TextStyle(
-                          color: Colors.grey,
+                          color: staticHomeDescriptionColor,
                           fontSize: 14,
                           fontWeight: FontWeight.bold),
                     ),
@@ -146,7 +151,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                         "View All",
                         style: TextStyle(
                             decoration: TextDecoration.underline,
-                            color: appTheme,
+                            color: appThemeSecondary,
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),

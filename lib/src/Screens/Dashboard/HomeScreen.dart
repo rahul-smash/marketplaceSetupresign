@@ -91,11 +91,12 @@ class _HomeScreenState extends State<HomeScreen> {
     listenCartChanges();
     checkForMultiStore();
     getCategoryApi();
+    listenEvent();
     try {
       AppConstant.placeholderUrl = store.banner10080;
       //print("-----store.banners-----${store.banners.length}------");
       if (store.banners.isEmpty) {
-        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
+//        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
       } else {
         for (var i = 0; i < store.banners.length; i++) {
           String imageUrl = store.banners[i].image;
@@ -131,6 +132,20 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void listenEvent() {
+    eventBus.on<onCartRemoved>().listen((event) {
+      setState(() {
+        setState(() {
+          _controller.text = '';
+          productsList.clear();
+          if (isCategoryViewSelected) {
+            isCategoryViewSelected = !isCategoryViewSelected;
+          }
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return this.keyboardDismisser(
@@ -140,7 +155,14 @@ class _HomeScreenState extends State<HomeScreen> {
             key: _key,
             appBar: getAppBar(),
             body: _newBody(),
-            drawer: NavDrawerMenu(store, user == null ? "" : user.fullName),
+            drawer: NavDrawerMenu(store, user == null ? "" : user.fullName, () {
+              FocusScope.of(context).unfocus();
+              _controller.text = "";
+              subCategoryList.clear();
+              productsList.clear();
+              isCategoryViewSelected = false;
+              setState(() {});
+            }),
             bottomNavigationBar: SafeArea(
               child: addBottomBar(),
             ),
@@ -166,13 +188,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget addBanners() {
-    return Center(
-      child: SizedBox(
-        height: 200.0,
-        width: Utils.getDeviceWidth(context),
-        child: _CarouselView(),
-      ),
-    );
+    if (imgList.length == 0) {
+      return Container();
+    } else
+      return Center(
+        child: SizedBox(
+          height: 200.0,
+          width: Utils.getDeviceWidth(context),
+          child: _CarouselView(),
+        ),
+      );
   }
 
   Widget _CarouselView() {
@@ -316,42 +341,49 @@ class _HomeScreenState extends State<HomeScreen> {
                       : 'images/unselectedcategoryicon.png',
                   width: 24,
                   fit: BoxFit.scaleDown,
-                  color: bottomBarIconColor),
+                  color: appThemeSecondary),
               title: Text(isCategoryViewSelected ? 'Home' : 'Category',
-                  style: TextStyle(color: bottomBarTextColor)),
+                  style: TextStyle(color: appThemeSecondary)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/contacticon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
-              title:
-                  Text('Contact', style: TextStyle(color: bottomBarTextColor)),
+                  width: 24,
+                  fit: BoxFit.scaleDown,
+                  color: staticHomeDescriptionColor),
+              title: Text('Contact',
+                  style: TextStyle(color: staticHomeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedexploreicon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
-              title:
-                  Text('Search', style: TextStyle(color: bottomBarTextColor)),
+                  width: 24,
+                  fit: BoxFit.scaleDown,
+                  color: staticHomeDescriptionColor),
+              title: Text('Search',
+                  style: TextStyle(color: staticHomeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedmyordericon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: bottomBarIconColor),
+                  width: 24,
+                  fit: BoxFit.scaleDown,
+                  color: staticHomeDescriptionColor),
               title: Text('My Orders',
-                  style: TextStyle(color: bottomBarTextColor)),
+                  style: TextStyle(color: staticHomeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Badge(
+                badgeColor: appThemeSecondary,
                 showBadge: cartBadgeCount == 0 ? false : true,
                 badgeContent: Text('${cartBadgeCount}',
                     style: TextStyle(color: Colors.white)),
                 child: Image.asset('images/unselectedcarticon.png',
                     width: 24,
                     fit: BoxFit.scaleDown,
-                    color: bottomBarIconColor),
+                    color: staticHomeDescriptionColor),
               ),
               title: Padding(
                 padding: EdgeInsets.fromLTRB(0, 2, 0, 0),
-                child:
-                    Text('Cart', style: TextStyle(color: bottomBarTextColor)),
+                child: Text('Cart',
+                    style: TextStyle(color: staticHomeDescriptionColor)),
               ),
             ),
           ],
@@ -417,6 +449,8 @@ class _HomeScreenState extends State<HomeScreen> {
         if (_currentIndex == 0) {
           //show categories
           setState(() {
+            _controller.text = '';
+            productsList.clear();
             isCategoryViewSelected = !isCategoryViewSelected;
           });
         }
@@ -608,6 +642,7 @@ class _HomeScreenState extends State<HomeScreen> {
               break;
             }
           }
+          setState(() {});
         }
       });
     }
@@ -773,12 +808,15 @@ class _HomeScreenState extends State<HomeScreen> {
       overflow: Overflow.visible,
       children: <Widget>[
         Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("images/backgroundimg.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
+          decoration: isCategoryViewSelected
+              ? BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("images/backgroundimg.png"),
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : null,
+          color: !isCategoryViewSelected ? Colors.white : null,
         ),
         Padding(
           padding: EdgeInsets.only(top: 60),
@@ -835,7 +873,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     enabledBorder: InputBorder.none,
                     errorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
-                    hintText: "Search for products"),
+                    hintText: "Search for dishes"),
               ),
             ),
             Visibility(
@@ -922,6 +960,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             subCategory,
                             callback: <Object>({value}) {
                               setState(() {
+                                if (value is String) {
+                                  setState(() {
+                                    isCategoryViewSelected =
+                                        !isCategoryViewSelected;
+                                  });
+                                  return;
+                                }
                                 selectedCategory = value as CategoryModel;
                                 this.selectedSubCategoryId =
                                     selectedCategory.subCategory.first.id;

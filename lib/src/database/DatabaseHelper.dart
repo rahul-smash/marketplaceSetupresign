@@ -533,6 +533,11 @@ class DatabaseHelper {
         cartData = new CartData();
         count = row[QUANTITY];
         cartData.QUANTITY = count;
+        cartData.VARIENT_ID = row[VARIENT_ID];
+        cartData.WEIGHT = row[WEIGHT];
+        cartData.MRP_PRICE = row[MRP_PRICE];
+        cartData.PRICE = row[PRICE];
+        cartData.DISCOUNT = row[DISCOUNT];
         //return count;
       });
     } else {

@@ -1,10 +1,15 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:restroapp/src/UI/CategoryView.dart';
+import 'package:restroapp/src/UI/DialogCategoryView.dart';
+import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
@@ -376,7 +381,7 @@ class DialogUtils {
                                 ),
                               ),
                               color: Colors.white,
-                              textColor: orangeColor,
+                              textColor: appThemeSecondary,
                               onPressed: () {
                                 Navigator.pop(context, true);
                               },
@@ -386,7 +391,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('OK'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, false);
@@ -457,7 +462,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('OK'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, true);
@@ -528,7 +533,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('OK'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, true);
@@ -600,7 +605,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
                             child: FlatButton(
                               child: Text('Cancel'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, false);
@@ -750,7 +755,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('${button1}'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, false);
@@ -761,7 +766,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('${button2}'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.pop(context, true);
@@ -832,7 +837,7 @@ class DialogUtils {
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
                               child: Text('OK'),
-                              color: orangeColor,
+                              color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
                                 SystemNavigator.pop();
@@ -1199,34 +1204,35 @@ class DialogUtils {
                                   fontWeight: FontWeight.w500),
                             ),
                           ),
-                             Container(
-                              height: 120,
-                              margin: EdgeInsets.fromLTRB(20, 15, 20, 20),
-                              decoration: new BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: new BorderRadius.all(
-                                    new Radius.circular(5.0)),
-                                border: new Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
+                          Container(
+                            height: 120,
+                            margin: EdgeInsets.fromLTRB(20, 15, 20, 20),
+                            decoration: new BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: new BorderRadius.all(
+                                  new Radius.circular(5.0)),
+                              border: new Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
                               ),
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 3),
-                                child: TextField(
-                                  textAlign: TextAlign.left,
-                                  maxLength: 250,
-                                  keyboardType: TextInputType.multiline,
-                                  maxLines: null,
-                                  textCapitalization: TextCapitalization.sentences,
-                                  controller: commentController,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(10.0),
-                                    border: InputBorder.none,
-                                  ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 3),
+                              child: TextField(
+                                textAlign: TextAlign.left,
+                                maxLength: 250,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: null,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                controller: commentController,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(10.0),
+                                  border: InputBorder.none,
                                 ),
                               ),
                             ),
+                          ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Row(
@@ -1238,12 +1244,12 @@ class DialogUtils {
                                   width: 130,
                                   child: FlatButton(
                                     child: Text('Submit'),
-                                    color: orangeColor,
+                                    color: appThemeSecondary,
                                     textColor: Colors.white,
                                     onPressed: () {
                                       Utils.hideKeyboard(context);
-                                      Navigator.pop(
-                                          context, commentController.text.trim());
+                                      Navigator.pop(context,
+                                          commentController.text.trim());
                                     },
                                   ),
                                 )
@@ -1257,7 +1263,8 @@ class DialogUtils {
         });
   }
 
-  static Future<bool> showAreaRemovedDialog(BuildContext context,String area) async {
+  static Future<bool> showAreaRemovedDialog(
+      BuildContext context, String area) async {
     StoreModel storeModel = await SharedPrefs.getStore();
     String storeName = storeModel.storeName;
     return await showDialog<bool>(
@@ -1291,4 +1298,192 @@ class DialogUtils {
       },
     );
   }
+
+  static Future<CategoryModel> displayMenuDialog(BuildContext context) async {
+    //prepare model object
+    DatabaseHelper databaseHelper = new DatabaseHelper();
+    List<CategoryModel> categoryList = await databaseHelper.getCategories();
+    CategoryResponse categoryResponse = CategoryResponse();
+    categoryResponse.categories = categoryList;
+    if (categoryResponse.categories != null &&
+        categoryResponse.categories.isNotEmpty) {
+      for (var i = 0; i < categoryResponse.categories.length; i++) {
+        String parent_id = categoryResponse.categories[i].id;
+        categoryResponse.categories[i].subCategory =
+        await databaseHelper.getSubCategories(parent_id);
+      }
+      categoryResponse.success = true;
+      return await showDialog<CategoryModel>(
+        context: context,
+        builder: (BuildContext context) {
+          return WillPopScope(
+            onWillPop: () {
+              return Future(() => true);
+            },
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              title: Text(
+                "Menu",
+                style: TextStyle(color: appTheme),
+                textAlign: TextAlign.center,
+              ),
+              content: Container(
+                width: double.maxFinite,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: categoryResponse.categories.length,
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider(
+                      color: Colors.transparent,
+                    );
+                  },
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        CategoryModel categoryModel = categoryList[index];
+                        if (categoryModel != null &&
+                            categoryModel.subCategory != null) {
+                          if (categoryModel.subCategory.isEmpty) {
+                            Utils.showToast("No data found!", false);
+                          } else {
+                            Navigator.pop(context, categoryList[index]);
+                          }
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(border: Border.all(
+                          color: appTheme.withOpacity(0.4),
+                          width: 2,
+                        ),
+                          borderRadius: BorderRadius.circular(10),),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Container(child:  categoryList[index].image300200.isNotEmpty
+                                ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                "${categoryList[index].image300200}",
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.scaleDown,
+                                //placeholder: (context, url) => CircularProgressIndicator(),
+                                errorWidget: (context, url, error) {
+                                  print('image error ${url}');
+                                  return Container();
+                                },
+                              ),
+                            )
+                                : Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                    BorderRadius.circular(10.0))),),
+                            Expanded(
+                                child:
+                                Padding(padding: EdgeInsets.only(left: 10),
+                                    child:Text(
+                                        "${categoryResponse.categories[index].title}",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black, fontSize: 14))))
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("Back"),
+                  textColor: appTheme,
+                  onPressed: () {
+                    Navigator.pop(context, null);
+                    // true here means you clicked ok
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+//  static Future<CategoryModel> displayMenuDialog(BuildContext context) async {
+//    //prepare model object
+//    DatabaseHelper databaseHelper = new DatabaseHelper();
+//    List<CategoryModel> categoryList = await databaseHelper.getCategories();
+//    CategoryResponse categoryResponse = CategoryResponse();
+//    categoryResponse.categories = categoryList;
+//    if (categoryResponse.categories != null &&
+//        categoryResponse.categories.isNotEmpty) {
+//      for (var i = 0; i < categoryResponse.categories.length; i++) {
+//        String parent_id = categoryResponse.categories[i].id;
+//        categoryResponse.categories[i].subCategory =
+//            await databaseHelper.getSubCategories(parent_id);
+//      }
+//      categoryResponse.success = true;
+//      StoreModel store = await SharedPrefs.getStore();
+//      return await showDialog<CategoryModel>(
+//        context: context,
+//        builder: (BuildContext context) {
+//          return WillPopScope(
+//            onWillPop: () {
+//              return Future(() => true);
+//            },
+//            child: AlertDialog(
+//              shape: RoundedRectangleBorder(
+//                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+//              title: Text(
+//                "Menu",
+//                style: TextStyle(color: appTheme),
+//                textAlign: TextAlign.center,
+//              ),
+//              content: Container(
+//                  width: double.maxFinite,
+//                  child: GridView.count(
+//                      crossAxisCount: 2,
+//                      childAspectRatio: 1,
+//                      shrinkWrap: true,
+//                      children: categoryResponse.categories
+//                          .map((CategoryModel model) {
+//                        return GridTile(
+//                            child: DialogCategoryView(model, store,
+//                                callback: <Object>({value}) {
+//                          CategoryModel categoryModel = model;
+//                          if (categoryModel != null &&
+//                              categoryModel.subCategory != null) {
+//                            if (categoryModel.subCategory.isEmpty) {
+//                              Utils.showToast("No data found!", false);
+//                            } else {
+//                              Navigator.pop(context, model);
+//                            }
+//                          }
+//                          return;
+//                        }));
+//                      }).toList())),
+//              actions: <Widget>[
+//                new FlatButton(
+//                  child: new Text("Back"),
+//                  textColor: appTheme,
+//                  onPressed: () {
+//                    Navigator.pop(context, null);
+//                    // true here means you clicked ok
+//                  },
+//                ),
+//              ],
+//            ),
+//          );
+//        },
+//      );
+//    }
+//  }
 }

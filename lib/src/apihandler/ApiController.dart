@@ -1238,7 +1238,7 @@ class ApiController {
       final respStr = await response.stream.bytesToString();
 
       final parsed = json.decode(respStr);
-      //print("---deliveryTimeSlot-respStr---${respStr}");
+      print("---deliveryTimeSlot-respStr---${respStr}");
       DeliveryTimeSlotModel storeArea = DeliveryTimeSlotModel.fromJson(parsed);
       return storeArea;
     } catch (e) {

@@ -108,7 +108,7 @@ class AvailableOffersState extends State<AvailableOffersDialog> {
                                                   child: SizedBox(
                                                     width: 80,
                                                     child: Text("${offer.couponCode}",
-                                                      style: TextStyle(color: orangeColor,),
+                                                      style: TextStyle(color: appThemeSecondary,),
                                                     ),
                                                   ),
                                                 ),

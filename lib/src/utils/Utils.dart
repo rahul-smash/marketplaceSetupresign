@@ -263,7 +263,7 @@ class Utils {
     //print("variants = ${product.variants} and ${classType}");
 
     if (classType == ClassType.CART) {
-      return Icon(Icons.keyboard_arrow_down, color: orangeColor, size: 25);
+      return Icon(Icons.keyboard_arrow_down, color: appThemeSecondary, size: 25);
     } else {
       bool isVariantNull = false;
       if (product.variants != null) {
@@ -272,7 +272,7 @@ class Utils {
         }
       }
       return Icon(Icons.keyboard_arrow_down,
-          color: isVariantNull ? whiteColor : orangeColor, size: 25);
+          color: isVariantNull ? whiteColor : appThemeSecondary, size: 25);
     }
   }
 
@@ -516,15 +516,15 @@ class Utils {
       BuildContext context, List<DeliveryAddressData> addressList,
       {bool showDialogBool, bool hitApi = false, String id = ""}) async {
     DeliveryAddressData deletedItem;
-print(id);
+    print(id);
     for (int i = 0; i < addressList.length; i++) {
-      print(addressList[i].id.compareTo(id) == 0 );
+      print(addressList[i].id.compareTo(id) == 0);
       if (id.isNotEmpty &&
           addressList[i].id.compareTo(id) == 0 &&
           addressList[i].isDeleted) {
         deletedItem = addressList[i];
         break;
-      } else if (id.isEmpty &&addressList[i].isDeleted) {
+      } else if (id.isEmpty && addressList[i].isDeleted) {
         deletedItem = addressList[i];
         break;
       }
@@ -550,16 +550,27 @@ print(id);
     return addressList;
   }
 
- static bool checkIfStoreClosed(StoreModel store) {
+  static bool checkIfStoreClosed(StoreModel store) {
     if (store.storeStatus == "0") {
       //0 mean Store close
       return true;
     } else {
       return false;
-    }}
+    }
+  }
+
+  static Color colorGeneralization(
+      Color passedColor, String colorString) {
+    Color returnedColor = passedColor;
+    if (colorString != null) {
+      returnedColor = Color(int.parse(
+          colorString.replaceAll("#", "0xff")));
+    }
+    return returnedColor;
+  }
 }
 
-enum ClassType { CART, SubCategory, Favourites, Home,Search }
+enum ClassType { CART, SubCategory, Favourites, Home, Search }
 
 enum OrderType { Delivery, PickUp, Menu }
 
