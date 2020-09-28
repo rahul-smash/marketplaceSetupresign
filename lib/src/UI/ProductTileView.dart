@@ -47,12 +47,12 @@ class _ProductTileItemState extends State<ProductTileItem> {
   @override
   void didUpdateWidget(ProductTileItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-//    getDataFromDB();
+    getDataFromDB();
   }
 
   void getDataFromDB() {
     databaseHelper
-        .getProductQuantitiy(widget.product.variantId)
+        .getProductQuantitiy(variant==null? widget.product.variantId:variant.id)
         .then((cartDataObj) {
       cartData = cartDataObj;
       counter = int.parse(cartData.QUANTITY);
