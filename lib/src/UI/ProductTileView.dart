@@ -87,9 +87,17 @@ class _ProductTileItemState extends State<ProductTileItem> {
     eventBus.on<onCounterUpdate>().listen((event) {
       setState(() {
         if (widget.product.id.compareTo(event.productId) == 0) {
-          counter = event.counter;
-          if (counter == 0) {
-            showAddButton = true;
+          String vID=variant==null?widget.product.variantId:variant.id;
+          print("Product= ${widget.product.title} ");
+          if (vID != null &&
+              event.variantId != null &&
+              vID.compareTo(event.variantId) == 0) {
+            counter = event.counter;
+            if (counter == 0) {
+              showAddButton = true;
+            } else {
+              showAddButton = false;
+            }
           }
         }
       });
@@ -407,7 +415,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               ? Text(
                                                   "${AppConstant.currency}${price}",
                                                   style: TextStyle(
-                                                      color: productHeadingColor,
+                                                      color:
+                                                          productHeadingColor,
                                                       fontWeight:
                                                           FontWeight.w600),
                                                 )
@@ -428,7 +437,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                     Text(
                                                       "${AppConstant.currency}${price}",
                                                       style: TextStyle(
-                                                          color: productHeadingColor,
+                                                          color:
+                                                              productHeadingColor,
                                                           fontWeight:
                                                               FontWeight.w700),
                                                     ),
@@ -452,7 +462,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                   "${widget.product.description}"),
                                               style: TextStyle(
                                                   fontSize: 14,
-                                                  color: staticHomeDescriptionColor,
+                                                  color:
+                                                      staticHomeDescriptionColor,
                                                   fontWeight: FontWeight.w400),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
@@ -464,7 +475,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                         ),
                                         Align(
                                           alignment: Alignment.bottomRight,
-                                          child: addQuantityView(),
+                                          child: addQuantityView(variantId),
                                         ),
                                       ],
                                     ))
@@ -632,7 +643,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
     );
   }
 
-  Widget addQuantityView() {
+  Widget addQuantityView(String variantID) {
     return Wrap(
       children: <Widget>[
         Container(
@@ -643,7 +654,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
               color: categoryListingBoxBackgroundColor,
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
               border: Border.all(
-                color: showAddButton ? staticCategoryListingButtonBorderColor : whiteColor,
+                color: showAddButton
+                    ? staticCategoryListingButtonBorderColor
+                    : whiteColor,
                 width: 1,
               )),
           margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
@@ -656,7 +669,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                     showAddButton = false;
                     insertInCartTable(widget.product, counter);
                     widget.callback();
-                    eventBus.fire(onCounterUpdate(counter, widget.product.id));
+                    eventBus.fire(
+                        onCounterUpdate(counter, widget.product.id,variantID ));
                   },
                   child: Container(
                     padding: EdgeInsets.only(left: 15, right: 15),
@@ -664,7 +678,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                       child: Text(
                         "ADD +",
                         style: TextStyle(
-                            color: appThemeSecondary, fontWeight: FontWeight.w600),
+                            color: appThemeSecondary,
+                            fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -678,102 +693,108 @@ class _ProductTileItemState extends State<ProductTileItem> {
                         color: staticCategoryListingButtonBorderColor,
                         width: 1,
                       ),
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(5.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     ),
-                    child:  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Container(
-                        padding: const EdgeInsets.all(0.0),
-                        width: 25.0, // you can adjust the width as you need
-                        child: GestureDetector(
-                            onTap: () {
-                              if (counter != 0) {
-                                setState(() => counter--);
-                                if (counter == 0) {
-                                  // delete from cart table
-                                  removeFromCartTable(widget.product.variantId);
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Container(
+                          padding: const EdgeInsets.all(0.0),
+                          width: 25.0, // you can adjust the width as you need
+                          child: GestureDetector(
+                              onTap: () {
+                                if (counter != 0) {
+                                  setState(() => counter--);
+                                  if (counter == 0) {
+                                    // delete from cart table
+                                    removeFromCartTable(
+                                        widget.product.variantId);
+                                  } else {
+                                    // insert/update to cart table
+                                    insertInCartTable(widget.product, counter);
+                                  }
+                                  widget.callback();
                                 } else {
-                                  // insert/update to cart table
-                                  insertInCartTable(widget.product, counter);
+                                  setState(() {
+                                    showAddButton = true;
+                                  });
                                 }
-                                widget.callback();
+                                eventBus.fire(onCounterUpdate(
+                                    counter, widget.product.id, variantID));
+                              },
+                              child: Container(
+                                width: 35,
+                                height: 25,
+                                decoration: BoxDecoration(
+                                  color: categoryListingBoxBackgroundColor,
+                                  border: Border.all(
+                                    color: categoryListingBoxBackgroundColor,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(5.0),
+                                      bottomLeft: Radius.circular(5.0)),
+                                ),
+                                child: Icon(Icons.remove,
+                                    color: appThemeSecondary, size: 20),
+                              )),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+//              width: 20.0,
+                          height: 20.0,
+                          decoration: new BoxDecoration(
+                            color: webThemeCategoryOpenColor,
+                            borderRadius:
+                                new BorderRadius.all(new Radius.circular(15.0)),
+                            border: new Border.all(
+                              color: webThemeCategoryOpenColor,
+                              width: 1.0,
+                            ),
+                          ),
+                          child: Center(
+                              child: Text(
+                            "$counter",
+                            style: TextStyle(
+                                fontSize: 18, color: appThemeSecondary),
+                          )),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(0.0),
+                          width: 25.0, // you can adjust the width as you need
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() => counter++);
+                              if (counter == 0) {
+                                // delete from cart table
+                                removeFromCartTable(widget.product.variantId);
                               } else {
-                                setState(() {
-                                  showAddButton = true;
-                                });
+                                // insert/update to cart table
+                                insertInCartTable(widget.product, counter);
                               }
-                              eventBus.fire(onCounterUpdate(counter, widget.product.id));
+                              eventBus.fire(onCounterUpdate(
+                                  counter, widget.product.id, variantID));
                             },
                             child: Container(
-                              width: 35,
-                              height: 25,
-                              decoration: BoxDecoration(
-                                color: categoryListingBoxBackgroundColor,
-                                border: Border.all(
+                                width: 35,
+                                height: 25,
+                                decoration: BoxDecoration(
                                   color: categoryListingBoxBackgroundColor,
-                                  width: 1,
+                                  border: Border.all(
+                                    color: categoryListingBoxBackgroundColor,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(5.0),
+                                      bottomRight: Radius.circular(5.0)),
                                 ),
-                                borderRadius:
-                                BorderRadius.only(topLeft:Radius.circular(5.0),bottomLeft: Radius.circular(5.0)),
-                              ),
-                              child: Icon(Icons.remove,
-                                  color: appThemeSecondary, size: 20),
-                            )),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
-//              width: 20.0,
-                        height: 20.0,
-                        decoration: new BoxDecoration(
-                          color: webThemeCategoryOpenColor,
-                          borderRadius:
-                          new BorderRadius.all(new Radius.circular(15.0)),
-                          border: new Border.all(
-                            color: webThemeCategoryOpenColor,
-                            width: 1.0,
+                                child: Icon(Icons.add,
+                                    color: appThemeSecondary, size: 20)),
                           ),
                         ),
-                        child: Center(
-                            child: Text(
-                              "$counter",
-                              style: TextStyle(fontSize: 18,color: appThemeSecondary),
-                            )),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(0.0),
-                        width: 25.0, // you can adjust the width as you need
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() => counter++);
-                            if (counter == 0) {
-                              // delete from cart table
-                              removeFromCartTable(widget.product.variantId);
-                            } else {
-                              // insert/update to cart table
-                              insertInCartTable(widget.product, counter);
-                            }
-                            eventBus.fire(onCounterUpdate(counter, widget.product.id));
-                          },
-                          child: Container(
-                              width: 35,
-                              height: 25,
-                              decoration: BoxDecoration(
-                                color: categoryListingBoxBackgroundColor,
-                                border: Border.all(
-                                  color: categoryListingBoxBackgroundColor,
-                                  width: 1,
-                                ),
-                                borderRadius:
-                                BorderRadius.only(topRight:Radius.circular(5.0),bottomRight: Radius.circular(5.0)),
-                              ),
-                              child: Icon(Icons.add,
-                                  color: appThemeSecondary, size: 20)),
-                        ),
-                      ),
-                    ],
-                  ),),
+                      ],
+                    ),
+                  ),
                 ),
         )
       ],

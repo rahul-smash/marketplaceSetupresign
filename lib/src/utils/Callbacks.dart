@@ -1,4 +1,5 @@
 import 'package:event_bus/event_bus.dart';
+import 'package:restroapp/src/models/SubCategoryResponse.dart';
 
 typedef CustomCallback = T Function<T extends Object>({T value});
 
@@ -15,8 +16,10 @@ class onCartRemoved {
 
 class onCounterUpdate {
   int counter;
-String productId;
-  onCounterUpdate(this.counter,this.productId);
+  String productId;
+  String variantId;
+
+  onCounterUpdate(this.counter, this.productId, this.variantId);
 }
 
 class onOpenMenu {

@@ -446,7 +446,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                   // insert/update to cart table
                   insertInCartTable(widget.product, counter);
                 });
-                eventBus.fire(onCounterUpdate(counter, widget.product.id));
+                eventBus.fire(onCounterUpdate(counter, widget.product.id,variantId));
               },
               child: Container(
                 child: Center(
@@ -478,7 +478,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                             }
                             //widget.callback();
                           }
-                          eventBus.fire(onCounterUpdate(counter, widget.product.id));
+                          eventBus.fire(onCounterUpdate(counter, widget.product.id,variantId));
                         },
                         child: Container(
                           width: 35,
@@ -528,7 +528,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                           // insert/update to cart table
                           insertInCartTable(widget.product, counter);
                         }
-                        eventBus.fire(onCounterUpdate(counter, widget.product.id));
+                        eventBus.fire(onCounterUpdate(counter, widget.product.id,variantId));
                       },
                       child: Container(
                           width: 35,
