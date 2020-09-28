@@ -453,7 +453,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               style: TextStyle(
                                                   fontSize: 14,
                                                   color: staticHomeDescriptionColor,
-                                                  fontWeight: FontWeight.w500),
+                                                  fontWeight: FontWeight.w400),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                             ),

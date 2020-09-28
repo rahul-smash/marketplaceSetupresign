@@ -177,7 +177,7 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen>
                       child: Text(
                         "${subCategory.products.length} items",
                         style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.w400),
+                            color: staticHomeDescriptionColor, fontWeight: FontWeight.w400),
                       ),
                     ),
                     Expanded(

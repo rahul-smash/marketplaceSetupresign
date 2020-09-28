@@ -57,7 +57,8 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),
-                      InkWell(
+                      Visibility(visible: widget.categoryResponse.categories.length>4,
+                        child: InkWell(
                         child: Text(
                           "View All",
                           style: TextStyle(
@@ -68,6 +69,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                         ),
                         onTap: () => widget.callback(value: 'toggle'),
                       )
+                        ,)
                     ],
                   ),
                 ),
@@ -104,7 +106,10 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
   }
 
   Widget getProductsWidget() {
-    //TODO: Check all possible case here
+    if((widget.categoryResponse.categories!=null&&widget.categoryResponse.categories.length==0)){
+      return Utils.getEmptyView2("No Categories available");
+    }
+
     if (widget.subCategory == null) {
       return Container(
         height: 200,

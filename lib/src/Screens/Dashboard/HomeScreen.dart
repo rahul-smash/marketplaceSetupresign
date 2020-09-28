@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppConstant.placeholderUrl = store.banner10080;
       //print("-----store.banners-----${store.banners.length}------");
       if (store.banners.isEmpty) {
-        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
+//        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
       } else {
         for (var i = 0; i < store.banners.length; i++) {
           String imageUrl = store.banners[i].image;
@@ -188,13 +188,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget addBanners() {
-    return Center(
-      child: SizedBox(
-        height: 200.0,
-        width: Utils.getDeviceWidth(context),
-        child: _CarouselView(),
-      ),
-    );
+    if (imgList.length == 0) {
+      return Container();
+    } else
+      return Center(
+        child: SizedBox(
+          height: 200.0,
+          width: Utils.getDeviceWidth(context),
+          child: _CarouselView(),
+        ),
+      );
   }
 
   Widget _CarouselView() {
@@ -344,19 +347,25 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/contacticon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: staticHomeDescriptionColor),
-              title:
-                  Text('Contact', style: TextStyle(color: staticHomeDescriptionColor)),
+                  width: 24,
+                  fit: BoxFit.scaleDown,
+                  color: staticHomeDescriptionColor),
+              title: Text('Contact',
+                  style: TextStyle(color: staticHomeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedexploreicon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: staticHomeDescriptionColor),
-              title:
-                  Text('Search', style: TextStyle(color: staticHomeDescriptionColor)),
+                  width: 24,
+                  fit: BoxFit.scaleDown,
+                  color: staticHomeDescriptionColor),
+              title: Text('Search',
+                  style: TextStyle(color: staticHomeDescriptionColor)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedmyordericon.png',
-                  width: 24, fit: BoxFit.scaleDown, color: staticHomeDescriptionColor),
+                  width: 24,
+                  fit: BoxFit.scaleDown,
+                  color: staticHomeDescriptionColor),
               title: Text('My Orders',
                   style: TextStyle(color: staticHomeDescriptionColor)),
             ),
@@ -373,8 +382,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               title: Padding(
                 padding: EdgeInsets.fromLTRB(0, 2, 0, 0),
-                child:
-                    Text('Cart', style: TextStyle(color: staticHomeDescriptionColor)),
+                child: Text('Cart',
+                    style: TextStyle(color: staticHomeDescriptionColor)),
               ),
             ),
           ],
@@ -633,6 +642,7 @@ class _HomeScreenState extends State<HomeScreen> {
               break;
             }
           }
+          setState(() {});
         }
       });
     }
