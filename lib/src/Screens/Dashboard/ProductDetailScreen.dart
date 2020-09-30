@@ -123,6 +123,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
             ),*/
             InkWell(
               onTap: () {
+                eventBus.fire(openHome());
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
               child: Padding(

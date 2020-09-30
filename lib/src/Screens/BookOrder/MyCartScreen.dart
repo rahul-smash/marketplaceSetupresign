@@ -74,6 +74,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
             visible: cartList.isNotEmpty,
             child: InkWell(
               onTap: () {
+                eventBus.fire(openHome());
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
               child: Padding(
@@ -112,8 +113,9 @@ class _MyCartScreenState extends State<MyCartScreen> {
           }),
       floatingActionButton: cartList.length == 0
           ? FloatingActionButton.extended(
-              backgroundColor: appTheme,
+              backgroundColor: appThemeSecondary,
               onPressed: () async {
+                eventBus.fire(openHome());
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
               icon: Image.asset(
