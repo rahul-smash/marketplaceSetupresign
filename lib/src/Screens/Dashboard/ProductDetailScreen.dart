@@ -158,7 +158,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
           ),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: appTheme,
+          backgroundColor: appThemeSecondary,
           onPressed: () async {
             CategoryModel result = await DialogUtils.displayMenuDialog(context);
             if (result != null) {
