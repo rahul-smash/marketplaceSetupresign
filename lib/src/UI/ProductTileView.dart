@@ -218,8 +218,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                             children: <Widget>[
                               imageUrl == ""
                                   ? Container(
-                                      width: 70.0,
-                                      height: 80.0,
+                                      width: 75.0,
+                                      height: 75.0,
                                       child: Utils.getImgPlaceHolder(),
                                     )
                                   : Padding(
@@ -239,8 +239,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               width: 1.0,
                                             ),
                                           ),
-                                          width: 70.0,
-                                          height: 80.0,
+                                          width: 75.0,
+                                          height: 75.0,
                                           child: ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(2.0),

@@ -13,6 +13,9 @@ class updateCartCount {
 class onCartRemoved {
   onCartRemoved();
 }
+class openHome {
+  openHome();
+}
 class OnProductTileDbRefresh {
   OnProductTileDbRefresh();
 }

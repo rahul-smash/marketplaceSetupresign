@@ -72,8 +72,7 @@ class CategoryView extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10.0))),
                         )),
             ),
-            Expanded(
-                child: Padding(
+            Padding(
 //              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
               padding: EdgeInsets.only(top: 10.0),
               child: Center(
@@ -88,7 +87,7 @@ class CategoryView extends StatelessWidget {
                       fontSize: 16.0,
                     )),
               ),
-            )),
+            ),
           ],
         ),
       ),

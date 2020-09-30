@@ -330,29 +330,36 @@ class _HomeScreenState extends State<HomeScreen> {
       children: <Widget>[
         BottomNavigationBar(
           currentIndex: _currentIndex,
-          backgroundColor: bottomBarBackgroundColor,
+//          backgroundColor: bottomBarBackgroundColor,
+          backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
           onTap: onTabTapped,
           items: [
             BottomNavigationBarItem(
               icon: Image.asset(
-                  isCategoryViewSelected
-                      ? 'images/homeicon.png'
-                      : 'images/unselectedcategoryicon.png',
+                  'images/homeicon.png',
                   width: 24,
                   fit: BoxFit.scaleDown,
-                  color: appThemeSecondary),
-              title: Text(isCategoryViewSelected ? 'Home' : 'Category',
-                  style: TextStyle(color: appThemeSecondary)),
+                  color: isCategoryViewSelected? staticHomeDescriptionColor: appThemeSecondary),
+              title: Text('Home',
+                  style: TextStyle(color: isCategoryViewSelected? staticHomeDescriptionColor: appThemeSecondary)),
             ),
             BottomNavigationBarItem(
-              icon: Image.asset('images/contacticon.png',
+              icon: Image.asset('images/unselectedcategoryicon.png',
                   width: 24,
                   fit: BoxFit.scaleDown,
-                  color: staticHomeDescriptionColor),
-              title: Text('Contact',
-                  style: TextStyle(color: staticHomeDescriptionColor)),
+                  color: !isCategoryViewSelected? staticHomeDescriptionColor: appThemeSecondary),
+              title: Text('Category',
+                  style: TextStyle(color: !isCategoryViewSelected? staticHomeDescriptionColor: appThemeSecondary)),
             ),
+//            BottomNavigationBarItem(
+//              icon: Image.asset('images/contacticon.png',
+//                  width: 24,
+//                  fit: BoxFit.scaleDown,
+//                  color: staticHomeDescriptionColor),
+//              title: Text('Contact',
+//                  style: TextStyle(color: staticHomeDescriptionColor)),
+//            ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedexploreicon.png',
                   width: 24,
@@ -438,20 +445,25 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
         if (_currentIndex == 1) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ContactScreen(store)),
-          );
-          Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-          attributeMap["ScreenName"] = "ContactScreen";
-          Utils.sendAnalyticsEvent("Clicked ContactScreen", attributeMap);
+          setState(() {
+            _controller.text = '';
+            productsList.clear();
+            isCategoryViewSelected =true;
+          });
+//          Navigator.push(
+//            context,
+//            MaterialPageRoute(builder: (context) => ContactScreen(store)),
+//          );
+//          Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+//          attributeMap["ScreenName"] = "ContactScreen";
+//          Utils.sendAnalyticsEvent("Clicked ContactScreen", attributeMap);
         }
         if (_currentIndex == 0) {
           //show categories
           setState(() {
             _controller.text = '';
             productsList.clear();
-            isCategoryViewSelected = !isCategoryViewSelected;
+            isCategoryViewSelected = false;
           });
         }
       });
@@ -560,6 +572,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void listenCartChanges() {
     eventBus.on<updateCartCount>().listen((event) {
       getCartCount();
+    });
+    eventBus.on<openHome>().listen((event) {
+     setState(() {
+       _controller.text = '';
+       productsList.clear();
+       isCategoryViewSelected =false;
+     });
     });
   }
 
