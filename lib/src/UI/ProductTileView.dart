@@ -21,12 +21,13 @@ class ProductTileItem extends StatefulWidget {
   ClassType classType;
   CustomCallback favCallback;
   List<String> tagsList = List();
+  _ProductTileItemState state = new _ProductTileItemState();
 
   ProductTileItem(this.product, this.callback, this.classType,
       {this.favCallback});
 
   @override
-  _ProductTileItemState createState() => new _ProductTileItemState();
+  _ProductTileItemState createState() => state;
 }
 
 class _ProductTileItemState extends State<ProductTileItem> {
@@ -52,23 +53,24 @@ class _ProductTileItemState extends State<ProductTileItem> {
 
   void getDataFromDB() {
     databaseHelper
-        .getProductQuantitiy(variant==null? widget.product.variantId:variant.id)
+        .getProductQuantitiy(
+            variant == null ? widget.product.variantId : variant.id)
         .then((cartDataObj) {
       cartData = cartDataObj;
       counter = int.parse(cartData.QUANTITY);
       showAddButton = counter == 0 ? true : false;
       setState(() {});
     });
-    databaseHelper
-        .checkProductsExistInFavTable(
-            DatabaseHelper.Favorite_Table, widget.product.id)
-        .then((favValue) {
-      setState(() {
-        widget.product.isFav = favValue.toString();
-        if (widget.favCallback != null)
-          widget.favCallback(value: widget.product.isFav);
-      });
-    });
+//    databaseHelper
+//        .checkProductsExistInFavTable(
+//            DatabaseHelper.Favorite_Table, widget.product.id)
+//        .then((favValue) {
+//      setState(() {
+//        widget.product.isFav = favValue.toString();
+//        if (widget.favCallback != null)
+//          widget.favCallback(value: widget.product.isFav);
+//      });
+//    });
   }
 
   void listenCartEvent() {
@@ -93,7 +95,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
     eventBus.on<onCounterUpdate>().listen((event) {
       setState(() {
         if (widget.product.id.compareTo(event.productId) == 0) {
-          String vID=variant==null?widget.product.variantId:variant.id;
+          String vID = variant == null ? widget.product.variantId : variant.id;
           print("Product= ${widget.product.title} ");
           if (vID != null &&
               event.variantId != null &&
@@ -107,6 +109,10 @@ class _ProductTileItemState extends State<ProductTileItem> {
           }
         }
       });
+    });
+
+    eventBus.on<OnProductTileDbRefresh>().listen((event) {
+      getDataFromDB();
     });
   }
 
@@ -159,7 +165,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) =>
-                        ProductDetailsScreen(widget.product,variant),
+                        ProductDetailsScreen(widget.product, variant),
                     fullscreenDialog: true,
                   ));
               setState(() {
@@ -676,7 +682,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                     insertInCartTable(widget.product, counter);
                     widget.callback();
                     eventBus.fire(
-                        onCounterUpdate(counter, widget.product.id,variantID ));
+                        onCounterUpdate(counter, widget.product.id, variantID));
                   },
                   child: Container(
                     padding: EdgeInsets.only(left: 15, right: 15),

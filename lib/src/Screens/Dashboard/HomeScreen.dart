@@ -645,6 +645,7 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {});
         }
       });
+//      eventBus.fire(OnProductTileDbRefresh());
     }
   }
 

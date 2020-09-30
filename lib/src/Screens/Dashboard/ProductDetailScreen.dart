@@ -212,6 +212,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                 ),*/
                         child: Center(
                           child: CachedNetworkImage(
+                            height: 280,
                             imageUrl: "${imageUrl}",
                             fit: BoxFit.fitWidth,
                             placeholder: (context, url) =>

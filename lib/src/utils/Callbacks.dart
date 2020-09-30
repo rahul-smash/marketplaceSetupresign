@@ -13,6 +13,9 @@ class updateCartCount {
 class onCartRemoved {
   onCartRemoved();
 }
+class OnProductTileDbRefresh {
+  OnProductTileDbRefresh();
+}
 
 class onCounterUpdate {
   int counter;
