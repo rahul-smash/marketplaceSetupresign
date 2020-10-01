@@ -248,24 +248,27 @@ class _MyOrderScreen extends State<MyOrderScreen> {
                 ),
 
                 Padding(
-                  padding: EdgeInsets.only(right: 0.0,top: 0),
-                  child:  SizedBox(
-                    width: 110,
-                    height: 30,
-                    child: FlatButton(
-                      onPressed: (){
-                        print("OrderDetailScreen");
-                        Navigator.push( context,
-                          MaterialPageRoute(
-                            builder: (context) => OrderDetailScreen(cardOrderHistoryItems),
-                          ),
-                        );
-                      },
-                      child: Text("View Order",style: TextStyle(color: Colors.white),),
-                      color: Color(0xFFFD5401),
-                      shape:  RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(3.0),
+                  padding: EdgeInsets.only(right: 0.0, top: 0),
+                  child: FlatButton(
+                    onPressed: () {
+                      print("OrderDetailScreen");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              OrderDetailScreen(cardOrderHistoryItems),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "View Order",
+                      style: TextStyle(
+                        color: Colors.white,
                       ),
+                    ),
+                    color: appThemeSecondary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3.0),
                     ),
                   ),
                 ),
