@@ -21,13 +21,12 @@ class ProductTileItem extends StatefulWidget {
   ClassType classType;
   CustomCallback favCallback;
   List<String> tagsList = List();
-  _ProductTileItemState state = new _ProductTileItemState();
 
   ProductTileItem(this.product, this.callback, this.classType,
       {this.favCallback});
 
   @override
-  _ProductTileItemState createState() => state;
+  _ProductTileItemState createState() => _ProductTileItemState();
 }
 
 class _ProductTileItemState extends State<ProductTileItem> {

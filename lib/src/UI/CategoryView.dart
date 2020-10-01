@@ -33,45 +33,44 @@ class CategoryView extends StatelessWidget {
           _onTapPressed(context);
       },
       child: Container(
-        width: isListView ? 90 : null,
-        margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
+        width: isListView ? (Utils.getDeviceWidth(context) / 4.2) - 3 : null,
+        margin: EdgeInsets.fromLTRB(
+            isListView ? 3 : 10, 0, isListView ? 3 : 10, 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            GestureDetector(
-              child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color:_isCategoryViewSelected() ? appThemeSecondary : Colors.white,width:_isCategoryViewSelected() ?2:0 ),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  height: 75,
-//                  width: 75,
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
-                  child: categoryModel.image300200.isNotEmpty
-                      ? Padding(
-                          padding:
-                              EdgeInsets.all(0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10.0),
-                            child: CachedNetworkImage(
-                              imageUrl: "${categoryModel.image300200}",
-                              width: Utils.getDeviceWidth(context),
-                              fit: BoxFit.cover,
-                              //placeholder: (context, url) => CircularProgressIndicator(),
-                              errorWidget: (context, url, error) {
-                                print('image error ${url}');
-                                return Container();
-                              },
-                            ),
-                          ))
-                      : Padding(
-                          padding:
-                              EdgeInsets.all(_isCategoryViewSelected() ? 4 : 0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10.0))),
-                        )),
-            ),
+            Container(
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: _isCategoryViewSelected()
+                            ? appThemeSecondary
+                            : Colors.white,
+                        width: _isCategoryViewSelected() ? 2 : 0),
+                    borderRadius: BorderRadius.circular(10.0)),
+                height: (Utils.getDeviceWidth(context) / 5) - 3,
+                margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                child: categoryModel.image300200.isNotEmpty
+                    ? ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: CachedNetworkImage(
+                    imageUrl: "${categoryModel.image300200}",
+                    width: (Utils.getDeviceWidth(context) / 4),
+                    fit: BoxFit.cover,
+                    //placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) {
+                      print('image error ${url}');
+                      return Container();
+                    },
+                  ),
+                )
+                    : Padding(
+                  padding:
+                  EdgeInsets.all(_isCategoryViewSelected() ? 4 : 0),
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.0))),
+                )),
             Padding(
 //              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
               padding: EdgeInsets.only(top: 10.0),
@@ -82,8 +81,9 @@ class CategoryView extends StatelessWidget {
                     maxLines: 2,
                     softWrap: true,
                     style: new TextStyle(
-                      color:
-                          _isCategoryViewSelected() ? appThemeSecondary : Colors.black,
+                      color: _isCategoryViewSelected()
+                          ? appThemeSecondary
+                          : Colors.black,
                       fontSize: 16.0,
                     )),
               ),

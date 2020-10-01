@@ -57,47 +57,52 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),
-                      Visibility(visible: widget.categoryResponse.categories.length>4,
+                      Visibility(
+                        visible: widget.categoryResponse.categories.length > 4,
                         child: InkWell(
-                        child: Text(
-                          "View All",
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: appThemeSecondary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold),
+                          child: Text(
+                            "View All",
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: appThemeSecondary,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onTap: () => widget.callback(value: 'toggle'),
                         ),
-                        onTap: () => widget.callback(value: 'toggle'),
                       )
-                        ,)
                     ],
                   ),
                 ),
                 Flexible(
-                    child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: widget.categoryResponse.categories
-                      .map((CategoryModel model) {
-                    return GridTile(
-                        child: CategoryView(
-                      model,
-                      widget.store,
-                      false,
-                      0,
-                      isListView: true,
-                      selectedSubCategoryId: widget.selectedCategoryId,
-                      callback: <Object>({value}) {
-                        setState(() {
-                          widget.selectedCategory = (value as CategoryModel);
-                          widget.selectedCategoryId =
-                              widget.selectedCategory.subCategory.first.id;
-                          widget.callback(value: widget.selectedCategory);
-                        });
-                        return;
-                      },
-                    ));
-                  }).toList(),
-                ))
+                  child: ListView.builder(
+                    itemCount: widget.categoryResponse.categories.length > 4
+                        ? 4
+                        : widget.categoryResponse.categories.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      CategoryModel model =
+                          widget.categoryResponse.categories[index];
+                      return CategoryView(
+                        model,
+                        widget.store,
+                        false,
+                        0,
+                        isListView: true,
+                        selectedSubCategoryId: widget.selectedCategoryId,
+                        callback: <Object>({value}) {
+                          setState(() {
+                            widget.selectedCategory = (value as CategoryModel);
+                            widget.selectedCategoryId =
+                                widget.selectedCategory.subCategory.first.id;
+                            widget.callback(value: widget.selectedCategory);
+                          });
+                          return;
+                        },
+                      );
+                    },
+                  ),
+                )
               ],
             )),
         getProductsWidget()
@@ -106,7 +111,8 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
   }
 
   Widget getProductsWidget() {
-    if((widget.categoryResponse.categories!=null&&widget.categoryResponse.categories.length==0)){
+    if ((widget.categoryResponse.categories != null &&
+        widget.categoryResponse.categories.length == 0)) {
       return Utils.getEmptyView2("No Categories available");
     }
 
@@ -135,7 +141,8 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
             Container(
               color: Colors.transparent,
               child: Padding(
-                padding: EdgeInsets.only(left: 10, right: 10, bottom: 5,top:10),
+                padding:
+                    EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -162,7 +169,9 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
               ),
             ),
             ListView.builder(
-              itemCount: widget.subCategory.products.length,
+              itemCount: widget.subCategory.products.length > 2
+                  ? 2
+                  : widget.subCategory.products.length,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {

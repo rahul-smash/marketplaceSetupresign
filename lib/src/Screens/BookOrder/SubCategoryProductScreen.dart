@@ -61,14 +61,15 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen>
         title: Text(widget.categoryModel.title),
         centerTitle: false,
       ),
-      body: Column(children: <Widget>[
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
         TabBar(
           controller: _tabController,
           isScrollable:
               widget.categoryModel.subCategory.length == 1 ? false : true,
           labelColor: appThemeSecondary,
           unselectedLabelColor: homeDescriptionColor,
-          indicatorColor: whiteColor,
 //            indicatorColor:
 //                widget.categoryModel.subCategory.length == 1 ? appTheme : orangeColor,
           indicatorWeight: 0.1,

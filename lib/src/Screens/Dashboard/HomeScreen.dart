@@ -336,21 +336,30 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: onTabTapped,
           items: [
             BottomNavigationBarItem(
-              icon: Image.asset(
-                  'images/homeicon.png',
+              icon: Image.asset('images/homeicon.png',
                   width: 24,
                   fit: BoxFit.scaleDown,
-                  color: isCategoryViewSelected? staticHomeDescriptionColor: appThemeSecondary),
+                  color: isCategoryViewSelected
+                      ? staticHomeDescriptionColor
+                      : appThemeSecondary),
               title: Text('Home',
-                  style: TextStyle(color: isCategoryViewSelected? staticHomeDescriptionColor: appThemeSecondary)),
+                  style: TextStyle(
+                      color: isCategoryViewSelected
+                          ? staticHomeDescriptionColor
+                          : appThemeSecondary)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedcategoryicon.png',
                   width: 24,
                   fit: BoxFit.scaleDown,
-                  color: !isCategoryViewSelected? staticHomeDescriptionColor: appThemeSecondary),
+                  color: !isCategoryViewSelected
+                      ? staticHomeDescriptionColor
+                      : appThemeSecondary),
               title: Text('Category',
-                  style: TextStyle(color: !isCategoryViewSelected? staticHomeDescriptionColor: appThemeSecondary)),
+                  style: TextStyle(
+                      color: !isCategoryViewSelected
+                          ? staticHomeDescriptionColor
+                          : appThemeSecondary)),
             ),
 //            BottomNavigationBarItem(
 //              icon: Image.asset('images/contacticon.png',
@@ -448,7 +457,7 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {
             _controller.text = '';
             productsList.clear();
-            isCategoryViewSelected =true;
+            isCategoryViewSelected = true;
           });
 //          Navigator.push(
 //            context,
@@ -574,11 +583,11 @@ class _HomeScreenState extends State<HomeScreen> {
       getCartCount();
     });
     eventBus.on<openHome>().listen((event) {
-     setState(() {
-       _controller.text = '';
-       productsList.clear();
-       isCategoryViewSelected =false;
-     });
+      setState(() {
+        _controller.text = '';
+        productsList.clear();
+        isCategoryViewSelected = false;
+      });
     });
   }
 
@@ -861,59 +870,59 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Padding(
         padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
         child: Center(
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.search,
-                size: 30,
-                color: appTheme,
-              ),
-            ),
-            Flexible(
-              child: TextField(
-                textInputAction: TextInputAction.search,
-                onSubmitted: (value) {
-                  if (value.trim().isEmpty) {
-                    Utils.showToast("Please enter some valid keyword", false);
-                  } else {
-                    callSearchAPI();
-                  }
-                },
-                onChanged: (text) {
-                  print("onChanged ${text}");
-                },
-                controller: _controller,
-                cursorColor: Colors.black,
-                keyboardType: TextInputType.text,
-                decoration: new InputDecoration(
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    hintText: "Search for dishes"),
-              ),
-            ),
-            Visibility(
-                visible: _controller.text.isNotEmpty,
-                child: IconButton(
-                    icon: Icon(
-                      Icons.clear,
-                      color: appTheme,
-                    ),
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
-                      setState(() {
-                        _controller.text = "";
-                        setState(() {
-                          subCategoryList.clear();
-                          productsList.clear();
-                        });
-                      });
-                    }))
-          ]),
+          child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(padding: EdgeInsets.fromLTRB(3,3,6,3),child:
+                Image.asset('images/searchicon.png',
+                    width: 20,
+                    fit: BoxFit.scaleDown,
+                    color: appTheme)),
+                Flexible(
+                  child: TextField(
+                    textInputAction: TextInputAction.search,
+                    onSubmitted: (value) {
+                      if (value.trim().isEmpty) {
+                        Utils.showToast(
+                            "Please enter some valid keyword", false);
+                      } else {
+                        callSearchAPI();
+                      }
+                    },
+                    onChanged: (text) {
+                      print("onChanged ${text}");
+                    },
+                    controller: _controller,
+                    cursorColor: Colors.black,
+                    keyboardType: TextInputType.text,
+                    decoration: new InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        hintText: "Search for dishes"),
+                  ),
+                ),
+                Visibility(
+                    visible: _controller.text.isNotEmpty,
+                    child: IconButton(
+                        icon: Icon(
+                          Icons.clear,
+                          color: appTheme,
+                        ),
+                        onPressed: () {
+                          FocusScope.of(context).unfocus();
+                          setState(() {
+                            _controller.text = "";
+                            setState(() {
+                              subCategoryList.clear();
+                              productsList.clear();
+                            });
+                          });
+                        }))
+              ]),
         ),
       ),
     );
