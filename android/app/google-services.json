@@ -808,6 +808,42 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:771670170221:android:79eb55c39dc9123435fd64",
+        "android_client_info": {
+          "package_name": "com.valueappz.cafehut"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771670170221-6m363j2udokd4csfr1lceif5ljn0vrok.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgtg5EIvBsh7V_3wP94v3JoT147EuRkwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771670170221-6m363j2udokd4csfr1lceif5ljn0vrok.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "771670170221-28do01a93krekq5io7qdo9p3j9brp9em.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.zimpl"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:771670170221:android:cd269b585f10f24535fd64",
         "android_client_info": {
           "package_name": "com.valueappz.desiangadi"
@@ -1963,6 +1999,42 @@
         "mobilesdk_app_id": "1:771670170221:android:1d785e9fee401e6035fd64",
         "android_client_info": {
           "package_name": "com.valueappz.reachhours"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771670170221-6m363j2udokd4csfr1lceif5ljn0vrok.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgtg5EIvBsh7V_3wP94v3JoT147EuRkwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771670170221-6m363j2udokd4csfr1lceif5ljn0vrok.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "771670170221-28do01a93krekq5io7qdo9p3j9brp9em.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.zimpl"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771670170221:android:c211a497c973ee2e35fd64",
+        "android_client_info": {
+          "package_name": "com.valueappz.restro_chinese_hut"
         }
       },
       "oauth_client": [
