@@ -230,19 +230,19 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                               top: 2,
                                               right: 2,
                                               bottom: 2),
-                                          decoration: new BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(2.0)),
-                                            border: Border.all(
-                                              color: Colors.grey,
-                                              width: 1.0,
-                                            ),
-                                          ),
+//                                          decoration:  BoxDecoration(
+//                                            borderRadius: BorderRadius.all(
+//                                                Radius.circular(5.0)),
+//                                            border: Border.all(
+//                                              color: Colors.grey,
+//                                              width: 1.0,
+//                                            ),
+//                                          ),
                                           width: 75.0,
                                           height: 75.0,
                                           child: ClipRRect(
                                             borderRadius:
-                                                BorderRadius.circular(2.0),
+                                                BorderRadius.circular(5.0),
                                             child: CachedNetworkImage(
                                                 imageUrl: "${imageUrl}",
                                                 fit: BoxFit.fill),
@@ -871,7 +871,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
       DatabaseHelper.description: product.description,
       DatabaseHelper.imageType: product.imageType,
       DatabaseHelper.imageUrl: product.imageUrl,
-      DatabaseHelper.image_100_80: product.image10080,
+      DatabaseHelper.image_100_80: product.image==null?product.image10080:product.image,
       DatabaseHelper.image_300_200: product.image300200,
     };
 
