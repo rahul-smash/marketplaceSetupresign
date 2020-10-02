@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:restroapp/src/Screens/Offers/AvailableOffersList.dart';
@@ -13,6 +16,7 @@ import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/DeliveryTimeSlotModel.dart';
+import 'package:restroapp/src/models/OrderDetailsModel.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/RazorpayOrderData.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
@@ -27,7 +31,8 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:webview_flutter/webview_flutter.dart';
 
 class ConfirmOrderScreen extends StatefulWidget {
   bool isComingFromPickUpScreen;
@@ -36,14 +41,15 @@ class ConfirmOrderScreen extends StatefulWidget {
   String areaId;
   OrderType deliveryType;
   Area areaObject;
+  StoreModel storeModel;
   List<Product> cartList = new List();
 
   ConfirmOrderScreen(this.address, this.isComingFromPickUpScreen, this.areaId,
       this.deliveryType,
-      {this.areaObject});
+      {this.areaObject, this.storeModel});
 
   @override
-  ConfirmOrderState createState() => ConfirmOrderState();
+  ConfirmOrderState createState() => ConfirmOrderState(storeModel: storeModel);
 }
 
 class ConfirmOrderState extends State<ConfirmOrderScreen> {
@@ -74,7 +80,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   String comment = "";
 
   bool isDeliveryResponseFalse=false;
-
+  ConfirmOrderState({this.storeModel});
   @override
   void initState() {
     super.initState();
@@ -1283,7 +1289,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         msg: "EXTERNAL_WALLET: " + response.walletName, timeInSecForIos: 4);*/
   }
 
-  void callOrderIdApi(StoreModel storeObject) {
+  void callOrderIdApi(StoreModel storeObject) async{
     Utils.showProgressDialog(context);
     double price = double.parse(taxModel.total); //totalPrice ;
     print("=======1===${price}===total==${taxModel.total}======");
@@ -1292,15 +1298,56 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     String mPrice =
         price.toString().substring(0, price.toString().indexOf('.'));
     print("=======mPrice===${mPrice}===========");
-    ApiController.razorpayCreateOrderApi(mPrice).then((response) {
-      CreateOrderData model = response;
-      if (model != null && response.success) {
-        print("----razorpayCreateOrderApi----${response.data.id}--");
-        openCheckout(model.data.id, storeObject);
-      } else {
-        Utils.showToast("${model.message}", true);
-        Utils.hideProgressDialog(context);
+    UserModel user = await SharedPrefs.getUser();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+    //new changes
+    databaseHelper.getCartItemsListToJson().then((orderJson) {
+      if (orderJson == null) {
+        print("--orderjson == null-orderjson == null-");
+        return;
       }
+      String storeAddress = "";
+      try {
+        storeAddress = "${storeModel.storeName}, ${storeModel.location},"
+            "${storeModel.city}, ${storeModel.state}, ${storeModel.country}, ${storeModel.zipcode}";
+      } catch (e) {
+        print(e);
+      }
+
+      String userId = user.id;
+      OrderDetailsModel detailsModel = OrderDetailsModel(
+          shippingCharges,
+          comment,
+          totalPrice.toString(),
+          widget.paymentMode,
+          taxModel,
+          widget.address,
+          widget.isComingFromPickUpScreen,
+          widget.areaId,
+          widget.deliveryType,
+          "",
+          "",
+          deviceId,
+          "Razorpay",
+          userId,
+          deviceToken,
+          storeAddress,
+          selectedDeliverSlotValue,
+          "");
+      ApiController.razorpayCreateOrderApi(
+              mPrice, orderJson, detailsModel.orderDetails)
+          .then((response) {
+        CreateOrderData model = response;
+        if (model != null && response.success) {
+          print("----razorpayCreateOrderApi----${response.data.id}--");
+          openCheckout(model.data.id, storeObject);
+        } else {
+          Utils.showToast("${model.message}", true);
+          Utils.hideProgressDialog(context);
+        }
+      });
     });
   }
 
@@ -1587,7 +1634,7 @@ class StripeWebView extends StatefulWidget {
 }
 
 class _StripeWebViewState extends State<StripeWebView> {
-  Completer<WebViewController> _controller = Completer<WebViewController>();
+  InAppWebViewController webView;
 
   @override
   Widget build(BuildContext context) {
@@ -1603,21 +1650,21 @@ class _StripeWebViewState extends State<StripeWebView> {
           centerTitle: true,
         ),
         body: Builder(builder: (BuildContext context) {
-          return WebView(
-            initialUrl: '${widget.stripeCheckOutModel.checkoutUrl}',
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebViewCreated: (WebViewController webViewController) {
-              _controller.complete(webViewController);
+          return InAppWebView(
+            initialUrl: "${widget.stripeCheckOutModel.checkoutUrl}",
+            initialHeaders: {},
+            initialOptions: InAppWebViewGroupOptions(
+                crossPlatform: InAppWebViewOptions(
+                    debuggingEnabled: true,
+                    javaScriptEnabled: true,
+                    javaScriptCanOpenWindowsAutomatically: true)),
+            onWebViewCreated: (InAppWebViewController controller) {
+              webView = controller;
             },
-            navigationDelegate: (NavigationRequest request) {
-              //print('=======NavigationRequest======= $request}');
-              return NavigationDecision.navigate;
+            onLoadStart: (InAppWebViewController controller, String url) {
+              print('==1====onLoadStart======: $url');
             },
-            onPageStarted: (String url) {
-              //print('======Page started loading======: $url');
-            },
-            onPageFinished: (String url) {
-              print('======Page finished loading======: $url');
+            onLoadStop: (InAppWebViewController controller, String url) async {
               if (url
                   .contains("api/stripeVerifyTransaction?response=success")) {
                 eventBus.fire(onPageFinished(
@@ -1625,7 +1672,10 @@ class _StripeWebViewState extends State<StripeWebView> {
                 Navigator.pop(context);
               }
             },
-            gestureNavigationEnabled: false,
+            onProgressChanged:
+                (InAppWebViewController controller, int progress) {
+              //print('==3====onProgressChanged======: $progress');
+            },
           );
         }),
       ),

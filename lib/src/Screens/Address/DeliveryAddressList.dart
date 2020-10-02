@@ -403,6 +403,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
       color: appTheme,
       child: InkWell(
         onTap: () async {
+          StoreModel storeModel = await SharedPrefs.getStore();
           if (addressList.length == 0) {
             Utils.showToast(AppConstant.selectAddress, false);
           } else {
@@ -413,10 +414,12 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ConfirmOrderScreen(
-                        addressList[selectedIndex],
-                        false,
-                        "",
-                        widget.delivery)),
+                          addressList[selectedIndex],
+                          false,
+                          "",
+                          widget.delivery,
+                          storeModel: storeModel,
+                        )),
               );
             } else {
               var result = await DialogUtils.displayOrderConfirmationDialog(
@@ -432,7 +435,8 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                           addressList[selectedIndex],
                           false,
                           "",
-                          widget.delivery)),
+                          widget.delivery,
+                          storeModel: storeModel)),
                 );
               }
             }
