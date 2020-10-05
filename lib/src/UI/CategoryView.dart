@@ -124,7 +124,17 @@ class CategoryView extends StatelessWidget {
       DialogUtils.displayCommonDialog(context, store.storeName, store.storeMsg);
     } else {
       if (categoryModel != null && categoryModel.subCategory.isNotEmpty) {
-        callback(value: categoryModel);
+//        callback(value: categoryModel);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) {
+            return SubCategoryProductScreen(
+                categoryModel, isComingFromBaner, index);
+          }),
+        );
+        Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+        attributeMap["ScreenName"] = "${categoryModel.title}";
+        Utils.sendAnalyticsEvent("Clicked category", attributeMap);
       } else {
         if (categoryModel != null && categoryModel.subCategory != null) {
           if (categoryModel.subCategory.isEmpty) {
