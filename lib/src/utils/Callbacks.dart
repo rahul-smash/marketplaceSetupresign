@@ -45,3 +45,12 @@ class onPageFinished {
 
   onPageFinished(this.url);
 }
+
+class onPayTMPageFinished {
+  String url;
+  String orderId;
+  String txnId;
+
+  onPayTMPageFinished(this.url, this.orderId, this.txnId);
+}
+

@@ -129,7 +129,8 @@ class DialogUtils {
       context: context,
       builder: (BuildContext context) {
         return WillPopScope(
-          onWillPop: () {},
+          onWillPop: () {
+          },
           child: AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -139,34 +140,43 @@ class DialogUtils {
             ),
             content: Container(
               width: double.maxFinite,
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: storeArea.data.length,
-                      itemBuilder: (context, index) {
-                        Datum areaObject = storeArea.data[index];
-                        return InkWell(
-                            onTap: () {
-                              Navigator.pop(context, areaObject);
-                            },
-                            child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.0, color: Colors.black)),
-                                color: Colors.white,
-                              ),
-                              child: Center(child: Text(areaObject.city.city)),
-                            ));
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: storeArea.data.length,
+                separatorBuilder: (BuildContext context, int index) {
+                  return Divider();
+                },
+                itemBuilder: (context, index) {
+                  Datum areaObject = storeArea.data[index];
+                  return InkWell(
+                    onTap: () {
+                      Navigator.pop(context, areaObject);
                       },
+                    child: ListTile(
+                      title: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(areaObject.city.city,
+                                  style: TextStyle(color: Colors.black,fontSize: 16)),
+                            ),
+                          ]),
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text("Cancel"),
+                textColor: Colors.blue,
+                onPressed: () {
+                  Navigator.pop(context,null);
+                  // true here means you clicked ok
+                },
+              ),
+            ],
           ),
         );
       },
@@ -189,34 +199,44 @@ class DialogUtils {
             ),
             content: Container(
               width: double.maxFinite,
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: cityObject.area.length,
-                      itemBuilder: (context, index) {
-                        Area object = cityObject.area[index];
-                        return InkWell(
-                            onTap: () {
-                              Navigator.pop(context, object);
-                            },
-                            child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.0, color: Colors.black)),
-                                color: Colors.white,
-                              ),
-                              child: Center(child: Text(object.areaName)),
-                            ));
-                      },
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: cityObject.area.length,
+                separatorBuilder: (BuildContext context, int index) {
+                  return Divider();
+                },
+                itemBuilder: (context, index) {
+                  Area object = cityObject.area[index];
+                  return InkWell(
+                    onTap: () {
+                      Navigator.pop(context, object);
+                    },
+                    child: ListTile(
+                      title: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(object.pickupAdd,
+                                  style: TextStyle(color: Colors.black,fontSize: 16)),
+                            ),
+                          ]),
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
+
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text("Cancel"),
+                textColor: Colors.blue,
+                onPressed: () {
+                  Navigator.pop(context,null);
+                  // true here means you clicked ok
+                },
+              ),
+            ],
           ),
         );
       },
@@ -1263,6 +1283,69 @@ class DialogUtils {
         });
   }
 
+  static Future<String> displayMultipleOnlinePaymentMethodDialog(
+      BuildContext context, StoreModel storeObject) async {
+    return await showDialog<String>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return WillPopScope(
+            onWillPop: () {
+              Navigator.pop(context, "");
+            },
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              title: Container(
+                child: Text(
+                  "Payment Via",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              content: Container(
+                width: double.maxFinite,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: storeObject.paymentGatewaySettings.length,
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
+                  },
+                  itemBuilder: (context, index) {
+                    PaymentGatewaySettings paymentGatewaySettings = storeObject.paymentGatewaySettings[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.pop(context, paymentGatewaySettings.paymentGateway);
+                      },
+                      child: ListTile(
+                        title: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(paymentGatewaySettings.paymentGateway,
+                                    style: TextStyle(color: Colors.black)),
+                              ),
+                            ]),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("Cancel"),
+                  textColor: Colors.blue,
+                  onPressed: () {
+                    Navigator.pop(context,"");
+                    // true here means you clicked ok
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+  }
   static Future<bool> showAreaRemovedDialog(
       BuildContext context, String area) async {
     StoreModel storeModel = await SharedPrefs.getStore();
