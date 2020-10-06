@@ -169,9 +169,9 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
               ),
             ),
             ListView.builder(
-              itemCount: widget.subCategory.products.length > 2
+              itemCount:/* widget.subCategory.products.length > 2
                   ? 2
-                  : widget.subCategory.products.length,
+                  : */widget.subCategory.products.length,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
