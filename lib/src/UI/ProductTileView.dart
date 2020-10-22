@@ -429,10 +429,19 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                       color:
                                                           productHeadingColor,
                                                       fontWeight:
-                                                          FontWeight.w600),
+                                                          FontWeight.w400,fontSize: 16.0),
                                                 )
                                               : Row(
                                                   children: <Widget>[
+                                                    Text(
+                                                      "${AppConstant.currency}${price}",
+                                                      style: TextStyle(
+                                                          color:
+                                                              productHeadingColor,
+                                                          fontWeight:
+                                                              FontWeight.w400,fontSize: 16.0),
+                                                    ),
+                                                    Text(" "),
                                                     Text(
                                                         "${AppConstant.currency}${mrpPrice}",
                                                         style: TextStyle(
@@ -443,16 +452,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                                 staticHomeDescriptionColor,
                                                             fontWeight:
                                                                 FontWeight
-                                                                    .w400)),
-                                                    Text(" "),
-                                                    Text(
-                                                      "${AppConstant.currency}${price}",
-                                                      style: TextStyle(
-                                                          color:
-                                                              productHeadingColor,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    ),
+                                                                    .w400,fontSize: 14.0)),
                                                   ],
                                                 ),
                                         ],
@@ -871,7 +871,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
       DatabaseHelper.description: product.description,
       DatabaseHelper.imageType: product.imageType,
       DatabaseHelper.imageUrl: product.imageUrl,
-      DatabaseHelper.image_100_80: product.image==null?product.image10080:product.image,
+      DatabaseHelper.image_100_80:
+          product.image == null ? product.image10080 : product.image,
       DatabaseHelper.image_300_200: product.image300200,
     };
 
