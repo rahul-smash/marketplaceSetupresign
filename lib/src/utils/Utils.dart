@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -16,6 +17,7 @@ import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
+import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 
@@ -335,7 +337,44 @@ class Utils {
       DateTime time = format.parse(date, true);
       time = time.toLocal();
       //print("time.toLocal()=   ${time.toLocal()}");
-      DateFormat formatter = new DateFormat('dd MMM yyyy, hh:mm');
+      DateFormat formatter = new DateFormat('dd MMM yyyy, hh:mm a');
+      formatted = formatter.format(time.toLocal());
+    } catch (e) {
+      print(e);
+    }
+
+    return formatted;
+  }
+
+  static convertOrderDate(String date) {
+    String formatted = date;
+    try {
+      DateFormat format = new DateFormat("yyyy-MM-dd hh:mm:ss");
+      //UTC time true
+      DateTime time = format.parse(date, true);
+      time = time.toLocal();
+      //print("time.toLocal()=   ${time.toLocal()}");
+      DateFormat formatter = new DateFormat('dd MMM, yyyy');
+      formatted = formatter.format(time.toLocal());
+    } catch (e) {
+      print(e);
+    }
+
+    return formatted;
+  }
+
+  static convertNotificationDateTime(String date, {bool onlyTime = false}) {
+    String formatted = date;
+    try {
+      DateFormat format = new DateFormat("dd MMM yyyy hh:mm a");
+      //UTC time true
+      DateTime time = format.parse(date, true);
+      time = time.toLocal();
+      //print("time.toLocal()=   ${time.toLocal()}");
+      DateFormat formatter = new DateFormat('dd MMM yyyy');
+      if (onlyTime) {
+        formatter = new DateFormat('hh:mm a');
+      }
       formatted = formatter.format(time.toLocal());
     } catch (e) {
       print(e);
@@ -549,6 +588,13 @@ class Utils {
     }
     return addressList;
   }
+ static Future<String> getCartItemsListToJson(
+      {bool isOrderVariations = true,
+        List<OrderDetail> responseOrderDetail}) async {
+    List jsonList = OrderDetail.encodeToJson(responseOrderDetail,removeOutOfStockProducts:true);
+    String encodedDoughnut = jsonEncode(jsonList);
+    return encodedDoughnut;
+  }
 
   static bool checkIfStoreClosed(StoreModel store) {
     if (store.storeStatus == "0") {
@@ -574,5 +620,5 @@ enum ClassType { CART, SubCategory, Favourites, Home, Search }
 
 enum OrderType { Delivery, PickUp, Menu }
 
-enum PaymentType { COD, ONLINE,ONLINE_PAYTM, CANCEL }
+enum PaymentType { COD, ONLINE, ONLINE_PAYTM, CANCEL }
 enum RadioButtonEnum { SELECTD, UNSELECTED }

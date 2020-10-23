@@ -27,6 +27,7 @@ Color dotIncreasedColor = Color(0xff777A18);
 //=================new added==========
 Color bottomBarBackgroundColor = Color(0xffffffff);
 Color gridBackgroundCOlor = Color(0xffECECEC);
+Color orangeColor = Color(0xffFF5400);
 Color appThemeSecondary = Color(0xffFF5400);
 Color yellow = Color(0xffFFAD01);
 Color grayColor = Color(0xffd3d3d3);
@@ -39,6 +40,7 @@ Color toastbgColor = Color(0xff656565);
 Color grayColorTitle = Color(0xff474d54);
 Color grayColorDescription = Color(0xff9A9DA1);
 Color grayLightColor = Color(0xFFEEEEEE);
+Color grayLightColorSecondary = Color(0xFFDCDCDC);
 
 Color lightRed = Color(0xFFFBF1F0);
 

@@ -1,3 +1,4 @@
+import 'package:compressimage/compressimage.dart';
 import 'package:dio/dio.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/ForgotPasswordScreen.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginMobileScreen.dart';
@@ -14,11 +15,15 @@ import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/CreatePaytmTxnTokenResponse.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/DeliveryTimeSlotModel.dart';
+import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/LoyalityPointsModel.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
+import 'package:restroapp/src/models/NotificationResponseModel.dart';
 import 'package:restroapp/src/models/OTPVerified.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
+import 'package:restroapp/src/models/ProductRatingResponse.dart';
 import 'package:restroapp/src/models/RazorpayOrderData.dart';
+import 'package:restroapp/src/models/RecommendedProductsResponse.dart';
 import 'package:restroapp/src/models/ReferEarnData.dart';
 import 'package:restroapp/src/models/SearchTagsModel.dart';
 import 'package:restroapp/src/models/StoreAreaResponse.dart';
@@ -66,7 +71,7 @@ class ApiController {
               contentType: "application/json",
               responseType: ResponseType.plain));
       print(response.statusCode);
-      //print(response.data);
+      print(response.data);
       StoreResponse storeData =
           StoreResponse.fromJson(json.decode(response.data));
       print("-------store.success ---${storeData.success}");
@@ -474,7 +479,7 @@ class ApiController {
       String city,
       String cityId,
       String lat,
-      String lng) async {
+      String lng,{String address2=''}) async {
     StoreModel store = await SharedPrefs.getStore();
     UserModel user = await SharedPrefs.getUser();
 
@@ -497,7 +502,8 @@ class ApiController {
         "lng": "${lng}",
         "area_id": areaId,
         "first_name": fullname,
-        "email": user.email
+        "email": user.email,
+        "address2":address2
       });
 
       if (addressId != null) {
@@ -628,11 +634,12 @@ class ApiController {
       String shipping,
       String orderJson) async {
     StoreModel store = await SharedPrefs.getStore();
+    UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
 
     var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
-        ApiConstants.multipleTaxCalculation;
+        ApiConstants.multipleTaxCalculation_2;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     print("----url---${url}");
     //print("----orderJson---${orderJson}");
@@ -641,6 +648,7 @@ class ApiController {
       request.fields.addAll({
         "fixed_discount_amount": "${discount}",
         "tax": "0",
+        "user_id": user.id,
         "discount": "0",
         "shipping": shipping,
         "order_detail": orderJson,
@@ -751,7 +759,12 @@ class ApiController {
         "coupon_code": taxModel == null ? "" : '${taxModel.couponCode}',
         "device_id": deviceId,
         "user_address":
-            isComingFromPickUpScreen == true ? storeAddress : address.address,
+            isComingFromPickUpScreen == true ? storeAddress :
+            address.address2!=null&&address.address2.trim().isNotEmpty?
+            '${address.address!=null&&address.address.trim().isNotEmpty?
+            '${address.address}, ${address.address2}'
+                :"${address.address2}"}'
+                : address.address,
         "store_fixed_tax_detail": "",
         "tax": taxModel == null ? "0" : '${taxModel.tax}',
         "store_tax_rate_detail": "",
@@ -798,7 +811,8 @@ class ApiController {
       String phoneNumber,
       bool isComingFromOtpScreen,
       String id,
-      String user_refer_code) async {
+      String user_refer_code,
+      String gstNumber) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     StoreModel store = await SharedPrefs.getStore();
     String userId;
@@ -823,6 +837,7 @@ class ApiController {
         "user_id": userId,
         "device_id": deviceId,
         "device_token": deviceToken,
+        "gst_number": gstNumber,
         "platform": Platform.isIOS ? "IOS" : "Android"
       });
       print("--fields--${request.fields.toString()}--");
@@ -894,6 +909,94 @@ class ApiController {
         print('--respStr===  $respStr');
         GetOrderHistory getOrderHistory = GetOrderHistory.fromJson(parsed);
         return getOrderHistory;
+      } catch (e) {
+        Utils.showToast(e.toString(), true);
+        return null;
+      }
+    } else {
+      Utils.showToast(AppConstant.noInternet, true);
+      return null;
+    }
+  }
+
+  static Future<GetOrderHistory> getOrderDetail(String orderID) async {
+    StoreModel store = await SharedPrefs.getStore();
+    UserModel user = await SharedPrefs.getUser();
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+        ApiConstants.orderDetailHistory;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    if (isNetworkAvailable) {
+      try {
+        request.fields.addAll({
+          "user_id": user.id,
+          "order_id": orderID,
+          "platform": Platform.isIOS ? "IOS" : "android",
+        });
+        print('--url===  $url');
+        print('--user.id=== ${user.id}');
+        final response =
+            await request.send().timeout(Duration(seconds: timeout));
+        final respStr = await response.stream.bytesToString();
+        final parsed = json.decode(respStr);
+        print('--respStr===  $respStr');
+        GetOrderHistory getOrderHistory = GetOrderHistory.fromJson(parsed);
+        return getOrderHistory;
+      } catch (e) {
+        Utils.showToast(e.toString(), true);
+        return null;
+      }
+    } else {
+      Utils.showToast(AppConstant.noInternet, true);
+      return null;
+    }
+  }
+
+  static Future<ProductRatingResponse> postProductRating(
+      String orderID, String productID, String rating,
+      {String desc = '', File imageFile}) async {
+    StoreModel store = await SharedPrefs.getStore();
+    UserModel user = await SharedPrefs.getUser();
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+        ApiConstants.reviewRating;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    if (isNetworkAvailable) {
+      if (imageFile != null) {
+        //print("====FILE SIZE BEFORE: " + imageFile.lengthSync().toString());
+        await CompressImage.compress(
+            imageSrc: imageFile.path,
+            desiredQuality: 80); //desiredQuality ranges from 0 to 100
+        //print("====FILE SIZE  AFTER: " + imageFile.lengthSync().toString());
+      }
+      try {
+        request.fields.addAll({
+          "user_id": user.id,
+          "order_id": orderID,
+          "platform": Platform.isIOS ? "IOS" : "android",
+          "product_id": productID,
+          "rating": rating,
+          "description": desc
+        });
+        if (imageFile != null) {
+          DateTime currentDate = DateTime.now();
+          var multipartFile = http.MultipartFile.fromBytes(
+            'image',
+            await imageFile.readAsBytes(),
+            filename: "Image_$currentDate",
+          );
+          request.files.add(multipartFile);
+        }
+        print('--url===  $url');
+        print('--user.id=== ${user.id}');
+        final response =
+            await request.send().timeout(Duration(seconds: timeout));
+        final respStr = await response.stream.bytesToString();
+        final parsed = json.decode(respStr);
+        print('--respStr===  $respStr');
+        ProductRatingResponse ratingResponse =
+            ProductRatingResponse.fromJson(parsed);
+        return ratingResponse;
       } catch (e) {
         Utils.showToast(e.toString(), true);
         return null;
@@ -1382,7 +1485,7 @@ class ApiController {
         var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
             ApiConstants.createPaytmTxnToken;
         //TODO: remove this static url
-        url = "https://stage.grocersapp.com/393/api/createPaytmTxnToken";
+//        url = "https://stage.grocersapp.com/393/api/createPaytmTxnToken";
         print(url);
         FormData formData = new FormData.fromMap({
           "customer_id": user.id,
@@ -1408,6 +1511,121 @@ class ApiController {
         } else {
           return null;
         }
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<FaqModel> getFAQRequest() async {
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    try {
+      if (isNetworkAvailable) {
+        StoreModel store = await SharedPrefs.getStore();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String deviceId = prefs.getString(AppConstant.deviceId);
+        String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+        var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+            ApiConstants.faqs;
+        var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+        request.fields.addAll({
+          "method": "POST",
+          "device_id": deviceId,
+          "device_token": deviceToken,
+          "platform": Platform.isIOS ? "IOS" : "Android"
+        });
+        print("${url}");
+        final response =
+            await request.send().timeout(Duration(seconds: timeout));
+        final respStr = await response.stream.bytesToString();
+        print("${respStr}");
+        final parsed = json.decode(respStr);
+        FaqModel model = FaqModel.fromJson(parsed);
+        return model;
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<NotificationResponseModel> getAllNotifications() async {
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    try {
+      if (isNetworkAvailable) {
+        StoreModel store = await SharedPrefs.getStore();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        UserModel user = await SharedPrefs.getUser();
+        String deviceId = prefs.getString(AppConstant.deviceId);
+        String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+        var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+            ApiConstants.allNotifications;
+        var request = new http.MultipartRequest("POST", Uri.parse(url));
+        print("user id ${user.id}");
+        request.fields.addAll({
+          "user_id": user.id,
+          "method": "POST",
+          "device_id": deviceId,
+          "device_token": deviceToken,
+          "platform": Platform.isIOS ? "IOS" : "Android"
+        });
+        print("${url}");
+        final response =
+            await request.send().timeout(Duration(seconds: timeout));
+        final respStr = await response.stream.bytesToString();
+        print("${respStr}");
+        final parsed = json.decode(respStr);
+        NotificationResponseModel model =
+            NotificationResponseModel.fromJson(parsed);
+        return model;
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<RecommendedProductsResponse> getRecommendedProducts(
+      String productID) async {
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    try {
+      if (isNetworkAvailable) {
+        StoreModel store = await SharedPrefs.getStore();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String deviceId = prefs.getString(AppConstant.deviceId);
+        String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+        var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+            ApiConstants.recommendedProduct;
+        var request = new http.MultipartRequest("POST", Uri.parse(url));
+        request.fields.addAll({
+          "product_id": productID,
+          "method": "POST",
+          "device_id": deviceId,
+          "device_token": deviceToken,
+          "platform": Platform.isIOS ? "IOS" : "Android"
+        });
+        print("${url}");
+        final response =
+            await request.send().timeout(Duration(seconds: timeout));
+        final respStr = await response.stream.bytesToString();
+        print("${respStr}");
+        final parsed = json.decode(respStr);
+        RecommendedProductsResponse model =
+            RecommendedProductsResponse.fromJson(parsed);
+        return model;
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
       }
     } catch (e) {
       print(e);

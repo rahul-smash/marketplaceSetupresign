@@ -129,8 +129,7 @@ class DialogUtils {
       context: context,
       builder: (BuildContext context) {
         return WillPopScope(
-          onWillPop: () {
-          },
+          onWillPop: () {},
           child: AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -151,7 +150,7 @@ class DialogUtils {
                   return InkWell(
                     onTap: () {
                       Navigator.pop(context, areaObject);
-                      },
+                    },
                     child: ListTile(
                       title: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -159,7 +158,8 @@ class DialogUtils {
                           children: <Widget>[
                             Expanded(
                               child: Text(areaObject.city.city,
-                                  style: TextStyle(color: Colors.black,fontSize: 16)),
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 16)),
                             ),
                           ]),
                     ),
@@ -172,7 +172,7 @@ class DialogUtils {
                 child: new Text("Cancel"),
                 textColor: Colors.blue,
                 onPressed: () {
-                  Navigator.pop(context,null);
+                  Navigator.pop(context, null);
                   // true here means you clicked ok
                 },
               ),
@@ -218,7 +218,8 @@ class DialogUtils {
                           children: <Widget>[
                             Expanded(
                               child: Text(object.pickupAdd,
-                                  style: TextStyle(color: Colors.black,fontSize: 16)),
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 16)),
                             ),
                           ]),
                     ),
@@ -226,13 +227,12 @@ class DialogUtils {
                 },
               ),
             ),
-
             actions: <Widget>[
               new FlatButton(
                 child: new Text("Cancel"),
                 textColor: Colors.blue,
                 onPressed: () {
-                  Navigator.pop(context,null);
+                  Navigator.pop(context, null);
                   // true here means you clicked ok
                 },
               ),
@@ -244,7 +244,8 @@ class DialogUtils {
   }
 
   static Future<Variant> displayVariantsDialog(
-      BuildContext context, String title, List<Variant> variants) async {
+      BuildContext context, String title, List<Variant> variants,
+      {Variant selectedVariant}) async {
     return await showDialog<Variant>(
       context: context,
       builder: (BuildContext context) {
@@ -331,7 +332,7 @@ class DialogUtils {
                 child: new Text("Cancel"),
                 textColor: Colors.blue,
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context, selectedVariant);
                   // true here means you clicked ok
                 },
               ),
@@ -430,7 +431,8 @@ class DialogUtils {
   }
 
   static Future<bool> displayCommonDialog(
-      BuildContext context, String title, String message) async {
+      BuildContext context, String title, String message,
+      {String buttonText = 'OK'}) async {
     return await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -462,7 +464,7 @@ class DialogUtils {
                         color: Colors.black45,
                         width: MediaQuery.of(context).size.width),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 15, 0, 10),
+                      padding: EdgeInsets.fromLTRB(10, 15, 10, 10),
                       child: Center(
                         child: Text(
                           "${message}",
@@ -481,7 +483,7 @@ class DialogUtils {
                           Container(
                             margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             child: FlatButton(
-                              child: Text('OK'),
+                              child: Text('$buttonText'),
                               color: appThemeSecondary,
                               textColor: Colors.white,
                               onPressed: () {
@@ -1312,10 +1314,12 @@ class DialogUtils {
                     return Divider();
                   },
                   itemBuilder: (context, index) {
-                    PaymentGatewaySettings paymentGatewaySettings = storeObject.paymentGatewaySettings[index];
+                    PaymentGatewaySettings paymentGatewaySettings =
+                        storeObject.paymentGatewaySettings[index];
                     return InkWell(
                       onTap: () {
-                        Navigator.pop(context, paymentGatewaySettings.paymentGateway);
+                        Navigator.pop(
+                            context, paymentGatewaySettings.paymentGateway);
                       },
                       child: ListTile(
                         title: Row(
@@ -1323,7 +1327,8 @@ class DialogUtils {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Expanded(
-                                child: Text(paymentGatewaySettings.paymentGateway,
+                                child: Text(
+                                    paymentGatewaySettings.paymentGateway,
                                     style: TextStyle(color: Colors.black)),
                               ),
                             ]),
@@ -1337,7 +1342,7 @@ class DialogUtils {
                   child: new Text("Cancel"),
                   textColor: Colors.blue,
                   onPressed: () {
-                    Navigator.pop(context,"");
+                    Navigator.pop(context, "");
                     // true here means you clicked ok
                   },
                 ),

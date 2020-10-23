@@ -6,6 +6,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:restroapp/src/models/CartTableData.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
+import 'package:restroapp/src/models/TaxCalulationResponse.dart';
+import 'package:restroapp/src/utils/Utils.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
@@ -20,6 +22,7 @@ class DatabaseHelper {
   static final String Products_Table = "products";
   static final String Favorite_Table = "favorite";
   static final String CART_Table = "cart";
+
 //  static final String VARIANT_Table = "Variant";
 
   // Database Columns
@@ -296,8 +299,8 @@ class DatabaseHelper {
     return subCategoryList;
   }
 
-  Future<List<SubCategoryModel>> getSubCategoriesFromID(String subCategoriesID) async {
-//    print("getSubCategoriesFromID ${DateTime.now().millisecondsSinceEpoch}");
+  Future<List<SubCategoryModel>> getSubCategoriesFromID(
+      String subCategoriesID) async {
     List<SubCategoryModel> subCategoryList = new List();
     var dbClient = await db;
     List<String> columnsToSelect = [
@@ -309,12 +312,11 @@ class DatabaseHelper {
       "deleted",
       "sort"
     ];
-//    print("getSubCategoriesFromID start query ${DateTime.now().millisecondsSinceEpoch}");
 
-    List<Map> resultList =
-        await dbClient.query(Sub_Categories_Table, columns: columnsToSelect,
-            where: 'id = ?',
-            whereArgs: [subCategoriesID]);
+    List<Map> resultList = await dbClient.query(Sub_Categories_Table,
+        columns: columnsToSelect,
+        where: 'id = ?',
+        whereArgs: [subCategoriesID]);
     if (resultList != null && resultList.isNotEmpty) {
       resultList.forEach((row) {
         SubCategoryModel subCategory = SubCategoryModel();
@@ -554,29 +556,62 @@ class DatabaseHelper {
     this method will get all the data from cart table and it will calculate the cart total price
     for the item added in the cart by the user
   * */
-  Future<double> getTotalPrice() async {
+  Future<double> getTotalPrice(
+      {bool isOrderVariations = false,
+      List<OrderDetail> responseOrderDetail}) async {
     double totalPrice = 0.00;
     //database connection
     var dbClient = await db;
-    List<String> columnsToSelect = [MRP_PRICE, PRICE, DISCOUNT, QUANTITY];
+    List<String> columnsToSelect = [MRP_PRICE, PRICE, DISCOUNT, QUANTITY, 'id',VARIENT_ID];
     List<Map> resultList =
         await dbClient.query(CART_Table, columns: columnsToSelect);
     // print the results
     if (resultList != null && resultList.isNotEmpty) {
       //print("--TotalPrice-result.length--- ${resultList.length}");
-      resultList.forEach((row) {
-        //print(row);
-      });
+//      resultList.forEach((row) {
+//        //print(row);
+//      });
       String price = "0";
       String quantity = "0";
+      int id = 0;
+      String varientID='0';
       resultList.forEach((row) {
         price = row[PRICE];
         quantity = row[QUANTITY];
+        id = row['id'];
+        varientID = row[VARIENT_ID];
         try {
           double total = int.parse(quantity) * double.parse(price);
           //print("-------total------${roundOffPrice(total,2)}");
           //print("-price ${price}---");
-          totalPrice = totalPrice + roundOffPrice(total, 2);
+          OrderDetail detail;
+          bool isProductOutOfStock = false;
+          if (isOrderVariations) {
+            InnerFor:
+            for (int i = 0; i < responseOrderDetail.length; i++) {
+              if (responseOrderDetail[i]
+                      .productStatus
+                      .contains('out_of_stock') &&
+                  int.parse(responseOrderDetail[i].productId)==id
+                  &&responseOrderDetail[i].variantId.compareTo(varientID)==0) {
+                isProductOutOfStock = true;
+                break InnerFor;
+              }
+              if (responseOrderDetail[i]
+                  .productStatus
+                  .compareTo('price_changed') ==
+                  0 &&
+                  int.parse(responseOrderDetail[i].productId)==id
+                  &&responseOrderDetail[i].variantId.compareTo(varientID)==0) {
+                detail=responseOrderDetail[i];
+                break InnerFor;
+              }
+            }
+          }
+          if (!isProductOutOfStock) {
+            double price=detail!=null&&detail.productStatus.contains('price_changed')?double.parse(detail.newPrice):total;
+            totalPrice = totalPrice + roundOffPrice(price, 2);
+          }
         } catch (e) {
           print(e);
         }
@@ -707,8 +742,46 @@ class DatabaseHelper {
     return cartList;
   }
 
-  Future<String> getCartItemsListToJson() async {
+  Future<String> getCartItemsListToJson(
+      {bool isOrderVariations = false,
+      List<OrderDetail> responseOrderDetail}) async {
     List<Product> productCartList = await getCartItemList();
+    if (isOrderVariations) {
+      for (int i = 0; i < responseOrderDetail.length; i++) {
+        if (responseOrderDetail[i].productStatus.contains('out_of_stock')) {
+          Product toBeRemovedProduct;
+          innerFor:
+          for (int j = 0; j < productCartList.length; j++) {
+            if (productCartList[j]
+                    .id
+                    .compareTo(responseOrderDetail[i].productId) ==
+                0&&productCartList[j].variantId.compareTo(responseOrderDetail[i].variantId)==0) {
+              toBeRemovedProduct = productCartList[j];
+              break innerFor;
+            }
+          }
+          if (toBeRemovedProduct != null) {
+            productCartList.remove(toBeRemovedProduct);
+          }
+        }
+
+        if (responseOrderDetail[i]
+            .productStatus
+            .compareTo('price_changed') ==
+            0) {
+          for (int j = 0; j < productCartList.length; j++){
+            if (productCartList[j]
+                .id
+                .compareTo(responseOrderDetail[i].productId) ==
+                0
+                &&productCartList[j].variantId.compareTo(responseOrderDetail[i].variantId)==0) {
+              productCartList[j].mrpPrice=responseOrderDetail[i].newMrpPrice;
+              productCartList[j].price=responseOrderDetail[i].newPrice;
+            }
+        }
+        }
+      }
+    }
     List jsonList = Product.encodeToJson(productCartList);
     String encodedDoughnut = jsonEncode(jsonList);
     return encodedDoughnut;
@@ -794,7 +867,6 @@ class DatabaseHelper {
     dbClient.delete(Favorite_Table);
 //    dbClient.delete(CART_Table);
   }
-
 
   Future close() async {
     var dbClient = await db;
