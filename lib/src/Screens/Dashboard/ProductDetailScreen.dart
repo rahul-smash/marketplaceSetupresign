@@ -1,15 +1,25 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_share/flutter_share.dart';
+import 'package:flutter_tags/flutter_tags.dart';
+import 'package:restroapp/src/Screens/BookOrder/MyCartScreen.dart';
+import 'package:restroapp/src/Screens/Offers/AvailableOffersList.dart';
+import 'package:restroapp/src/UI/CartBottomView.dart';
+import 'package:restroapp/src/UI/ProductTileView.dart';
+import 'package:restroapp/src/apihandler/ApiConstants.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
+import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/CartTableData.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
+import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
@@ -39,14 +49,25 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
   CartData cartData;
   bool showAddButton;
   int selctedTag;
+  StoreModel _storeModel;
   bool isVisible = true;
+  List<Product> _recommendedProducts = List();
   double totalPrice = 0.00;
+
+  bool _isProductOutOfStock = false;
+
+  int _current = 0;
+
+  CarouselController _carouselController;
+
+  var _pageController;
 
   @override
   initState() {
     super.initState();
     selctedTag = 0;
     showAddButton = false;
+    _carouselController = CarouselController();
     variant=widget.passedVariant;
     getDataFromDB();
     getProductDetail(widget.product.id);
@@ -104,23 +125,20 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           actions: <Widget>[
-            /*InkWell(
-              onTap: () async {
-                totalPrice = await databaseHelper.getTotalPrice();
-                if (totalPrice == 0.0) {
-                  Utils.showToast(AppConstant.addItems, false);
-                }else{
-                  Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (BuildContext context) => MyCartScreen(() {
-                    }),),
-                  );
-                }
-              },
-              child: Padding(
-                padding: EdgeInsets.only(top: 0.0, bottom: 0.0,left: 0,right: 10),
-                child: Icon(Icons.shopping_cart, color: Colors.white,size: 30,),
-              ),
-            ),*/
+            Visibility(
+                visible: _checkVisibility(),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.share,
+                    size: 25.0,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    share(widget.product,
+                        '${_storeModel.domain}/shop/product/${widget.product
+                            .id}');
+                  },
+                )),
             InkWell(
               onTap: () {
                 eventBus.fire(openHome());
@@ -128,7 +146,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
               },
               child: Padding(
                 padding:
-                    EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
+                EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
                 child: Icon(
                   Icons.home,
                   color: Colors.white,
@@ -194,35 +212,9 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
           children: <Widget>[
             Padding(
               padding:
-                  EdgeInsets.only(top: 10.0, bottom: 10.0, left: 40, right: 40),
+              EdgeInsets.only(top: 10.0, bottom: 10.0, left: 0, right: 0),
 //              EdgeInsets.all(0),
-              child: imageUrl == ""
-                  ? Container(
-                      child: Center(
-                        child: Utils.getImgPlaceHolder(),
-                      ),
-                    )
-                  : Padding(
-                      padding: EdgeInsets.all(0),
-                      child: Container(
-                        /*child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: CachedNetworkImage(
-                    imageUrl: "${imageUrl}", fit: BoxFit.cover
-                  ),
-                ),*/
-                        child: Center(
-                          child: CachedNetworkImage(
-                            height: 280,
-                            imageUrl: "${imageUrl}",
-                            fit: BoxFit.fitWidth,
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                          ),
-                        ),
-                      )),
+              child: _getImageView(),
             ),
             Visibility(
               visible:
@@ -246,6 +238,27 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
               ),
             ),
 //            favIcon(),
+            Visibility(
+              visible: _checkOutOfStock(),
+              child: Container(
+                height: 280.0,
+                color: Colors.white54,
+                child: Center(
+                  child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.red, width: 2),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Padding(
+                        padding: EdgeInsets.all(5),
+                        child: Text(
+                          "Out of Stock",
+                          style: TextStyle(color: Colors.red, fontSize: 18),
+                        ),
+                      )),
+                ),
+              ),
+            )
           ],
           overflow: Overflow.clip,
         ),
@@ -272,30 +285,30 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                 Padding(
                   padding: EdgeInsets.only(top: 10.0, left: 20.0),
                   child: (discount == "0.00" ||
-                          discount == "0" ||
-                          discount == "0.0")
+                      discount == "0" ||
+                      discount == "0.0")
                       ? Text(
-                          "${AppConstant.currency}${price}",
-                          style: TextStyle(
-                              color: grayColorTitle,
-                              fontWeight: FontWeight.w600),
-                        )
+                    "${AppConstant.currency}${price}",
+                    style: TextStyle(
+                        color: grayColorTitle,
+                        fontWeight: FontWeight.w600),
+                  )
                       : Row(
-                          children: <Widget>[
-                            Text(
-                              "${AppConstant.currency}${price}",
-                              style: TextStyle(
-                                  color: grayColorTitle,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            Text(" "),
-                            Text("${AppConstant.currency}${mrpPrice}",
-                                style: TextStyle(
-                                    decoration: TextDecoration.lineThrough,
-                                    color: grayColorTitle,
-                                    fontWeight: FontWeight.w400)),
-                          ],
-                        ),
+                    children: <Widget>[
+                      Text(
+                        "${AppConstant.currency}${price}",
+                        style: TextStyle(
+                            color: grayColorTitle,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Text(" "),
+                      Text("${AppConstant.currency}${mrpPrice}",
+                          style: TextStyle(
+                              decoration: TextDecoration.lineThrough,
+                              color: grayColorTitle,
+                              fontWeight: FontWeight.w400)),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 0, 10),
@@ -334,32 +347,68 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
             ],
           ),
         ),
-        Visibility(
-          visible: isVisible,
-          child: addDividerView(),
-        ),
-        !widget.isApiLoading
-            ? Padding(
-                padding: EdgeInsets.fromLTRB(20, 10, 0, 10),
-                child: Text(
-                  widget.product.description.isEmpty ? "" : "Product Detail",
-                  style: TextStyle(fontSize: 16.0),
-                ),
-              )
-            : Center(
-                child: CircularProgressIndicator(
-                    backgroundColor: Colors.black26,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.black26)),
+
+        !widget.isApiLoading &&
+            widget.product.description != null &&
+            widget.product.description.isNotEmpty
+            ? Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Visibility(
+              visible: isVisible,
+              child: addDividerView(),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(20, 10, 0, 10),
+              child: Text(
+                "Product Detail",
+                style: TextStyle(fontSize: 16.0),
               ),
-        !widget.isApiLoading
-            ? Padding(
-                padding:
-                    const EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
-                child: Html(
-                  data: "${widget.product.description}",
-                  padding: EdgeInsets.all(10.0),
-                ),
-              )
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 5.0, left: 10.0, right: 10.0),
+              child: Html(
+                data: "${widget.product.description}",
+                padding: EdgeInsets.all(10.0),
+              ),
+            )
+          ],
+        )
+            : !widget.isApiLoading
+            ? Container()
+            : Center(
+          child: CircularProgressIndicator(
+              backgroundColor: Colors.black26,
+              valueColor:
+              AlwaysStoppedAnimation<Color>(Colors.black26)),
+        ),
+        _recommendedProducts.length > 0
+            ? Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            addDividerView(),
+            Padding(
+              padding: EdgeInsets.fromLTRB(20, 10, 0, 10),
+              child: Text(
+                "Recommended Products",
+                style: TextStyle(
+                    fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            ListView.builder(
+              itemCount: _recommendedProducts.length,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                Product product = _recommendedProducts[index];
+                return ProductTileItem(product, () {
+//              bottomBar.state.updateTotalPrice();
+                }, ClassType.SubCategory);
+              },
+            )
+          ],
+        )
             : Container(),
       ],
     );
@@ -432,7 +481,10 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
   }
 
   Widget addQuantityView() {
-    return Container(
+    return
+      Visibility(
+          visible: !_isProductOutOfStock,
+          child:Container(
       width: 100,
       height: 30,
       decoration: BoxDecoration(
@@ -443,14 +495,16 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       child: showAddButton == true
           ? InkWell(
               onTap: () {
-                //print("add onTap");
-                setState(() {
-                  counter++;
-                  showAddButton = false;
-                  // insert/update to cart table
-                  insertInCartTable(widget.product, counter);
-                });
-                eventBus.fire(onCounterUpdate(counter, widget.product.id,variantId));
+              //print("add onTap");
+              if (_checkStockQuantity(counter)){
+    setState(() {
+      counter++;
+      showAddButton = false;
+      // insert/update to cart table
+      insertInCartTable(widget.product, counter);
+    });
+    eventBus.fire(onCounterUpdate(counter, widget.product.id, variantId));
+  }
               },
               child: Container(
                 child: Center(
@@ -524,7 +578,8 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                     width: 30.0, // you can adjust the width as you need
                     child: GestureDetector(
                       onTap: () {
-                        setState(() => counter++);
+                        if (_checkStockQuantity(counter)){
+                          setState(() => counter++);
                         if (counter == 0) {
                           // delete from cart table
                           removeFromCartTable(widget.product.variantId);
@@ -533,6 +588,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                           insertInCartTable(widget.product, counter);
                         }
                         eventBus.fire(onCounterUpdate(counter, widget.product.id,variantId));
+                        }
                       },
                       child: Container(
                           width: 35,
@@ -553,7 +609,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                 ],
               ),
             ),
-    );
+    ));
   }
 
   void insertInCartTable(Product product, int quantity) {
@@ -621,21 +677,281 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
   Widget addDividerView() {
     return Container(
       height: 1,
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       color: grayColor,
       margin: EdgeInsets.only(top: 5.0, bottom: 10.0, left: 20, right: 20),
     );
   }
 
-  void getProductDetail(String productID) {
-    ApiController.getSubCategoryProductDetail(productID).then((value) async {
+  void getProductDetail(String productID) async {
+    _storeModel = await SharedPrefs.getStore();
+    ApiController.getSubCategoryProductDetail(productID).then((value) {
       setState(() {
-        widget.product = value.subCategories.first.products.first;
+        Product product = value.subCategories.first.products.first;
+        widget.product.productImages = product.productImages;
+        widget.product.description = product.description;
         widget.isApiLoading = false;
       });
-//      DatabaseHelper databaseHelper=new DatabaseHelper();
-//      databaseHelper.updateProductDetails(value.subCategories.first.products.first);
     });
+
+    if (_storeModel != null &&
+        _storeModel.recommendedProducts.compareTo("1") == 0)
+      ApiController.getRecommendedProducts(productID).then((value) {
+        if (value != null && value.success) {
+          for (var list in value.data) {
+            _recommendedProducts.addAll(list.products);
+          }
+          setState(() {});
+        }
+      });
+  }
+
+  bool _checkVisibility() {
+    bool isVisible = false;
+    if (_storeModel != null &&
+        _storeModel.domain != null &&
+        _storeModel.domain.isNotEmpty) {
+      isVisible = true;
+    }
+    return isVisible;
+  }
+
+  Future<void> share(Product product, String link) async {
+    await FlutterShare.share(
+        title: product.title,
+        text: 'You may like this ${product.title}',
+        linkUrl: link,
+        chooserTitle: 'Share');
+  }
+
+  Widget _getImageView() {
+    return widget.product.productImages != null &&
+        widget.product.productImages.isNotEmpty
+        ? Column(
+      children: <Widget>[
+        Container(
+          child: CarouselSlider.builder(
+            itemCount: widget.product.productImages.length,
+            carouselController: _carouselController,
+            options: CarouselOptions(
+//                    aspectRatio: 16 / 9,
+              height: 280,
+              initialPage: 0,
+              enableInfiniteScroll: false,
+              reverse: false,
+              autoPlay: false,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _current = index;
+                });
+              },
+              enlargeCenterPage: false,
+              autoPlayInterval: Duration(seconds: 3),
+              autoPlayAnimationDuration: Duration(milliseconds: 800),
+              autoPlayCurve: Curves.ease,
+              scrollDirection: Axis.horizontal,
+            ),
+            itemBuilder: (BuildContext context, int itemIndex) =>
+                Container(
+                  child: _makeBanner(context, itemIndex),
+                ),
+          ),
+        ),
+        Visibility(
+            visible: widget.product.productImages.length > 1,
+            child: Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: widget.product.productImages.map((url) {
+                  int index = widget.product.productImages.indexOf(url);
+                  return _current == index
+                      ? Container(
+                    width: 7.0,
+                    height: 7.0,
+                    margin: EdgeInsets.symmetric(
+                        vertical: 0.0, horizontal: 2.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: dotIncreasedColor,
+                    ),
+                  )
+                      : Container(
+                    width: 6.0,
+                    height: 6.0,
+                    margin: EdgeInsets.symmetric(
+                        vertical: 0.0, horizontal: 2.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromRGBO(0, 0, 0, 0.4),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ))
+      ],
+    )
+        : imageUrl == ""
+        ? Container(
+      child: Center(
+        child: Utils.getImgPlaceHolder(),
+      ),
+    )
+        : Padding(
+        padding: EdgeInsets.all(0),
+        child: Container(
+          /*child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: CachedNetworkImage(
+                    imageUrl: "${imageUrl}", fit: BoxFit.cover
+                  ),
+                ),*/
+          child: Center(
+            child: CachedNetworkImage(
+              imageUrl: "${imageUrl}",
+              height: 280,
+              fit: BoxFit.scaleDown,
+              placeholder: (context, url) =>
+                  CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+          ),
+        ));
+  }
+
+  Widget _makeBanner(BuildContext context, int _index) {
+    return Container(
+        height: 280,
+        child: Center(
+          child: CachedNetworkImage(
+            imageUrl: "${widget.product.productImages[_index].url}",
+            height: 280,
+            fit: BoxFit.scaleDown,
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          ),
+        ));
+  }
+
+  bool _checkOutOfStock() {
+    _isProductOutOfStock = false;
+//1)min_alert
+//if product min_stock_alert  number is less than or equal to the product stock -> make the product oos
+//2)threshold_quantity -
+//if product stock number is less than or equal to zero -> make the product oos
+//3)continue_selling -> no out of stock
+
+    Variant selectedVariant =
+    variant != null ? variant : findVariant(widget.product.variantId);
+    if (selectedVariant != null &&
+        selectedVariant.stockType != null &&
+        selectedVariant.stockType.isNotEmpty) {
+      switch (selectedVariant.stockType) {
+        case 'min_alert':
+          if (selectedVariant.minStockAlert != null &&
+              selectedVariant.stock != null) {
+            int stock = int.parse(selectedVariant.stock);
+            int minStockAlert = int.parse(selectedVariant.minStockAlert);
+            if (minStockAlert >= stock) {
+              _isProductOutOfStock = true;
+            }
+          }
+          break;
+        case 'threshold_quantity':
+          if (selectedVariant.stock != null) {
+            int stock = int.parse(selectedVariant.stock);
+            if (stock <= 0) {
+              _isProductOutOfStock = true;
+            }
+          }
+          break;
+        case 'continue_selling':
+          _isProductOutOfStock = false;
+          break;
+        default:
+          _isProductOutOfStock = false;
+      }
+    }
+    return _isProductOutOfStock;
+  }
+
+  Variant findVariant(String variantId) {
+    Variant foundVariant;
+    if (widget.product.variants != null)
+      for (int i = 0; i < widget.product.variants.length; i++) {
+        if (widget.product.variants[i].id.compareTo(variantId) == 0) {
+          foundVariant = widget.product.variants[i];
+          break;
+        }
+      }
+    return foundVariant;
+  }
+
+  PageController getPageController() {
+    //memory efficient
+    if (_pageController != null) _pageController.dispose();
+
+    return _pageController;
+  }
+
+  bool _checkStockQuantity(int counter) {
+    bool isProductAvailable = true;
+//1)min_alert
+//if product min_stock_alert  number is less than or equal to the product stock -> make the product oos
+//2)threshold_quantity -
+//if product stock number is less than or equal to zero -> make the product oos
+//3)continue_selling -> no out of stock
+
+    Variant selectedVariant =
+    variant != null ? variant : findVariant(widget.product.variantId);
+    if (selectedVariant != null &&
+        selectedVariant.stockType != null &&
+        selectedVariant.stockType.isNotEmpty) {
+      switch (selectedVariant.stockType) {
+        case 'threshold_quantity':
+          if (selectedVariant.stock != null) {
+            int stock = int.parse(selectedVariant.stock);
+            if (stock <= 0) {
+              isProductAvailable = false;
+              Utils.showToast("Out of Stock", true);
+            } else if (stock <= counter) {
+              isProductAvailable = false;
+              Utils.showToast(
+                  "Only ${counter} Items Available in Stocks", true);
+            } else {
+              isProductAvailable = true;
+            }
+          }
+          break;
+        case 'min_alert':
+          if (selectedVariant.stock != null &&
+              selectedVariant.minStockAlert != null) {
+            int stock = int.parse(selectedVariant.stock);
+            int minStockAlert = int.parse(selectedVariant.minStockAlert);
+            if (stock <= 0) {
+              isProductAvailable = false;
+              Utils.showToast("Out of Stock", true);
+            } else if (counter>=(stock-minStockAlert)) {
+              isProductAvailable = false;
+              Utils.showToast(
+                  "Only ${counter} Items Available in Stocks", true);
+            } else if (stock <= counter) {
+              isProductAvailable = false;
+              Utils.showToast(
+                  "Only ${counter} Items Available in Stocks", true);
+            } else {
+              isProductAvailable = true;
+            }
+          }
+          break;
+        default:
+          isProductAvailable = true;
+      }
+    }
+    return isProductAvailable;
   }
 
   Widget favIcon() {

@@ -143,8 +143,6 @@ void setStoreCurrency(StoreModel store, ConfigModel configObject) {
 
 void setAppThemeColors(StoreModel store) {
   AppThemeColors appThemeColors = store.appThemeColors;
-  appTheme = Color(int.parse(appThemeColors.appThemeColor));
-
   left_menu_header_bkground =
       Color(int.parse(appThemeColors.leftMenuHeaderBackgroundColor));
   left_menu_icon_colors = Color(int.parse(appThemeColors.leftMenuIconColor));
@@ -157,58 +155,6 @@ void setAppThemeColors(StoreModel store) {
   bottomBarIconColor = Color(int.parse(appThemeColors.bottomBarIconColor));
   bottomBarTextColor = Color(int.parse(appThemeColors.bottomBarTextColor));
   dotIncreasedColor = Color(int.parse(appThemeColors.dotIncreasedColor));
-  bottomBarBackgroundColor =
-      Color(int.parse(appThemeColors.bottom_bar_background_color));
-  leftMenuLabelTextColors =
-      Color(int.parse(appThemeColors.left_menu_label_Color));
-}
-
-Future<String> loadAsset() async {
-  return await rootBundle.loadString('assets/app_config.json');
-}
-
-  String branch_id =
-      await SharedPrefs.getStoreSharedValue(AppConstant.branch_id);
-  if (branch_id == null || branch_id.isEmpty) {
-  } else if (branch_id.isNotEmpty) {
-  StoreResponse storeData =
-      await ApiController.versionApiRequest("${configObject.storeId}");
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    runApp(ValueApp(packageInfo, configObject, storeData));
-  static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
-
-  ValueApp(this.packageInfo, this.configObject, this.storeData);
-      home: showHomeScreen(storeData, configObject,
-          packageInfo), //SplashScreen(configObject,storeData),
-Widget showHomeScreen(
-    StoreResponse model, ConfigModel configObject, PackageInfo packageInfo) {
-    setStoreCurrency(model.store, configObject);
-    SharedPrefs.storeSharedValue(
-        AppConstant.DeliverySlot, model.store.deliverySlot);
-    SharedPrefs.storeSharedValue(
-        AppConstant.is24x7Open, model.store.is24x7Open);
-    double currentVesrion = double.parse(version.substring(0, index1).trim());
-      apiVesrion = double.parse(
-          forceDownload[0].androidAppVerison.substring(0, index1).trim());
-    if (apiVesrion > currentVesrion) {
-      return HomeScreen(model.store, configObject, true);
-    } else {
-      return HomeScreen(model.store, configObject, false);
-  } else {
-void setStoreCurrency(StoreModel store, ConfigModel configObject) {
-  if (store.showCurrency == "symbol") {
-    if (store.currency_unicode.isEmpty) {
-    } else {
-  } else {
-  left_menu_header_bkground =
-      Color(int.parse(appThemeColors.leftMenuHeaderBackgroundColor));
-  left_menu_background_color =
-      Color(int.parse(appThemeColors.leftMenuBackgroundColor));
-  leftMenuWelcomeTextColors =
-      Color(int.parse(appThemeColors.leftMenuUsernameColor));
-  leftMenuUsernameColors =
-      Color(int.parse(appThemeColors.leftMenuUsernameColor));
   bottomBarBackgroundColor =
       Color(int.parse(appThemeColors.bottom_bar_background_color));
   leftMenuLabelTextColors =
@@ -251,3 +197,8 @@ void setStoreCurrency(StoreModel store, ConfigModel configObject) {
     appTheme = Color(int.parse(appThemeColors.appThemeColor));
     appThemeLight = appTheme.withOpacity(0.1);
   }
+}
+
+Future<String> loadAsset() async {
+  return await rootBundle.loadString('assets/app_config.json');
+}

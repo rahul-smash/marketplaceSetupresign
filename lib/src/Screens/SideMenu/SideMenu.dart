@@ -5,10 +5,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:restroapp/src/Screens/Favourites/Favourite.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginMobileScreen.dart';
+import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
 import 'package:restroapp/src/Screens/SideMenu/AboutScreen.dart';
 import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginEmailScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
+import 'package:restroapp/src/Screens/SideMenu/ReferEarn.dart';
+import 'package:restroapp/src/Screens/SideMenu/FAQScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -19,6 +22,7 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 
 import 'LoyalityPoints.dart';
@@ -60,12 +64,14 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
 //    _drawerItems.add(
 //        DrawerChildItem(DrawerChildConstants.MY_FAVORITES, "images/myfav.png"));
     _drawerItems.add(
-        DrawerChildItem(DrawerChildConstants.ABOUT_US, "images/about.png"));
+        DrawerChildItem(DrawerChildConstants.ABOUT_US, "images/about_image.png"));
     _drawerItems.add(DrawerChildItem(
         widget.store.isRefererFnEnable && AppConstant.isLoggedIn
             ? DrawerChildConstants.ReferEarn
             : DrawerChildConstants.SHARE,
         "images/refer.png"));
+    _drawerItems
+        .add(DrawerChildItem(DrawerChildConstants.FAQ, "images/about.png"));
     _drawerItems
         .add(DrawerChildItem(DrawerChildConstants.LOGIN, "images/sign_in.png"));
     try {
@@ -206,7 +212,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => MyOrderScreen(widget.store)),
+                builder: (context) => MyOrderScreenVersion2(widget.store)),
           );
           Map<String, dynamic> attributeMap = new Map<String, dynamic>();
           attributeMap["ScreenName"] = "MyOrderScreen";
@@ -318,6 +324,16 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
             }
           });
         }
+        break;
+      case DrawerChildConstants.FAQ:
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => FAQScreen(widget.store)),
+        );
+        Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+        attributeMap["ScreenName"] = "FAQ";
+        Utils.sendAnalyticsEvent("Clicked AboutScreen", attributeMap);
         break;
     }
   }
@@ -440,6 +456,7 @@ class DrawerChildConstants {
   static const MY_FAVORITES = "My Favorites";
   static const ABOUT_US = "About Us";
   static const SHARE = "Share";
+  static const FAQ = "FAQ";
   static const ReferEarn = "Refer & Earn";
   static const LOGIN = "Login";
   static const LOGOUT = "Logout";

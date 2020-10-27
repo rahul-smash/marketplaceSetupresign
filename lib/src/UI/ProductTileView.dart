@@ -36,12 +36,15 @@ class _ProductTileItemState extends State<ProductTileItem> {
   Variant variant;
   bool showAddButton;
 
+  bool _isProductOutOfStock = false;
+
   @override
   initState() {
     super.initState();
     showAddButton = false;
     getDataFromDB();
     listenCartEvent();
+    _checkOutOfStock(findNext: true);
   }
 
   @override
@@ -997,5 +1000,130 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //    );
 //
 //    return htmlText.replaceAll(exp, '');
+  }
+
+  _checkOutOfStock({bool findNext = false}) async {
+    _isProductOutOfStock = false;
+//1)min_alert
+//if product min_stock_alert  number is less than or equal to the product stock -> make the product oos
+//2)threshold_quantity -
+//if product stock number is less than or equal to zero -> make the product oos
+//3)continue_selling -> no out of stock
+
+    Variant selectedVariant =
+    variant != null ? variant : findVariant(widget.product.variantId);
+    if (selectedVariant != null &&
+        selectedVariant.stockType != null &&
+        selectedVariant.stockType.isNotEmpty) {
+      switch (selectedVariant.stockType) {
+        case 'min_alert':
+          if (selectedVariant.minStockAlert != null &&
+              selectedVariant.stock != null) {
+            int stock = int.parse(selectedVariant.stock);
+            int minStockAlert = int.parse(selectedVariant.minStockAlert);
+            if (minStockAlert >= stock) {
+              _isProductOutOfStock = true;
+            }
+          }
+          break;
+        case 'threshold_quantity':
+          if (selectedVariant.stock != null) {
+            int stock = int.parse(selectedVariant.stock);
+            if (stock <= 0) {
+              _isProductOutOfStock = true;
+            }
+          }
+          break;
+        case 'continue_selling':
+          _isProductOutOfStock = false;
+          break;
+        default:
+          _isProductOutOfStock = false;
+      }
+    }
+
+    if (findNext &&
+        variant == null &&
+        selectedVariant != null &&
+        _isProductOutOfStock &&
+        widget.product.variants != null &&
+        widget.product.variants.isNotEmpty) {
+      //find next variant which is in the stocks
+      for (int i = 0; i < widget.product.variants.length; i++) {
+        variant = widget.product.variants[i];
+        await _checkOutOfStock(findNext: false);
+      }
+    }
+    if (mounted) setState(() {});
+    return _isProductOutOfStock;
+  }
+
+  bool _checkStockQuantity(int counter) {
+    bool isProductAvailable = true;
+//1)min_alert
+//if product min_stock_alert  number is less than or equal to the product stock -> make the product oos
+//2)threshold_quantity -
+//if product stock number is less than or equal to zero -> make the product oos
+//3)continue_selling -> no out of stock
+
+    Variant selectedVariant =
+    variant != null ? variant : findVariant(widget.product.variantId);
+    if (selectedVariant != null &&
+        selectedVariant.stockType != null &&
+        selectedVariant.stockType.isNotEmpty) {
+      switch (selectedVariant.stockType) {
+        case 'threshold_quantity':
+          if (selectedVariant.stock != null) {
+            int stock = int.parse(selectedVariant.stock);
+            if (stock <= 0) {
+              isProductAvailable = false;
+              Utils.showToast("Out of Stock", true);
+            } else if (stock <= counter) {
+              isProductAvailable = false;
+              Utils.showToast(
+                  "Only ${counter} Items Available in Stocks", true);
+            } else {
+              isProductAvailable = true;
+            }
+          }
+          break;
+        case 'min_alert':
+          if (selectedVariant.stock != null &&
+              selectedVariant.minStockAlert != null) {
+            int stock = int.parse(selectedVariant.stock);
+            int minStockAlert = int.parse(selectedVariant.minStockAlert);
+            if (stock <= 0) {
+              isProductAvailable = false;
+              Utils.showToast("Out of Stock", true);
+            } else if (counter>=(stock-minStockAlert)) {
+              isProductAvailable = false;
+              Utils.showToast(
+                  "Only ${counter} Items Available in Stocks", true);
+            } else if (stock <= counter) {
+              isProductAvailable = false;
+              Utils.showToast(
+                  "Only ${counter} Items Available in Stocks", true);
+            } else {
+              isProductAvailable = true;
+            }
+          }
+          break;
+        default:
+          isProductAvailable = true;
+      }
+    }
+    return isProductAvailable;
+  }
+
+  Variant findVariant(String variantId) {
+    Variant foundVariant;
+    if (widget.product.variants != null)
+      for (int i = 0; i < widget.product.variants.length; i++) {
+        if (widget.product.variants[i].id.compareTo(variantId) == 0) {
+          foundVariant = widget.product.variants[i];
+          break;
+        }
+      }
+    return foundVariant;
   }
 }

@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/ContactScreen.dart';
 import 'package:restroapp/src/Screens/BookOrder/MyCartScreen.dart';
+import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
 import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
@@ -111,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (widget.showForceUploadAlert) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           DialogUtils.showForceUpdateDialog(context, store.storeName,
-              store.forceDownload[0].forceDownloadMessage);
+              store.forceDownload[0].forceDownloadMessage,storeModel: store);
         });
       } else {
         if (!checkIfStoreClosed()) {
