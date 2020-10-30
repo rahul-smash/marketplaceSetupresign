@@ -12,6 +12,7 @@ import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:html/parser.dart';
 
@@ -178,8 +179,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
                   weight = variant.weight;
                   variantId = variant.id;
                 } else {
-                  variantId = widget.product.variantId;
+                  variantId = variant==null? widget.product.variantId:variant.id;
                 }
+                _checkOutOfStock(findNext: false);
                 databaseHelper
                     .getProductQuantitiy(variantId)
                     .then((cartDataObj) {
@@ -273,6 +275,29 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                   ),
                                 ),
                               ),
+                              Visibility(
+                                visible: _isProductOutOfStock,
+                                child: Container(
+                                  height: 80.0,
+                                  color: Colors.white54,
+                                  child: Center(
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.red, width: 1),
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(5)),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(2),
+                                          child: Text(
+                                            "Out of Stock",
+                                            style: TextStyle(
+                                                color: Colors.red, fontSize: 12),
+                                          ),
+                                        )),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ),
@@ -568,6 +593,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                       setState(() {});
                                     });
                                   }
+                                  _checkOutOfStock(findNext: false);
                                 },
                               ))
                           .toList(),
@@ -678,14 +704,17 @@ class _ProductTileItemState extends State<ProductTileItem> {
               ? InkWell(
                   onTap: () {
                     //print("add onTap");
-                    setState(() {});
-                    counter++;
-                    showAddButton = false;
-                    insertInCartTable(widget.product, counter);
-                    widget.callback();
-                    eventBus.fire(
-                        onCounterUpdate(counter, widget.product.id, variantID));
-                  },
+                    if (_checkStockQuantity(counter)) {
+                      setState(() {});
+                      counter++;
+                      showAddButton = false;
+                      insertInCartTable(widget.product, counter);
+                      widget.callback();
+                      eventBus.fire(
+                          onCounterUpdate(
+                              counter, widget.product.id, variantID));
+                    }
+                    },
                   child: Container(
                     padding: EdgeInsets.only(left: 15, right: 15),
                     child: Center(
@@ -778,17 +807,18 @@ class _ProductTileItemState extends State<ProductTileItem> {
                           width: 25.0, // you can adjust the width as you need
                           child: GestureDetector(
                             onTap: () {
-                              setState(() => counter++);
-                              if (counter == 0) {
-                                // delete from cart table
-                                removeFromCartTable(widget.product.variantId);
-                              } else {
-                                // insert/update to cart table
-                                insertInCartTable(widget.product, counter);
-                              }
-                              eventBus.fire(onCounterUpdate(
-                                  counter, widget.product.id, variantID));
-                            },
+                              if (_checkStockQuantity(counter)) {
+                                setState(() => counter++);
+                                if (counter == 0) {
+                                  // delete from cart table
+                                  removeFromCartTable(widget.product.variantId);
+                                } else {
+                                  // insert/update to cart table
+                                  insertInCartTable(widget.product, counter);
+                                }
+                                eventBus.fire(onCounterUpdate(
+                                    counter, widget.product.id, variantID));
+                              }},
                             child: Container(
                                 width: 35,
                                 height: 25,

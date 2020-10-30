@@ -265,7 +265,8 @@ class Utils {
     //print("variants = ${product.variants} and ${classType}");
 
     if (classType == ClassType.CART) {
-      return Icon(Icons.keyboard_arrow_down, color: appThemeSecondary, size: 25);
+      return Icon(Icons.keyboard_arrow_down,
+          color: appThemeSecondary, size: 25);
     } else {
       bool isVariantNull = false;
       if (product.variants != null) {
@@ -588,10 +589,12 @@ class Utils {
     }
     return addressList;
   }
- static Future<String> getCartItemsListToJson(
+
+  static Future<String> getCartItemsListToJson(
       {bool isOrderVariations = true,
-        List<OrderDetail> responseOrderDetail}) async {
-    List jsonList = OrderDetail.encodeToJson(responseOrderDetail,removeOutOfStockProducts:true);
+      List<OrderDetail> responseOrderDetail}) async {
+    List jsonList = OrderDetail.encodeToJson(responseOrderDetail,
+        removeOutOfStockProducts: true);
     String encodedDoughnut = jsonEncode(jsonList);
     return encodedDoughnut;
   }
@@ -605,12 +608,15 @@ class Utils {
     }
   }
 
-  static Color colorGeneralization(
-      Color passedColor, String colorString) {
+
+  static Color colorGeneralization(Color passedColor, String colorString) {
     Color returnedColor = passedColor;
     if (colorString != null) {
-      returnedColor = Color(int.parse(
-          colorString.replaceAll("#", "0xff")));
+      try {
+        returnedColor = Color(int.parse(colorString.replaceAll("#", "0xff")));
+      } catch (e) {
+        print(e);
+      }
     }
     return returnedColor;
   }
