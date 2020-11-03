@@ -70,8 +70,8 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
             ? DrawerChildConstants.ReferEarn
             : DrawerChildConstants.SHARE,
         "images/refer.png"));
-    _drawerItems
-        .add(DrawerChildItem(DrawerChildConstants.FAQ, "images/about.png"));
+//    _drawerItems
+//        .add(DrawerChildItem(DrawerChildConstants.FAQ, "images/about.png"));
     _drawerItems
         .add(DrawerChildItem(DrawerChildConstants.LOGIN, "images/sign_in.png"));
     try {
