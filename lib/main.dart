@@ -193,6 +193,19 @@ void setAppThemeColors(StoreModel store) {
     categoryListingBoxBackgroundColor = Utils.colorGeneralization(
         categoryListingBoxBackgroundColor,
         webAppThemeColors.categoryListingBoxBackgroundColor);
+
+    bottomBarTextColor = Utils.colorGeneralization(
+        bottomBarBackgroundColor,
+        "#000000");
+    bottomBarIconColor= appTheme;
+    bottomBarBackgroundColor =
+        Utils.colorGeneralization(
+            bottomBarBackgroundColor,
+            "#ffffff");
+    leftMenuLabelTextColors =
+        Utils.colorGeneralization(
+            leftMenuLabelTextColors,
+            "#ffffff");
   } else {
     appTheme = Color(int.parse(appThemeColors.appThemeColor));
     appThemeLight = appTheme.withOpacity(0.1);
