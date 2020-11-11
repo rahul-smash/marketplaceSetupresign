@@ -107,17 +107,17 @@ class _MarketPlaceHomeCategoryViewState
                       ));
                     }).toList()),
                 Container(
-                  margin: EdgeInsets.only(top: 25,left: 10),
+                  margin: EdgeInsets.only(top: 30,left: 10),
                   height: 30,
                   child: ListView(
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     children: [
                         Wrap(children: [Container(
-                          margin:EdgeInsets.only(left:3,right:3),
+                          margin:EdgeInsets.only(left:3,right:4),
                           padding:EdgeInsets.fromLTRB(6,3,6,3),
                           decoration: BoxDecoration( border: Border.all(
-                              color: Colors.grey,
+                              color: grayLightColor,
                               width:  1),
                           borderRadius: BorderRadius.circular(2)),
                           child:  Row(
@@ -134,10 +134,10 @@ class _MarketPlaceHomeCategoryViewState
                             ],
                           ),)],),
                         Wrap(children: [Container(
-                          margin:EdgeInsets.only(left:3,right:3),
+                          margin:EdgeInsets.only(left:4,right:4),
                           padding:EdgeInsets.fromLTRB(6,3,6,3),
                           decoration: BoxDecoration( border: Border.all(
-                              color: Colors.grey,
+                              color:grayLightColor,
                               width:  1),
                           borderRadius: BorderRadius.circular(2)),
                           child:  Row(
@@ -149,10 +149,13 @@ class _MarketPlaceHomeCategoryViewState
                             ],
                           ),)],),
                         Wrap(children: [Container(
-                          margin:EdgeInsets.only(left:3,right:3),
+                          margin:EdgeInsets.only(left:4,right:4),
 
                           padding:EdgeInsets.fromLTRB(6,3,6,3),
-                          decoration: BoxDecoration( border: Border.all(
+                          decoration: BoxDecoration(
+                            color: grayLightColor,
+                              border: Border.all(
+
                               color: Colors.grey,
                               width:  1),
                           borderRadius: BorderRadius.circular(2)),
@@ -164,7 +167,7 @@ class _MarketPlaceHomeCategoryViewState
                               ),
                               SizedBox(width: 5,),
                               Image.asset('images/cancelicon.png',
-                                width: 12,
+                                width: 10,
                                 fit: BoxFit.scaleDown,
                                 color: Colors.black,
                               ),
@@ -172,9 +175,10 @@ class _MarketPlaceHomeCategoryViewState
                             ],
                           ),)],),
                         Wrap(children: [Container(
+                          margin:EdgeInsets.only(left:4,right:4),
                           padding:EdgeInsets.fromLTRB(6,3,6,3),
                           decoration: BoxDecoration( border: Border.all(
-                              color: Colors.grey,
+                              color: grayLightColor,
                               width:  1),
                           borderRadius: BorderRadius.circular(2)),
                           child:  Row(
@@ -186,10 +190,10 @@ class _MarketPlaceHomeCategoryViewState
                             ],
                           ),)],),
                         Wrap(children: [Container(
-                          margin:EdgeInsets.only(left:3,right:3),
+                          margin:EdgeInsets.only(left:4,right:4),
                           padding:EdgeInsets.fromLTRB(6,3,6,3),
                           decoration: BoxDecoration( border: Border.all(
-                              color: Colors.grey,
+                              color: grayLightColor,
                               width:  1),
                           borderRadius: BorderRadius.circular(2)),
                           child:  Row(
@@ -201,10 +205,10 @@ class _MarketPlaceHomeCategoryViewState
                             ],
                           ),)],),
                         Wrap(children: [Container(
-                          margin:EdgeInsets.only(left:3,right:3),
+                          margin:EdgeInsets.only(left:4,right:4),
                           padding:EdgeInsets.fromLTRB(6,3,6,3),
                           decoration: BoxDecoration( border: Border.all(
-                              color: Colors.grey,
+                              color: grayLightColor,
                               width:  1),
                           borderRadius: BorderRadius.circular(2)),
                           child:  Row(
