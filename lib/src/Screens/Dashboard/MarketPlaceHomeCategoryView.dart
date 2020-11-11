@@ -66,8 +66,11 @@ class _MarketPlaceHomeCategoryViewState
             child: Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Padding(
                   padding: EdgeInsets.all(10),
                   child: Row(
@@ -103,6 +106,118 @@ class _MarketPlaceHomeCategoryViewState
                         selectedSubCategoryId: widget.selectedCategoryId,
                       ));
                     }).toList()),
+                Container(
+                  margin: EdgeInsets.only(top: 25,left: 10),
+                  height: 30,
+                  child: ListView(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                        Wrap(children: [Container(
+                          margin:EdgeInsets.only(left:3,right:3),
+                          padding:EdgeInsets.fromLTRB(6,3,6,3),
+                          decoration: BoxDecoration( border: Border.all(
+                              color: Colors.grey,
+                              width:  1),
+                          borderRadius: BorderRadius.circular(2)),
+                          child:  Row(
+                            children: [
+                              Image.asset('images/filtericon.png',
+                                  width: 12,
+                                  fit: BoxFit.scaleDown,
+                                 ),
+                              SizedBox(width: 5,),
+                              Text(
+                                'Filters',
+                                style: TextStyle(color: Colors.grey),
+                              )
+                            ],
+                          ),)],),
+                        Wrap(children: [Container(
+                          margin:EdgeInsets.only(left:3,right:3),
+                          padding:EdgeInsets.fromLTRB(6,3,6,3),
+                          decoration: BoxDecoration( border: Border.all(
+                              color: Colors.grey,
+                              width:  1),
+                          borderRadius: BorderRadius.circular(2)),
+                          child:  Row(
+                            children: [
+                              Text(
+                                'Nearest',
+                                style: TextStyle(color: Colors.grey),
+                              )
+                            ],
+                          ),)],),
+                        Wrap(children: [Container(
+                          margin:EdgeInsets.only(left:3,right:3),
+
+                          padding:EdgeInsets.fromLTRB(6,3,6,3),
+                          decoration: BoxDecoration( border: Border.all(
+                              color: Colors.grey,
+                              width:  1),
+                          borderRadius: BorderRadius.circular(2)),
+                          child:  Row(
+                            children: [
+                              Text(
+                                'Distance',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              SizedBox(width: 5,),
+                              Image.asset('images/cancelicon.png',
+                                width: 12,
+                                fit: BoxFit.scaleDown,
+                                color: Colors.black,
+                              ),
+
+                            ],
+                          ),)],),
+                        Wrap(children: [Container(
+                          padding:EdgeInsets.fromLTRB(6,3,6,3),
+                          decoration: BoxDecoration( border: Border.all(
+                              color: Colors.grey,
+                              width:  1),
+                          borderRadius: BorderRadius.circular(2)),
+                          child:  Row(
+                            children: [
+                              Text(
+                                'Cuisne',
+                                style: TextStyle(color: Colors.grey),
+                              )
+                            ],
+                          ),)],),
+                        Wrap(children: [Container(
+                          margin:EdgeInsets.only(left:3,right:3),
+                          padding:EdgeInsets.fromLTRB(6,3,6,3),
+                          decoration: BoxDecoration( border: Border.all(
+                              color: Colors.grey,
+                              width:  1),
+                          borderRadius: BorderRadius.circular(2)),
+                          child:  Row(
+                            children: [
+                              Text(
+                                'Rating 4.0+',
+                                style: TextStyle(color: Colors.grey),
+                              )
+                            ],
+                          ),)],),
+                        Wrap(children: [Container(
+                          margin:EdgeInsets.only(left:3,right:3),
+                          padding:EdgeInsets.fromLTRB(6,3,6,3),
+                          decoration: BoxDecoration( border: Border.all(
+                              color: Colors.grey,
+                              width:  1),
+                          borderRadius: BorderRadius.circular(2)),
+                          child:  Row(
+                            children: [
+                              Text(
+                                'Others',
+                                style: TextStyle(color: Colors.grey),
+                              )
+                            ],
+                          ),)],),
+                    ],
+                  ),
+                ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
                   child: Row(
@@ -422,7 +537,6 @@ class _MarketPlaceHomeCategoryViewState
               ],
             )
           ],
-
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
         )
