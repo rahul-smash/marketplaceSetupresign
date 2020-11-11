@@ -139,6 +139,21 @@ flutter:
     - images/menuicon.png
     - images/searchicon.png
     - images/placeHolder.png
+    - images/cancelicon.png
+    - images/dropdownarrowicon.png
+    - images/favouriteicon.png
+    - images/filtericon.png
+    - images/mealsforonebg.png
+    - images/newarrivalsbg.png
+    - images/nonvegbd.png
+    - images/offersbg.png
+    - images/premiumbg.png
+    - images/purevegbg.png
+    - images/safetybg.png
+    - images/staricon.png
+    - images/trendingbg.png
+    - images/img1.png
+    - images/img2.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

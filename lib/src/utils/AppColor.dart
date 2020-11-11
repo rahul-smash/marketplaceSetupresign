@@ -40,6 +40,7 @@ Color grayColorTitle = Color(0xff474d54);
 Color grayColorDescription = Color(0xff9A9DA1);
 Color grayLightColor = Color(0xFFEEEEEE);
 Color grayLightColorSecondary = Color(0xFFDCDCDC);
+Color whiteWith70Opacity = Color(0xCCFFFFFF);
 
 Color lightRed = Color(0xFFFBF1F0);
 

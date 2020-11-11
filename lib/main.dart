@@ -7,6 +7,7 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info/package_info.dart';
 import 'package:restroapp/src/Screens/Dashboard/HomeScreen.dart';
+import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/ConfigModel.dart';
@@ -119,9 +120,9 @@ Widget showHomeScreen(
     //print("--currentVesrion--${currentVesrion} and ${apiVesrion}");
     if (apiVesrion > currentVesrion) {
       //return ForceUpdateAlert(forceDownload[0].forceDownloadMessage,appName);
-      return HomeScreen(model.store, configObject, true);
+      return MarketPlaceHomeScreen(model.store, configObject, true);
     } else {
-      return HomeScreen(model.store, configObject, false);
+      return MarketPlaceHomeScreen(model.store, configObject, false);
     }
   } else {
     return Container();

@@ -38,7 +38,7 @@ class CategoryModel {
     id: json["id"],
     title: json["title"],
     version: json["version"],
-    image300200: json["image_300_200"],
+    image300200: json["image"],
     subCategory: new List<SubCategory>.from(json["sub_category"].map((x) => SubCategory.fromJson(x))),
   );
 
