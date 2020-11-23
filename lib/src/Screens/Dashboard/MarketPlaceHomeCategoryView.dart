@@ -106,6 +106,7 @@ class _MarketPlaceHomeCategoryViewState
                         selectedSubCategoryId: widget.selectedCategoryId,
                       ));
                     }).toList()),
+                //Static
                 Container(
                   margin: EdgeInsets.only(top: 30,left: 10),
                   height: 30,
@@ -287,6 +288,7 @@ class _MarketPlaceHomeCategoryViewState
         ListView(
           padding: EdgeInsets.only(bottom: 20),
           children: [
+            //to be dynamic
             Stack(
               children: [
                 Container(
