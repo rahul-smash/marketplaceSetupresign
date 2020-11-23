@@ -1,6 +1,6 @@
 class ApiConstants{
   static String baseUrl = 'https://app.restroapp.com/storeId/api/';
-  static String baseUrl2 = 'https://app.restroapp.com/storeId/api/';
+  static String baseUrl2 = 'http://devmarketplace.restroapp.com/storeId/v1/marketplace/';
 
   static String storeList = 'storeList';
   static String version = 'version';
@@ -81,5 +81,10 @@ class ApiConstants{
 
   static final String enterOtp = "Please enter otp number";
 
+  //----------------------MARKET PLACE APIs-----------------------------
+
+  static final String homescreenCategories = "homescreen/getCategories";
+  static final String homescreenTags = "homescreen/getTags";
+  static final String homescreenStores = "homescreen/getStores";
 
 }

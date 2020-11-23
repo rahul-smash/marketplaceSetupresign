@@ -11,6 +11,7 @@ import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/AdminLoginModel.dart';
 import 'package:restroapp/src/models/CancelOrderModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
+import 'package:restroapp/src/models/Categorys.dart';
 import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/CreatePaytmTxnTokenResponse.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
@@ -29,8 +30,10 @@ import 'package:restroapp/src/models/SearchTagsModel.dart';
 import 'package:restroapp/src/models/StoreAreaResponse.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
+import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/StripeCheckOutModel.dart';
 import 'package:restroapp/src/models/StripeVerifyModel.dart';
+import 'package:restroapp/src/models/TagsModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/StoreDeliveryAreasResponse.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
@@ -87,6 +90,108 @@ class ApiController {
         DatabaseHelper databaseHelper = DatabaseHelper();
         databaseHelper.clearDataBase();
       }
+
+      return storeData;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<CategoriesModel> categoriesApiRequest() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+    var url = ApiConstants.baseUrl2.replaceAll("storeId",AppConstant.brandID)
+        +ApiConstants.homescreenCategories;
+
+    print("----url--${url}");
+    try {
+      FormData formData = new FormData.fromMap({
+        "device_id": deviceId,
+        "device_token": "${deviceToken}",
+        "platform": Platform.isIOS ? "IOS" : "Android"
+      });
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      CategoriesModel storeData =
+      CategoriesModel.fromJson(json.decode(response.data));
+      print("-------categoriesModel ---${storeData.success}");
+
+      return storeData;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<TagsModel> tagsApiRequest() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+    var url = ApiConstants.baseUrl2.replaceAll("storeId",AppConstant.brandID)
+        +ApiConstants.homescreenTags;
+
+    print("----url--${url}");
+    try {
+      FormData formData = new FormData.fromMap({
+        "device_id": deviceId,
+        "device_token": "${deviceToken}",
+        "platform": Platform.isIOS ? "IOS" : "Android"
+      });
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      TagsModel storeData =
+      TagsModel.fromJson(json.decode(response.data));
+      print("-------tagsApiRequest ---${storeData.success}");
+
+      return storeData;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<StoresModel> storesApiRequest() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+    var url = ApiConstants.baseUrl2.replaceAll("storeId",AppConstant.brandID)
+        +ApiConstants.homescreenStores;
+
+    print("----url--${url}");
+    try {
+      FormData formData = new FormData.fromMap({
+        "device_id": deviceId,
+        "device_token": "${deviceToken}",
+        "platform": Platform.isIOS ? "IOS" : "Android"
+      });
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      StoresModel storeData =
+      StoresModel.fromJson(json.decode(response.data));
+      print("-------StoresModel ---${storeData.success}");
 
       return storeData;
     } catch (e) {

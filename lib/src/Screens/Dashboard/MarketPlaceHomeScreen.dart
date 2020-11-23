@@ -21,6 +21,7 @@ import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
+import 'package:restroapp/src/models/Categorys.dart';
 import 'package:restroapp/src/models/ConfigModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
@@ -81,6 +82,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   String selectedSubCategoryId;
   CategoryModel selectedCategory;
+  CategoriesModel categoriesModel;
 
   _MarketPlaceHomeScreenState(this.store);
 
@@ -643,13 +645,20 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   void getCategoryApi() {
     isLoading = true;
-    ApiController.getCategoriesApiRequest(store.id).then((response) {
+    ApiController.categoriesApiRequest().then((response){
+      setState(() {
+        isLoading = false;
+        this.categoriesModel = response;
+        print("---CategoriesData-${categoriesModel.success}---");
+      });
+    });
+    /*ApiController.getCategoriesApiRequest(store.id).then((response) {
       setState(() {
         isLoading = false;
         this.categoryResponse = response;
-        getHomeCategoryProductApi();
+        //getHomeCategoryProductApi();
       });
-    });
+    });*/
   }
 
   void getHomeCategoryProductApi() {
@@ -1004,10 +1013,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                 )),
             isLoading
                 ? Center(child: CircularProgressIndicator())
-                : categoryResponse == null
+                : categoriesModel == null
                 ? Center(child: Text(""))
                 : !isCategoryViewSelected
-                ? MarketPlaceHomeCategoryView(
+                ? MarketPlaceHomeCategoryView(categoriesModel,
               categoryResponse,
               store,
               subCategory,
@@ -1042,11 +1051,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                   mainAxisSpacing: 1.0,
                   crossAxisSpacing: 0.0,
                   shrinkWrap: true,
-                  children: categoryResponse.categories
-                      .map((CategoryModel model) {
+                  children: categoryResponse.categories.map((CategoryModel model) {
                     return GridTile(
-                        child:
-                        CategoryView(model, store, false, 0));
+                        child: CategoryView(model, store, false, 0));
                   }).toList()),
             )
           ],

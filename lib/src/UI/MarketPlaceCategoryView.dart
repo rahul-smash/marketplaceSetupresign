@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
+import 'package:restroapp/src/models/Categorys.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -10,7 +11,8 @@ import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class MarketPlaceCategoryView extends StatelessWidget {
-  final CategoryModel categoryModel;
+  //final CategoryModel categoryModel;
+  CategoriesData categoryModel;
   StoreModel store;
   int index;
   bool isComingFromBaner;
@@ -88,7 +90,7 @@ class MarketPlaceCategoryView extends StatelessWidget {
   }
 
   _onTapPressed(BuildContext context) async {
-    if (Utils.checkIfStoreClosed(store)) {
+    /*if (Utils.checkIfStoreClosed(store)) {
       DialogUtils.displayCommonDialog(context, store.storeName, store.storeMsg);
     } else {
       if (categoryModel != null && categoryModel.subCategory.isNotEmpty) {
@@ -109,11 +111,11 @@ class MarketPlaceCategoryView extends StatelessWidget {
           }
         }
       }
-    }
+    }*/
   }
 
   void _onListTapHandle(BuildContext context) {
-    if (Utils.checkIfStoreClosed(store)) {
+    /*if (Utils.checkIfStoreClosed(store)) {
       DialogUtils.displayCommonDialog(context, store.storeName, store.storeMsg);
     } else {
       if (categoryModel != null && categoryModel.subCategory.isNotEmpty) {
@@ -135,11 +137,11 @@ class MarketPlaceCategoryView extends StatelessWidget {
           }
         }
       }
-    }
+    }*/
   }
 
   bool _isCategoryViewSelected() {
-    if (isListView &&
+    /*if (isListView &&
         selectedSubCategoryId != null &&
         categoryModel != null &&
         categoryModel.subCategory != null &&
@@ -149,6 +151,7 @@ class MarketPlaceCategoryView extends StatelessWidget {
           0;
     } else {
       return false;
-    }
+    }*/
+    return false;
   }
 }
