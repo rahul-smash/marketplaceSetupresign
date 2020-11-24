@@ -236,6 +236,34 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                       );
                     }).toList()
                 ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(10, 15, 10, 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "Restaurants",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      Visibility(
+                        visible: true,
+                        child: InkWell(
+                          child: Text(
+                            "View all",
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: appThemeSecondary,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
                 storeData == null ? Container() : getProductsWidget()
               ],
             )),
@@ -247,7 +275,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
     return Column(
       children: <Widget>[
         Container(
-          height: 10,
+          height: 0,
           width: MediaQuery.of(context).size.width,
         ),
 
