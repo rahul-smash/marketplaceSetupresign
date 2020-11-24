@@ -761,6 +761,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     }
 
     return AppBar(
+      titleSpacing: 5,
       title: widget.configObject.isMultiStore == false
           ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
