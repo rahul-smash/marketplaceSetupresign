@@ -165,10 +165,10 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                           height: 30,
                           margin:EdgeInsets.only(left:4,right:4),
                           padding:EdgeInsets.fromLTRB(6,3,6,3),
-                          decoration: BoxDecoration( border: Border.all(
-                              color:grayLightColor,
-                              width:  1),
-                              borderRadius: BorderRadius.circular(2)),
+                          decoration: BoxDecoration(
+                              border: Border.all(color:grayLightColor,width:  1),
+                              borderRadius: BorderRadius.circular(2)
+                          ),
                           child:  index == 0
                               ? Row(
                             children: [
@@ -210,7 +210,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                     ],
                   ),
                 ),
-                GridView.count(
+                tagsModel == null ? Utils.showIndicator() :GridView.count(
                     crossAxisCount: 4,
                     childAspectRatio: 1.4,
                     physics: NeverScrollableScrollPhysics(),
@@ -219,17 +219,23 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                     mainAxisSpacing: 1.0,
                     crossAxisSpacing: 0.0,
                     shrinkWrap: true,
-                    children: widget.quickListUrls.map((String url) {
+                    children: tagsModel.data.map((TagData tagObject) {
+
                       return Container(
-                          margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                          margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
                             image: DecorationImage(
-                              image: AssetImage(url),
+                              image: NetworkImage("${tagObject.image}"),
                               fit: BoxFit.cover,
                             ),
-                          ));
-                    }).toList()),
+                          ),
+                        child: Center(child: Text("${tagObject.name}",maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.white),),),
+                      );
+                    }).toList()
+                ),
                 storeData == null ? Container() : getProductsWidget()
               ],
             )),
@@ -241,7 +247,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
     return Column(
       children: <Widget>[
         Container(
-          height: 20,
+          height: 10,
           width: MediaQuery.of(context).size.width,
         ),
 
@@ -259,9 +265,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                 return Stack(
                   children: [
                     Container(
-                      margin: EdgeInsets.all(
-                        10,
-                      ),
+                      margin: EdgeInsets.all(10),
                       decoration: new BoxDecoration(
                         borderRadius: BorderRadius.only(
                             topRight: Radius.circular(5),

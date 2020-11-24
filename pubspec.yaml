@@ -51,7 +51,7 @@ dependencies:
   flutter_pull_to_refresh: ^1.0.0
   dio: ^3.0.9  #latest version
 #  webview_flutter: ^1.0.3
-  webview_flutter: ^0.3.22+1
+  webview_flutter: ^0.3.24
   keyboard_visibility: ^0.5.6
 #  flutter_inappwebview: ^4.0.0+4
   flutter_open_whatsapp: ^0.1.2

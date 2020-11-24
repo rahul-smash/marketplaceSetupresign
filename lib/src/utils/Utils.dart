@@ -63,6 +63,17 @@ class Utils {
     return packageInfo;
   }
 
+  static Widget showIndicator() {
+    return Container(
+      child: Center(
+        child: CircularProgressIndicator(
+            backgroundColor: Colors.black26,
+            valueColor:
+            AlwaysStoppedAnimation<Color>(Colors.black26)),
+      ),
+    );
+  }
+
   static void hideKeyboard(BuildContext context) {
     FocusScope.of(context).requestFocus(FocusNode());
   }

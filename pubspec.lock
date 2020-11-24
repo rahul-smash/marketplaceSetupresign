@@ -112,7 +112,7 @@ packages:
       name: csslib
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.15.0"
+    version: "0.16.2"
   device_info:
     dependency: "direct main"
     description:
