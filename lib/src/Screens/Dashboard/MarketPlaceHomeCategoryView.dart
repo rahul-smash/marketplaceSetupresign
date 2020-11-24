@@ -410,11 +410,15 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                           decoration: BoxDecoration(
                               color: whiteWith70Opacity,
                               borderRadius: BorderRadius.circular(5)),
-                          child: Text(
-                            "45 mins",
-                            style: TextStyle(color: Colors.black, fontSize: 12),
+                          child: Center(
+                            child: Text(
+                              "45 mins",
+                              style: TextStyle(color: Colors.black, fontSize: 12),
+                            ),
                           ),
-                        ))
+                          width: 70,
+                        )
+                    ),
                   ],
                 );
               },
