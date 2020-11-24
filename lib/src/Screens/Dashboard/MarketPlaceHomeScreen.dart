@@ -6,14 +6,14 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geocoder/model.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
-import 'package:restroapp/src/Screens/Dashboard/ContactScreen.dart';
 import 'package:restroapp/src/Screens/BookOrder/MyCartScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeCategoryView.dart';
 import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
-import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
-import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
 import 'package:restroapp/src/Screens/SideMenu/SideMenu.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
@@ -34,11 +34,11 @@ import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'ForceUpdate.dart';
-import 'HomeCategoryListView.dart';
 import 'SearchScreen.dart';
 import 'dart:io';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
+import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart' as permission_handler;
 
 class MarketPlaceHomeScreen extends StatefulWidget {
   final StoreModel store;
@@ -54,6 +54,7 @@ class MarketPlaceHomeScreen extends StatefulWidget {
 }
 
 class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
+
   StoreModel store;
   FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
   List<NetworkImage> imgList = [];
@@ -83,6 +84,12 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   String selectedSubCategoryId;
   CategoryModel selectedCategory;
   CategoriesModel categoriesModel;
+
+  Location location = new Location();
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
+  String locationAddress = "Select Location";
 
   _MarketPlaceHomeScreenState(this.store);
 
@@ -758,16 +765,73 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Visibility(
-            visible: store.homePageTitleStatus,
-            child: Text(
-              store.homePageTitle != null
+          InkWell(
+            onTap: () async {
+              print("AppBar onTap");
+              bool isNetworkAvailable = await Utils.isNetworkAvailable();
+              if(!isNetworkAvailable){
+                Utils.showToast("No Internet connection",false);
+                return;
+              }
+              LatLng _initialPosition;
+              _serviceEnabled = await location.serviceEnabled();
+              if (!_serviceEnabled) {
+                _serviceEnabled = await location.requestService();
+                if (!_serviceEnabled) {
+                  return;
+                }
+              }
+              _permissionGranted = await location.hasPermission();
+              print("permission sttsu $_permissionGranted");
+              if (_permissionGranted == PermissionStatus.denied) {
+                print("permission deniedddd");
+                _permissionGranted = await location.requestPermission();
+                if (_permissionGranted != PermissionStatus.granted) {
+                  print("permission not grantedd");
+                  var result = await DialogUtils.displayDialog(context, "Location Permission Required",
+                      "Please enable location permissions in settings.", "Cancel", "Ok");
+                  if(result == true){
+                    permission_handler.openAppSettings();
+                  }
+                  return;
+                }
+              }
+              if (Platform.isAndroid) {
+                await location.changeSettings(accuracy: LocationAccuracy.high,distanceFilter: 0,interval: 1000,);
+              }
+              _locationData = await location.getLocation();
+              _initialPosition = LatLng(_locationData.latitude,_locationData.longitude);
+              if (_initialPosition != null) {
+                Coordinates coordinates = new Coordinates(_initialPosition.latitude, _initialPosition.longitude);
+                var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+                var first = addresses.first;
+                //print("--addresses-${addresses} and ${first}");
+                print("----------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
+                setState(() {
+                  locationAddress = first.addressLine;
+                });
+              }
+            },
+            child: Visibility(
+              visible: store.homePageTitleStatus,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: (Utils.getDeviceWidth(context)/2.6),
+                    child: Text(
+                      store.homePageTitle != null
 //                  ? store.homePageTitle
-                  ? "The Market Place"
-                  : store.storeName,
+                          ? "${locationAddress}"
+                          : store.storeName,
+                      maxLines: 2,
+                      style: TextStyle(fontSize: 14),),
+                  ),
+                  Icon(Icons.keyboard_arrow_down)
+                ],
+              ),
             ),
           ),
-          Visibility(
+          /*Visibility(
             visible: store.homePageSubtitleStatus &&
                 store.homePageSubtitle != null,
             child: Text(
@@ -778,10 +842,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               textAlign: TextAlign.center,
               maxLines: 2,
             ),
-          )
+          )*/
         ],
-      )
-          : InkWell(
+      ) : InkWell(
         onTap: () async {
           BranchData selectedStore =
           await DialogUtils.displayBranchDialog(context,
@@ -854,6 +917,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       ],
     );
   }
+
 
   _launchCaller(String call) async {
     String url = "tel:${call}";

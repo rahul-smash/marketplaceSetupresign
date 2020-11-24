@@ -310,7 +310,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                         '${storeDataObj.storeName}',
                                         style: TextStyle(fontSize: 18),
                                       ),
-                                      Row(
+                                      /*Row(
                                         children: [
                                           Container(
                                               margin: EdgeInsets.only(right: 5),
@@ -337,7 +337,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                                 fontSize: 16, color: Colors.grey),
                                           )
                                         ],
-                                      ),
+                                      ),*/
                                     ],
                                   )),
                               Padding(
@@ -348,21 +348,22 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                     MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        'Pizza, Fast Food',
+                                        '${storeDataObj.state}',
                                         style: TextStyle(
                                             fontSize: 14, color: Colors.grey),
                                       ),
-                                      Text(
+                                      /*Text(
                                         '${AppConstant.currency}350 for two',
                                         style: TextStyle(
                                             fontSize: 14, color: Colors.grey),
-                                      ),
+                                      ),*/
                                     ],
-                                  )),
+                                  )
+                              ),
                             ],
                           )),
                     ),
-                    Container(
+                    /*Container(
                       margin: EdgeInsets.only(top: 130),
                       padding: EdgeInsets.fromLTRB(5, 3, 5, 3),
                       decoration: BoxDecoration(
@@ -372,7 +373,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                         "5% OFF",
                         style: TextStyle(color: Colors.white, fontSize: 12),
                       ),
-                    ),
+                    ),*/
                     Align(
                         alignment: Alignment.topRight,
                         child: Container(
@@ -396,267 +397,6 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
           height: 20,
           width: MediaQuery.of(context).size.width,
         ),
-        /*ListView(
-          padding: EdgeInsets.only(bottom: 20),
-          children: [
-            //to be dynamic
-            Stack(
-              children: [
-                Container(
-                  margin: EdgeInsets.all(
-                    10,
-                  ),
-                  decoration: new BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(5),
-                        topLeft: Radius.circular(5)),
-                    boxShadow: [
-//                  color: Colors.white, //background color of box
-                      BoxShadow(
-                        color: Colors.grey,
-                        blurRadius: 75.0, // soften the shadow
-                        spreadRadius: 2.0, //extend the shadow
-//                    offset: Offset(
-//                      5.0, // Move to right 10  horizontally
-//                      5.0, // Move to bottom 10 Vertically
-//                    ),
-                      )
-                    ],
-                  ),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(5),
-                            bottomRight: Radius.circular(5)),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                              height: 150,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(5),
-                                    topLeft: Radius.circular(5)),
-                                image: DecorationImage(
-                                  image: AssetImage('images/img1.png'),
-                                  fit: BoxFit.cover,
-                                ),
-                              )),
-                          Padding(
-                              padding:
-                                  EdgeInsets.only(left: 16, right: 16, top: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Pizza Hut',
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                          margin: EdgeInsets.only(right: 5),
-                                          decoration: BoxDecoration(
-                                            color: appThemeSecondary,
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(3),
-                                            child: Image.asset(
-                                                'images/staricon.png',
-                                                width: 15,
-                                                fit: BoxFit.scaleDown,
-                                                color: Colors.white),
-                                          )),
-                                      Text(
-                                        '4.0/',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      Text(
-                                        '5',
-                                        style: TextStyle(
-                                            fontSize: 16, color: Colors.grey),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              )),
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  left: 16, right: 16, top: 5, bottom: 16),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Pizza, Fast Food',
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.grey),
-                                  ),
-                                  Text(
-                                    '${AppConstant.currency}350 for two',
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.grey),
-                                  ),
-                                ],
-                              )),
-                        ],
-                      )),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 130),
-                  padding: EdgeInsets.fromLTRB(5, 3, 5, 3),
-                  decoration: BoxDecoration(
-                      color: yellowColor,
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Text(
-                    "5% OFF",
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                ),
-                Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 130, right: 20),
-                      padding: EdgeInsets.fromLTRB(5, 3, 5, 3),
-                      decoration: BoxDecoration(
-                          color: whiteWith70Opacity,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Text(
-                        "45 mins",
-                        style: TextStyle(color: Colors.black, fontSize: 12),
-                      ),
-                    ))
-              ],
-            ),
-            Stack(
-              children: [
-                Container(
-                  margin: EdgeInsets.all(
-                    10,
-                  ),
-                  decoration: new BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(5),
-                        topLeft: Radius.circular(5)),
-                    boxShadow: [
-//                  color: Colors.white, //background color of box
-                      BoxShadow(
-                        color: Colors.grey,
-                        blurRadius: 75.0, // soften the shadow
-                        spreadRadius: 2.0, //extend the shadow
-//                    offset: Offset(
-//                      5.0, // Move to right 10  horizontally
-//                      5.0, // Move to bottom 10 Vertically
-//                    ),
-                      )
-                    ],
-                  ),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(5),
-                            bottomRight: Radius.circular(5)),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                              height: 150,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(5),
-                                    topLeft: Radius.circular(5)),
-                                image: DecorationImage(
-                                  image: AssetImage('images/img2.png'),
-                                  fit: BoxFit.cover,
-                                ),
-                              )),
-                          Padding(
-                              padding:
-                                  EdgeInsets.only(left: 16, right: 16, top: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Sagar Ratna',
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                          margin: EdgeInsets.only(right: 5),
-                                          decoration: BoxDecoration(
-                                            color: appThemeSecondary,
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(3),
-                                            child: Image.asset(
-                                                'images/staricon.png',
-                                                width: 15,
-                                                fit: BoxFit.scaleDown,
-                                                color: Colors.white),
-                                          )),
-                                      Text(
-                                        '4.5/',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      Text(
-                                        '5',
-                                        style: TextStyle(
-                                            fontSize: 16, color: Colors.grey),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              )),
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  left: 16, right: 16, top: 5, bottom: 16),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'South Indian',
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.grey),
-                                  ),
-                                  Text(
-                                    '${AppConstant.currency}100 for one',
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.grey),
-                                  ),
-                                ],
-                              )),
-                        ],
-                      )),
-                ),
-                Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 130, right: 20),
-                      padding: EdgeInsets.fromLTRB(5, 3, 5, 3),
-                      decoration: BoxDecoration(
-                          color: whiteWith70Opacity,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Text(
-                        "45 mins",
-                        style: TextStyle(color: Colors.black, fontSize: 12),
-                      ),
-                    ))
-              ],
-            )
-          ],
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-        ),*/
       ],
     );
   }
