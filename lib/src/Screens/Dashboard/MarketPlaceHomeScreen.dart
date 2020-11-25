@@ -507,14 +507,18 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   _handleDrawer() async {
     try {
-      if (checkIfStoreClosed()) {
-        DialogUtils.displayCommonDialog(
-            context, store.storeName, store.storeMsg);
-      } else {
-        _key.currentState.openDrawer();
-        if (AppConstant.isLoggedIn) {
-          user = await SharedPrefs.getUser();
-          if (user != null) setState(() {});
+      if(isViewAllSelected){
+
+      }else{
+        if (checkIfStoreClosed()) {
+          DialogUtils.displayCommonDialog(
+              context, store.storeName, store.storeMsg);
+        } else {
+          _key.currentState.openDrawer();
+          if (AppConstant.isLoggedIn) {
+            user = await SharedPrefs.getUser();
+            if (user != null) setState(() {});
+          }
         }
       }
     } catch (e) {
@@ -774,7 +778,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     }
 
     return AppBar(
-      titleSpacing: 5,
+      titleSpacing: 0,
       title: widget.configObject.isMultiStore == false
           ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -875,7 +879,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         ),
       ),
       centerTitle: widget.configObject.isMultiStore == true ? false : false,
-      leading: new IconButton(
+      leading: isViewAllSelected
+          ? Icon(Icons.keyboard_arrow_left, size: 35)
+          : IconButton(
         icon: Image.asset('images/menuicon.png', width: 25),
         onPressed: _handleDrawer,
       ),
