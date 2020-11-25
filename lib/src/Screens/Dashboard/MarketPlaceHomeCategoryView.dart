@@ -291,9 +291,17 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                 fontSize: 14,
                                 fontWeight: FontWeight.w300),
                           ),
-                          onTap: (){
+                          onTap: () async {
                             print("onTap");
+                            bool isNetworkAvailable = await Utils.isNetworkAvailable();
+                            if(!isNetworkAvailable){
+                              Utils.showToast("No Internet connection",false);
+                              return;
+                            }
+                            Utils.showProgressDialog(context);
                             ApiController.getAllStores().then((storesResponse){
+                              Utils.hideProgressDialog(context);
+                              Utils.hideKeyboard(context);
                               setState(() {
                                 isViewAllRestSelected = true;
                                 allStoreData = storesResponse;
