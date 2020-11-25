@@ -6,6 +6,7 @@ import 'package:restroapp/src/UI/ProductTileView.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/Categorys.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
@@ -344,55 +345,67 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                     ? allStoreData.data[index]
                     : storeData.data[index];
 
-                return Stack(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(10),
-                      decoration: new BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(5),
-                            topLeft: Radius.circular(5)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey,
-                            spreadRadius: 1,
-                            blurRadius: 5,
-                            //offset: Offset(10, 13), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(5),
-                                bottomRight: Radius.circular(5)),
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                  height: 150,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(5),
-                                        topLeft: Radius.circular(5)),
-                                    image: DecorationImage(
-                                      image: AssetImage('images/img1.png'),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )),
-                              Padding(
-                                  padding:
-                                  EdgeInsets.only(left: 16, right: 16, top: 10),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '${storeDataObj.storeName}',
-                                        style: TextStyle(fontSize: 18),
+                return InkWell(
+                  onTap: (){
+                    print("----onTap-${storeDataObj.id}--");
+                    Utils.showProgressDialog(context);
+                    ApiController.getStoreVersionData(storeDataObj.id).then((response){
+                      Utils.hideProgressDialog(context);
+                      Utils.hideKeyboard(context);
+                      StoreDataModel storeObject = response;
+
+                    });
+
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        decoration: new BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(5),
+                              topLeft: Radius.circular(5)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              //offset: Offset(10, 13), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(5),
+                                  bottomRight: Radius.circular(5)),
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(5),
+                                          topLeft: Radius.circular(5)),
+                                      image: DecorationImage(
+                                        image: AssetImage('images/img1.png'),
+                                        fit: BoxFit.cover,
                                       ),
-                                      /*Row(
+                                    )),
+                                Padding(
+                                    padding:
+                                    EdgeInsets.only(left: 16, right: 16, top: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '${storeDataObj.storeName}',
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                        /*Row(
                                         children: [
                                           Container(
                                               margin: EdgeInsets.only(right: 5),
@@ -420,32 +433,32 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                           )
                                         ],
                                       ),*/
-                                    ],
-                                  )),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 16, right: 16, top: 5, bottom: 16),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '${storeDataObj.state}',
-                                        style: TextStyle(
-                                            fontSize: 14, color: Colors.grey),
-                                      ),
-                                      /*Text(
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 16, right: 16, top: 5, bottom: 16),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '${storeDataObj.state}',
+                                          style: TextStyle(
+                                              fontSize: 14, color: Colors.grey),
+                                        ),
+                                        /*Text(
                                         '${AppConstant.currency}350 for two',
                                         style: TextStyle(
                                             fontSize: 14, color: Colors.grey),
                                       ),*/
-                                    ],
-                                  )
-                              ),
-                            ],
-                          )),
-                    ),
-                    /*Container(
+                                      ],
+                                    )
+                                ),
+                              ],
+                            )),
+                      ),
+                      /*Container(
                       margin: EdgeInsets.only(top: 130),
                       padding: EdgeInsets.fromLTRB(5, 3, 5, 3),
                       decoration: BoxDecoration(
@@ -456,21 +469,22 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                         style: TextStyle(color: Colors.white, fontSize: 12),
                       ),
                     ),*/
-                    Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          margin: EdgeInsets.only(top: 130, right: 20),
-                          padding: EdgeInsets.fromLTRB(5, 3, 5, 3),
-                          decoration: BoxDecoration(
-                              color: whiteWith70Opacity,
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Center(
-                            child: Text("45 mins",style: TextStyle(color: Colors.black, fontSize: 12),),
-                          ),
-                          width: 70,
-                        )
-                    ),
-                  ],
+                      Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            margin: EdgeInsets.only(top: 130, right: 20),
+                            padding: EdgeInsets.fromLTRB(5, 3, 5, 3),
+                            decoration: BoxDecoration(
+                                color: whiteWith70Opacity,
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Center(
+                              child: Text("45 mins",style: TextStyle(color: Colors.black, fontSize: 12),),
+                            ),
+                            width: 70,
+                          )
+                      ),
+                    ],
+                  ),
                 );
               },
             ),

@@ -1,6 +1,12 @@
+import 'package:restroapp/src/utils/AppConstants.dart';
+
 class ApiConstants{
+
   static String baseUrl = 'https://app.restroapp.com/storeId/api/';
-  static String baseUrl2 = 'http://devmarketplace.restroapp.com/storeId/v1/marketplace/';
+
+  static String baseUrl2 = 'http://devmarketplace.restroapp.com/brandId/v1/marketplace/';
+  static String baseUrl3 = 'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId/store_configuration';
+
 
   static String storeList = 'storeList';
   static String version = 'version';
