@@ -266,7 +266,8 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                 ),
                 storeData == null ? Container() : getProductsWidget()
               ],
-            )),
+            )
+        ),
       ],
     );
   }
@@ -411,10 +412,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                               color: whiteWith70Opacity,
                               borderRadius: BorderRadius.circular(5)),
                           child: Center(
-                            child: Text(
-                              "45 mins",
-                              style: TextStyle(color: Colors.black, fontSize: 12),
-                            ),
+                            child: Text("45 mins",style: TextStyle(color: Colors.black, fontSize: 12),),
                           ),
                           width: 70,
                         )

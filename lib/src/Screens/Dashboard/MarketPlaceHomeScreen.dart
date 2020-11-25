@@ -824,7 +824,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 //                  ? store.homePageTitle
                           ? "${locationAddress}"
                           : store.storeName,
-                      maxLines: 2,
+                      maxLines: 2,textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 14),),
                   ),
                   Icon(Icons.keyboard_arrow_down)
