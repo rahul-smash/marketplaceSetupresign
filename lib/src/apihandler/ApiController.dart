@@ -166,6 +166,26 @@ class ApiController {
     return null;
   }
 
+  static Future<StoresModel> getAllStores({Map params}) async {
+    var url = ApiConstants.baseUrl2.replaceAll("storeId",AppConstant.brandID)
+        +ApiConstants.allStores;
+
+    var request = new http.MultipartRequest("GET", Uri.parse(url));
+    try {
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print("----url---${url}");
+      print("----respStr---${respStr}");
+      final parsed = json.decode(respStr);
+      StoresModel storeArea = StoresModel.fromJson(parsed);
+      return storeArea;
+    } catch (e) {
+      print("--allStores--catch---${e.toString()}");
+      //Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
   static Future<StoresModel> storesApiRequest() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);

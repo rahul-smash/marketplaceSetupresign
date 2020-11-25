@@ -25,6 +25,7 @@ import 'package:restroapp/src/models/Categorys.dart';
 import 'package:restroapp/src/models/ConfigModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
@@ -90,6 +91,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   PermissionStatus _permissionGranted;
   LocationData _locationData;
   String locationAddress = "Select Location";
+  ScrollController controller = ScrollController();
+  bool isViewAllSelected = false;
+  StoresModel allStoreData;
 
   _MarketPlaceHomeScreenState(this.store);
 
@@ -97,6 +101,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   void initState() {
     super.initState();
     isStoreClosed = false;
+    isViewAllSelected = false;
     initFirebase();
     _setSetCurrentScreen();
     cartBadgeCount = 0;
@@ -146,6 +151,15 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   }
 
   void listenEvent() {
+    eventBus.on<onViewAllSelected>().listen((event) {
+      print("isViewAllSelected=${event.isViewAllSelected}");
+      setState(() {
+        isViewAllSelected = event.isViewAllSelected;
+        allStoreData = event.allStoreData;
+      });
+      scrollTop();
+    });
+
     eventBus.on<onCartRemoved>().listen((event) {
       setState(() {
         setState(() {
@@ -246,8 +260,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       child: Container(
           margin:
           EdgeInsets.only(top: 0.0, bottom: 15.0, left: 7.5, right: 7.5),
-          width: Utils.getDeviceWidth(context) -
-              (Utils.getDeviceWidth(context) / 4),
+          width: Utils.getDeviceWidth(context)-(Utils.getDeviceWidth(context) / 4),
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10.0)),
           child: ClipRRect(
@@ -945,10 +958,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           color: !isCategoryViewSelected ? Colors.white : null,
         ),
         Padding(
-          padding: EdgeInsets.only(top: 60),
+          padding: EdgeInsets.only(top: isViewAllSelected ? 10 : 60),
           child: _getCurrentBody(),
         ),
-        _addSearchView(),
+        Visibility(
+          visible: isViewAllSelected ? false : true,
+          child: _addSearchView(),
+        ),
+
       ],
     );
   }
@@ -1035,17 +1052,26 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     return gesture;
   }
 
+  void scrollTop(){
+    controller.animateTo(0,
+        curve: Curves.linear, duration: Duration(milliseconds: 100));
+  }
+
   Widget _getCurrentBody() {
     if (productsList.length > 0) {
       return HomeSearchView(productsList);
     } else {
       return SingleChildScrollView(
+        controller: controller,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            addBanners(),
             Visibility(
-                visible: imgList.length > 1,
+              visible: isViewAllSelected ? false : true,
+              child: addBanners(),
+            ),
+            Visibility(
+                visible: isViewAllSelected ? false : imgList.length > 1,
                 child: Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Row(

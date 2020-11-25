@@ -86,5 +86,6 @@ class ApiConstants{
   static final String homescreenCategories = "homescreen/getCategories";
   static final String homescreenTags = "homescreen/getTags";
   static final String homescreenStores = "homescreen/getStores";
+  static final String allStores = "stores";
 
 }

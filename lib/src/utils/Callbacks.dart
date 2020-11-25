@@ -1,10 +1,17 @@
 import 'package:event_bus/event_bus.dart';
+import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 
 typedef CustomCallback = T Function<T extends Object>({T value});
 
 /// The global [EventBus] object.
 EventBus eventBus = EventBus();
+
+class onViewAllSelected {
+  bool isViewAllSelected;
+  StoresModel allStoreData;
+  onViewAllSelected(this.isViewAllSelected,this.allStoreData);
+}
 
 class updateCartCount {
   updateCartCount();
