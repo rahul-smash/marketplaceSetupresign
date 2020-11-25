@@ -4,22 +4,22 @@
 
 import 'dart:convert';
 
-VersionModel versionModelFromJson(String str) => VersionModel.fromJson(json.decode(str));
+BrandVersionModel versionModelFromJson(String str) => BrandVersionModel.fromJson(json.decode(str));
 
-String versionModelToJson(VersionModel data) => json.encode(data.toJson());
+String versionModelToJson(BrandVersionModel data) => json.encode(data.toJson());
 
-class VersionModel {
-  VersionModel({
+class BrandVersionModel {
+  BrandVersionModel({
     this.success,
     this.brand,
   });
 
   bool success;
-  Brand brand;
+  BrandData brand;
 
-  factory VersionModel.fromJson(Map<String, dynamic> json) => VersionModel(
+  factory BrandVersionModel.fromJson(Map<String, dynamic> json) => BrandVersionModel(
     success: json["success"],
-    brand: json["brand"] == null ? null : Brand.fromJson(json["brand"]),
+    brand: json["brand"] == null ? null : BrandData.fromJson(json["brand"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -28,8 +28,8 @@ class VersionModel {
   };
 }
 
-class Brand {
-  Brand({
+class BrandData {
+  BrandData({
     this.id,
     this.name,
     this.userId,
@@ -103,7 +103,7 @@ class Brand {
   bool isRefererFnEnable;
   List<dynamic> homeScreenSection;
 
-  factory Brand.fromJson(Map<String, dynamic> json) => Brand(
+  factory BrandData.fromJson(Map<String, dynamic> json) => BrandData(
     id: json["id"],
     name: json["name"],
     userId: json["user_id"],

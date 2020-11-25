@@ -43,6 +43,7 @@ import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/models/ValidateCouponsResponse.dart';
 import 'package:restroapp/src/models/GetOrderHistory.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/models/forgotPassword/GetForgotPwdData.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
@@ -97,6 +98,27 @@ class ApiController {
       print(e);
     }
     return null;
+  }
+
+  static Future<BrandVersionModel> getBrandVersion() async {
+
+    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID);
+
+    var request = new http.MultipartRequest("GET", Uri.parse(url));
+    try {
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print("----url---${url}");
+      print("----respStr---${respStr}");
+      final parsed = json.decode(respStr);
+      BrandVersionModel storeArea = BrandVersionModel.fromJson(parsed);
+
+      return storeArea;
+    } catch (e) {
+      print("--allStores--catch---${e.toString()}");
+      //Utils.showToast(e.toString(), true);
+      return null;
+    }
   }
 
   static Future<CategoriesModel> categoriesApiRequest() async {

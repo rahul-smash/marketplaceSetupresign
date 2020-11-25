@@ -89,6 +89,7 @@ class ApiConstants{
 
   //----------------------MARKET PLACE APIs-----------------------------
 
+  static final String brandVersion = "homescreen/version";
   static final String homescreenCategories = "homescreen/getCategories";
   static final String homescreenTags = "homescreen/getTags";
   static final String homescreenStores = "homescreen/getStores";

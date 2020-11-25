@@ -22,6 +22,7 @@ import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/ConfigModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
@@ -39,7 +40,8 @@ import 'dart:io';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 
 class HomeScreen extends StatefulWidget {
-  final StoreModel store;
+  //final StoreModel store;
+  final StoreDataObj store;
   ConfigModel configObject;
   bool showForceUploadAlert;
 
@@ -52,7 +54,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  StoreModel store;
+  //StoreModel store;
+  StoreDataObj store;
   FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
   List<NetworkImage> imgList = [];
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();

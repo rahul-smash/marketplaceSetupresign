@@ -11,6 +11,7 @@ import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/TagsModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -24,7 +25,6 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
 
   final CategoryResponse categoryResponse;
   //List<CategoryModel> categories = new List();
-  List<String> quickListUrls = new List();
   StoreModel store;
   CustomCallback callback;
 
@@ -52,15 +52,6 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
     } else {
       categorieslist.addAll(categoriesModel.data);
     }
-
-    quickListUrls.add('images/purevegbg.png');
-    quickListUrls.add('images/offersbg.png');
-    quickListUrls.add('images/premiumbg.png');
-    quickListUrls.add('images/mealsforonebg.png');
-    quickListUrls.add('images/nonvegbd.png');
-    quickListUrls.add('images/trendingbg.png');
-    quickListUrls.add('images/newarrivalsbg.png');
-    quickListUrls.add('images/safetybg.png');
   }
 
   @override
@@ -75,6 +66,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
   StoresModel storeData;
   bool isViewAllRestSelected = false;
   StoresModel allStoreData;
+  BrandVersionModel brandVersionModel;
 
   @override
   void initState() {
@@ -95,6 +87,9 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
       setState(() {
         this.storeData = storesResponse;
       });
+    });
+    ApiController.getBrandVersion().then((response){
+      brandVersionModel = response;
     });
   }
 
