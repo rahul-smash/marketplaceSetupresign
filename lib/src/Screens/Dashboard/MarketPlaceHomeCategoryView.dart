@@ -72,14 +72,12 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
   void initState() {
     super.initState();
     isViewAllRestSelected = false;
+
+    addFilters();
+
     ApiController.tagsApiRequest().then((tagsResponse){
       setState(() {
         this.tagsModel = tagsResponse;
-        TagData filterTag = TagData();
-        filterTag.name = "Filters";
-        filterTag.isFilterView = true;
-        tagsList.add(filterTag);
-        tagsList.addAll(this.tagsModel.data);
       });
     });
     //----------------------------------------------
@@ -516,5 +514,20 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
         }
       }
     }*/
+  }
+
+  void addFilters() {
+    TagData filterTag = TagData();
+    filterTag.name = "Filters";
+    filterTag.isFilterView = true;
+    tagsList.add(filterTag);
+    TagData filter1 = TagData();
+    filterTag.name = "Distance";
+    filterTag.isFilterView = false;
+    tagsList.add(filter1);
+    TagData filter2 = TagData();
+    filterTag.name = "Newly Added";
+    filterTag.isFilterView = false;
+    tagsList.add(filter2);
   }
 }

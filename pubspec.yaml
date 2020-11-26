@@ -156,6 +156,7 @@ flutter:
     - images/trendingbg.png
     - images/img1.png
     - images/img2.png
+    - images/mk_splash.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

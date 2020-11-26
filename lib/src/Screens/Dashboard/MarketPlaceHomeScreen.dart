@@ -44,11 +44,12 @@ import 'package:permission_handler/permission_handler.dart' as permission_handle
 
 class MarketPlaceHomeScreen extends StatefulWidget {
   //final StoreModel store;
+  LatLng initialPosition;
   final BrandData brandData;
   ConfigModel configObject;
   bool showForceUploadAlert;
 
-  MarketPlaceHomeScreen(this.brandData, this.configObject, this.showForceUploadAlert);
+  MarketPlaceHomeScreen(this.brandData, this.configObject, this.showForceUploadAlert, initialPosition);
 
   @override
   State<StatefulWidget> createState() {
