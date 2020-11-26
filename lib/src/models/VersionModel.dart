@@ -1,12 +1,12 @@
 // To parse this JSON data, do
 //
-//     final versionModel = versionModelFromJson(jsonString);
+//     final brandVersionModel = brandVersionModelFromJson(jsonString);
 
 import 'dart:convert';
 
-BrandVersionModel versionModelFromJson(String str) => BrandVersionModel.fromJson(json.decode(str));
+BrandVersionModel brandVersionModelFromJson(String str) => BrandVersionModel.fromJson(json.decode(str));
 
-String versionModelToJson(BrandVersionModel data) => json.encode(data.toJson());
+String brandVersionModelToJson(BrandVersionModel data) => json.encode(data.toJson());
 
 class BrandVersionModel {
   BrandVersionModel({
@@ -19,7 +19,7 @@ class BrandVersionModel {
 
   factory BrandVersionModel.fromJson(Map<String, dynamic> json) => BrandVersionModel(
     success: json["success"],
-    brand: json["brand"] == null ? null : BrandData.fromJson(json["brand"]),
+    brand: BrandData.fromJson(json["brand"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -88,8 +88,8 @@ class BrandData {
   String internationalOtp;
   String onlinePayment;
   List<dynamic> paymentGatewaySettings;
-  List<dynamic> banners;
-  List<WebBanner> webBanners;
+  List<Banner> banners;
+  List<Banner> webBanners;
   List<dynamic> footerBanners;
   List<dynamic> aboutusBanner;
   List<ForceDownload> forceDownload;
@@ -125,8 +125,8 @@ class BrandData {
     internationalOtp: json["international_otp"],
     onlinePayment: json["online_payment"],
     paymentGatewaySettings: List<dynamic>.from(json["payment_gateway_settings"].map((x) => x)),
-    banners: List<dynamic>.from(json["banners"].map((x) => x)),
-    webBanners: List<WebBanner>.from(json["web_banners"].map((x) => WebBanner.fromJson(x))),
+    banners: List<Banner>.from(json["banners"].map((x) => Banner.fromJson(x))),
+    webBanners: List<Banner>.from(json["web_banners"].map((x) => Banner.fromJson(x))),
     footerBanners: List<dynamic>.from(json["footer_banners"].map((x) => x)),
     aboutusBanner: List<dynamic>.from(json["aboutus_banner"].map((x) => x)),
     forceDownload: List<ForceDownload>.from(json["force_download"].map((x) => ForceDownload.fromJson(x))),
@@ -163,7 +163,7 @@ class BrandData {
     "international_otp": internationalOtp,
     "online_payment": onlinePayment,
     "payment_gateway_settings": List<dynamic>.from(paymentGatewaySettings.map((x) => x)),
-    "banners": List<dynamic>.from(banners.map((x) => x)),
+    "banners": List<dynamic>.from(banners.map((x) => x.toJson())),
     "web_banners": List<dynamic>.from(webBanners.map((x) => x.toJson())),
     "footer_banners": List<dynamic>.from(footerBanners.map((x) => x)),
     "aboutus_banner": List<dynamic>.from(aboutusBanner.map((x) => x)),
@@ -228,40 +228,8 @@ class AppThemeIcons {
   };
 }
 
-class ForceDownload {
-  ForceDownload({
-    this.iosAppVersion,
-    this.androidAppVerison,
-    this.windowAppVersion,
-    this.forceDownload,
-    this.forceDownloadMessage,
-  });
-
-  String iosAppVersion;
-  String androidAppVerison;
-  String windowAppVersion;
-  String forceDownload;
-  String forceDownloadMessage;
-
-  factory ForceDownload.fromJson(Map<String, dynamic> json) => ForceDownload(
-    iosAppVersion: json["ios_app_version"],
-    androidAppVerison: json["android_app_verison"],
-    windowAppVersion: json["window_app_version"],
-    forceDownload: json["force_download"],
-    forceDownloadMessage: json["force_download_message"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "ios_app_version": iosAppVersion,
-    "android_app_verison": androidAppVerison,
-    "window_app_version": windowAppVersion,
-    "force_download": forceDownload,
-    "force_download_message": forceDownloadMessage,
-  };
-}
-
-class WebBanner {
-  WebBanner({
+class Banner {
+  Banner({
     this.id,
     this.storeId,
     this.link,
@@ -293,7 +261,7 @@ class WebBanner {
   String type;
   String platform;
 
-  factory WebBanner.fromJson(Map<String, dynamic> json) => WebBanner(
+  factory Banner.fromJson(Map<String, dynamic> json) => Banner(
     id: json["id"],
     storeId: json["store_id"],
     link: json["link"],
@@ -325,5 +293,37 @@ class WebBanner {
     "status": status,
     "type": type,
     "platform": platform,
+  };
+}
+
+class ForceDownload {
+  ForceDownload({
+    this.iosAppVersion,
+    this.androidAppVerison,
+    this.windowAppVersion,
+    this.forceDownload,
+    this.forceDownloadMessage,
+  });
+
+  String iosAppVersion;
+  String androidAppVerison;
+  String windowAppVersion;
+  String forceDownload;
+  String forceDownloadMessage;
+
+  factory ForceDownload.fromJson(Map<String, dynamic> json) => ForceDownload(
+    iosAppVersion: json["ios_app_version"],
+    androidAppVerison: json["android_app_verison"],
+    windowAppVersion: json["window_app_version"],
+    forceDownload: json["force_download"],
+    forceDownloadMessage: json["force_download_message"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "ios_app_version": iosAppVersion,
+    "android_app_verison": androidAppVerison,
+    "window_app_version": windowAppVersion,
+    "force_download": forceDownload,
+    "force_download_message": forceDownloadMessage,
   };
 }

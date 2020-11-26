@@ -114,7 +114,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     listenEvent();
     try {
       //AppConstant.placeholderUrl = store.banner10080;
-      //print("-----store.banners-----${store.banners.length}------");
+      print("-----store.banners-----${store.banners.length}------");
       if (store.banners.isEmpty) {
 //        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
       } else {
