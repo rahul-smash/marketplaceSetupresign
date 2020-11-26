@@ -1,44 +1,13 @@
-import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
-import 'package:restroapp/src/Screens/Dashboard/ContactScreen.dart';
-import 'package:restroapp/src/Screens/BookOrder/MyCartScreen.dart';
-import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
-import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
-import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
-import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
-import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
-import 'package:restroapp/src/Screens/SideMenu/SideMenu.dart';
-import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
-import 'package:restroapp/src/database/SharedPrefs.dart';
-import 'package:restroapp/src/models/BrandModel.dart';
-import 'package:restroapp/src/models/CategoryResponseModel.dart';
-import 'package:restroapp/src/models/ConfigModel.dart';
-import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
-import 'package:restroapp/src/models/StoreResponseModel.dart';
-import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
-import 'package:restroapp/src/utils/Callbacks.dart';
-import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'ForceUpdate.dart';
-import 'HomeCategoryListView.dart';
-import 'SearchScreen.dart';
-import 'dart:io';
-import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 
 class StoreDashboardScreen extends StatefulWidget {
   //final StoreModel store;
@@ -69,11 +38,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   void initState() {
     super.initState();
     isStoreClosed = false;
-    initFirebase();
-    _setSetCurrentScreen();
-    getCartCount();
-    listenCartChanges();
-    checkForMultiStore();
     getCategoryApi();
     listenEvent();
     try {
@@ -263,308 +227,62 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     ApiController.getCategoriesApiRequest(store.id).then((response) {
       setState(() {
         isLoading = false;
-        this.categoryResponse = response;
-        getHomeCategoryProductApi();
+//        this.categoryResponse = response;
+//        getHomeCategoryProductApi();
       });
     });
   }
 
-  void getHomeCategoryProductApi() {
-    if (categoryResponse != null &&
-        categoryResponse.categories != null &&
-        categoryResponse.categories.isNotEmpty) {
-      String subCategoryId =
-          categoryResponse.categories.first.subCategory[0].id;
-      if (selectedCategory == null)
-        selectedCategory = categoryResponse.categories.first;
-
-      if (selectedSubCategoryId != null && selectedSubCategoryId.isNotEmpty) {
-        subCategoryId = selectedSubCategoryId;
-      }
-      ApiController.getSubCategoryProducts(subCategoryId).then((response) {
-        if (response != null && response.success) {
-          subCategory = SubCategoryModel();
-          selectedSubCategoryId = subCategoryId;
-          for (int i = 0; i < response.subCategories.length; i++) {
-            if (subCategoryId == response.subCategories[i].id) {
-              subCategory = response.subCategories[i];
-              break;
-            }
-          }
-          setState(() {});
-        }
-      });
-      eventBus.fire(OnProductTileDbRefresh());
-    }
-  }
-
-  Future logout(BuildContext context, BranchData selectedStore) async {
-    /*try {
-      Utils.showProgressDialog(context);
-      SharedPrefs.setUserLoggedIn(false);
-      SharedPrefs.storeSharedValue(AppConstant.isAdminLogin, "false");
-      SharedPrefs.removeKey(AppConstant.showReferEarnAlert);
-      SharedPrefs.removeKey(AppConstant.referEarnMsg);
-      AppConstant.isLoggedIn = false;
-      DatabaseHelper databaseHelper = new DatabaseHelper();
-      databaseHelper.deleteTable(DatabaseHelper.Categories_Table);
-      databaseHelper.deleteTable(DatabaseHelper.Sub_Categories_Table);
-      databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
-      databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-      databaseHelper.deleteTable(DatabaseHelper.Products_Table);
-      eventBus.fire(updateCartCount());
-
-      StoreResponse storeData =
-          await ApiController.versionApiRequest(selectedStore.id);
-      CategoryResponse categoryResponse =
-          await ApiController.getCategoriesApiRequest(storeData.store.id);
-      setState(() {
-        this.store = storeData.store;
-        this.branchData = selectedStore;
-        this.categoryResponse = categoryResponse;
-        Utils.hideProgressDialog(context);
-      });
-    } catch (e) {
-      print(e);
-    }*/
-  }
-
-  Widget getAppBar() {
-    bool rightActionsEnable = false,
-        whatIconEnable = false,
-        dialIconEnable = false;
-
-    if (store.homePageDisplayNumberType != null &&
-        store.homePageDisplayNumberType.isNotEmpty) {
-      //0=>Contact Number,1=>App Icon,2=>None
-      switch (store.homePageHeaderRight) {
-        case "0":
-          rightActionsEnable = true;
-          break;
-        case "1":
-          rightActionsEnable = true;
-          break;
-        case "2":
-          rightActionsEnable = false;
-          break;
-      }
-      if (store.homePageDisplayNumber != null &&
-          store.homePageDisplayNumber.isNotEmpty) {
-        //0=>Whats app, 1=>Phone Call
-        if (store.homePageDisplayNumberType.compareTo("0") == 0) {
-          whatIconEnable = true;
-        }
-        //0=>Whats app, 1=>Phone Call
-        if (store.homePageDisplayNumberType.compareTo("1") == 0) {
-          dialIconEnable = true;
-        }
-      }
-    }
-
-    return AppBar(
-      title: widget.configObject.isMultiStore == false
-          ? Column(
-        children: <Widget>[
-          Visibility(
-            visible: store.homePageTitleStatus,
-            child: Text(
-              store.homePageTitle != null
-                  ? store.homePageTitle
-                  : store.storeName,
-            ),
-          ),
-          Visibility(
-            visible: store.homePageSubtitleStatus &&
-                store.homePageSubtitle != null,
-            child: Text(
-              store.homePageSubtitle != null
-                  ? store.homePageSubtitle
-                  : "",
-              style: TextStyle(fontSize: 13),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-            ),
-          )
-        ],
-      )
-          : InkWell(
-        onTap: () async {
-          BranchData selectedStore =
-          await DialogUtils.displayBranchDialog(context,
-              "Select Branch", storeBranchesModel, branchData);
-          if (selectedStore != null &&
-              store.id.compareTo(selectedStore.id) != 0)
-            logout(context, selectedStore);
-        },
-        child: Row(
-          children: <Widget>[
-            Text(branchData == null ? "" : branchData.storeName),
-            Icon(Icons.keyboard_arrow_down)
-          ],
-        ),
-      ),
-      centerTitle: widget.configObject.isMultiStore == true ? false : true,
-      leading: new IconButton(
-        icon: Image.asset('images/menuicon.png', width: 25),
-        onPressed: _handleDrawer,
-      ),
-      actions: <Widget>[
-        Visibility(
-            visible: AppConstant.isLoggedIn,
-            child: IconButton(
-              icon: Icon(
-                Icons.notifications,
-                size: 25.0,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return NotificationScreen();
-                  }),
-                );
-              },
-            )),
-        Visibility(
-          visible: rightActionsEnable && whatIconEnable,
-          child: Padding(
-              padding: EdgeInsets.only(right: 5.0),
-              child: IconButton(
-                icon: Image.asset(
-                  'images/whatsapp.png',
-                  width: 28,
-                  height: 25,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  FlutterOpenWhatsapp.sendSingleMessage(
-                      store.homePageDisplayNumber, "");
-                },
-              )),
-        ),
-        Visibility(
-            visible: rightActionsEnable && dialIconEnable,
-            child: Padding(
-                padding: EdgeInsets.only(right: 8.0),
-                child: GestureDetector(
-                  onTap: () {
-                    _launchCaller(store.homePageDisplayNumber);
-                  },
-                  child: Icon(
-                    Icons.call,
-                    size: 25.0,
-                    color: Colors.white,
-                  ),
-                )))
-      ],
-    );
-  }
-
-  _launchCaller(String call) async {
-    String url = "tel:${call}";
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+//  void getHomeCategoryProductApi() {
+//    if (categoryResponse != null &&
+//        categoryResponse.categories != null &&
+//        categoryResponse.categories.isNotEmpty) {
+//      String subCategoryId =
+//          categoryResponse.categories.first.subCategory[0].id;
+//      if (selectedCategory == null)
+//        selectedCategory = categoryResponse.categories.first;
+//
+//      if (selectedSubCategoryId != null && selectedSubCategoryId.isNotEmpty) {
+//        subCategoryId = selectedSubCategoryId;
+//      }
+//      ApiController.getSubCategoryProducts(subCategoryId).then((response) {
+//        if (response != null && response.success) {
+//          subCategory = SubCategoryModel();
+//          selectedSubCategoryId = subCategoryId;
+//          for (int i = 0; i < response.subCategories.length; i++) {
+//            if (subCategoryId == response.subCategories[i].id) {
+//              subCategory = response.subCategories[i];
+//              break;
+//            }
+//          }
+//          setState(() {});
+//        }
+//      });
+//      eventBus.fire(OnProductTileDbRefresh());
+//    }
+//  }
 
   Widget _newBody() {
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
         Container(
-          decoration: isCategoryViewSelected
-              ? BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage("images/backgroundimg.png"),
               fit: BoxFit.cover,
             ),
-          )
-              : null,
-          color: !isCategoryViewSelected ? Colors.white : null,
+          ),
+          color: Colors.white,
         ),
         Padding(
           padding: EdgeInsets.only(top: 60),
           child: _getCurrentBody(),
         ),
-        _addSearchView(),
       ],
     );
   }
 
-  Widget _addSearchView() {
-    return Container(
-      height: 40,
-      margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-      //padding: EdgeInsets.all(5.0),
-      decoration: BoxDecoration(
-          color: searchGrayColor,
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          border: Border.all(
-            color: searchGrayColor,
-          )),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: Center(
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(padding: EdgeInsets.fromLTRB(3,3,6,3),child:
-                Image.asset('images/searchicon.png',
-                    width: 20,
-                    fit: BoxFit.scaleDown,
-                    color: appTheme)),
-                Flexible(
-                  child: TextField(
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: (value) {
-                      if (value.trim().isEmpty) {
-                        Utils.showToast(
-                            "Please enter some valid keyword", false);
-                      } else {
-                        callSearchAPI();
-                      }
-                    },
-                    onChanged: (text) {
-                      print("onChanged ${text}");
-                    },
-                    controller: _controller,
-                    cursorColor: Colors.black,
-                    keyboardType: TextInputType.text,
-                    decoration: new InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        hintText: "Search for dishes"),
-                  ),
-                ),
-                Visibility(
-                    visible: _controller.text.isNotEmpty,
-                    child: IconButton(
-                        icon: Icon(
-                          Icons.clear,
-                          color: appTheme,
-                        ),
-                        onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          setState(() {
-                            _controller.text = "";
-                            setState(() {
-                              subCategoryList.clear();
-                              productsList.clear();
-                            });
-                          });
-                        }))
-              ]),
-        ),
-      ),
-    );
-  }
 
   Widget keyboardDismisser({BuildContext context, Widget child}) {
     final gesture = GestureDetector(
@@ -577,9 +295,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   }
 
   Widget _getCurrentBody() {
-    if (productsList.length > 0) {
-      return HomeSearchView(productsList);
-    } else {
       return SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -617,11 +332,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                   ),
                 )),
             isLoading
-                ? Center(child: CircularProgressIndicator())
-                : categoryResponse == null
-                ? Center(child: Text(""))
-                : !isCategoryViewSelected
-                ? /*HomeCategoryListView(
+                ?
+//            Center(child: CircularProgressIndicator())
+                 /*HomeCategoryListView(
                             categoryResponse,
                             store,
                             subCategory,
@@ -667,38 +380,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           ],
         ),
       );
-    }
   }
 
-  void callSearchAPI() {
-    Utils.hideKeyboard(context);
-    Utils.isNetworkAvailable().then((isNetworkAvailable) async {
-      if (isNetworkAvailable) {
-        Utils.sendSearchAnalyticsEvent(_controller.text);
-        Utils.showProgressDialog(context);
-        SubCategoryResponse subCategoryResponse =
-        await ApiController.getSearchResults(_controller.text);
-        Utils.hideKeyboard(context);
-        Utils.hideProgressDialog(context);
-        if (subCategoryResponse == null ||
-            subCategoryResponse.subCategories.isEmpty) {
-          Utils.showToast("No result found.", false);
-          setState(() {
-            subCategoryList.clear();
-            productsList.clear();
-          });
-        } else {
-          setState(() {
-            subCategoryList = subCategoryResponse.subCategories;
-            productsList.clear();
-            for (int i = 0; i < subCategoryList.length; i++) {
-              productsList.addAll(subCategoryList[i].products);
-            }
-          });
-        }
-      } else {
-        Utils.showToast(AppConstant.noInternet, false);
-      }
-    });
-  }
 }
