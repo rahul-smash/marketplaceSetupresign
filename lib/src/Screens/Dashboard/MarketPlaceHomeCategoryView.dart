@@ -187,7 +187,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                   Row(
                                     children: [
                                       Text('${tagsList[index].name}',
-                                          style:TextStyle(color: Colors.grey)),
+                                          style:TextStyle(color: selectedFilterIndex==index?Colors.grey[600]:Colors.grey)),
                                       SizedBox(width: 5,),
                                       Visibility(
                                         visible: selectedFilterIndex == index ? true : false,
