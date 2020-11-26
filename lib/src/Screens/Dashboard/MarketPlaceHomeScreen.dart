@@ -49,7 +49,7 @@ class MarketPlaceHomeScreen extends StatefulWidget {
   ConfigModel configObject;
   bool showForceUploadAlert;
 
-  MarketPlaceHomeScreen(this.brandData, this.configObject, this.showForceUploadAlert, initialPosition);
+  MarketPlaceHomeScreen(this.brandData, this.configObject, this.showForceUploadAlert, this.initialPosition);
 
   @override
   State<StatefulWidget> createState() {
@@ -113,6 +113,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     checkForMultiStore();
     getCategoryApi();
     listenEvent();
+    getAddressFromLocation();
     try {
       //AppConstant.placeholderUrl = store.banner10080;
       print("-----store.banners-----${store.banners.length}------");
@@ -749,37 +750,26 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     }*/
   }
 
+  getAddressFromLocation() async {
+    if (widget.initialPosition != null) {
+      print("--widget.initialPosition != null----");
+      Coordinates coordinates = new Coordinates(widget.initialPosition.latitude, widget.initialPosition.longitude);
+      var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      var first = addresses.first;
+      //print("--addresses-${addresses} and ${first}");
+      print("---getAddressFromLocation-------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
+      setState(() {
+        locationAddress = first.addressLine;
+      });
+    }else{
+      print("-else-widget.initialPosition != null----${widget.initialPosition}");
+    }
+  }
+
   Widget getAppBar() {
     bool rightActionsEnable = false,
         whatIconEnable = false,
         dialIconEnable = false;
-
-    /*if (store.homePageDisplayNumberType != null &&
-        store.homePageDisplayNumberType.isNotEmpty) {
-      //0=>Contact Number,1=>App Icon,2=>None
-      switch (store.homePageHeaderRight) {
-        case "0":
-          rightActionsEnable = true;
-          break;
-        case "1":
-          rightActionsEnable = true;
-          break;
-        case "2":
-          rightActionsEnable = false;
-          break;
-      }
-      if (store.homePageDisplayNumber != null &&
-          store.homePageDisplayNumber.isNotEmpty) {
-        //0=>Whats app, 1=>Phone Call
-        if (store.homePageDisplayNumberType.compareTo("0") == 0) {
-          whatIconEnable = true;
-        }
-        //0=>Whats app, 1=>Phone Call
-        if (store.homePageDisplayNumberType.compareTo("1") == 0) {
-          dialIconEnable = true;
-        }
-      }
-    }*/
 
     return AppBar(
       titleSpacing: 0,

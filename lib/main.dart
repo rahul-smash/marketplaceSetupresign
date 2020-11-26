@@ -167,7 +167,7 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
     _locationData = await location.getLocation();
     initialPosition = LatLng(_locationData.latitude,_locationData.longitude);
     setState(() {
-      print("initialPosition=$initialPosition");
+      print("----initialPosition----=$initialPosition");
     });
   }
 }
@@ -194,6 +194,7 @@ Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject, Package
     } catch (e) {
       //print("-apiVesrion--catch--${e}----");
     }
+    print("x-initialPosition--${initialPosition}----");
     //print("--currentVesrion--${currentVesrion} and ${apiVesrion}");
     if (apiVesrion > currentVesrion) {
       //return ForceUpdateAlert(forceDownload[0].forceDownloadMessage,appName);
