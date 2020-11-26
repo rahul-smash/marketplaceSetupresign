@@ -154,9 +154,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                       Container(
                         margin: EdgeInsets.only(top: 0,left: 10),
                         height: 30,
-                        child: tagsModel == null
-                            ? Container()
-                            : Container(
+                        child: Container(
                           height: 30,
                           child: ListView.builder(
                             itemCount: tagsList.length,
@@ -526,13 +524,15 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
     filterTag.name = "Filters";
     filterTag.isFilterView = true;
     tagsList.add(filterTag);
+
     TagData filter1 = TagData();
-    filterTag.name = "Distance";
-    filterTag.isFilterView = false;
+    filter1.name = "Distance";
+    filter1.isFilterView = false;
     tagsList.add(filter1);
+
     TagData filter2 = TagData();
-    filterTag.name = "Newly Added";
-    filterTag.isFilterView = false;
+    filter2.name = "Newly Added";
+    filter2.isFilterView = false;
     tagsList.add(filter2);
   }
 }
