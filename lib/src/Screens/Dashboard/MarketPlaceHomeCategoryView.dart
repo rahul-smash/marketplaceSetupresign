@@ -68,14 +68,13 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
   StoresModel storeData;
   bool isViewAllRestSelected = false;
   StoresModel allStoreData;
+  int selectedFilterIndex = -1;
 
   @override
   void initState() {
     super.initState();
     isViewAllRestSelected = false;
-
     addFilters();
-
     ApiController.tagsApiRequest().then((tagsResponse){
       setState(() {
         this.tagsModel = tagsResponse;
@@ -152,7 +151,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                 ));
                           }).toList()),
                       Container(
-                        margin: EdgeInsets.only(top: 0,left: 10),
+                        margin: EdgeInsets.only(top: 20,left: 10),
                         height: 30,
                         child: Container(
                           height: 30,
@@ -160,22 +159,43 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                             itemCount: tagsList.length,
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
-                              return Container(
-                                height: 30,
-                                margin:EdgeInsets.only(left:4,right:4),
-                                padding:EdgeInsets.fromLTRB(6,3,6,3),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color:grayLightColor,width:  1),
-                                    borderRadius: BorderRadius.circular(2)
+                              return InkWell(
+                                onTap: (){
+                                  print("onTap=${index}");
+                                  if(index != 0){
+                                    setState(() {
+                                      selectedFilterIndex = index;
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  height: 30,
+                                  margin:EdgeInsets.only(left:4,right:4),
+                                  padding:EdgeInsets.fromLTRB(6,3,6,3),
+                                  decoration: BoxDecoration(
+                                    color: selectedFilterIndex==index?Colors.grey[200]:Colors.white,
+                                      border: Border.all(color: selectedFilterIndex==index?Colors.grey[400]:grayLightColor, width:1),
+                                      borderRadius: BorderRadius.circular(2)
+                                  ),
+                                  child: index == 0
+                                      ? Row(
+                                    children: [
+                                      Image.asset("images/filtericon.png",height: 20,width: 20,),
+                                      SizedBox(width: 5,),
+                                      Text('${tagsList[index].name}',style:TextStyle(color:Colors.grey)),
+                                    ],) :
+                                  Row(
+                                    children: [
+                                      Text('${tagsList[index].name}',
+                                          style:TextStyle(color: Colors.grey)),
+                                      SizedBox(width: 5,),
+                                      Visibility(
+                                        visible: selectedFilterIndex == index ? true : false,
+                                        child: Icon(Icons.clear,size: 15,),
+                                      )
+                                    ],
+                                  )
                                 ),
-                                child:  index == 0
-                                    ? Row(
-                                  children: [
-                                    Image.asset("images/filtericon.png",height: 20,width: 20,),
-                                    SizedBox(width: 5,),
-                                    Text('${tagsList[index].name}',style:TextStyle(color:Colors.grey)),
-                                  ],)
-                                    :Center(child: Text('${tagsList[index].name}',style:TextStyle(color:Colors.grey)),),
                               );
                             },
                           ),
