@@ -19,6 +19,7 @@ import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/ConfigModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
@@ -112,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
       }
-      if (widget.showForceUploadAlert) {
+      /*if (widget.showForceUploadAlert) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           DialogUtils.showForceUpdateDialog(context, store.storeName,
               store.forceDownload[0].forceDownloadMessage,storeModel: store);
@@ -132,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           });
         }
-      }
+      }*/
     } catch (e) {
       print(e);
     }
@@ -161,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
             key: _key,
             appBar: getAppBar(),
             body: _newBody(),
-            drawer: NavDrawerMenu(store, user == null ? "" : user.fullName, () {
+            drawer: NavDrawerMenu(BrandModel.getInstance().brandVersionModel.brand, user == null ? "" : user.fullName, () {
               FocusScope.of(context).unfocus();
               _controller.text = "";
               subCategoryList.clear();
@@ -448,10 +449,10 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         if (_currentIndex == 3) {
           if (AppConstant.isLoggedIn) {
-            Navigator.push(
+            /*Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => MyOrderScreenVersion2(store)),
-            );
+            );*/
             Map<String, dynamic> attributeMap = new Map<String, dynamic>();
             attributeMap["ScreenName"] = "MyOrderScreen";
             Utils.sendAnalyticsEvent("Clicked MyOrderScreen", attributeMap);
@@ -684,7 +685,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future logout(BuildContext context, BranchData selectedStore) async {
-    try {
+    /*try {
       Utils.showProgressDialog(context);
       SharedPrefs.setUserLoggedIn(false);
       SharedPrefs.storeSharedValue(AppConstant.isAdminLogin, "false");
@@ -711,7 +712,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     } catch (e) {
       print(e);
-    }
+    }*/
   }
 
   Widget getAppBar() {
@@ -1006,7 +1007,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 : categoryResponse == null
                     ? Center(child: Text(""))
                     : !isCategoryViewSelected
-                        ? HomeCategoryListView(
+                        ? /*HomeCategoryListView(
                             categoryResponse,
                             store,
                             subCategory,
@@ -1029,10 +1030,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             selectedCategoryId: selectedSubCategoryId,
                             selectedCategory: selectedCategory,
-                          )
+                          )*/Container()
                         : Container(
                             padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                            child: GridView.count(
+                            /*child: GridView.count(
                                 crossAxisCount: 3,
                                 childAspectRatio: .8,
                                 physics: NeverScrollableScrollPhysics(),
@@ -1046,7 +1047,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return GridTile(
                                       child:
                                           CategoryView(model, store, false, 0));
-                                }).toList()),
+                                }).toList()
+                            ),*/
                           )
           ],
         ),

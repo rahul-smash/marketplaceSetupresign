@@ -28,6 +28,7 @@ import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -42,21 +43,22 @@ import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart' as permission_handler;
 
 class MarketPlaceHomeScreen extends StatefulWidget {
-  final StoreModel store;
+  //final StoreModel store;
+  final BrandData brandData;
   ConfigModel configObject;
   bool showForceUploadAlert;
 
-  MarketPlaceHomeScreen(this.store, this.configObject, this.showForceUploadAlert);
+  MarketPlaceHomeScreen(this.brandData, this.configObject, this.showForceUploadAlert);
 
   @override
   State<StatefulWidget> createState() {
-    return _MarketPlaceHomeScreenState(this.store);
+    return _MarketPlaceHomeScreenState(this.brandData);
   }
 }
 
 class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
-  StoreModel store;
+  BrandData store;
   FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
   List<NetworkImage> imgList = [];
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
@@ -111,7 +113,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     getCategoryApi();
     listenEvent();
     try {
-      AppConstant.placeholderUrl = store.banner10080;
+      //AppConstant.placeholderUrl = store.banner10080;
       //print("-----store.banners-----${store.banners.length}------");
       if (store.banners.isEmpty) {
 //        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
@@ -126,7 +128,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       }
       if (widget.showForceUploadAlert) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
-          DialogUtils.showForceUpdateDialog(context, store.storeName,
+          DialogUtils.showForceUpdateDialog(context, store.name,
               store.forceDownload[0].forceDownloadMessage,storeModel: store);
         });
       } else {
@@ -436,7 +438,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   onTabTapped(int index) {
     if (checkIfStoreClosed()) {
-      DialogUtils.displayCommonDialog(context, store.storeName, store.storeMsg);
+      DialogUtils.displayCommonDialog(context, store.name, /*store.storeMsg*/"Store Closed");
     } else {
       setState(() {
         _currentIndex = index;
@@ -468,10 +470,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         }
         if (_currentIndex == 3) {
           if (AppConstant.isLoggedIn) {
-            Navigator.push(
+            /*Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => MyOrderScreenVersion2(store)),
-            );
+            );*/
             Map<String, dynamic> attributeMap = new Map<String, dynamic>();
             attributeMap["ScreenName"] = "MyOrderScreen";
             Utils.sendAnalyticsEvent("Clicked MyOrderScreen", attributeMap);
@@ -512,7 +514,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       }else{
         if (checkIfStoreClosed()) {
           DialogUtils.displayCommonDialog(
-              context, store.storeName, store.storeMsg);
+              context, store.name, /*store.storeMsg*/"Store Closed");
         } else {
           _key.currentState.openDrawer();
           if (AppConstant.isLoggedIn) {
@@ -623,7 +625,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   void checkForMultiStore() {
     print("isMultiStore=${widget.configObject.isMultiStore}");
-    if (widget.configObject.isMultiStore) {
+    /*if (widget.configObject.isMultiStore) {
       ApiController.multiStoreApiRequest(widget.configObject.primaryStoreId)
           .then((response) {
         setState(() {
@@ -640,11 +642,12 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           }
         });
       });
-    }
+    }*/
   }
 
   bool checkIfStoreClosed() {
-    if (store.storeStatus == "0") {
+    String storeStatus = "0";
+    if (storeStatus == "0") {
       //0 mean Store close
       return true;
     } else {
@@ -715,7 +718,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   }
 
   Future logout(BuildContext context, BranchData selectedStore) async {
-    try {
+    /*try {
       Utils.showProgressDialog(context);
       SharedPrefs.setUserLoggedIn(false);
       SharedPrefs.storeSharedValue(AppConstant.isAdminLogin, "false");
@@ -742,7 +745,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       });
     } catch (e) {
       print(e);
-    }
+    }*/
   }
 
   Widget getAppBar() {
@@ -750,7 +753,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         whatIconEnable = false,
         dialIconEnable = false;
 
-    if (store.homePageDisplayNumberType != null &&
+    /*if (store.homePageDisplayNumberType != null &&
         store.homePageDisplayNumberType.isNotEmpty) {
       //0=>Contact Number,1=>App Icon,2=>None
       switch (store.homePageHeaderRight) {
@@ -775,7 +778,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           dialIconEnable = true;
         }
       }
-    }
+    }*/
 
     return AppBar(
       titleSpacing: 0,
@@ -831,16 +834,12 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               }
             },
             child: Visibility(
-              visible: store.homePageTitleStatus,
+              visible: true,
               child: Row(
                 children: [
                   SizedBox(
                     width: (Utils.getDeviceWidth(context)/2.6),
-                    child: Text(
-                      store.homePageTitle != null
-//                  ? store.homePageTitle
-                          ? "${locationAddress}"
-                          : store.storeName,
+                    child: Text("${locationAddress}",
                       maxLines: 2,textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 14),),
                   ),
@@ -915,8 +914,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  FlutterOpenWhatsapp.sendSingleMessage(
-                      store.homePageDisplayNumber, "");
+                  /*FlutterOpenWhatsapp.sendSingleMessage(
+                      store.homePageDisplayNumber, "");*/
                 },
               )),
         ),
@@ -926,7 +925,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                 padding: EdgeInsets.only(right: 8.0),
                 child: GestureDetector(
                   onTap: () {
-                    _launchCaller(store.homePageDisplayNumber);
+                    //_launchCaller(store.homePageDisplayNumber);
                   },
                   child: Icon(
                     Icons.call,
@@ -1114,7 +1113,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                 ? Center(child: Text(""))
                 : !isCategoryViewSelected
                 ? MarketPlaceHomeCategoryView(categoriesModel,
-              categoryResponse,
+              /*categoryResponse,*/
               store,
               subCategory,
               callback: <Object>({value}) {
@@ -1139,7 +1138,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             )
                 : Container(
               padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-              child: GridView.count(
+              /*child: GridView.count(
                   crossAxisCount: 3,
                   childAspectRatio: .8,
                   physics: NeverScrollableScrollPhysics(),
@@ -1151,7 +1150,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                   children: categoryResponse.categories.map((CategoryModel model) {
                     return GridTile(
                         child: CategoryView(model, store, false, 0));
-                  }).toList()),
+                  }).toList()
+              ),*/
             )
           ],
         ),

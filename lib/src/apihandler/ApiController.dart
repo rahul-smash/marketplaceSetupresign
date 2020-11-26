@@ -102,7 +102,8 @@ class ApiController {
 
   static Future<BrandVersionModel> getBrandVersion() async {
 
-    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID);
+    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID)+
+        ApiConstants.brandVersion;
 
     var request = new http.MultipartRequest("GET", Uri.parse(url));
     try {

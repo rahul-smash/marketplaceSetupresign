@@ -6,17 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info/package_info.dart';
-import 'package:restroapp/src/Screens/Dashboard/HomeScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/ConfigModel.dart';
-import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+
+import 'src/models/BrandModel.dart';
+import 'src/models/VersionModel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,19 +53,23 @@ Future<void> main() async {
   //print(configObject.storeId);
 
   Crashlytics.instance.enableInDevMode = true;
-  StoreResponse storeData =
-      await ApiController.versionApiRequest("${configObject.storeId}");
-  setAppThemeColors(storeData.store);
+  /*StoreResponse storeData =
+      await ApiController.versionApiRequest("${configObject.storeId}");*/
+
+  BrandVersionModel brandVersionModel = await ApiController.getBrandVersion();
+  BrandModel.getInstance(brandVersionModelObj: brandVersionModel).brandVersionModel;
+
+  //setAppThemeColors(brandVersionModel.store);
   // Pass all uncaught errors to Crashlytics.
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
   SharedPrefs.storeSharedValue(AppConstant.isAdminLogin, "${isAdminLogin}");
 
-  PackageInfo packageInfo = await Utils.getAppVersionDetails(storeData);
+  PackageInfo packageInfo = await Utils.getAppVersionDetails();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   // To turn off landscape mode
   runZoned(() {
-    runApp(ValueApp(packageInfo, configObject, storeData));
+    runApp(ValueApp(packageInfo, configObject, brandVersionModel));
   }, onError: Crashlytics.instance.recordError);
 }
 
@@ -73,7 +78,7 @@ class ValueApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics();
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
-  StoreResponse storeData;
+  BrandVersionModel storeData;
   PackageInfo packageInfo;
 
   ValueApp(this.packageInfo, this.configObject, this.storeData);
@@ -83,7 +88,7 @@ class ValueApp extends StatelessWidget {
     // define it once at root level.
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: '${storeData.store.storeName}',
+      title: '${storeData.brand.name}',
       theme: ThemeData(
         primaryColor: appTheme,
       ),
@@ -96,16 +101,16 @@ class ValueApp extends StatelessWidget {
 }
 
 Widget showHomeScreen(
-    StoreResponse model, ConfigModel configObject, PackageInfo packageInfo) {
+    BrandVersionModel model, ConfigModel configObject, PackageInfo packageInfo) {
   String version = packageInfo.version;
   if (model.success) {
-    setStoreCurrency(model.store, configObject);
+    setStoreCurrency(model, configObject);
+    /*SharedPrefs.storeSharedValue(
+        AppConstant.DeliverySlot, model.brand.deliverySlot);
     SharedPrefs.storeSharedValue(
-        AppConstant.DeliverySlot, model.store.deliverySlot);
-    SharedPrefs.storeSharedValue(
-        AppConstant.is24x7Open, model.store.is24x7Open);
+        AppConstant.is24x7Open, model.store.is24x7Open);*/
 
-    List<ForceDownload> forceDownload = model.store.forceDownload;
+    List<ForceDownload> forceDownload = model.brand.forceDownload;
     //print("app= ${version} and -androidAppVerison--${forceDownload[0].androidAppVerison}");
     int index1 = version.lastIndexOf(".");
     //print("--substring--${version.substring(0,index1)} ");
@@ -120,29 +125,28 @@ Widget showHomeScreen(
     //print("--currentVesrion--${currentVesrion} and ${apiVesrion}");
     if (apiVesrion > currentVesrion) {
       //return ForceUpdateAlert(forceDownload[0].forceDownloadMessage,appName);
-      return MarketPlaceHomeScreen(model.store, configObject, true);
+      return MarketPlaceHomeScreen(model.brand, configObject, true);
     } else {
-      return MarketPlaceHomeScreen(model.store, configObject, false);
+      return MarketPlaceHomeScreen(model.brand, configObject, false);
     }
   } else {
     return Container();
   }
 }
 
-void setStoreCurrency(StoreModel store, ConfigModel configObject) {
-  if (store.showCurrency == "symbol") {
-    if (store.currency_unicode.isEmpty) {
-      AppConstant.currency = store.currencyAbbr;
+void setStoreCurrency(BrandVersionModel store, ConfigModel configObject) {
+  if (store.brand.showCurrency == "symbol") {
+    if (store.brand.currency.isEmpty) {
+      AppConstant.currency = store.brand.currency;
     } else {
       AppConstant.currency = configObject.currency;
     }
-    //U+020B9 // \u20B9
   } else {
-    AppConstant.currency = store.currencyAbbr;
+    AppConstant.currency = store.brand.currency;
   }
 }
 
-void setAppThemeColors(StoreModel store) {
+/*void setAppThemeColors(BrandVersionModel store) {
   AppThemeColors appThemeColors = store.appThemeColors;
   left_menu_header_bkground =
       Color(int.parse(appThemeColors.leftMenuHeaderBackgroundColor));
@@ -211,7 +215,7 @@ void setAppThemeColors(StoreModel store) {
     appTheme = Color(int.parse(appThemeColors.appThemeColor));
     appThemeLight = appTheme.withOpacity(0.1);
   }
-}
+}*/
 
 Future<String> loadAsset() async {
   return await rootBundle.loadString('assets/app_config.json');

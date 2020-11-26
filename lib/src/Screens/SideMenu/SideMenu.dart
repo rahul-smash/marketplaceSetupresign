@@ -17,6 +17,7 @@ import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/ReferEarnData.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -29,11 +30,12 @@ import 'LoyalityPoints.dart';
 import 'ProfileScreen.dart';
 
 class NavDrawerMenu extends StatefulWidget {
-  final StoreModel store;
+  //final StoreModel store;
+  final BrandData brandData;
   final String userName;
   VoidCallback callback;
 
-  NavDrawerMenu(this.store, this.userName,this.callback);
+  NavDrawerMenu(this.brandData, this.userName,this.callback);
 
   @override
   _NavDrawerMenuState createState() {
@@ -58,7 +60,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         DrawerChildConstants.DELIVERY_ADDRESS, "images/deliveryaddress.png"));
     _drawerItems.add(
         DrawerChildItem(DrawerChildConstants.MY_ORDERS, "images/my_order.png"));
-    if (widget.store.loyality == "1")
+    //if (widget.brandData.loyality == "1")
       _drawerItems.add(DrawerChildItem(
           DrawerChildConstants.LOYALITY_POINTS, "images/loyality.png"));
 //    _drawerItems.add(
@@ -66,7 +68,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
     _drawerItems.add(
         DrawerChildItem(DrawerChildConstants.ABOUT_US, "images/about_image.png"));
     _drawerItems.add(DrawerChildItem(
-        widget.store.isRefererFnEnable && AppConstant.isLoggedIn
+        widget.brandData.isRefererFnEnable && AppConstant.isLoggedIn
             ? DrawerChildConstants.ReferEarn
             : DrawerChildConstants.SHARE,
         "images/refer.png"));
@@ -209,11 +211,11 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       case DrawerChildConstants.MY_ORDERS:
         if (AppConstant.isLoggedIn) {
           Navigator.pop(context);
-          Navigator.push(
+          /*Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => MyOrderScreenVersion2(widget.store)),
-          );
+          );*/
           Map<String, dynamic> attributeMap = new Map<String, dynamic>();
           attributeMap["ScreenName"] = "MyOrderScreen";
           Utils.sendAnalyticsEvent("Clicked MyOrderScreen", attributeMap);
@@ -224,11 +226,11 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       case DrawerChildConstants.LOYALITY_POINTS:
         if (AppConstant.isLoggedIn) {
           Navigator.pop(context);
-          Navigator.push(
+          /*Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => LoyalityPointsScreen(widget.store)),
-          );
+          );*/
         } else {
           Utils.showLoginDialog(context);
         }
@@ -250,10 +252,10 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         break;
       case DrawerChildConstants.ABOUT_US:
         Navigator.pop(context);
-        Navigator.push(
+        /*Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => AboutScreen(widget.store)),
-        );
+        );*/
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
         attributeMap["ScreenName"] = "AboutScreen";
         Utils.sendAnalyticsEvent("Clicked AboutScreen", attributeMap);
@@ -261,24 +263,24 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       case DrawerChildConstants.ReferEarn:
       case DrawerChildConstants.SHARE:
         if (AppConstant.isLoggedIn) {
-          if (widget.store.isRefererFnEnable) {
+          if (widget.brandData.isRefererFnEnable) {
             Navigator.pop(context);
 
             Utils.showProgressDialog(context);
             ReferEarnData referEarn = await ApiController.referEarn();
             Utils.hideProgressDialog(context);
-            share2(referEarn.referEarn.sharedMessage, widget.store);
+            share2(referEarn.referEarn.sharedMessage, widget.brandData);
           } else {
             Utils.showToast("Refer Earn is inactive!", true);
-            share2(null, widget.store);
+            share2(null, widget.brandData);
           }
         } else {
           Navigator.pop(context);
-          if (widget.store.isRefererFnEnable) {
+          if (widget.brandData.isRefererFnEnable) {
             var result = await DialogUtils.showInviteEarnAlert(context);
             print("showInviteEarnAlert=${result}");
           } else {
-            share2(null, widget.store);
+            share2(null, widget.brandData);
           }
         }
         //share();
@@ -327,10 +329,10 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         break;
       case DrawerChildConstants.FAQ:
         Navigator.pop(context);
-        Navigator.push(
+        /*Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => FAQScreen(widget.store)),
-        );
+        );*/
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
         attributeMap["ScreenName"] = "FAQ";
         Utils.sendAnalyticsEvent("Clicked AboutScreen", attributeMap);
@@ -371,26 +373,26 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
   Future<void> share() async {
     await FlutterShare.share(
         title: 'Kindly download',
-        text: 'Kindly download' + widget.store.storeName + 'app from',
+        text: 'Kindly download' + widget.brandData.name + 'app from',
         linkUrl: Platform.isIOS
-            ? widget.store.iphoneShareLink
-            : widget.store.androidShareLink,
+            ? widget.brandData.iphoneShareLink
+            : widget.brandData.androidShareLink,
         chooserTitle: 'Share');
   }
 
-  Future<void> share2(String referEarn, StoreModel store) async {
+  Future<void> share2(String referEarn, BrandData store) async {
     if (referEarn != null && store.isRefererFnEnable) {
       await FlutterShare.share(
-          title: '${store.storeName}',
+          title: '${store.name}',
           linkUrl: referEarn,
           chooserTitle: 'Refer & Earn');
     } else {
       await FlutterShare.share(
           title: 'Kindly download',
-          text: 'Kindly download' + widget.store.storeName + 'app from',
+          text: 'Kindly download' + widget.brandData.name + 'app from',
           linkUrl: Platform.isIOS
-              ? widget.store.iphoneShareLink
-              : widget.store.androidShareLink,
+              ? widget.brandData.iphoneShareLink
+              : widget.brandData.androidShareLink,
           chooserTitle: 'Share');
     }
   }

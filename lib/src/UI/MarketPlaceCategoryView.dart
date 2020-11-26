@@ -5,6 +5,7 @@ import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/Categorys.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
@@ -13,7 +14,8 @@ import 'package:restroapp/src/utils/Utils.dart';
 class MarketPlaceCategoryView extends StatelessWidget {
   //final CategoryModel categoryModel;
   CategoriesData categoryModel;
-  StoreModel store;
+  //StoreModel store;
+  BrandData brandData;
   int index;
   bool isComingFromBaner;
   bool isListView;
@@ -21,7 +23,7 @@ class MarketPlaceCategoryView extends StatelessWidget {
   String selectedSubCategoryId;
 
   MarketPlaceCategoryView(
-      this.categoryModel, this.store, this.isComingFromBaner, this.index,
+      this.categoryModel, this.brandData, this.isComingFromBaner, this.index,
       {this.isListView = false,
       this.selectedSubCategoryId = '',
       this.callback});

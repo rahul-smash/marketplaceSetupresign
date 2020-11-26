@@ -14,6 +14,7 @@ import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -808,7 +809,7 @@ class DialogUtils {
 
   static Future<bool> showForceUpdateDialog(
       BuildContext context, String title, String message,
-      {StoreModel storeModel}) async {
+      {BrandData storeModel}) async {
     return await showDialog<bool>(
       context: context,
       barrierDismissible: true,

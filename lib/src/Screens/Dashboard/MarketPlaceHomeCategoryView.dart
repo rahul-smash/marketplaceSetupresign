@@ -23,9 +23,10 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
   CategoriesModel categoriesModel;
   List<CategoriesData> categorieslist = new List();
 
-  final CategoryResponse categoryResponse;
+  //final CategoryResponse categoryResponse;
   //List<CategoryModel> categories = new List();
-  StoreModel store;
+  //StoreModel store;
+  BrandData brandData;
   CustomCallback callback;
 
   //Product from SubCategory are going to display on the home screen
@@ -34,7 +35,7 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
   String selectedCategoryId;
 
   MarketPlaceHomeCategoryView(this.categoriesModel,
-      this.categoryResponse, this.store, this.subCategory,
+      /*this.categoryResponse,*/ this.brandData, this.subCategory,
       {this.callback, this.selectedCategoryId, this.selectedCategory}) {
 
     /*if (categoryResponse.categories.length > 8) {
@@ -66,7 +67,6 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
   StoresModel storeData;
   bool isViewAllRestSelected = false;
   StoresModel allStoreData;
-  BrandVersionModel brandVersionModel;
 
   @override
   void initState() {
@@ -87,9 +87,6 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
       setState(() {
         this.storeData = storesResponse;
       });
-    });
-    ApiController.getBrandVersion().then((response){
-      brandVersionModel = response;
     });
   }
 
@@ -148,7 +145,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                             return GridTile(
                                 child: MarketPlaceCategoryView(
                                   model,
-                                  widget.store,
+                                  widget.brandData,
                                   false,
                                   0,
                                   isListView: true,
@@ -494,7 +491,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
   }
 
   _showAllSubCategories() {
-    if (Utils.checkIfStoreClosed(widget.store)) {
+    /*if (Utils.checkIfStoreClosed(widget.store)) {
       DialogUtils.displayCommonDialog(
           context, widget.store.storeName, widget.store.storeMsg);
     } else {
@@ -518,6 +515,6 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
           }
         }
       }
-    }
+    }*/
   }
 }
