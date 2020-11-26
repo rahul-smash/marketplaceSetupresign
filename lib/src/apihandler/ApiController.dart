@@ -1,5 +1,6 @@
 import 'package:compressimage/compressimage.dart';
 import 'package:dio/dio.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/ForgotPasswordScreen.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginMobileScreen.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/OtpScreen.dart';
@@ -191,33 +192,51 @@ class ApiController {
   }
 
   static Future<StoresModel> getAllStores({Map params}) async {
-    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID)
-        +ApiConstants.allStores;
-
-    var request = new http.MultipartRequest("GET", Uri.parse(url));
-    try {
-      final response = await request.send().timeout(Duration(seconds: timeout));
-      final respStr = await response.stream.bytesToString();
-      print("----url---${url}");
-      print("----respStr---${respStr}");
-      final parsed = json.decode(respStr);
-      StoresModel storeArea = StoresModel.fromJson(parsed);
-      return storeArea;
-    } catch (e) {
-      print("--allStores--catch---${e.toString()}");
-      //Utils.showToast(e.toString(), true);
-      return null;
-    }
-  }
-
-  static Future<StoresModel> storesApiRequest() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
 
     var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID)
-        +ApiConstants.homescreenStores;
+        +ApiConstants.allStores;
 
+    print("----url--${url}");
+    try {
+      FormData formData = new FormData.fromMap({
+        "device_id": deviceId,
+        "device_token": "${deviceToken}",
+        "platform": Platform.isIOS ? "IOS" : "Android"
+      });
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      StoresModel storeData =
+      StoresModel.fromJson(json.decode(response.data));
+      print("-------getAllStores ---${storeData.success}");
+
+      return storeData;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static String getQueryParams(LatLng initialPosition){
+    String location = "?lat=${initialPosition.latitude}&lng=${initialPosition.longitude}";
+    return location;
+  }
+
+  static Future<StoresModel> storesApiRequest(LatLng initialPosition) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID)
+        +ApiConstants.homescreenStores+getQueryParams(initialPosition);
     print("----url--${url}");
     try {
       FormData formData = new FormData.fromMap({

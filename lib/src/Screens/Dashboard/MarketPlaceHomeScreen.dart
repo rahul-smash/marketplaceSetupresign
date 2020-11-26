@@ -1103,7 +1103,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                 : categoriesModel == null
                 ? Center(child: Text(""))
                 : !isCategoryViewSelected
-                ? MarketPlaceHomeCategoryView(categoriesModel,
+                ? MarketPlaceHomeCategoryView(categoriesModel,widget.initialPosition,
               /*categoryResponse,*/
               store,
               subCategory,

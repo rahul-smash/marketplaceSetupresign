@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/UI/MarketPlaceCategoryView.dart';
@@ -22,7 +23,7 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
 
   CategoriesModel categoriesModel;
   List<CategoriesData> categorieslist = new List();
-
+  LatLng initialPosition;
   //final CategoryResponse categoryResponse;
   //List<CategoryModel> categories = new List();
   //StoreModel store;
@@ -34,7 +35,7 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
   CategoryModel selectedCategory;
   String selectedCategoryId;
 
-  MarketPlaceHomeCategoryView(this.categoriesModel,
+  MarketPlaceHomeCategoryView(this.categoriesModel,this.initialPosition,
       /*this.categoryResponse,*/ this.brandData, this.subCategory,
       {this.callback, this.selectedCategoryId, this.selectedCategory}) {
 
@@ -81,7 +82,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
       });
     });
     //----------------------------------------------
-    ApiController.storesApiRequest().then((storesResponse){
+    ApiController.storesApiRequest(widget.initialPosition).then((storesResponse){
       setState(() {
         this.storeData = storesResponse;
       });
@@ -289,8 +290,12 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                               Utils.showToast("No Internet connection",false);
                               return;
                             }
+                            Map data = {
+                              "lst" : widget.initialPosition.latitude,
+                              "lng": widget.initialPosition.latitude,
+                            };
                             Utils.showProgressDialog(context);
-                            ApiController.getAllStores().then((storesResponse){
+                            ApiController.getAllStores(params: data).then((storesResponse){
                               Utils.hideProgressDialog(context);
                               Utils.hideKeyboard(context);
                               setState(() {
