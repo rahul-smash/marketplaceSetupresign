@@ -150,7 +150,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                 });
                               },
                               child: Text(
-                                isSeeAll ? "see less" : "see all",
+                                isCateSeeAll ? "View Less" : "View More",
                                 style: TextStyle(
                                     color: appThemeSecondary,
                                     fontSize: 14,
@@ -234,9 +234,9 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                 ),
                 //Quick Links
                 Visibility(
-                  visible: isViewAllRestSelected ? false : true,
+                  visible: true,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 25, 10, 10),
+                    padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -268,7 +268,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                               });
                             },
                             child: Text(
-                              isSeeAll ? "see less" : "see all",
+                              isSeeAll ? "View Less" : "View More",
                               style: TextStyle(
                                   color: appThemeSecondary,
                                   fontSize: 14,
@@ -333,9 +333,8 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                         visible: true,
                         child: InkWell(
                           child: Text(
-                            "View all",
+                            "View All",
                             style: TextStyle(
-                                decoration: TextDecoration.underline,
                                 color: appThemeSecondary,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w300),
