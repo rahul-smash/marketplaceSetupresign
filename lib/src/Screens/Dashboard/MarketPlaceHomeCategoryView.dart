@@ -446,7 +446,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: isViewAllRestSelected ? allStoreData.data.length :storeData.data.length,
+              itemCount: isViewAllRestSelected?allStoreData.data.length:storeData.data.length,
               itemBuilder: (context, index) {
                 StoreData storeDataObj = isViewAllRestSelected
                     ? allStoreData.data[index]
