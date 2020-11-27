@@ -5,6 +5,7 @@ import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/UI/MarketPlaceCategoryView.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/Categorys.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
@@ -48,7 +49,7 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
 class _MarketPlaceHomeCategoryViewState
     extends State<MarketPlaceHomeCategoryView> {
   TagsModel tagsModel;
-  List<TagData> tagsList = List();
+  List<Filter> tagsList = List();
   StoresModel storeData;
   StoresModel allStoreData;
   int selectedFilterIndex = -1;
@@ -70,7 +71,6 @@ class _MarketPlaceHomeCategoryViewState
       isCateSeeAll = false;
       categorieslist.addAll(widget.categoriesModel.data);
     }
-
     addFilters();
     ApiController.tagsApiRequest().then((tagsResponse) {
       setState(() {
@@ -223,7 +223,7 @@ class _MarketPlaceHomeCategoryViewState
                                     Map data = {
                                       "lst" : widget.initialPosition.latitude,
                                       "lng": widget.initialPosition.latitude,
-                                      "filter_by":tagsList[index].id=="1"?"distance":"newly_added",
+                                      "filter_by":tagsList[index].value,
                                     };
                                     Utils.showProgressDialog(context);
                                     ApiController.getAllStores(params: data).then((storesResponse){
@@ -261,14 +261,14 @@ class _MarketPlaceHomeCategoryViewState
                                               SizedBox(
                                                 width: 5,
                                               ),
-                                              Text('${tagsList[index].name}',
+                                              Text('${tagsList[index].lable}',
                                                   style: TextStyle(
                                                       color: Colors.grey)),
                                             ],
                                           )
                                         : Row(
                                             children: [
-                                              Text('${tagsList[index].name}',
+                                              Text('${tagsList[index].lable}',
                                                   style: TextStyle(
                                                       color:
                                                           selectedFilterIndex ==
@@ -683,13 +683,16 @@ class _MarketPlaceHomeCategoryViewState
   }
 
   void addFilters() {
-    TagData filterTag = TagData();
-    filterTag.id = "0";
-    filterTag.name = "Filters";
-    filterTag.isFilterView = true;
-    tagsList.add(filterTag);
+    print("=brand.filters=${BrandModel.getInstance().brandVersionModel.brand.filters.length}");
 
-    TagData filter1 = TagData();
+    Filter filterTag = Filter();
+    //filterTag.id = "0";
+    filterTag.lable = "Filters";
+    //filterTag.isFilterView = true;
+    tagsList.add(filterTag);
+    tagsList.addAll(BrandModel.getInstance().brandVersionModel.brand.filters);
+
+    /*TagData filter1 = TagData();
     filter1.id = "1";
     filter1.name = "Distance";
     filter1.isFilterView = false;
@@ -699,6 +702,6 @@ class _MarketPlaceHomeCategoryViewState
     filter2.id = "2";
     filter2.name = "Newly Added";
     filter2.isFilterView = false;
-    tagsList.add(filter2);
+    tagsList.add(filter2);*/
   }
 }

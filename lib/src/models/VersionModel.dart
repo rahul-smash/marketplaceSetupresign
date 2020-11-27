@@ -65,6 +65,7 @@ class BrandData {
     this.blDeviceIdUnique,
     this.isRefererFnEnable,
     this.homeScreenSection,
+    this.filters,
   });
 
   String id;
@@ -102,6 +103,7 @@ class BrandData {
   bool blDeviceIdUnique;
   bool isRefererFnEnable;
   List<dynamic> homeScreenSection;
+  List<Filter> filters;
 
   factory BrandData.fromJson(Map<String, dynamic> json) => BrandData(
     id: json["id"],
@@ -139,6 +141,7 @@ class BrandData {
     blDeviceIdUnique: json["bl_device_id_unique"],
     isRefererFnEnable: json["is_referer_fn_enable"],
     homeScreenSection: List<dynamic>.from(json["home_screen_section"].map((x) => x)),
+    filters: List<Filter>.from(json["filters"].map((x) => Filter.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -177,6 +180,27 @@ class BrandData {
     "bl_device_id_unique": blDeviceIdUnique,
     "is_referer_fn_enable": isRefererFnEnable,
     "home_screen_section": List<dynamic>.from(homeScreenSection.map((x) => x)),
+    "filters": List<dynamic>.from(filters.map((x) => x.toJson())),
+  };
+}
+
+class Filter {
+  Filter({
+    this.lable,
+    this.value,
+  });
+
+  String lable;
+  String value;
+
+  factory Filter.fromJson(Map<String, dynamic> json) => Filter(
+    lable: json["lable"],
+    value: json["value"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "lable": lable,
+    "value": value,
   };
 }
 
