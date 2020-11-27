@@ -67,8 +67,7 @@ class Utils {
       child: Center(
         child: CircularProgressIndicator(
             backgroundColor: Colors.black26,
-            valueColor:
-            AlwaysStoppedAnimation<Color>(Colors.black26)),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.black26)),
       ),
     );
   }
@@ -618,7 +617,6 @@ class Utils {
     }
   }
 
-
   static Color colorGeneralization(Color passedColor, String colorString) {
     Color returnedColor = passedColor;
     if (colorString != null) {
@@ -630,6 +628,14 @@ class Utils {
     }
     return returnedColor;
   }
+}
+
+enum HomeScreenEnum {
+  HOME_BAND_VIEW,
+  HOME_SEARCH_VIEW,
+  HOME_RESTAURANT_VIEW,
+  HOME_BAND_CATEGORIES_VIEW,
+  HOME_SELECTED_STORE_VIEW
 }
 
 enum ClassType { CART, SubCategory, Favourites, Home, Search }

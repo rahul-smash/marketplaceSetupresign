@@ -102,8 +102,7 @@ class ApiController {
   }
 
   static Future<BrandVersionModel> getBrandVersion() async {
-
-    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID)+
+    var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.brandVersion;
 
     var request = new http.MultipartRequest("GET", Uri.parse(url));
@@ -128,8 +127,8 @@ class ApiController {
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID)
-        +ApiConstants.homescreenCategories;
+    var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.homescreenCategories;
 
     print("----url--${url}");
     try {
@@ -147,7 +146,7 @@ class ApiController {
       print(response.statusCode);
       print(response.data);
       CategoriesModel storeData =
-      CategoriesModel.fromJson(json.decode(response.data));
+          CategoriesModel.fromJson(json.decode(response.data));
       print("-------categoriesModel ---${storeData.success}");
 
       return storeData;
@@ -162,8 +161,8 @@ class ApiController {
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID)
-        +ApiConstants.homescreenTags;
+    var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.homescreenTags;
 
     print("----url--${url}");
     try {
@@ -180,8 +179,7 @@ class ApiController {
               responseType: ResponseType.plain));
       print(response.statusCode);
       print(response.data);
-      TagsModel storeData =
-      TagsModel.fromJson(json.decode(response.data));
+      TagsModel storeData = TagsModel.fromJson(json.decode(response.data));
       print("-------tagsApiRequest ---${storeData.success}");
 
       return storeData;
@@ -196,8 +194,8 @@ class ApiController {
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID)
-        +ApiConstants.allStores;
+    var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.allStores;
 
     print("----url--${url}");
     try {
@@ -214,8 +212,7 @@ class ApiController {
               responseType: ResponseType.plain));
       print(response.statusCode);
       print(response.data);
-      StoresModel storeData =
-      StoresModel.fromJson(json.decode(response.data));
+      StoresModel storeData = StoresModel.fromJson(json.decode(response.data));
       print("-------getAllStores ---${storeData.success}");
 
       return storeData;
@@ -225,8 +222,9 @@ class ApiController {
     return null;
   }
 
-  static String getQueryParams(LatLng initialPosition){
-    String location = "?lat=${initialPosition.latitude}&lng=${initialPosition.longitude}";
+  static String getQueryParams(LatLng initialPosition) {
+    String location =
+        "?lat=${initialPosition.latitude}&lng=${initialPosition.longitude}";
     return location;
   }
 
@@ -235,8 +233,9 @@ class ApiController {
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.brandID)
-        +ApiConstants.homescreenStores+getQueryParams(initialPosition);
+    var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.homescreenStores +
+        getQueryParams(initialPosition);
     print("----url--${url}");
     try {
       FormData formData = new FormData.fromMap({
@@ -252,8 +251,7 @@ class ApiController {
               responseType: ResponseType.plain));
       print(response.statusCode);
       print(response.data);
-      StoresModel storeData =
-      StoresModel.fromJson(json.decode(response.data));
+      StoresModel storeData = StoresModel.fromJson(json.decode(response.data));
       print("-------StoresModel ---${storeData.success}");
 
       return storeData;
@@ -264,8 +262,8 @@ class ApiController {
   }
 
   static Future<StoreDataModel> getStoreVersionData(String storeId) async {
-
-    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId);
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
+        ApiConstants.store_configuration;
 
     var request = new http.MultipartRequest("GET", Uri.parse(url));
     try {
@@ -392,17 +390,13 @@ class ApiController {
 
   static Future<CategoryResponse> getCategoriesApiRequest(
       String storeId) async {
-    var url = ApiConstants.baseUrl.replaceAll("storeId", storeId) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
         ApiConstants.getCategories;
     CategoryResponse categoryResponse = CategoryResponse();
-    DatabaseHelper databaseHelper = new DatabaseHelper();
 
     try {
-      int dbCount =
-          await databaseHelper.getCount(DatabaseHelper.Categories_Table);
       bool isNetworkAviable = await Utils.isNetworkAvailable();
-      if (dbCount == 0 && isNetworkAviable) {
-        print("database zero");
+      if (isNetworkAviable) {
         print("catttttt  $url");
         Response response = await Dio()
             .get(url, options: new Options(responseType: ResponseType.plain));
@@ -410,29 +404,13 @@ class ApiController {
         categoryResponse =
             CategoryResponse.fromJson(json.decode(response.data));
         //print("-------Categories.length ---${categoryResponse.categories.length}");
-        for (int i = 0; i < categoryResponse.categories.length; i++) {
-          CategoryModel model = categoryResponse.categories[i];
-          databaseHelper.saveCategories(model);
-          if (model.subCategory != null) {
-            for (int j = 0; j < model.subCategory.length; j++) {
-              databaseHelper.saveSubCategories(model.subCategory[j], model.id);
-            }
-          }
-        }
-      } else if (dbCount == 0 && !isNetworkAviable) {
+      } else if (!isNetworkAviable) {
         categoryResponse.success = false;
         return categoryResponse;
       } else {
         print("database has values");
         //prepare model object
-        List<CategoryModel> categoryList = await databaseHelper.getCategories();
-        categoryResponse.categories = categoryList;
-        for (var i = 0; i < categoryResponse.categories.length; i++) {
-          String parent_id = categoryResponse.categories[i].id;
-          categoryResponse.categories[i].subCategory =
-              await databaseHelper.getSubCategories(parent_id);
-        }
-        categoryResponse.success = true;
+        categoryResponse.success = false;
       }
     } catch (e) {
       print(e);
@@ -441,23 +419,20 @@ class ApiController {
   }
 
   static Future<SubCategoryResponse> getSubCategoryProducts(
-      String subCategoryId) async {
-    DatabaseHelper databaseHelper = new DatabaseHelper();
-
-    int dbProductCounts = await databaseHelper.getCountWithCondition(
-        DatabaseHelper.Products_Table, "category_ids", subCategoryId);
+      String subCategoryId,
+      {StoreDataObj store}) async {
     SubCategoryResponse subCategoryResponse = SubCategoryResponse();
     bool isNetworkAviable = await Utils.isNetworkAvailable();
     try {
-      if (dbProductCounts == 0 && isNetworkAviable) {
-        StoreModel store = await SharedPrefs.getStore();
+      if (isNetworkAviable) {
+//        StoreModel store = await SharedPrefs.getStore();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String deviceId = prefs.getString(AppConstant.deviceId);
         print("deviceID $deviceId");
         String deviceToken = prefs.getString(AppConstant.deviceToken);
         print("deviceToken $deviceToken");
 
-        var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+        var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
             ApiConstants.getProducts +
             subCategoryId;
         print(url);
@@ -474,47 +449,14 @@ class ApiController {
                 contentType: "application/json",
                 responseType: ResponseType.plain));
         print("this is responseeee $response");
-        //print(response.data);
         subCategoryResponse =
             SubCategoryResponse.fromJson(json.decode(response.data));
-        if (subCategoryResponse.success) {
-          for (int i = 0; i < subCategoryResponse.subCategories.length; i++) {
-            for (int j = 0;
-                j < subCategoryResponse.subCategories[i].products.length;
-                j++) {
-              databaseHelper.saveProducts(
-                  subCategoryResponse.subCategories[i].products[j],
-                  subCategoryResponse.subCategories[i].id);
-            }
-          }
-          return subCategoryResponse;
-        }
-        //print("-------store.success ---${storeData.success}");
-      } else if (dbProductCounts == 0 && !isNetworkAviable) {
+        return subCategoryResponse;
+      } else if (!isNetworkAviable) {
         subCategoryResponse.success = false;
         return subCategoryResponse;
       } else {
-        print("database has SubCategories");
-        subCategoryResponse = SubCategoryResponse();
-        //prepare model object
-        List<SubCategoryModel> categoryList =
-            await databaseHelper.getSubCategoriesFromID(subCategoryId);
-
-        subCategoryResponse.subCategories = categoryList;
-
-        for (var i = 0; i < subCategoryResponse.subCategories.length; i++) {
-          String parent_id = subCategoryResponse.subCategories[i].id;
-          subCategoryResponse.subCategories[i].products =
-              await databaseHelper.getProducts(parent_id);
-//          for (int j = 0;
-//              j < subCategoryResponse.subCategories[i].products.length;
-//              j++) {
-//            subCategoryResponse.subCategories[i].products[j].variants =
-//                await databaseHelper.getProductsVariants(
-//                    subCategoryResponse.subCategories[i].products[j].id);
-//          }
-        }
-        subCategoryResponse.success = true;
+        subCategoryResponse.success = false;
         return subCategoryResponse;
       }
     } catch (e) {
@@ -667,7 +609,8 @@ class ApiController {
       String city,
       String cityId,
       String lat,
-      String lng,{String address2=''}) async {
+      String lng,
+      {String address2 = ''}) async {
     StoreModel store = await SharedPrefs.getStore();
     UserModel user = await SharedPrefs.getUser();
 
@@ -691,7 +634,7 @@ class ApiController {
         "area_id": areaId,
         "first_name": fullname,
         "email": user.email,
-        "address2":address2
+        "address2": address2
       });
 
       if (addressId != null) {
@@ -946,12 +889,10 @@ class ApiController {
         "calculated_tax_detail": "",
         "coupon_code": taxModel == null ? "" : '${taxModel.couponCode}',
         "device_id": deviceId,
-        "user_address":
-            isComingFromPickUpScreen == true ? storeAddress :
-            address.address2!=null&&address.address2.trim().isNotEmpty?
-            '${address.address!=null&&address.address.trim().isNotEmpty?
-            '${address.address}, ${address.address2}'
-                :"${address.address2}"}'
+        "user_address": isComingFromPickUpScreen == true
+            ? storeAddress
+            : address.address2 != null && address.address2.trim().isNotEmpty
+                ? '${address.address != null && address.address.trim().isNotEmpty ? '${address.address}, ${address.address2}' : "${address.address2}"}'
                 : address.address,
         "store_fixed_tax_detail": "",
         "tax": taxModel == null ? "0" : '${taxModel.tax}',
@@ -1656,8 +1597,11 @@ class ApiController {
         StoreModel store = await SharedPrefs.getStore();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         UserModel user = await SharedPrefs.getUser();
-        String email =
-            user.email == null ? 'NA' : user.email.isEmpty ? "NA" : user.email;
+        String email = user.email == null
+            ? 'NA'
+            : user.email.isEmpty
+                ? "NA"
+                : user.email;
 //        address = "170,phase1";
         String firstName = user.fullName.contains(" ") == true
             ? user.fullName.substring(0, user.fullName.indexOf(" "))

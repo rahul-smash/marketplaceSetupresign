@@ -85,7 +85,8 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
                           widget.categoryResponse.categories[index];
                       return CategoryView(
                         model,
-                        widget.store,
+//                        widget.store,
+                       null,
                         false,
                         0,
                         isListView: true,

@@ -29,7 +29,7 @@ import 'package:restroapp/src/utils/Utils.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   Product product;
-  bool isApiLoading = true, isFav = false;
+  bool isApiLoading = false, isFav = false;
   Variant passedVariant;
 
   ProductDetailsScreen(this.product,this.passedVariant);
@@ -70,7 +70,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
     _carouselController = CarouselController();
     variant=widget.passedVariant;
     getDataFromDB();
-    getProductDetail(widget.product.id);
+//    getProductDetail(widget.product.id);
   }
 
   void getDataFromDB() {
@@ -175,29 +175,6 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
               ],
             ),
           ),
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: appThemeSecondary,
-          onPressed: () async {
-            CategoryModel result = await DialogUtils.displayMenuDialog(context);
-            if (result != null) {
-              Navigator.of(context).popUntil(
-                (route) => route.isFirst,
-              );
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return SubCategoryProductScreen(result, false, 0);
-                }),
-              );
-            }
-          },
-          icon: Image.asset(
-            'images/restauranticon.png',
-            width: 20,
-            color: Colors.white,
-          ),
-          label: Text("Menu"),
         ),
       ),
     );

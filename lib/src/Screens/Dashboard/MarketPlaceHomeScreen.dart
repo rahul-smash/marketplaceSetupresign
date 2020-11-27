@@ -24,6 +24,7 @@ import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/Categorys.dart';
 import 'package:restroapp/src/models/ConfigModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
@@ -40,7 +41,9 @@ import 'SearchScreen.dart';
 import 'dart:io';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:location/location.dart';
-import 'package:permission_handler/permission_handler.dart' as permission_handler;
+import 'package:restroapp/src/Screens/Dashboard/StoreDashboardScreen.dart';
+import 'package:permission_handler/permission_handler.dart'
+    as permission_handler;
 
 class MarketPlaceHomeScreen extends StatefulWidget {
   //final StoreModel store;
@@ -49,7 +52,8 @@ class MarketPlaceHomeScreen extends StatefulWidget {
   ConfigModel configObject;
   bool showForceUploadAlert;
 
-  MarketPlaceHomeScreen(this.brandData, this.configObject, this.showForceUploadAlert, this.initialPosition);
+  MarketPlaceHomeScreen(this.brandData, this.configObject,
+      this.showForceUploadAlert, this.initialPosition);
 
   @override
   State<StatefulWidget> createState() {
@@ -58,7 +62,6 @@ class MarketPlaceHomeScreen extends StatefulWidget {
 }
 
 class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
-
   BrandData store;
   FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
   List<NetworkImage> imgList = [];
@@ -67,7 +70,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   UserModel user;
   static FirebaseAnalytics analytics = FirebaseAnalytics();
   static FirebaseAnalyticsObserver observer =
-  FirebaseAnalyticsObserver(analytics: analytics);
+      FirebaseAnalyticsObserver(analytics: analytics);
   bool isStoreClosed;
   final DatabaseHelper databaseHelper = new DatabaseHelper();
   int cartBadgeCount;
@@ -97,6 +100,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   ScrollController controller = ScrollController();
   bool isViewAllSelected = false;
   StoresModel allStoreData;
+
+  StoreDataModel _selectedSingleStore;
+
+  HomeScreenEnum _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
 
   _MarketPlaceHomeScreenState(this.store);
 
@@ -130,8 +137,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       }
       if (widget.showForceUploadAlert) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
-          DialogUtils.showForceUpdateDialog(context, store.name,
-              store.forceDownload[0].forceDownloadMessage,storeModel: store);
+          DialogUtils.showForceUpdateDialog(
+              context, store.name, store.forceDownload[0].forceDownloadMessage,
+              storeModel: store);
         });
       } else {
         if (!checkIfStoreClosed()) {
@@ -211,8 +219,30 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                   isCategoryViewSelected = !isCategoryViewSelected;
                 });
                 return new Future(() => false);
-              } else
-                return new Future(() => true);
+              } else {
+                switch (_selectedHomeScreen) {
+                  case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
+                    setState(() {
+                      _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+                      isViewAllSelected = false;
+                    });
+                    return new Future(() => false);
+                  case HomeScreenEnum.HOME_RESTAURANT_VIEW:
+                  case HomeScreenEnum.HOME_BAND_VIEW:
+                  default:
+                    if(isViewAllSelected){
+                      setState(() {
+                        _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+                        isViewAllSelected = false;
+                      });
+                      return new Future(() =>false);
+                    }else{
+                      return new Future(() =>true);
+                    }
+
+
+                }
+              }
             }
           },
         ));
@@ -263,8 +293,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       onTap: () => _onBannerTap(_index),
       child: Container(
           margin:
-          EdgeInsets.only(top: 0.0, bottom: 15.0, left: 7.5, right: 7.5),
-          width: Utils.getDeviceWidth(context)-(Utils.getDeviceWidth(context) / 4),
+              EdgeInsets.only(top: 0.0, bottom: 15.0, left: 7.5, right: 7.5),
+          width: Utils.getDeviceWidth(context) -
+              (Utils.getDeviceWidth(context) / 4),
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10.0)),
           child: ClipRRect(
@@ -378,19 +409,19 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                           ? staticHomeDescriptionColor
                           : appThemeSecondary)),
             ),
-            BottomNavigationBarItem(
-              icon: Image.asset('images/unselectedcategoryicon.png',
-                  width: 24,
-                  fit: BoxFit.scaleDown,
-                  color: !isCategoryViewSelected
-                      ? staticHomeDescriptionColor
-                      : appThemeSecondary),
-              title: Text('Category',
-                  style: TextStyle(
-                      color: !isCategoryViewSelected
-                          ? staticHomeDescriptionColor
-                          : appThemeSecondary)),
-            ),
+//            BottomNavigationBarItem(
+//              icon: Image.asset('images/unselectedcategoryicon.png',
+//                  width: 24,
+//                  fit: BoxFit.scaleDown,
+//                  color: !isCategoryViewSelected
+//                      ? staticHomeDescriptionColor
+//                      : appThemeSecondary),
+//              title: Text('Category',
+//                  style: TextStyle(
+//                      color: !isCategoryViewSelected
+//                          ? staticHomeDescriptionColor
+//                          : appThemeSecondary)),
+//            ),
 //            BottomNavigationBarItem(
 //              icon: Image.asset('images/contacticon.png',
 //                  width: 24,
@@ -440,7 +471,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   onTabTapped(int index) {
     if (checkIfStoreClosed()) {
-      DialogUtils.displayCommonDialog(context, store.name, /*store.storeMsg*/"Store Closed");
+      DialogUtils.displayCommonDialog(
+          context, store.name, /*store.storeMsg*/ "Store Closed");
     } else {
       setState(() {
         _currentIndex = index;
@@ -449,8 +481,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => MyCartScreen(() {
-                  getCartCount();
-                })),
+                      getCartCount();
+                    })),
           );
 
           Map<String, dynamic> attributeMap = new Map<String, dynamic>();
@@ -511,12 +543,11 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   _handleDrawer() async {
     try {
-      if(isViewAllSelected){
-
-      }else{
+      if (isViewAllSelected) {
+      } else {
         if (checkIfStoreClosed()) {
           DialogUtils.displayCommonDialog(
-              context, store.name, /*store.storeMsg*/"Store Closed");
+              context, store.name, /*store.storeMsg*/ "Store Closed");
         } else {
           _key.currentState.openDrawer();
           if (AppConstant.isLoggedIn) {
@@ -580,12 +611,12 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   Future showNotification(
       String title, String body, Map<String, dynamic> message) async {
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    new FlutterLocalNotificationsPlugin();
+        new FlutterLocalNotificationsPlugin();
 
     String appName = await SharedPrefs.getStoreSharedValue(AppConstant.appName);
 
     var initializationSettingsAndroid =
-    AndroidInitializationSettings('ic_notification');
+        AndroidInitializationSettings('ic_notification');
     var initializationSettingsIOS = IOSInitializationSettings(
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
     var initializationSettings = InitializationSettings(
@@ -674,7 +705,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   void getCategoryApi() {
     isLoading = true;
-    ApiController.categoriesApiRequest().then((response){
+    ApiController.categoriesApiRequest().then((response) {
       setState(() {
         isLoading = false;
         this.categoriesModel = response;
@@ -753,16 +784,20 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   getAddressFromLocation() async {
     if (widget.initialPosition != null) {
       print("--widget.initialPosition != null----");
-      Coordinates coordinates = new Coordinates(widget.initialPosition.latitude, widget.initialPosition.longitude);
-      var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      Coordinates coordinates = new Coordinates(
+          widget.initialPosition.latitude, widget.initialPosition.longitude);
+      var addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
       var first = addresses.first;
       //print("--addresses-${addresses} and ${first}");
-      print("---getAddressFromLocation-------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
+      print(
+          "---getAddressFromLocation-------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
       setState(() {
         locationAddress = first.addressLine;
       });
-    }else{
-      print("-else-widget.initialPosition != null----${widget.initialPosition}");
+    } else {
+      print(
+          "-else-widget.initialPosition != null----${widget.initialPosition}");
     }
   }
 
@@ -775,71 +810,87 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       titleSpacing: 0,
       title: widget.configObject.isMultiStore == false
           ? Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          InkWell(
-            onTap: () async {
-              print("AppBar onTap");
-              bool isNetworkAvailable = await Utils.isNetworkAvailable();
-              if(!isNetworkAvailable){
-                Utils.showToast("No Internet connection",false);
-                return;
-              }
-              LatLng _initialPosition;
-              _serviceEnabled = await location.serviceEnabled();
-              if (!_serviceEnabled) {
-                _serviceEnabled = await location.requestService();
-                if (!_serviceEnabled) {
-                  return;
-                }
-              }
-              _permissionGranted = await location.hasPermission();
-              print("permission sttsu $_permissionGranted");
-              if (_permissionGranted == PermissionStatus.denied) {
-                print("permission deniedddd");
-                _permissionGranted = await location.requestPermission();
-                if (_permissionGranted != PermissionStatus.granted) {
-                  print("permission not grantedd");
-                  var result = await DialogUtils.displayDialog(context, "Location Permission Required",
-                      "Please enable location permissions in settings.", "Cancel", "Ok");
-                  if(result == true){
-                    permission_handler.openAppSettings();
-                  }
-                  return;
-                }
-              }
-              if (Platform.isAndroid) {
-                await location.changeSettings(accuracy: LocationAccuracy.high,distanceFilter: 0,interval: 1000,);
-              }
-              _locationData = await location.getLocation();
-              _initialPosition = LatLng(_locationData.latitude,_locationData.longitude);
-              if (_initialPosition != null) {
-                Coordinates coordinates = new Coordinates(_initialPosition.latitude, _initialPosition.longitude);
-                var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
-                var first = addresses.first;
-                //print("--addresses-${addresses} and ${first}");
-                print("----------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
-                setState(() {
-                  locationAddress = first.addressLine;
-                });
-              }
-            },
-            child: Visibility(
-              visible: true,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: (Utils.getDeviceWidth(context)/2.6),
-                    child: Text("${locationAddress}",
-                      maxLines: 2,textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14),),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  onTap: () async {
+                    print("AppBar onTap");
+                    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+                    if (!isNetworkAvailable) {
+                      Utils.showToast("No Internet connection", false);
+                      return;
+                    }
+                    LatLng _initialPosition;
+                    _serviceEnabled = await location.serviceEnabled();
+                    if (!_serviceEnabled) {
+                      _serviceEnabled = await location.requestService();
+                      if (!_serviceEnabled) {
+                        return;
+                      }
+                    }
+                    _permissionGranted = await location.hasPermission();
+                    print("permission sttsu $_permissionGranted");
+                    if (_permissionGranted == PermissionStatus.denied) {
+                      print("permission deniedddd");
+                      _permissionGranted = await location.requestPermission();
+                      if (_permissionGranted != PermissionStatus.granted) {
+                        print("permission not grantedd");
+                        var result = await DialogUtils.displayDialog(
+                            context,
+                            "Location Permission Required",
+                            "Please enable location permissions in settings.",
+                            "Cancel",
+                            "Ok");
+                        if (result == true) {
+                          permission_handler.openAppSettings();
+                        }
+                        return;
+                      }
+                    }
+                    if (Platform.isAndroid) {
+                      await location.changeSettings(
+                        accuracy: LocationAccuracy.high,
+                        distanceFilter: 0,
+                        interval: 1000,
+                      );
+                    }
+                    _locationData = await location.getLocation();
+                    _initialPosition =
+                        LatLng(_locationData.latitude, _locationData.longitude);
+                    if (_initialPosition != null) {
+                      Coordinates coordinates = new Coordinates(
+                          _initialPosition.latitude,
+                          _initialPosition.longitude);
+                      var addresses = await Geocoder.local
+                          .findAddressesFromCoordinates(coordinates);
+                      var first = addresses.first;
+                      //print("--addresses-${addresses} and ${first}");
+                      print(
+                          "----------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
+                      setState(() {
+                        locationAddress = first.addressLine;
+                      });
+                    }
+                  },
+                  child: Visibility(
+                    visible: true,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: (Utils.getDeviceWidth(context) / 2.6),
+                          child: Text(
+                            "${locationAddress}",
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Icon(Icons.keyboard_arrow_down)
+                      ],
+                    ),
                   ),
-                  Icon(Icons.keyboard_arrow_down)
-                ],
-              ),
-            ),
-          ),
-          /*Visibility(
+                ),
+                /*Visibility(
             visible: store.homePageSubtitleStatus &&
                 store.homePageSubtitle != null,
             child: Text(
@@ -851,30 +902,26 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               maxLines: 2,
             ),
           )*/
-        ],
-      ) : InkWell(
-        onTap: () async {
-          BranchData selectedStore =
-          await DialogUtils.displayBranchDialog(context,
-              "Select Branch", storeBranchesModel, branchData);
-          if (selectedStore != null &&
-              store.id.compareTo(selectedStore.id) != 0)
-            logout(context, selectedStore);
-        },
-        child: Row(
-          children: <Widget>[
-            Text(branchData == null ? "" : branchData.storeName),
-            Icon(Icons.keyboard_arrow_down)
-          ],
-        ),
-      ),
+              ],
+            )
+          : InkWell(
+              onTap: () async {
+                BranchData selectedStore =
+                    await DialogUtils.displayBranchDialog(context,
+                        "Select Branch", storeBranchesModel, branchData);
+                if (selectedStore != null &&
+                    store.id.compareTo(selectedStore.id) != 0)
+                  logout(context, selectedStore);
+              },
+              child: Row(
+                children: <Widget>[
+                  Text(branchData == null ? "" : branchData.storeName),
+                  Icon(Icons.keyboard_arrow_down)
+                ],
+              ),
+            ),
       centerTitle: widget.configObject.isMultiStore == true ? false : false,
-      leading: isViewAllSelected
-          ? Icon(Icons.keyboard_arrow_left, size: 35)
-          : IconButton(
-        icon: Image.asset('images/menuicon.png', width: 25),
-        onPressed: _handleDrawer,
-      ),
+      leading: _getAppBarLeftIcon(),
       actions: <Widget>[
         Visibility(
             visible: AppConstant.isLoggedIn,
@@ -928,7 +975,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     );
   }
 
-
   _launchCaller(String call) async {
     String url = "tel:${call}";
     if (await canLaunch(url)) {
@@ -945,23 +991,18 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         Container(
           decoration: isCategoryViewSelected
               ? BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("images/backgroundimg.png"),
-              fit: BoxFit.cover,
-            ),
-          )
+                  image: DecorationImage(
+                    image: AssetImage("images/backgroundimg.png"),
+                    fit: BoxFit.cover,
+                  ),
+                )
               : null,
           color: !isCategoryViewSelected ? Colors.white : null,
         ),
         Padding(
-          padding: EdgeInsets.only(top: isViewAllSelected ? 10 : 60),
+          padding: EdgeInsets.only(top: 10),
           child: _getCurrentBody(),
         ),
-        Visibility(
-          visible: isViewAllSelected ? false : true,
-          child: _addSearchView(),
-        ),
-
       ],
     );
   }
@@ -969,7 +1010,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   Widget _addSearchView() {
     return Container(
       height: 40,
-      margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+      margin: EdgeInsets.fromLTRB(10, 10, 10, 20),
       //padding: EdgeInsets.all(5.0),
       decoration: BoxDecoration(
           color: searchGrayColor,
@@ -984,11 +1025,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(padding: EdgeInsets.fromLTRB(3,3,6,3),child:
-                Image.asset('images/searchicon.png',
-                    width: 20,
-                    fit: BoxFit.scaleDown,
-                    color: appTheme)),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(3, 3, 6, 3),
+                    child: Image.asset('images/searchicon.png',
+                        width: 20, fit: BoxFit.scaleDown, color: appTheme)),
                 Flexible(
                   child: TextField(
                     textInputAction: TextInputAction.search,
@@ -1048,88 +1088,122 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     return gesture;
   }
 
-  void scrollTop(){
+  void scrollTop() {
     controller.animateTo(0,
         curve: Curves.linear, duration: Duration(milliseconds: 100));
   }
 
   Widget _getCurrentBody() {
-    if (productsList.length > 0) {
-      return HomeSearchView(productsList);
-    } else {
-      return SingleChildScrollView(
-        controller: controller,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
+    switch (_selectedHomeScreen) {
+      case HomeScreenEnum.HOME_SEARCH_VIEW:
+        return HomeSearchView(productsList);
+      case HomeScreenEnum.HOME_RESTAURANT_VIEW:
+        break;
+      case HomeScreenEnum.HOME_BAND_CATEGORIES_VIEW:
+        break;
+      case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
+        return StoreDashboardScreen(_selectedSingleStore);
+        break;
+      case HomeScreenEnum.HOME_BAND_VIEW:
+      default:
+        return Column(
+          children: [
             Visibility(
               visible: isViewAllSelected ? false : true,
-              child: addBanners(),
+              child: _addSearchView(),
             ),
-            Visibility(
-                visible: isViewAllSelected ? false : imgList.length > 1,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: imgList.map((url) {
-                      int index = imgList.indexOf(url);
-                      return _current == index
-                          ? Container(
-                        width: 7.0,
-                        height: 7.0,
-                        margin: EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 2.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: dotIncreasedColor,
-                        ),
-                      )
-                          : Container(
-                        width: 6.0,
-                        height: 6.0,
-                        margin: EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 2.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color.fromRGBO(0, 0, 0, 0.4),
-                        ),
-                      );
-                    }).toList(),
+            Expanded(
+                child: SingleChildScrollView(
+              controller: controller,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Visibility(
+                    visible: isViewAllSelected ? false : true,
+                    child: addBanners(),
                   ),
-                )),
-            isLoading
-                ? Center(child: CircularProgressIndicator())
-                : categoriesModel == null
-                ? Center(child: Text(""))
-                : !isCategoryViewSelected
-                ? MarketPlaceHomeCategoryView(categoriesModel,widget.initialPosition,
-              /*categoryResponse,*/
-              store,
-              subCategory,
-              callback: <Object>({value}) {
-                setState(() {
-                  if (value is String) {
-                    setState(() {
-                      isCategoryViewSelected =
-                      !isCategoryViewSelected;
-                    });
-                    return;
-                  }
-                  selectedCategory = value as CategoryModel;
-                  this.selectedSubCategoryId =
-                      selectedCategory.subCategory.first.id;
-                  subCategory = null;
-                  getHomeCategoryProductApi();
-                });
-                return;
-              },
-              selectedCategoryId: selectedSubCategoryId,
-              selectedCategory: selectedCategory,
-            )
-                : Container(
-              padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-              /*child: GridView.count(
+                  Visibility(
+                      visible: isViewAllSelected ? false : imgList.length > 1,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: imgList.map((url) {
+                            int index = imgList.indexOf(url);
+                            return _current == index
+                                ? Container(
+                                    width: 7.0,
+                                    height: 7.0,
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 0.0, horizontal: 2.0),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: dotIncreasedColor,
+                                    ),
+                                  )
+                                : Container(
+                                    width: 6.0,
+                                    height: 6.0,
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 0.0, horizontal: 2.0),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color.fromRGBO(0, 0, 0, 0.4),
+                                    ),
+                                  );
+                          }).toList(),
+                        ),
+                      )),
+                  isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : categoriesModel == null
+                          ? Center(child: Text(""))
+                          : !isCategoryViewSelected
+                              ? MarketPlaceHomeCategoryView(
+                                  categoriesModel,
+                                  widget.initialPosition,
+                                  /*categoryResponse,*/
+                                  store,
+                                  subCategory,
+                                  isViewAllRestSelected: isViewAllSelected,
+                                  callback: <Object>({value}) {
+                                    setState(() {
+                                      if (value == null) {
+                                        Utils.showToast('No Data found', false);
+                                        return;
+                                      }
+                                      if (value is StoreDataModel) {
+                                        setState(() {
+                                          _selectedSingleStore =
+                                              value as StoreDataModel;
+                                          _selectedHomeScreen = HomeScreenEnum
+                                              .HOME_SELECTED_STORE_VIEW;
+                                        });
+                                        return;
+                                      }
+
+                                      if (value is String) {
+                                        setState(() {
+                                          isCategoryViewSelected =
+                                              !isCategoryViewSelected;
+                                        });
+                                        return;
+                                      }
+                                      selectedCategory = value as CategoryModel;
+                                      this.selectedSubCategoryId =
+                                          selectedCategory.subCategory.first.id;
+                                      subCategory = null;
+                                      getHomeCategoryProductApi();
+                                    });
+                                    return;
+                                  },
+                                  selectedCategoryId: selectedSubCategoryId,
+                                  selectedCategory: selectedCategory,
+                                )
+                              : Container(
+                                  padding:
+                                      EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                                  /*child: GridView.count(
                   crossAxisCount: 3,
                   childAspectRatio: .8,
                   physics: NeverScrollableScrollPhysics(),
@@ -1143,10 +1217,12 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         child: CategoryView(model, store, false, 0));
                   }).toList()
               ),*/
-            )
+                                )
+                ],
+              ),
+            )),
           ],
-        ),
-      );
+        );
     }
   }
 
@@ -1157,7 +1233,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         Utils.sendSearchAnalyticsEvent(_controller.text);
         Utils.showProgressDialog(context);
         SubCategoryResponse subCategoryResponse =
-        await ApiController.getSearchResults(_controller.text);
+            await ApiController.getSearchResults(_controller.text);
         Utils.hideKeyboard(context);
         Utils.hideProgressDialog(context);
         if (subCategoryResponse == null ||
@@ -1180,5 +1256,42 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         Utils.showToast(AppConstant.noInternet, false);
       }
     });
+  }
+
+  _getAppBarLeftIcon() {
+    switch (_selectedHomeScreen) {
+      case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
+        return IconButton(
+          icon: Icon(Icons.keyboard_arrow_left, size: 35),
+          onPressed: () {
+            setState(() {
+              _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+              isViewAllSelected = false;
+            });
+          },
+        );
+        break;
+      case HomeScreenEnum.HOME_BAND_CATEGORIES_VIEW:
+        break;
+      case HomeScreenEnum.HOME_RESTAURANT_VIEW:
+        break;
+      case HomeScreenEnum.HOME_BAND_VIEW:
+      default:
+        return isViewAllSelected
+            ? IconButton(
+                icon: Icon(Icons.keyboard_arrow_left, size: 35),
+                onPressed: () {
+                  setState(() {
+                    _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+                    isViewAllSelected = false;
+                  });
+                },
+              )
+            : IconButton(
+                icon: Image.asset('images/menuicon.png', width: 25),
+                onPressed: _handleDrawer,
+              );
+        break;
+    }
   }
 }
