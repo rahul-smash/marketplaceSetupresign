@@ -9,6 +9,7 @@ import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/UI/DialogCategoryView.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
@@ -1523,73 +1524,4 @@ class DialogUtils {
       );
     }
   }
-//  static Future<CategoryModel> displayMenuDialog(BuildContext context) async {
-//    //prepare model object
-//    DatabaseHelper databaseHelper = new DatabaseHelper();
-//    List<CategoryModel> categoryList = await databaseHelper.getCategories();
-//    CategoryResponse categoryResponse = CategoryResponse();
-//    categoryResponse.categories = categoryList;
-//    if (categoryResponse.categories != null &&
-//        categoryResponse.categories.isNotEmpty) {
-//      for (var i = 0; i < categoryResponse.categories.length; i++) {
-//        String parent_id = categoryResponse.categories[i].id;
-//        categoryResponse.categories[i].subCategory =
-//            await databaseHelper.getSubCategories(parent_id);
-//      }
-//      categoryResponse.success = true;
-//      StoreModel store = await SharedPrefs.getStore();
-//      return await showDialog<CategoryModel>(
-//        context: context,
-//        builder: (BuildContext context) {
-//          return WillPopScope(
-//            onWillPop: () {
-//              return Future(() => true);
-//            },
-//            child: AlertDialog(
-//              shape: RoundedRectangleBorder(
-//                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
-//              title: Text(
-//                "Menu",
-//                style: TextStyle(color: appTheme),
-//                textAlign: TextAlign.center,
-//              ),
-//              content: Container(
-//                  width: double.maxFinite,
-//                  child: GridView.count(
-//                      crossAxisCount: 2,
-//                      childAspectRatio: 1,
-//                      shrinkWrap: true,
-//                      children: categoryResponse.categories
-//                          .map((CategoryModel model) {
-//                        return GridTile(
-//                            child: DialogCategoryView(model, store,
-//                                callback: <Object>({value}) {
-//                          CategoryModel categoryModel = model;
-//                          if (categoryModel != null &&
-//                              categoryModel.subCategory != null) {
-//                            if (categoryModel.subCategory.isEmpty) {
-//                              Utils.showToast("No data found!", false);
-//                            } else {
-//                              Navigator.pop(context, model);
-//                            }
-//                          }
-//                          return;
-//                        }));
-//                      }).toList())),
-//              actions: <Widget>[
-//                new FlatButton(
-//                  child: new Text("Back"),
-//                  textColor: appTheme,
-//                  onPressed: () {
-//                    Navigator.pop(context, null);
-//                    // true here means you clicked ok
-//                  },
-//                ),
-//              ],
-//            ),
-//          );
-//        },
-//      );
-//    }
-//  }
 }

@@ -396,39 +396,46 @@ class _MarketPlaceHomeCategoryViewState
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(
-                        widget.isViewAllRestSelected
-                            ? "All Restaurants"
-                            : "Restaurants",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
+                      InkWell(
+                        child: Text(
+                          widget.isViewAllRestSelected
+                              ? "All Restaurants"
+                              : "Restaurants",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400),
+                        ),
                       ),
                       widget. isViewAllRestSelected
-                          ? Container(
-                              height: 30,
-                              margin: EdgeInsets.only(left: 4, right: 4),
-                              padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: grayLightColor, width: 1),
-                                  borderRadius: BorderRadius.circular(2)),
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    "images/filtericon.png",
-                                    height: 20,
-                                    width: 20,
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text('Filters',
-                                      style: TextStyle(color: Colors.grey)),
-                                ],
+                          ? InkWell(
+                        onTap: (){
+                          showBottomSheet(context);
+                        },
+                        child: Container(
+                          height: 30,
+                          margin: EdgeInsets.only(left: 4, right: 4),
+                          padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: grayLightColor, width: 1),
+                              borderRadius: BorderRadius.circular(2)),
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                "images/filtericon.png",
+                                height: 20,
+                                width: 20,
                               ),
-                            )
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text('Filters',
+                                  style: TextStyle(color: Colors.grey)),
+                            ],
+                          ),
+                        ),
+                      )
                           : Visibility(
                               visible: true,
                               child: InkWell(
@@ -476,6 +483,18 @@ class _MarketPlaceHomeCategoryViewState
       ],
     );
   }
+
+  void showBottomSheet(context){
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc){
+          return Container(
+            child: RadioGroup()
+          );
+        }
+    );
+  }
+
 
   Widget getProductsWidget() {
     return Column(
@@ -687,25 +706,65 @@ class _MarketPlaceHomeCategoryViewState
   }
 
   void addFilters() {
-    print("=brand.filters=${BrandModel.getInstance().brandVersionModel.brand.filters.length}");
-
     Filter filterTag = Filter();
-    //filterTag.id = "0";
     filterTag.lable = "Filters";
-    //filterTag.isFilterView = true;
     tagsList.add(filterTag);
     tagsList.addAll(BrandModel.getInstance().brandVersionModel.brand.filters);
+  }
+}
 
-    /*TagData filter1 = TagData();
-    filter1.id = "1";
-    filter1.name = "Distance";
-    filter1.isFilterView = false;
-    tagsList.add(filter1);
 
-    TagData filter2 = TagData();
-    filter2.id = "2";
-    filter2.name = "Newly Added";
-    filter2.isFilterView = false;
-    tagsList.add(filter2);*/
+class NumberList {
+  String number;
+  int index;
+  NumberList({this.number, this.index});
+
+}
+
+class RadioGroup extends StatefulWidget {
+  @override
+  RadioGroupWidget createState() => RadioGroupWidget();
+}
+
+class RadioGroupWidget extends State {
+
+  List<Filter> filters = BrandModel.getInstance().brandVersionModel.brand.filters;
+  // Default Radio Button Selected Item.
+  String radioItemHolder = 'One';
+  // Group Value for Radio Button.
+  String id = "";
+
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Padding(
+            padding : EdgeInsets.all(10.0),
+            child: Text('Select Filter', style: TextStyle(fontSize: 20))
+        ),
+
+        Expanded(
+            child: Container(
+              height: 350.0,
+              child: Column(
+                children:
+                filters.map((data) {
+
+                  return RadioListTile(
+                    title: Text("${data.lable}"),
+                    groupValue: id,
+                    value: data.value,
+                    onChanged: (val) {
+                      setState(() {
+                        radioItemHolder = data.lable ;
+                        id = data.value;
+                      });
+                      },
+                  );
+                }).toList(),
+              ),
+            )
+        ),
+      ],
+    );
   }
 }
