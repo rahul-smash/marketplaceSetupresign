@@ -22,7 +22,6 @@ import 'package:restroapp/src/utils/Utils.dart';
 class MarketPlaceHomeCategoryView extends StatefulWidget {
 
   CategoriesModel categoriesModel;
-  List<CategoriesData> categorieslist = new List();
   LatLng initialPosition;
   //final CategoryResponse categoryResponse;
   //List<CategoryModel> categories = new List();
@@ -35,26 +34,8 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
   CategoryModel selectedCategory;
   String selectedCategoryId;
 
-  MarketPlaceHomeCategoryView(this.categoriesModel,this.initialPosition,
-      /*this.categoryResponse,*/ this.brandData, this.subCategory,
-      {this.callback, this.selectedCategoryId, this.selectedCategory}) {
-
-    /*if (categoryResponse.categories.length > 8) {
-      for (int i = 0; i < 8; i++) {
-        categories.add(categoryResponse.categories[i]);
-      }
-    } else {
-      categories.addAll(categoryResponse.categories);
-    }*/
-
-    if (categoriesModel.data.length > 8) {
-      for (int i = 0; i < 8; i++) {
-        categorieslist.add(categoriesModel.data[i]);
-      }
-    } else {
-      categorieslist.addAll(categoriesModel.data);
-    }
-  }
+  MarketPlaceHomeCategoryView(this.categoriesModel,this.initialPosition,this.brandData, this.subCategory,
+      {this.callback, this.selectedCategoryId, this.selectedCategory});
 
   @override
   _MarketPlaceHomeCategoryViewState createState() =>
@@ -69,15 +50,38 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
   bool isViewAllRestSelected = false;
   StoresModel allStoreData;
   int selectedFilterIndex = -1;
+  List<CategoriesData> categorieslist = new List();
+
+  List<TagData> tagsDataList;
+  bool isSeeAll = false;
+  bool isCateSeeAll = false;
 
   @override
   void initState() {
     super.initState();
     isViewAllRestSelected = false;
+
+    if(widget.categoriesModel.data.length > 8){
+      isCateSeeAll = false;
+      categorieslist = widget.categoriesModel.data;
+      categorieslist = categorieslist.sublist(0,8);
+    }else{
+      isCateSeeAll = false;
+      categorieslist.addAll(widget.categoriesModel.data);
+    }
+
     addFilters();
     ApiController.tagsApiRequest().then((tagsResponse){
       setState(() {
         this.tagsModel = tagsResponse;
+        if(this.tagsModel.data.length > 8){
+          tagsDataList = this.tagsModel.data;
+          tagsDataList = tagsDataList.sublist(0,8);
+          isSeeAll = false;
+        }else{
+          isSeeAll = false;
+          tagsDataList = this.tagsModel.data;
+        }
       });
     });
     //----------------------------------------------
@@ -127,6 +131,32 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400),
                             ),
+                            InkWell(
+                              onTap: (){
+                                print("onTap =isCateSeeAll=${isCateSeeAll}");
+                                if(isCateSeeAll){
+                                  isCateSeeAll = false;
+                                  if(this.tagsModel.data.length > 8){
+                                    categorieslist = widget.categoriesModel.data;
+                                    categorieslist = categorieslist.sublist(0,8);
+                                  }else{
+                                    categorieslist = widget.categoriesModel.data;
+                                  }
+                                }else{
+                                  isCateSeeAll = true;
+                                  categorieslist = widget.categoriesModel.data;
+                                }
+                                setState(() {
+                                });
+                              },
+                              child: Text(
+                                isSeeAll ? "see less" : "see all",
+                                style: TextStyle(
+                                    color: appThemeSecondary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -134,12 +164,10 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                           crossAxisCount: 4,
                           childAspectRatio: .75,
                           physics: NeverScrollableScrollPhysics(),
-//                    padding:
-//                    EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
                           mainAxisSpacing: 1.0,
                           crossAxisSpacing: 0.0,
                           shrinkWrap: true,
-                          children: widget.categorieslist.map((CategoriesData model) {
+                          children: categorieslist.map((CategoriesData model) {
                             return GridTile(
                                 child: MarketPlaceCategoryView(
                                   model,
@@ -151,7 +179,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                 ));
                           }).toList()),
                       Container(
-                        margin: EdgeInsets.only(top: 20,left: 10),
+                        margin: EdgeInsets.only(top: 10,left: 10),
                         height: 30,
                         child: Container(
                           height: 30,
@@ -222,10 +250,26 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                         Visibility(
                           visible: true,
                           child: InkWell(
+                            onTap: (){
+                              print("onTap =isSeeAll=${isSeeAll}");
+                              setState(() {
+                                if(isSeeAll){
+                                  isSeeAll = false;
+                                  if(this.tagsModel.data.length > 8){
+                                    tagsDataList = this.tagsModel.data;
+                                    tagsDataList = tagsDataList.sublist(0,8);
+                                  }else{
+                                    tagsDataList = tagsModel.data;
+                                  }
+                                }else{
+                                  isSeeAll = true;
+                                  tagsDataList = tagsModel.data;
+                                }
+                              });
+                            },
                             child: Text(
-                              "see all",
+                              isSeeAll ? "see less" : "see all",
                               style: TextStyle(
-                                  decoration: TextDecoration.underline,
                                   color: appThemeSecondary,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w300),
@@ -240,12 +284,10 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                     crossAxisCount: 4,
                     childAspectRatio: 1.4,
                     physics: NeverScrollableScrollPhysics(),
-//                    padding:
-//                    EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
                     mainAxisSpacing: 1.0,
                     crossAxisSpacing: 0.0,
                     shrinkWrap: true,
-                    children: tagsModel.data.map((TagData tagObject) {
+                    children: tagsDataList.map((TagData tagObject) {
 
                       return Container(
                           margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -256,9 +298,6 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                               fit: BoxFit.cover,
                             ),
                           ),
-                        child: Center(child: Text("${tagObject.name}",maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white),),),
                       );
                     }).toList()
                 ),
