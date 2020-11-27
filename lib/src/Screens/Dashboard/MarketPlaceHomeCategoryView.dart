@@ -19,7 +19,6 @@ import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class MarketPlaceHomeCategoryView extends StatefulWidget {
-
   CategoriesModel categoriesModel;
   List<CategoriesData> categorieslist = new List();
 
@@ -34,10 +33,13 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
   CategoryModel selectedCategory;
   String selectedCategoryId;
 
-  MarketPlaceHomeCategoryView(this.categoriesModel,
-      /*this.categoryResponse,*/ this.brandData, this.subCategory,
-      {this.callback, this.selectedCategoryId, this.selectedCategory}) {
-
+  MarketPlaceHomeCategoryView(
+      this.categoriesModel,
+      /*this.categoryResponse,*/ this.brandData,
+      this.subCategory,
+      {this.callback,
+      this.selectedCategoryId,
+      this.selectedCategory}) {
     /*if (categoryResponse.categories.length > 8) {
       for (int i = 0; i < 8; i++) {
         categories.add(categoryResponse.categories[i]);
@@ -60,8 +62,8 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
       _MarketPlaceHomeCategoryViewState();
 }
 
-class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryView> {
-
+class _MarketPlaceHomeCategoryViewState
+    extends State<MarketPlaceHomeCategoryView> {
   TagsModel tagsModel;
   List<TagData> tagsList = List();
   StoresModel storeData;
@@ -72,7 +74,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
   void initState() {
     super.initState();
     isViewAllRestSelected = false;
-    ApiController.tagsApiRequest().then((tagsResponse){
+    ApiController.tagsApiRequest().then((tagsResponse) {
       setState(() {
         this.tagsModel = tagsResponse;
         TagData filterTag = TagData();
@@ -83,7 +85,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
       });
     });
     //----------------------------------------------
-    ApiController.storesApiRequest().then((storesResponse){
+    ApiController.storesApiRequest().then((storesResponse) {
       setState(() {
         this.storeData = storesResponse;
       });
@@ -141,48 +143,65 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                           mainAxisSpacing: 1.0,
                           crossAxisSpacing: 0.0,
                           shrinkWrap: true,
-                          children: widget.categorieslist.map((CategoriesData model) {
+                          children:
+                              widget.categorieslist.map((CategoriesData model) {
                             return GridTile(
                                 child: MarketPlaceCategoryView(
-                                  model,
-                                  widget.brandData,
-                                  false,
-                                  0,
-                                  isListView: true,
-                                  selectedSubCategoryId: widget.selectedCategoryId,
-                                ));
+                              model,
+                              widget.brandData,
+                              false,
+                              0,
+                              isListView: true,
+                              selectedSubCategoryId: widget.selectedCategoryId,
+                            ));
                           }).toList()),
                       Container(
-                        margin: EdgeInsets.only(top: 0,left: 10),
+                        margin: EdgeInsets.only(top: 0, left: 10),
                         height: 30,
                         child: tagsModel == null
                             ? Container()
                             : Container(
-                          height: 30,
-                          child: ListView.builder(
-                            itemCount: tagsList.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return Container(
                                 height: 30,
-                                margin:EdgeInsets.only(left:4,right:4),
-                                padding:EdgeInsets.fromLTRB(6,3,6,3),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color:grayLightColor,width:  1),
-                                    borderRadius: BorderRadius.circular(2)
+                                child: ListView.builder(
+                                  itemCount: tagsList.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      height: 30,
+                                      margin:
+                                          EdgeInsets.only(left: 4, right: 4),
+                                      padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: grayLightColor, width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(2)),
+                                      child: index == 0
+                                          ? Row(
+                                              children: [
+                                                Image.asset(
+                                                  "images/filtericon.png",
+                                                  height: 20,
+                                                  width: 20,
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text('${tagsList[index].name}',
+                                                    style: TextStyle(
+                                                        color: Colors.grey)),
+                                              ],
+                                            )
+                                          : Center(
+                                              child: Text(
+                                                  '${tagsList[index].name}',
+                                                  style: TextStyle(
+                                                      color: Colors.grey)),
+                                            ),
+                                    );
+                                  },
                                 ),
-                                child:  index == 0
-                                    ? Row(
-                                  children: [
-                                    Image.asset("images/filtericon.png",height: 20,width: 20,),
-                                    SizedBox(width: 5,),
-                                    Text('${tagsList[index].name}',style:TextStyle(color:Colors.grey)),
-                                  ],)
-                                    :Center(child: Text('${tagsList[index].name}',style:TextStyle(color:Colors.grey)),),
-                              );
-                            },
-                          ),
-                        ),
+                              ),
                       ),
                     ],
                   ),
@@ -219,39 +238,46 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                     ),
                   ),
                 ),
-                tagsModel == null ? Utils.showIndicator() : GridView.count(
-                    crossAxisCount: 4,
-                    childAspectRatio: 1.4,
-                    physics: NeverScrollableScrollPhysics(),
+                tagsModel == null
+                    ? Utils.showIndicator()
+                    : GridView.count(
+                        crossAxisCount: 4,
+                        childAspectRatio: 1.4,
+                        physics: NeverScrollableScrollPhysics(),
 //                    padding:
 //                    EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-                    mainAxisSpacing: 1.0,
-                    crossAxisSpacing: 0.0,
-                    shrinkWrap: true,
-                    children: tagsModel.data.map((TagData tagObject) {
-
-                      return Container(
-                          margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.0),
-                            image: DecorationImage(
-                              image: NetworkImage("${tagObject.image}"),
-                              fit: BoxFit.cover,
+                        mainAxisSpacing: 1.0,
+                        crossAxisSpacing: 0.0,
+                        shrinkWrap: true,
+                        children: tagsModel.data.map((TagData tagObject) {
+                          return Container(
+                            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5.0),
+                              image: DecorationImage(
+                                image: NetworkImage("${tagObject.image}"),
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                        child: Center(child: Text("${tagObject.name}",maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white),),),
-                      );
-                    }).toList()
-                ),
+                            child: Center(
+                              child: Text(
+                                "${tagObject.name}",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          );
+                        }).toList()),
                 Padding(
                   padding: EdgeInsets.fromLTRB(10, 15, 10, 5),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        isViewAllRestSelected ? "All Restaurants": "Restaurants",
+                        isViewAllRestSelected
+                            ? "All Restaurants"
+                            : "Restaurants",
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
@@ -259,58 +285,69 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                       ),
                       isViewAllRestSelected
                           ? Container(
-                        height: 30,
-                        margin:EdgeInsets.only(left:4,right:4),
-                        padding:EdgeInsets.fromLTRB(6,3,6,3),
-                        decoration: BoxDecoration(
-                            border: Border.all(color:grayLightColor,width:  1),
-                            borderRadius: BorderRadius.circular(2)
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset("images/filtericon.png",height: 20,width: 20,),
-                            SizedBox(width: 5,),
-                            Text('Filters',style:TextStyle(color:Colors.grey)),
-                          ],),
-                      )
+                              height: 30,
+                              margin: EdgeInsets.only(left: 4, right: 4),
+                              padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: grayLightColor, width: 1),
+                                  borderRadius: BorderRadius.circular(2)),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "images/filtericon.png",
+                                    height: 20,
+                                    width: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text('Filters',
+                                      style: TextStyle(color: Colors.grey)),
+                                ],
+                              ),
+                            )
                           : Visibility(
-                        visible: true,
-                        child: InkWell(
-                          child: Text(
-                            "View all",
-                            style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: appThemeSecondary,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w300),
-                          ),
-                          onTap: () async {
-                            print("onTap");
-                            bool isNetworkAvailable = await Utils.isNetworkAvailable();
-                            if(!isNetworkAvailable){
-                              Utils.showToast("No Internet connection",false);
-                              return;
-                            }
-                            Utils.showProgressDialog(context);
-                            ApiController.getAllStores().then((storesResponse){
-                              Utils.hideProgressDialog(context);
-                              Utils.hideKeyboard(context);
-                              setState(() {
-                                isViewAllRestSelected = true;
-                                allStoreData = storesResponse;
-                                eventBus.fire(onViewAllSelected(isViewAllRestSelected,allStoreData));
-                              });
-                            });
-                          },
-                        ),
-                      ),
+                              visible: true,
+                              child: InkWell(
+                                child: Text(
+                                  "View all",
+                                  style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      color: appThemeSecondary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                                onTap: () async {
+                                  print("onTap");
+                                  bool isNetworkAvailable =
+                                      await Utils.isNetworkAvailable();
+                                  if (!isNetworkAvailable) {
+                                    Utils.showToast(
+                                        "No Internet connection", false);
+                                    return;
+                                  }
+                                  Utils.showProgressDialog(context);
+                                  ApiController.getAllStores()
+                                      .then((storesResponse) {
+                                    Utils.hideProgressDialog(context);
+                                    Utils.hideKeyboard(context);
+                                    setState(() {
+                                      isViewAllRestSelected = true;
+                                      allStoreData = storesResponse;
+                                      eventBus.fire(onViewAllSelected(
+                                          isViewAllRestSelected, allStoreData));
+                                    });
+                                  });
+                                },
+                              ),
+                            ),
                     ],
                   ),
                 ),
                 storeData == null ? Container() : getProductsWidget()
               ],
-            )
-        ),
+            )),
       ],
     );
   }
@@ -322,7 +359,6 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
           height: 0,
           width: MediaQuery.of(context).size.width,
         ),
-
         ListView(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -331,23 +367,25 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: isViewAllRestSelected ? allStoreData.data.length :storeData.data.length,
+              itemCount: isViewAllRestSelected
+                  ? allStoreData.data.length
+                  : storeData.data.length,
               itemBuilder: (context, index) {
                 StoreData storeDataObj = isViewAllRestSelected
                     ? allStoreData.data[index]
                     : storeData.data[index];
 
                 return InkWell(
-                  onTap: (){
+                  onTap: () {
                     print("----onTap-${storeDataObj.id}--");
                     Utils.showProgressDialog(context);
-                    ApiController.getStoreVersionData(storeDataObj.id).then((response){
+                    ApiController.getStoreVersionData(storeDataObj.id)
+                        .then((response) {
                       Utils.hideProgressDialog(context);
                       Utils.hideKeyboard(context);
                       StoreDataModel storeObject = response;
-
+                      widget.callback(value: storeObject);
                     });
-
                   },
                   child: Stack(
                     children: [
@@ -387,11 +425,11 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                       ),
                                     )),
                                 Padding(
-                                    padding:
-                                    EdgeInsets.only(left: 16, right: 16, top: 10),
+                                    padding: EdgeInsets.only(
+                                        left: 16, right: 16, top: 10),
                                     child: Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           '${storeDataObj.storeName}',
@@ -429,10 +467,13 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                     )),
                                 Padding(
                                     padding: EdgeInsets.only(
-                                        left: 16, right: 16, top: 5, bottom: 16),
+                                        left: 16,
+                                        right: 16,
+                                        top: 5,
+                                        bottom: 16),
                                     child: Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           '${storeDataObj.state}',
@@ -445,8 +486,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                             fontSize: 14, color: Colors.grey),
                                       ),*/
                                       ],
-                                    )
-                                ),
+                                    )),
                               ],
                             )),
                       ),
@@ -470,11 +510,14 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                                 color: whiteWith70Opacity,
                                 borderRadius: BorderRadius.circular(5)),
                             child: Center(
-                              child: Text("45 mins",style: TextStyle(color: Colors.black, fontSize: 12),),
+                              child: Text(
+                                "45 mins",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 12),
+                              ),
                             ),
                             width: 70,
-                          )
-                      ),
+                          )),
                     ],
                   ),
                 );

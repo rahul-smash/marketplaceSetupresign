@@ -246,7 +246,8 @@ class ApiController {
 
   static Future<StoreDataModel> getStoreVersionData(String storeId) async {
 
-    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId);
+//    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId);
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", '1');
 
     var request = new http.MultipartRequest("GET", Uri.parse(url));
     try {

@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
@@ -10,14 +9,13 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class StoreDashboardScreen extends StatefulWidget {
-  //final StoreModel store;
-  final StoreDataObj store;
+  final StoreDataModel store;
 
   StoreDashboardScreen(this.store);
 
   @override
   State<StatefulWidget> createState() {
-    return _StoreDashboardScreenState(this.store);
+    return _StoreDashboardScreenState(this.store.store);
   }
 }
 
@@ -29,7 +27,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   UserModel user;
   bool isStoreClosed;
   final DatabaseHelper databaseHelper = new DatabaseHelper();
-  bool isLoading;
+  bool isLoading=true;
   int _current = 0;
 
   _StoreDashboardScreenState(this.store);
@@ -44,7 +42,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       AppConstant.placeholderUrl = store.banner10080;
       //print("-----store.banners-----${store.banners.length}------");
       if (store.banners.isEmpty) {
-//        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
+        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
       } else {
         for (var i = 0; i < store.banners.length; i++) {
           String imageUrl = store.banners[i].image;
@@ -65,15 +63,76 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return this.keyboardDismisser(
-        context: context,
-        child: WillPopScope(
-          child: Container(child: _newBody(),
+    return WillPopScope(
+      child: Container(child: _newBody(),
+      ),
+      onWillPop: () {
+        return new Future(() => true);
+      },
+    );
+  }
+  Widget _newBody() {
+    return Stack(
+      overflow: Overflow.visible,
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("images/backgroundimg.png"),
+              fit: BoxFit.cover,
+            ),
           ),
-          onWillPop: () {
-            return new Future(() => true);
-          },
-        ));
+//          color: Colors.white,
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 60),
+          child: _getCurrentBody(),
+        ),
+      ],
+    );
+  }
+
+  Widget _getCurrentBody() {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          addBanners(),
+          Visibility(
+              visible: imgList.length > 1,
+              child: Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: imgList.map((url) {
+                    int index = imgList.indexOf(url);
+                    return _current == index
+                        ? Container(
+                      width: 7.0,
+                      height: 7.0,
+                      margin: EdgeInsets.symmetric(
+                          vertical: 0.0, horizontal: 2.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: dotIncreasedColor,
+                      ),
+                    )
+                        : Container(
+                      width: 6.0,
+                      height: 6.0,
+                      margin: EdgeInsets.symmetric(
+                          vertical: 0.0, horizontal: 2.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color.fromRGBO(0, 0, 0, 0.4),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              )),
+          Container()
+        ],
+      ),
+    );
   }
 
   Widget addBanners() {
@@ -110,9 +169,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
         autoPlayCurve: Curves.ease,
         scrollDirection: Axis.horizontal,
       ),
-      itemBuilder: (BuildContext context, int itemIndex) => Container(
-        child: _makeBanner(context, itemIndex),
-      ),
+      itemBuilder: (BuildContext context, int itemIndex) =>
+          Container(
+            child: _makeBanner(context, itemIndex),
+          ),
     );
   }
 
@@ -139,7 +199,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
 
   void _onBannerTap(position) {
     print("onImageTap ${position}");
-    print("linkTo=${store.banners[position].linkTo}");
+//    print("linkTo=${store.banners[position].linkTo}");
 
 //    if (store.banners[position].linkTo.isNotEmpty) {
 //      if (store.banners[position].linkTo == "category") {
@@ -214,24 +274,24 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
 
 
   bool checkIfStoreClosed() {
-    if (store.storeStatus == "0") {
-      //0 mean Store close
-      return true;
-    } else {
-      return false;
-    }
+//    if (store.storeStatus == "0") {
+//      //0 mean Store close
+//      return true;
+//    } else {
+//      return false;
+//    }
   }
 
   void getCategoryApi() {
-    isLoading = true;
-    ApiController.getCategoriesApiRequest(store.id).then((response) {
-      setState(() {
-        isLoading = false;
-//        this.categoryResponse = response;
-//        getHomeCategoryProductApi();
-      });
-    });
-  }
+//    isLoading = true;
+//    ApiController.getCategoriesApiRequest(store.id).then((response) {
+//      setState(() {
+//        isLoading = false;
+////        this.categoryResponse = response;
+////        getHomeCategoryProductApi();
+//      });
+//    });
+//  }
 
 //  void getHomeCategoryProductApi() {
 //    if (categoryResponse != null &&
@@ -262,124 +322,5 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
 //    }
 //  }
 
-  Widget _newBody() {
-    return Stack(
-      overflow: Overflow.visible,
-      children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("images/backgroundimg.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
-          color: Colors.white,
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 60),
-          child: _getCurrentBody(),
-        ),
-      ],
-    );
   }
-
-
-  Widget keyboardDismisser({BuildContext context, Widget child}) {
-    final gesture = GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: child,
-    );
-    return gesture;
-  }
-
-  Widget _getCurrentBody() {
-      return SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            addBanners(),
-            Visibility(
-                visible: imgList.length > 1,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: imgList.map((url) {
-                      int index = imgList.indexOf(url);
-                      return _current == index
-                          ? Container(
-                        width: 7.0,
-                        height: 7.0,
-                        margin: EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 2.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: dotIncreasedColor,
-                        ),
-                      )
-                          : Container(
-                        width: 6.0,
-                        height: 6.0,
-                        margin: EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 2.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color.fromRGBO(0, 0, 0, 0.4),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                )),
-            isLoading
-                ?
-//            Center(child: CircularProgressIndicator())
-                 /*HomeCategoryListView(
-                            categoryResponse,
-                            store,
-                            subCategory,
-                            callback: <Object>({value}) {
-                              setState(() {
-                                if (value is String) {
-                                  setState(() {
-                                    isCategoryViewSelected =
-                                        !isCategoryViewSelected;
-                                  });
-                                  return;
-                                }
-                                selectedCategory = value as CategoryModel;
-                                this.selectedSubCategoryId =
-                                    selectedCategory.subCategory.first.id;
-                                subCategory = null;
-                                getHomeCategoryProductApi();
-                              });
-                              return;
-                            },
-                            selectedCategoryId: selectedSubCategoryId,
-                            selectedCategory: selectedCategory,
-                          )*/Container()
-                : Container(
-              padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-              /*child: GridView.count(
-                                crossAxisCount: 3,
-                                childAspectRatio: .8,
-                                physics: NeverScrollableScrollPhysics(),
-                                padding:
-                                    EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-                                mainAxisSpacing: 1.0,
-                                crossAxisSpacing: 0.0,
-                                shrinkWrap: true,
-                                children: categoryResponse.categories
-                                    .map((CategoryModel model) {
-                                  return GridTile(
-                                      child:
-                                          CategoryView(model, store, false, 0));
-                                }).toList()
-                            ),*/
-            )
-          ],
-        ),
-      );
-  }
-
 }
