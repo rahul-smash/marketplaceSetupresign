@@ -1,11 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_pro/carousel_pro.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
+import 'package:restroapp/src/UI/CategoryView.dart';
+import 'package:restroapp/src/UI/ProductTileView.dart';
+import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
+import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
+import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
+import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class StoreDashboardScreen extends StatefulWidget {
@@ -27,8 +35,16 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   UserModel user;
   bool isStoreClosed;
   final DatabaseHelper databaseHelper = new DatabaseHelper();
-  bool isLoading=true;
+  bool isLoading = true;
   int _current = 0;
+
+  CategoryResponse categoryResponse;
+
+  CategoryModel selectedCategory;
+
+  String selectedSubCategoryId;
+
+  SubCategoryModel subCategory;
 
   _StoreDashboardScreenState(this.store);
 
@@ -39,10 +55,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     getCategoryApi();
     listenEvent();
     try {
-      AppConstant.placeholderUrl = store.banner10080;
-      //print("-----store.banners-----${store.banners.length}------");
+      AppConstant.placeholderUrl = store.banner300200;
       if (store.banners.isEmpty) {
-        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
+        imgList = [NetworkImage(store.banner300200)];
       } else {
         for (var i = 0; i < store.banners.length; i++) {
           String imageUrl = store.banners[i].image;
@@ -57,35 +72,35 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     }
   }
 
-  void listenEvent() {
-
-  }
+  void listenEvent() {}
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      child: Container(child: _newBody(),
+      child: Container(
+        child: _newBody(),
       ),
       onWillPop: () {
         return new Future(() => true);
       },
     );
   }
+
   Widget _newBody() {
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
         Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("images/backgroundimg.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
-//          color: Colors.white,
+//          decoration: BoxDecoration(
+//            image: DecorationImage(
+//              image: AssetImage("images/backgroundimg.png"),
+//              fit: BoxFit.cover,
+//            ),
+//          ),
+          color: Colors.white,
         ),
         Padding(
-          padding: EdgeInsets.only(top: 60),
+          padding: EdgeInsets.only(top: 0),
           child: _getCurrentBody(),
         ),
       ],
@@ -97,230 +112,215 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       child: Column(
         children: <Widget>[
           addBanners(),
-          Visibility(
-              visible: imgList.length > 1,
-              child: Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: imgList.map((url) {
-                    int index = imgList.indexOf(url);
-                    return _current == index
-                        ? Container(
-                      width: 7.0,
-                      height: 7.0,
-                      margin: EdgeInsets.symmetric(
-                          vertical: 0.0, horizontal: 2.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: dotIncreasedColor,
+          categoryResponse != null && categoryResponse.categories.isNotEmpty
+              ? Container(
+                  height: 180,
+                  color: Colors.transparent,
+                  margin: EdgeInsets.only(left: 2.5),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              "Categories",
+                              style: TextStyle(
+                                  color: staticHomeDescriptionColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       ),
-                    )
-                        : Container(
-                      width: 6.0,
-                      height: 6.0,
-                      margin: EdgeInsets.symmetric(
-                          vertical: 0.0, horizontal: 2.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromRGBO(0, 0, 0, 0.4),
+                      Flexible(
+                        child: ListView.builder(
+                          itemCount: categoryResponse.categories.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            CategoryModel model =
+                                categoryResponse.categories[index];
+                            return CategoryView(
+                              model,
+                              store,
+                              false,
+                              0,
+                              isListView: true,
+                              selectedSubCategoryId: selectedSubCategoryId,
+                              callback: <Object>({value}) {
+                                setState(() {
+                                  selectedCategory = (value as CategoryModel);
+                                  selectedSubCategoryId = selectedCategory.id;
+                                  getHomeCategoryProductApi();
+//                              widget.callback(value: widget.selectedCategory);
+                                });
+                                return;
+                              },
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ))
+              : categoryResponse != null && categoryResponse.categories.isEmpty
+                  ? Utils.getEmptyView2('')
+                  : Container(
+                      height: 200,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                            backgroundColor: Colors.black26,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.black26)),
                       ),
-                    );
-                  }).toList(),
-                ),
-              )),
-          Container()
+                    ),
+          getProductsWidget(),
         ],
       ),
     );
   }
 
   Widget addBanners() {
-    if (imgList.length == 0) {
-      return Container();
-    } else
-      return Center(
-        child: SizedBox(
-          height: 200.0,
-          width: Utils.getDeviceWidth(context),
-          child: _CarouselView(),
-        ),
-      );
-  }
-
-  Widget _CarouselView() {
-    return CarouselSlider.builder(
-      itemCount: imgList.length,
-      options: CarouselOptions(
-        aspectRatio: 16 / 9,
-        height: 200,
-        initialPage: 0,
-        enableInfiniteScroll: true,
-        reverse: false,
-        autoPlay: true,
-        onPageChanged: (index, reason) {
-          setState(() {
-            _current = index;
-          });
-        },
-        enlargeCenterPage: false,
-        autoPlayInterval: Duration(seconds: 3),
-        autoPlayAnimationDuration: Duration(milliseconds: 800),
-        autoPlayCurve: Curves.ease,
-        scrollDirection: Axis.horizontal,
-      ),
-      itemBuilder: (BuildContext context, int itemIndex) =>
-          Container(
-            child: _makeBanner(context, itemIndex),
-          ),
-    );
-  }
-
-  Widget _makeBanner(BuildContext context, int _index) {
-    return InkWell(
-      onTap: () => _onBannerTap(_index),
-      child: Container(
-          margin:
-          EdgeInsets.only(top: 0.0, bottom: 15.0, left: 7.5, right: 7.5),
-          width: Utils.getDeviceWidth(context) -
-              (Utils.getDeviceWidth(context) / 4),
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(10.0)),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: CachedNetworkImage(
-              imageUrl: "${imgList[_index].url}",
-              fit: BoxFit.fill,
-              errorWidget: (context, url, error) => Icon(Icons.error),
+    return Stack(
+      children: <Widget>[
+        Center(
+          child: SizedBox(
+            height: 150.0,
+            width: Utils.getDeviceWidth(context),
+            child: Carousel(
+              boxFit: BoxFit.cover,
+              autoplay: true,
+              animationCurve: Curves.ease,
+              autoplayDuration: Duration(milliseconds: 5000),
+              animationDuration: Duration(milliseconds: 3000),
+              dotSize: 6.0,
+              dotIncreasedColor: dotIncreasedColor,
+              dotBgColor: Colors.transparent,
+              dotPosition: DotPosition.bottomCenter,
+              dotVerticalPadding: 10.0,
+              showIndicator: imgList.length == 1 ? false : true,
+              indicatorBgPadding: 7.0,
+              images: imgList,
+              onImageTap: (position) {},
             ),
-          )),
+          ),
+        ),
+      ],
     );
-  }
-
-  void _onBannerTap(position) {
-    print("onImageTap ${position}");
-//    print("linkTo=${store.banners[position].linkTo}");
-
-//    if (store.banners[position].linkTo.isNotEmpty) {
-//      if (store.banners[position].linkTo == "category") {
-//        if (store.banners[position].categoryId == "0" &&
-//            store.banners[position].subCategoryId == "0" &&
-//            store.banners[position].productId == "0") {
-//          print("return");
-//          return;
-//        }
-//
-//        if (store.banners[position].categoryId != "0" &&
-//            store.banners[position].subCategoryId != "0" &&
-//            store.banners[position].productId != "0") {
-//          // here we have to open the product detail
-//          print("open the product detail ${position}");
-//        } else if (store.banners[position].categoryId != "0" &&
-//            store.banners[position].subCategoryId != "0" &&
-//            store.banners[position].productId == "0") {
-//          //here open the banner sub category
-//          print("open the subCategory ${position}");
-//
-//          for (int i = 0; i < categoryResponse.categories.length; i++) {
-//            CategoryModel categories = categoryResponse.categories[i];
-//            if (store.banners[position].categoryId == categories.id) {
-//              print(
-//                  "title ${categories.title} and ${categories.id} and ${store.banners[position].categoryId}");
-//              if (categories.subCategory != null) {
-//                for (int j = 0; j < categories.subCategory.length; j++) {
-//                  SubCategory subCategory = categories.subCategory[j];
-//
-//                  if (subCategory.id == store.banners[position].subCategoryId) {
-//                    print(
-//                        "open the subCategory ${subCategory.title} and ${subCategory.id} = ${store.banners[position].subCategoryId}");
-//
-//                    Navigator.push(
-//                      context,
-//                      MaterialPageRoute(builder: (context) {
-//                        return SubCategoryProductScreen(categories, true, j);
-//                      }),
-//                    );
-//
-//                    break;
-//                  }
-//                }
-//              }
-//            }
-//            //print("Category ${categories.id} = ${categories.title} = ${categories.subCategory.length}");
-//          }
-//        } else if (store.banners[position].categoryId != "0" &&
-//            store.banners[position].subCategoryId == "0" &&
-//            store.banners[position].productId == "0") {
-//          print("open the Category ${position}");
-//
-//          for (int i = 0; i < categoryResponse.categories.length; i++) {
-//            CategoryModel categories = categoryResponse.categories[i];
-//            if (store.banners[position].categoryId == categories.id) {
-//              print(
-//                  "title ${categories.title} and ${categories.id} and ${store.banners[position].categoryId}");
-//              Navigator.push(
-//                context,
-//                MaterialPageRoute(builder: (context) {
-//                  return SubCategoryProductScreen(categories, true, 0);
-//                }),
-//              );
-//              break;
-//            }
-//          }
-//        }
-//      }
-//    }
-  }
-
-
-  bool checkIfStoreClosed() {
-//    if (store.storeStatus == "0") {
-//      //0 mean Store close
-//      return true;
-//    } else {
-//      return false;
-//    }
   }
 
   void getCategoryApi() {
-//    isLoading = true;
-//    ApiController.getCategoriesApiRequest(store.id).then((response) {
-//      setState(() {
-//        isLoading = false;
-////        this.categoryResponse = response;
-////        getHomeCategoryProductApi();
-//      });
-//    });
-//  }
+    isLoading = true;
+    ApiController.getCategoriesApiRequest(store.id).then((response) {
+      setState(() {
+        isLoading = false;
+        this.categoryResponse = response;
+        if (categoryResponse == null) {
+          return;
+        }
+        getHomeCategoryProductApi();
+      });
+    });
+  }
 
-//  void getHomeCategoryProductApi() {
-//    if (categoryResponse != null &&
-//        categoryResponse.categories != null &&
-//        categoryResponse.categories.isNotEmpty) {
-//      String subCategoryId =
-//          categoryResponse.categories.first.subCategory[0].id;
-//      if (selectedCategory == null)
-//        selectedCategory = categoryResponse.categories.first;
-//
-//      if (selectedSubCategoryId != null && selectedSubCategoryId.isNotEmpty) {
-//        subCategoryId = selectedSubCategoryId;
-//      }
-//      ApiController.getSubCategoryProducts(subCategoryId).then((response) {
-//        if (response != null && response.success) {
-//          subCategory = SubCategoryModel();
-//          selectedSubCategoryId = subCategoryId;
-//          for (int i = 0; i < response.subCategories.length; i++) {
+  Widget getProductsWidget() {
+    if (categoryResponse == null) {
+      return Container();
+    }
+    if ((categoryResponse.categories != null &&
+        categoryResponse.categories.length == 0)) {
+      return Utils.getEmptyView2("No Categories available");
+    }
+
+    if (subCategory == null) {
+      return Container(
+        height: 200,
+        child: Center(
+          child: CircularProgressIndicator(
+              backgroundColor: Colors.black26,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.black26)),
+        ),
+      );
+    } else {
+      //print("products.length= ${subCategory.products.length}");
+      if (subCategory.products == null) {
+        return Utils.getEmptyView2("No Products found!");
+      } else if (subCategory.products.length == 0) {
+        return Utils.getEmptyView2("No Products found!");
+      } else {
+        return Column(
+          children: <Widget>[
+            Container(
+                height: 5,
+                width: MediaQuery.of(context).size.width,
+                color: listingBorderColor),
+            Container(
+              color: Colors.transparent,
+              child: Padding(
+                padding:
+                    EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      subCategory.title,
+                      style: TextStyle(
+                          color: staticHomeDescriptionColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            ListView.builder(
+              itemCount:
+                  /* widget.subCategory.products.length > 2
+                  ? 2
+                  : */
+                  subCategory.products.length,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                Product product = subCategory.products[index];
+                return ProductTileItem(product, () {}, ClassType.Home);
+              },
+            )
+          ],
+        );
+      }
+    }
+  }
+
+  void getHomeCategoryProductApi() {
+    subCategory = null;
+    if (categoryResponse != null &&
+        categoryResponse.categories != null &&
+        categoryResponse.categories.isNotEmpty) {
+      String subCategoryId = categoryResponse.categories.first.id;
+      if (selectedCategory == null)
+        selectedCategory = categoryResponse.categories.first;
+
+      if (selectedSubCategoryId != null && selectedSubCategoryId.isNotEmpty) {
+        subCategoryId = selectedSubCategoryId;
+      }
+      ApiController.getSubCategoryProducts(subCategoryId, store: store)
+          .then((response) {
+        if (response != null && response.success) {
+          subCategory = SubCategoryModel();
+          selectedSubCategoryId = subCategoryId;
+          for (int i = 0; i < response.subCategories.length; i++) {
 //            if (subCategoryId == response.subCategories[i].id) {
-//              subCategory = response.subCategories[i];
+            subCategory = response.subCategories[i];
 //              break;
 //            }
-//          }
-//          setState(() {});
-//        }
-//      });
-//      eventBus.fire(OnProductTileDbRefresh());
-//    }
-//  }
-
+          }
+          setState(() {});
+        }
+      });
+      eventBus.fire(OnProductTileDbRefresh());
+    }
   }
 }

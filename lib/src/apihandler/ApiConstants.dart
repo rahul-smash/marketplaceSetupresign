@@ -5,16 +5,13 @@ class ApiConstants{
   static String baseUrl = 'https://app.restroapp.com/storeId/api/';
 
   static String baseUrl2 = 'http://devmarketplace.restroapp.com/brandId/v1/marketplace/';
-  static String baseUrl3 = 'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId/store_configuration';
-
+  static String baseUrl3 = 'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 
   static String storeList = 'storeList';
   static String version = 'version';
   static String storeLogin = 'storeLogin';
 
 
-  static String getCategories = 'getCategories';
-  static String getProducts = 'getSubCategoryProducts/';
   static String getProductDetail = 'productDetail/';
 
   static String getStoreBranches = 'getStoreBranches';
@@ -94,5 +91,9 @@ class ApiConstants{
   static final String homescreenTags = "homescreen/getTags";
   static final String homescreenStores = "homescreen/getStores";
   static final String allStores = "stores";
+  static final String store_configuration = "/store_configuration";
+  static final String getCategories = "/inventory/getCategories";
+  static String getProducts = '/inventory/getSubCategoryProducts/';
+
 
 }

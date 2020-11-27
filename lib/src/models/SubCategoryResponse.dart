@@ -182,7 +182,7 @@ class Product {
     product.tags =  json["tags"] ?? "";
     product.variants =
     List<Variant>.from(json["variants"].map((x) => Variant.fromJson(x)));
-    product.selectedVariant = SelectedVariant.fromJson(json["selectedVariant"]);
+    product.selectedVariant = json["selectedVariant"]==null?null: SelectedVariant.fromJson(json["selectedVariant"]);
 
     dynamic variant = json["variants"] != null
         ? json["variants"].length > 0 ? json["variants"].first : null

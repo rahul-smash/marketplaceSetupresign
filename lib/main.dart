@@ -5,6 +5,8 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:package_info/package_info.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
@@ -15,9 +17,10 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:restroapp/src/utils/Utils.dart';
-
+import 'package:permission_handler/permission_handler.dart' as permission_handler;
 import 'src/models/BrandModel.dart';
 import 'src/models/VersionModel.dart';
+import 'src/utils/DialogUtils.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,41 +70,110 @@ Future<void> main() async {
   PackageInfo packageInfo = await Utils.getAppVersionDetails();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   // To turn off landscape mode
   runZoned(() {
-    runApp(ValueApp(packageInfo, configObject, brandVersionModel));
+    runApp(MarketPlaceApp(packageInfo, configObject, brandVersionModel));
   }, onError: Crashlytics.instance.recordError);
+
 }
 
-class ValueApp extends StatelessWidget {
+class MarketPlaceApp extends StatefulWidget {
+
   ConfigModel configObject;
   static FirebaseAnalytics analytics = FirebaseAnalytics();
-  static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
+  static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
   BrandVersionModel storeData;
   PackageInfo packageInfo;
 
-  ValueApp(this.packageInfo, this.configObject, this.storeData);
+  MarketPlaceApp(this.packageInfo, this.configObject, this.storeData);
+
+  @override
+  _MarketPlaceAppState createState() => _MarketPlaceAppState();
+
+}
+
+class _MarketPlaceAppState extends State<MarketPlaceApp> {
+
+  Location location = new Location();
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
+  LatLng initialPosition;
+  bool userDisabledGps = false;
+
+  @override
+  void initState() {
+    super.initState();
+    initialPosition = null;
+    userDisabledGps = false;
+    getCurrentLocation(context);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // define it once at root level.
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: '${storeData.brand.name}',
+      title: '${widget.storeData.brand.name}',
       theme: ThemeData(
         primaryColor: appTheme,
       ),
-      navigatorObservers: <NavigatorObserver>[observer],
-      //home: isAdminLogin == true? LoginEmailScreen("menu"):SplashScreen(configObject,storeData),
-      home: showHomeScreen(storeData, configObject,
-          packageInfo), //SplashScreen(configObject,storeData),
+      navigatorObservers: <NavigatorObserver>[MarketPlaceApp.observer],
+      //home: showHomeScreen(widget.storeData,widget.configObject,widget.packageInfo),
+      home: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("images/mk_splash.png"),
+                fit: BoxFit.cover)
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: initialPosition == null
+              ? userDisabledGps?Container(child: LocationAlertDialog()):Container()
+              : showHomeScreen(widget.storeData,widget.configObject,widget.packageInfo,initialPosition),
+        ),
+      ),
     );
+  }
+
+  Future<void> getCurrentLocation(BuildContext context) async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        print("----!_serviceEnabled----$_serviceEnabled");
+        setState(() {
+          userDisabledGps = true;
+        });
+        return;
+      }
+    }
+    _permissionGranted = await location.hasPermission();
+    print("permission sttsu $_permissionGranted");
+    if (_permissionGranted == PermissionStatus.denied) {
+      print("permission deniedddd");
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        print("permission not grantedd");
+        setState(() {
+          userDisabledGps = true;
+        });
+        return;
+      }
+    }
+    if (Platform.isAndroid) {
+      await location.changeSettings(accuracy: LocationAccuracy.high,distanceFilter: 0,interval: 1000,);
+    }
+    _locationData = await location.getLocation();
+    initialPosition = LatLng(_locationData.latitude,_locationData.longitude);
+    setState(() {
+      print("----initialPosition----=$initialPosition");
+    });
   }
 }
 
-Widget showHomeScreen(
-    BrandVersionModel model, ConfigModel configObject, PackageInfo packageInfo) {
+
+Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject, PackageInfo packageInfo, LatLng initialPosition) {
   String version = packageInfo.version;
   if (model.success) {
     setStoreCurrency(model, configObject);
@@ -122,12 +194,13 @@ Widget showHomeScreen(
     } catch (e) {
       //print("-apiVesrion--catch--${e}----");
     }
+    print("x-initialPosition--${initialPosition}----");
     //print("--currentVesrion--${currentVesrion} and ${apiVesrion}");
     if (apiVesrion > currentVesrion) {
       //return ForceUpdateAlert(forceDownload[0].forceDownloadMessage,appName);
-      return MarketPlaceHomeScreen(model.brand, configObject, true);
+      return MarketPlaceHomeScreen(model.brand, configObject, true,initialPosition);
     } else {
-      return MarketPlaceHomeScreen(model.brand, configObject, false);
+      return MarketPlaceHomeScreen(model.brand, configObject, false,initialPosition);
     }
   } else {
     return Container();
@@ -219,4 +292,32 @@ void setStoreCurrency(BrandVersionModel store, ConfigModel configObject) {
 
 Future<String> loadAsset() async {
   return await rootBundle.loadString('assets/app_config.json');
+}
+
+class LocationAlertDialog extends StatelessWidget {
+
+  LocationAlertDialog();
+
+  @override
+  Widget build(BuildContext context) {
+
+    return AlertDialog(
+      title: Text("Location Required!"),
+      content: Text("Please enable location permissions in settings.",
+        textAlign: TextAlign.center,),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)),
+      actions: <Widget>[
+        FlatButton(
+          child: Text("Open Settings"),
+          textColor: Colors.blue,
+          onPressed: () {
+            //Navigator.of(context).pop(false);
+            permission_handler.openAppSettings();
+          },
+        ),
+      ],
+    );
+  }
 }

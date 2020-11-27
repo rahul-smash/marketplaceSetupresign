@@ -12,7 +12,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/Screens/BookOrder/MyCartScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeCategoryView.dart';
-import 'package:restroapp/src/Screens/Dashboard/StoreDashboardScreen.dart';
 import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
@@ -42,17 +41,19 @@ import 'SearchScreen.dart';
 import 'dart:io';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:location/location.dart';
+import 'package:restroapp/src/Screens/Dashboard/StoreDashboardScreen.dart';
 import 'package:permission_handler/permission_handler.dart'
     as permission_handler;
 
 class MarketPlaceHomeScreen extends StatefulWidget {
   //final StoreModel store;
+  LatLng initialPosition;
   final BrandData brandData;
   ConfigModel configObject;
   bool showForceUploadAlert;
 
-  MarketPlaceHomeScreen(
-      this.brandData, this.configObject, this.showForceUploadAlert);
+  MarketPlaceHomeScreen(this.brandData, this.configObject,
+      this.showForceUploadAlert, this.initialPosition);
 
   @override
   State<StatefulWidget> createState() {
@@ -100,9 +101,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   bool isViewAllSelected = false;
   StoresModel allStoreData;
 
-  HomeScreenEnum _selectedHomeView = HomeScreenEnum.HOME_BAND_VIEW;
-
   StoreDataModel _selectedSingleStore;
+
+  HomeScreenEnum _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
 
   _MarketPlaceHomeScreenState(this.store);
 
@@ -119,6 +120,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     checkForMultiStore();
     getCategoryApi();
     listenEvent();
+    getAddressFromLocation();
     try {
       //AppConstant.placeholderUrl = store.banner10080;
       print("-----store.banners-----${store.banners.length}------");
@@ -385,19 +387,19 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                           ? staticHomeDescriptionColor
                           : appThemeSecondary)),
             ),
-            BottomNavigationBarItem(
-              icon: Image.asset('images/unselectedcategoryicon.png',
-                  width: 24,
-                  fit: BoxFit.scaleDown,
-                  color: !isCategoryViewSelected
-                      ? staticHomeDescriptionColor
-                      : appThemeSecondary),
-              title: Text('Category',
-                  style: TextStyle(
-                      color: !isCategoryViewSelected
-                          ? staticHomeDescriptionColor
-                          : appThemeSecondary)),
-            ),
+//            BottomNavigationBarItem(
+//              icon: Image.asset('images/unselectedcategoryicon.png',
+//                  width: 24,
+//                  fit: BoxFit.scaleDown,
+//                  color: !isCategoryViewSelected
+//                      ? staticHomeDescriptionColor
+//                      : appThemeSecondary),
+//              title: Text('Category',
+//                  style: TextStyle(
+//                      color: !isCategoryViewSelected
+//                          ? staticHomeDescriptionColor
+//                          : appThemeSecondary)),
+//            ),
 //            BottomNavigationBarItem(
 //              icon: Image.asset('images/contacticon.png',
 //                  width: 24,
@@ -757,37 +759,30 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     }*/
   }
 
+  getAddressFromLocation() async {
+    if (widget.initialPosition != null) {
+      print("--widget.initialPosition != null----");
+      Coordinates coordinates = new Coordinates(
+          widget.initialPosition.latitude, widget.initialPosition.longitude);
+      var addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      var first = addresses.first;
+      //print("--addresses-${addresses} and ${first}");
+      print(
+          "---getAddressFromLocation-------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
+      setState(() {
+        locationAddress = first.addressLine;
+      });
+    } else {
+      print(
+          "-else-widget.initialPosition != null----${widget.initialPosition}");
+    }
+  }
+
   Widget getAppBar() {
     bool rightActionsEnable = false,
         whatIconEnable = false,
         dialIconEnable = false;
-
-    /*if (store.homePageDisplayNumberType != null &&
-        store.homePageDisplayNumberType.isNotEmpty) {
-      //0=>Contact Number,1=>App Icon,2=>None
-      switch (store.homePageHeaderRight) {
-        case "0":
-          rightActionsEnable = true;
-          break;
-        case "1":
-          rightActionsEnable = true;
-          break;
-        case "2":
-          rightActionsEnable = false;
-          break;
-      }
-      if (store.homePageDisplayNumber != null &&
-          store.homePageDisplayNumber.isNotEmpty) {
-        //0=>Whats app, 1=>Phone Call
-        if (store.homePageDisplayNumberType.compareTo("0") == 0) {
-          whatIconEnable = true;
-        }
-        //0=>Whats app, 1=>Phone Call
-        if (store.homePageDisplayNumberType.compareTo("1") == 0) {
-          dialIconEnable = true;
-        }
-      }
-    }*/
 
     return AppBar(
       titleSpacing: 0,
@@ -904,12 +899,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               ),
             ),
       centerTitle: widget.configObject.isMultiStore == true ? false : false,
-      leading: isViewAllSelected
-          ? Icon(Icons.keyboard_arrow_left, size: 35)
-          : IconButton(
-              icon: Image.asset('images/menuicon.png', width: 25),
-              onPressed: _handleDrawer,
-            ),
+      leading: _getAppBarLeftIcon(),
       actions: <Widget>[
         Visibility(
             visible: AppConstant.isLoggedIn,
@@ -988,12 +978,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           color: !isCategoryViewSelected ? Colors.white : null,
         ),
         Padding(
-          padding: EdgeInsets.only(top: isViewAllSelected ? 10 : 60),
+          padding: EdgeInsets.only(top: 10),
           child: _getCurrentBody(),
-        ),
-        Visibility(
-          visible: isViewAllSelected ? false : true,
-          child: _addSearchView(),
         ),
       ],
     );
@@ -1002,7 +988,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   Widget _addSearchView() {
     return Container(
       height: 40,
-      margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+      margin: EdgeInsets.fromLTRB(10, 10, 10, 20),
       //padding: EdgeInsets.all(5.0),
       decoration: BoxDecoration(
           color: searchGrayColor,
@@ -1086,7 +1072,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   }
 
   Widget _getCurrentBody() {
-    switch (_selectedHomeView) {
+    switch (_selectedHomeScreen) {
       case HomeScreenEnum.HOME_SEARCH_VIEW:
         return HomeSearchView(productsList);
       case HomeScreenEnum.HOME_RESTAURANT_VIEW:
@@ -1095,90 +1081,107 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         break;
       case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
         return StoreDashboardScreen(_selectedSingleStore);
+        break;
       case HomeScreenEnum.HOME_BAND_VIEW:
       default:
-        return SingleChildScrollView(
-          controller: controller,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Visibility(
-                visible: isViewAllSelected ? false : true,
-                child: addBanners(),
-              ),
-              Visibility(
-                  visible: isViewAllSelected ? false : imgList.length > 1,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: imgList.map((url) {
-                        int index = imgList.indexOf(url);
-                        return _current == index
-                            ? Container(
-                                width: 7.0,
-                                height: 7.0,
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 0.0, horizontal: 2.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: dotIncreasedColor,
-                                ),
-                              )
-                            : Container(
-                                width: 6.0,
-                                height: 6.0,
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 0.0, horizontal: 2.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Color.fromRGBO(0, 0, 0, 0.4),
-                                ),
-                              );
-                      }).toList(),
-                    ),
-                  )),
-              isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : categoriesModel == null
-                      ? Center(child: Text(""))
-                      : !isCategoryViewSelected
-                          ? MarketPlaceHomeCategoryView(
-                              categoriesModel,
-                              /*categoryResponse,*/
-                              store,
-                              subCategory,
-                              callback: <Object>({value}) {
-                                setState(() {
-                                  if (value is StoreDataModel) {
-                                    _selectedSingleStore =
-                                        value as StoreDataModel;
-                                    _selectedHomeView =
-                                        HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
-                                    return;
-                                  }
-
-                                  if (value is String) {
+        return Column(
+          children: [
+            Visibility(
+              visible: isViewAllSelected ? false : true,
+              child: _addSearchView(),
+            ),
+            Expanded(
+                child: SingleChildScrollView(
+              controller: controller,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Visibility(
+                    visible: isViewAllSelected ? false : true,
+                    child: addBanners(),
+                  ),
+                  Visibility(
+                      visible: isViewAllSelected ? false : imgList.length > 1,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: imgList.map((url) {
+                            int index = imgList.indexOf(url);
+                            return _current == index
+                                ? Container(
+                                    width: 7.0,
+                                    height: 7.0,
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 0.0, horizontal: 2.0),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: dotIncreasedColor,
+                                    ),
+                                  )
+                                : Container(
+                                    width: 6.0,
+                                    height: 6.0,
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 0.0, horizontal: 2.0),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color.fromRGBO(0, 0, 0, 0.4),
+                                    ),
+                                  );
+                          }).toList(),
+                        ),
+                      )),
+                  isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : categoriesModel == null
+                          ? Center(child: Text(""))
+                          : !isCategoryViewSelected
+                              ? MarketPlaceHomeCategoryView(
+                                  categoriesModel,
+                                  widget.initialPosition,
+                                  /*categoryResponse,*/
+                                  store,
+                                  subCategory,
+                                  isViewAllRestSelected:isViewAllSelected,
+                                  callback: <Object>({value}) {
                                     setState(() {
-                                      isCategoryViewSelected =
-                                          !isCategoryViewSelected;
+                                      if(value == null){
+                                        Utils.showToast('No Data found', false);
+                                        return;
+                                      }
+                                      if (value is StoreDataModel) {
+                                        setState(() {
+                                          _selectedSingleStore =
+                                              value as StoreDataModel;
+                                          _selectedHomeScreen = HomeScreenEnum
+                                              .HOME_SELECTED_STORE_VIEW;
+                                        });
+                                        return;
+                                      }
+
+                                      if (value is String) {
+                                        setState(() {
+                                          isCategoryViewSelected =
+                                              !isCategoryViewSelected;
+                                        });
+                                        return;
+                                      }
+                                      selectedCategory = value as CategoryModel;
+                                      this.selectedSubCategoryId =
+                                          selectedCategory.subCategory.first.id;
+                                      subCategory = null;
+                                      getHomeCategoryProductApi();
                                     });
                                     return;
-                                  }
-                                  selectedCategory = value as CategoryModel;
-                                  this.selectedSubCategoryId =
-                                      selectedCategory.subCategory.first.id;
-                                  subCategory = null;
-                                  getHomeCategoryProductApi();
-                                });
-                                return;
-                              },
-                              selectedCategoryId: selectedSubCategoryId,
-                              selectedCategory: selectedCategory,
-                            )
-                          : Container(
-                              padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                              /*child: GridView.count(
+                                  },
+                                  selectedCategoryId: selectedSubCategoryId,
+                                  selectedCategory: selectedCategory,
+                                )
+                              : Container(
+                                  padding:
+                                      EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                                  /*child: GridView.count(
                   crossAxisCount: 3,
                   childAspectRatio: .8,
                   physics: NeverScrollableScrollPhysics(),
@@ -1192,11 +1195,12 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         child: CategoryView(model, store, false, 0));
                   }).toList()
               ),*/
-                            )
-            ],
-          ),
+                                )
+                ],
+              ),
+            )),
+          ],
         );
-        break;
     }
   }
 
@@ -1230,5 +1234,42 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         Utils.showToast(AppConstant.noInternet, false);
       }
     });
+  }
+
+  _getAppBarLeftIcon() {
+    switch (_selectedHomeScreen) {
+      case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
+        return IconButton(
+          icon: Icon(Icons.keyboard_arrow_left, size: 35),
+          onPressed: () {
+            setState(() {
+              _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+              isViewAllSelected = false;
+            });
+          },
+        );
+        break;
+      case HomeScreenEnum.HOME_BAND_CATEGORIES_VIEW:
+        break;
+      case HomeScreenEnum.HOME_RESTAURANT_VIEW:
+        break;
+      case HomeScreenEnum.HOME_BAND_VIEW:
+      default:
+        return isViewAllSelected
+            ? IconButton(
+                icon: Icon(Icons.keyboard_arrow_left, size: 35),
+                onPressed: () {
+                  setState(() {
+                    _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+                    isViewAllSelected = false;
+                  });
+                },
+              )
+            : IconButton(
+                icon: Image.asset('images/menuicon.png', width: 25),
+                onPressed: _handleDrawer,
+              );
+        break;
+    }
   }
 }

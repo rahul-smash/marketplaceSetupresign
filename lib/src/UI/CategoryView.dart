@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -11,7 +12,7 @@ import 'package:restroapp/src/utils/Utils.dart';
 
 class CategoryView extends StatelessWidget {
   final CategoryModel categoryModel;
-  StoreModel store;
+  StoreDataObj store;
   int index;
   bool isComingFromBaner;
   bool isListView;
@@ -95,7 +96,7 @@ class CategoryView extends StatelessWidget {
   }
 
   _onTapPressed(BuildContext context) async {
-    if (Utils.checkIfStoreClosed(store)) {
+    if (checkIfStoreClosed(store)) {
       DialogUtils.displayCommonDialog(context, store.storeName, store.storeMsg);
     } else {
       if (categoryModel != null && categoryModel.subCategory.isNotEmpty) {
@@ -120,18 +121,18 @@ class CategoryView extends StatelessWidget {
   }
 
   void _onListTapHandle(BuildContext context) {
-    if (Utils.checkIfStoreClosed(store)) {
+    if (checkIfStoreClosed(store)) {
       DialogUtils.displayCommonDialog(context, store.storeName, store.storeMsg);
     } else {
       if (categoryModel != null && categoryModel.subCategory.isNotEmpty) {
-//        callback(value: categoryModel);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return SubCategoryProductScreen(
-                categoryModel, isComingFromBaner, index);
-          }),
-        );
+        callback(value: categoryModel);
+//        Navigator.push(
+//          context,
+//          MaterialPageRoute(builder: (context) {
+//            return SubCategoryProductScreen(
+//                categoryModel, isComingFromBaner, index);
+//          }),
+//        );
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
         attributeMap["ScreenName"] = "${categoryModel.title}";
         Utils.sendAnalyticsEvent("Clicked category", attributeMap);
@@ -152,8 +153,16 @@ class CategoryView extends StatelessWidget {
         categoryModel.subCategory != null &&
         categoryModel.subCategory.isNotEmpty) {
       return selectedSubCategoryId
-              .compareTo(categoryModel.subCategory.first.id) ==
+              .compareTo(categoryModel.id) ==
           0;
+    } else {
+      return false;
+    }
+  }
+  bool checkIfStoreClosed(StoreDataObj store) {
+    if (store.storeStatus == "0") {
+      //0 mean Store close
+      return true;
     } else {
       return false;
     }

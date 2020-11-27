@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/UI/MarketPlaceCategoryView.dart';
@@ -20,7 +21,7 @@ import 'package:restroapp/src/utils/Utils.dart';
 
 class MarketPlaceHomeCategoryView extends StatefulWidget {
   CategoriesModel categoriesModel;
-  List<CategoriesData> categorieslist = new List();
+  LatLng initialPosition;
 
   //final CategoryResponse categoryResponse;
   //List<CategoryModel> categories = new List();
@@ -33,29 +34,11 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
   CategoryModel selectedCategory;
   String selectedCategoryId;
 
-  MarketPlaceHomeCategoryView(
-      this.categoriesModel,
-      /*this.categoryResponse,*/ this.brandData,
-      this.subCategory,
-      {this.callback,
-      this.selectedCategoryId,
-      this.selectedCategory}) {
-    /*if (categoryResponse.categories.length > 8) {
-      for (int i = 0; i < 8; i++) {
-        categories.add(categoryResponse.categories[i]);
-      }
-    } else {
-      categories.addAll(categoryResponse.categories);
-    }*/
+  bool isViewAllRestSelected;
 
-    if (categoriesModel.data.length > 8) {
-      for (int i = 0; i < 8; i++) {
-        categorieslist.add(categoriesModel.data[i]);
-      }
-    } else {
-      categorieslist.addAll(categoriesModel.data);
-    }
-  }
+  MarketPlaceHomeCategoryView(this.categoriesModel, this.initialPosition,
+      this.brandData, this.subCategory,
+      {this.callback, this.selectedCategoryId, this.selectedCategory,this.isViewAllRestSelected=false});
 
   @override
   _MarketPlaceHomeCategoryViewState createState() =>
@@ -67,25 +50,44 @@ class _MarketPlaceHomeCategoryViewState
   TagsModel tagsModel;
   List<TagData> tagsList = List();
   StoresModel storeData;
-  bool isViewAllRestSelected = false;
   StoresModel allStoreData;
+  int selectedFilterIndex = -1;
+  List<CategoriesData> categorieslist = new List();
+
+  List<TagData> tagsDataList;
+  bool isSeeAll = false;
+  bool isCateSeeAll = false;
+
 
   @override
   void initState() {
     super.initState();
-    isViewAllRestSelected = false;
+    if (widget.categoriesModel.data.length > 8) {
+      isCateSeeAll = false;
+      categorieslist = widget.categoriesModel.data;
+      categorieslist = categorieslist.sublist(0, 8);
+    } else {
+      isCateSeeAll = false;
+      categorieslist.addAll(widget.categoriesModel.data);
+    }
+
+    addFilters();
     ApiController.tagsApiRequest().then((tagsResponse) {
       setState(() {
         this.tagsModel = tagsResponse;
-        TagData filterTag = TagData();
-        filterTag.name = "Filters";
-        filterTag.isFilterView = true;
-        tagsList.add(filterTag);
-        tagsList.addAll(this.tagsModel.data);
+        if (this.tagsModel.data.length > 8) {
+          tagsDataList = this.tagsModel.data;
+          tagsDataList = tagsDataList.sublist(0, 8);
+          isSeeAll = false;
+        } else {
+          isSeeAll = false;
+          tagsDataList = this.tagsModel.data;
+        }
       });
     });
     //----------------------------------------------
-    ApiController.storesApiRequest().then((storesResponse) {
+    ApiController.storesApiRequest(widget.initialPosition)
+        .then((storesResponse) {
       setState(() {
         this.storeData = storesResponse;
       });
@@ -110,7 +112,7 @@ class _MarketPlaceHomeCategoryViewState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Visibility(
-                  visible: isViewAllRestSelected ? false : true,
+                  visible: widget.isViewAllRestSelected ? false : true,
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -131,6 +133,34 @@ class _MarketPlaceHomeCategoryViewState
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400),
                             ),
+                            InkWell(
+                              onTap: () {
+                                print("onTap =isCateSeeAll=${isCateSeeAll}");
+                                if (isCateSeeAll) {
+                                  isCateSeeAll = false;
+                                  if (this.tagsModel.data.length > 8) {
+                                    categorieslist =
+                                        widget.categoriesModel.data;
+                                    categorieslist =
+                                        categorieslist.sublist(0, 8);
+                                  } else {
+                                    categorieslist =
+                                        widget.categoriesModel.data;
+                                  }
+                                } else {
+                                  isCateSeeAll = true;
+                                  categorieslist = widget.categoriesModel.data;
+                                }
+                                setState(() {});
+                              },
+                              child: Text(
+                                isCateSeeAll ? "View Less" : "View More",
+                                style: TextStyle(
+                                    color: appThemeSecondary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -138,13 +168,10 @@ class _MarketPlaceHomeCategoryViewState
                           crossAxisCount: 4,
                           childAspectRatio: .75,
                           physics: NeverScrollableScrollPhysics(),
-//                    padding:
-//                    EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
                           mainAxisSpacing: 1.0,
                           crossAxisSpacing: 0.0,
                           shrinkWrap: true,
-                          children:
-                              widget.categorieslist.map((CategoriesData model) {
+                          children: categorieslist.map((CategoriesData model) {
                             return GridTile(
                                 child: MarketPlaceCategoryView(
                               model,
@@ -156,61 +183,90 @@ class _MarketPlaceHomeCategoryViewState
                             ));
                           }).toList()),
                       Container(
-                        margin: EdgeInsets.only(top: 0, left: 10),
+                        margin: EdgeInsets.only(top: 10, left: 10),
                         height: 30,
-                        child: tagsModel == null
-                            ? Container()
-                            : Container(
-                                height: 30,
-                                child: ListView.builder(
-                                  itemCount: tagsList.length,
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      height: 30,
-                                      margin:
-                                          EdgeInsets.only(left: 4, right: 4),
-                                      padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: grayLightColor, width: 1),
-                                          borderRadius:
-                                              BorderRadius.circular(2)),
-                                      child: index == 0
-                                          ? Row(
-                                              children: [
-                                                Image.asset(
-                                                  "images/filtericon.png",
-                                                  height: 20,
-                                                  width: 20,
-                                                ),
-                                                SizedBox(
-                                                  width: 5,
-                                                ),
-                                                Text('${tagsList[index].name}',
-                                                    style: TextStyle(
-                                                        color: Colors.grey)),
-                                              ],
-                                            )
-                                          : Center(
-                                              child: Text(
-                                                  '${tagsList[index].name}',
+                        child: Container(
+                          height: 30,
+                          child: ListView.builder(
+                            itemCount: tagsList.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () {
+                                  print("onTap=${index}");
+                                  if (index != 0) {
+                                    setState(() {
+                                      selectedFilterIndex = index;
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                    height: 30,
+                                    margin: EdgeInsets.only(left: 4, right: 4),
+                                    padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
+                                    decoration: BoxDecoration(
+                                        color: selectedFilterIndex == index
+                                            ? Colors.grey[200]
+                                            : Colors.white,
+                                        border: Border.all(
+                                            color: selectedFilterIndex == index
+                                                ? Colors.grey[400]
+                                                : grayLightColor,
+                                            width: 1),
+                                        borderRadius: BorderRadius.circular(2)),
+                                    child: index == 0
+                                        ? Row(
+                                            children: [
+                                              Image.asset(
+                                                "images/filtericon.png",
+                                                height: 20,
+                                                width: 20,
+                                              ),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text('${tagsList[index].name}',
                                                   style: TextStyle(
                                                       color: Colors.grey)),
-                                            ),
-                                    );
-                                  },
-                                ),
-                              ),
+                                            ],
+                                          )
+                                        : Row(
+                                            children: [
+                                              Text('${tagsList[index].name}',
+                                                  style: TextStyle(
+                                                      color:
+                                                          selectedFilterIndex ==
+                                                                  index
+                                                              ? Colors.grey[600]
+                                                              : Colors.grey)),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              Visibility(
+                                                visible:
+                                                    selectedFilterIndex == index
+                                                        ? true
+                                                        : false,
+                                                child: Icon(
+                                                  Icons.clear,
+                                                  size: 15,
+                                                ),
+                                              )
+                                            ],
+                                          )),
+                              );
+                            },
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
                 //Quick Links
                 Visibility(
-                  visible: isViewAllRestSelected ? false : true,
+                  visible: true,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 25, 10, 10),
+                    padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -224,10 +280,26 @@ class _MarketPlaceHomeCategoryViewState
                         Visibility(
                           visible: true,
                           child: InkWell(
+                            onTap: () {
+                              print("onTap =isSeeAll=${isSeeAll}");
+                              setState(() {
+                                if (isSeeAll) {
+                                  isSeeAll = false;
+                                  if (this.tagsModel.data.length > 8) {
+                                    tagsDataList = this.tagsModel.data;
+                                    tagsDataList = tagsDataList.sublist(0, 8);
+                                  } else {
+                                    tagsDataList = tagsModel.data;
+                                  }
+                                } else {
+                                  isSeeAll = true;
+                                  tagsDataList = tagsModel.data;
+                                }
+                              });
+                            },
                             child: Text(
-                              "see all",
+                              isSeeAll ? "View Less" : "View More",
                               style: TextStyle(
-                                  decoration: TextDecoration.underline,
                                   color: appThemeSecondary,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w300),
@@ -244,12 +316,10 @@ class _MarketPlaceHomeCategoryViewState
                         crossAxisCount: 4,
                         childAspectRatio: 1.4,
                         physics: NeverScrollableScrollPhysics(),
-//                    padding:
-//                    EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
                         mainAxisSpacing: 1.0,
                         crossAxisSpacing: 0.0,
                         shrinkWrap: true,
-                        children: tagsModel.data.map((TagData tagObject) {
+                        children: tagsDataList.map((TagData tagObject) {
                           return Container(
                             margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
                             decoration: BoxDecoration(
@@ -257,14 +327,6 @@ class _MarketPlaceHomeCategoryViewState
                               image: DecorationImage(
                                 image: NetworkImage("${tagObject.image}"),
                                 fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "${tagObject.name}",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.white),
                               ),
                             ),
                           );
@@ -275,7 +337,7 @@ class _MarketPlaceHomeCategoryViewState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        isViewAllRestSelected
+                        widget.isViewAllRestSelected
                             ? "All Restaurants"
                             : "Restaurants",
                         style: TextStyle(
@@ -283,7 +345,7 @@ class _MarketPlaceHomeCategoryViewState
                             fontSize: 16,
                             fontWeight: FontWeight.w400),
                       ),
-                      isViewAllRestSelected
+                      widget. isViewAllRestSelected
                           ? Container(
                               height: 30,
                               margin: EdgeInsets.only(left: 4, right: 4),
@@ -311,9 +373,8 @@ class _MarketPlaceHomeCategoryViewState
                               visible: true,
                               child: InkWell(
                                 child: Text(
-                                  "View all",
+                                  "View All",
                                   style: TextStyle(
-                                      decoration: TextDecoration.underline,
                                       color: appThemeSecondary,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w300),
@@ -327,16 +388,20 @@ class _MarketPlaceHomeCategoryViewState
                                         "No Internet connection", false);
                                     return;
                                   }
+                                  Map data = {
+                                    "lst": widget.initialPosition.latitude,
+                                    "lng": widget.initialPosition.latitude,
+                                  };
                                   Utils.showProgressDialog(context);
-                                  ApiController.getAllStores()
+                                  ApiController.getAllStores(params: data)
                                       .then((storesResponse) {
                                     Utils.hideProgressDialog(context);
                                     Utils.hideKeyboard(context);
                                     setState(() {
-                                      isViewAllRestSelected = true;
+                                      widget.isViewAllRestSelected = true;
                                       allStoreData = storesResponse;
                                       eventBus.fire(onViewAllSelected(
-                                          isViewAllRestSelected, allStoreData));
+                                          widget.isViewAllRestSelected, allStoreData));
                                     });
                                   });
                                 },
@@ -367,11 +432,11 @@ class _MarketPlaceHomeCategoryViewState
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: isViewAllRestSelected
+              itemCount: widget.isViewAllRestSelected
                   ? allStoreData.data.length
                   : storeData.data.length,
               itemBuilder: (context, index) {
-                StoreData storeDataObj = isViewAllRestSelected
+                StoreData storeDataObj = widget.isViewAllRestSelected
                     ? allStoreData.data[index]
                     : storeData.data[index];
 
@@ -559,5 +624,22 @@ class _MarketPlaceHomeCategoryViewState
         }
       }
     }*/
+  }
+
+  void addFilters() {
+    TagData filterTag = TagData();
+    filterTag.name = "Filters";
+    filterTag.isFilterView = true;
+    tagsList.add(filterTag);
+
+    TagData filter1 = TagData();
+    filter1.name = "Distance";
+    filter1.isFilterView = false;
+    tagsList.add(filter1);
+
+    TagData filter2 = TagData();
+    filter2.name = "Newly Added";
+    filter2.isFilterView = false;
+    tagsList.add(filter2);
   }
 }
