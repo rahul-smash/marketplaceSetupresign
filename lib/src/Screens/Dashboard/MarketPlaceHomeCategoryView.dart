@@ -122,7 +122,7 @@ class _MarketPlaceHomeCategoryViewState
                         height: 10,
                       ),
                       Padding(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -164,15 +164,17 @@ class _MarketPlaceHomeCategoryViewState
                           ],
                         ),
                       ),
-                      GridView.count(
-                          crossAxisCount: 4,
-                          childAspectRatio: .75,
-                          physics: NeverScrollableScrollPhysics(),
-                          mainAxisSpacing: 1.0,
-                          crossAxisSpacing: 0.0,
-                          shrinkWrap: true,
-                          children: categorieslist.map((CategoriesData model) {
-                            return GridTile(
+                      Padding(
+                        padding:EdgeInsets.fromLTRB(5, 0, 5, 0),
+                        child: GridView.count(
+                            crossAxisCount: 4,
+                            childAspectRatio: .75,
+                            physics: NeverScrollableScrollPhysics(),
+                            mainAxisSpacing: 1.0,
+                            crossAxisSpacing: 0.0,
+                            shrinkWrap: true,
+                            children: categorieslist.map((CategoriesData model) {
+                              return GridTile(
                                 child: InkWell(
                                   onTap: () async {
                                     print("onTap===>${model.id}");
@@ -185,23 +187,25 @@ class _MarketPlaceHomeCategoryViewState
                                       "lst" : widget.initialPosition.latitude,
                                       "lng": widget.initialPosition.latitude,
                                       "search_by": "category",
-                              "id": "${model.id}",
+                                      "id": "${model.id}",
                                     };
                                     Utils.showProgressDialog(context);
                                     ApiController.getAllStores(params: data).then((storesResponse){
                                       Utils.hideProgressDialog(context);
                                       Utils.hideKeyboard(context);
-                              });
+                                    });
                                   },
                                   child: MarketPlaceCategoryView(model,widget.brandData,
-                              false,
-                              0,
-                              isListView: true,
-                              selectedSubCategoryId: widget.selectedCategoryId,
-                            ),
+                                    false,
+                                    0,
+                                    isListView: true,
+                                    selectedSubCategoryId: widget.selectedCategoryId,
+                                  ),
                                 ),
-                            );
-                          }).toList()),
+                              );
+                            }).toList()),
+                      ),
+
                       Container(
                         margin: EdgeInsets.only(top: 10, left: 10),
                         height: 30,

@@ -61,7 +61,7 @@ class MarketPlaceCategoryView extends StatelessWidget {
               )),
           Padding(
 //              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-            padding: EdgeInsets.only(top: 10.0),
+            padding: EdgeInsets.only(top: 5.0),
             child: Center(
               child: Text(categoryModel.title,
                   textAlign: TextAlign.center,
