@@ -219,8 +219,30 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                   isCategoryViewSelected = !isCategoryViewSelected;
                 });
                 return new Future(() => false);
-              } else
-                return new Future(() => true);
+              } else {
+                switch (_selectedHomeScreen) {
+                  case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
+                    setState(() {
+                      _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+                      isViewAllSelected = false;
+                    });
+                    return new Future(() => false);
+                  case HomeScreenEnum.HOME_RESTAURANT_VIEW:
+                  case HomeScreenEnum.HOME_BAND_VIEW:
+                  default:
+                    if(isViewAllSelected){
+                      setState(() {
+                        _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+                        isViewAllSelected = false;
+                      });
+                      return new Future(() =>false);
+                    }else{
+                      return new Future(() =>true);
+                    }
+
+
+                }
+              }
             }
           },
         ));
@@ -1143,10 +1165,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                                   /*categoryResponse,*/
                                   store,
                                   subCategory,
-                                  isViewAllRestSelected:isViewAllSelected,
+                                  isViewAllRestSelected: isViewAllSelected,
                                   callback: <Object>({value}) {
                                     setState(() {
-                                      if(value == null){
+                                      if (value == null) {
                                         Utils.showToast('No Data found', false);
                                         return;
                                       }
