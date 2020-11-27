@@ -735,34 +735,26 @@ class RadioGroupWidget extends State {
   String id = "";
 
   Widget build(BuildContext context) {
-    return Column(
+    return Wrap(
       children: <Widget>[
         Padding(
             padding : EdgeInsets.all(10.0),
             child: Text('Select Filter', style: TextStyle(fontSize: 20))
         ),
-
-        Expanded(
-            child: Container(
-              height: 350.0,
-              child: Column(
-                children:
-                filters.map((data) {
-
-                  return RadioListTile(
-                    title: Text("${data.lable}"),
-                    groupValue: id,
-                    value: data.value,
-                    onChanged: (val) {
-                      setState(() {
-                        radioItemHolder = data.lable ;
-                        id = data.value;
-                      });
-                      },
-                  );
-                }).toList(),
-              ),
-            )
+        Wrap(
+          children: filters.map((data) {
+            return RadioListTile(
+              title: Text("${data.lable}"),
+              groupValue: id,
+              value: data.value,
+              onChanged: (val) {
+                setState(() {
+                  radioItemHolder = data.lable ;
+                  id = data.value;
+                });
+              },
+            );
+          }).toList(),
         ),
       ],
     );
