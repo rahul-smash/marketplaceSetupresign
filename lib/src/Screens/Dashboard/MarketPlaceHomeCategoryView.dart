@@ -486,6 +486,12 @@ class _MarketPlaceHomeCategoryViewState
 
   void showBottomSheet(context){
     showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(10),
+          ),
+        ),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
         context: context,
         builder: (BuildContext bc){
           return Container(
@@ -714,13 +720,6 @@ class _MarketPlaceHomeCategoryViewState
 }
 
 
-class NumberList {
-  String number;
-  int index;
-  NumberList({this.number, this.index});
-
-}
-
 class RadioGroup extends StatefulWidget {
   @override
   RadioGroupWidget createState() => RadioGroupWidget();
@@ -738,8 +737,19 @@ class RadioGroupWidget extends State {
     return Wrap(
       children: <Widget>[
         Padding(
-            padding : EdgeInsets.all(10.0),
-            child: Text('Select Filter', style: TextStyle(fontSize: 20))
+            padding : EdgeInsets.all(15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Select Filter', style: TextStyle(fontSize: 20)),
+                InkWell(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                  child: Icon(Icons.clear),
+                )
+              ],
+            )
         ),
         Wrap(
           children: filters.map((data) {
