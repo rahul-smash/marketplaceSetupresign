@@ -169,14 +169,33 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                           shrinkWrap: true,
                           children: categorieslist.map((CategoriesData model) {
                             return GridTile(
-                                child: MarketPlaceCategoryView(
-                                  model,
-                                  widget.brandData,
-                                  false,
-                                  0,
-                                  isListView: true,
-                                  selectedSubCategoryId: widget.selectedCategoryId,
-                                ));
+                                child: InkWell(
+                                  onTap: () async {
+                                    print("onTap===>${model.id}");
+                                    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+                                    if(!isNetworkAvailable){
+                                      Utils.showToast("No Internet connection",false);
+                                      return;
+                                    }
+                                    Map data = {
+                                      "lst" : widget.initialPosition.latitude,
+                                      "lng": widget.initialPosition.latitude,
+                                      "search_by": "category",
+                                      "id": "${model.id}",
+                                    };
+                                    Utils.showProgressDialog(context);
+                                    ApiController.getAllStores(params: data).then((storesResponse){
+                                      Utils.hideProgressDialog(context);
+                                      Utils.hideKeyboard(context);
+
+                                    });
+                                  },
+                                  child: MarketPlaceCategoryView(model,widget.brandData,
+                                    false,0,isListView: true,
+                                    selectedSubCategoryId: widget.selectedCategoryId,
+                                  ),
+                                ),
+                            );
                           }).toList()),
                       Container(
                         margin: EdgeInsets.only(top: 10,left: 10),
@@ -188,9 +207,25 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
                               return InkWell(
-                                onTap: (){
+                                onTap: () async {
                                   print("onTap=${index}");
                                   if(index != 0){
+                                    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+                                    if(!isNetworkAvailable){
+                                      Utils.showToast("No Internet connection",false);
+                                      return;
+                                    }
+                                    Map data = {
+                                      "lst" : widget.initialPosition.latitude,
+                                      "lng": widget.initialPosition.latitude,
+                                      "filter_by":tagsList[index].id=="1"?"distance":"newly_added",
+                                    };
+                                    Utils.showProgressDialog(context);
+                                    ApiController.getAllStores(params: data).then((storesResponse){
+                                      Utils.hideProgressDialog(context);
+                                      Utils.hideKeyboard(context);
+
+                                    });
                                     setState(() {
                                       selectedFilterIndex = index;
                                     });
@@ -289,7 +324,27 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                     shrinkWrap: true,
                     children: tagsDataList.map((TagData tagObject) {
 
-                      return Container(
+                      return InkWell(
+                        onTap: () async {
+                          bool isNetworkAvailable = await Utils.isNetworkAvailable();
+                          if(!isNetworkAvailable){
+                            Utils.showToast("No Internet connection",false);
+                            return;
+                          }
+                          Map data = {
+                            "lst" : widget.initialPosition.latitude,
+                            "lng": widget.initialPosition.latitude,
+                            "search_by": "tag",
+                            "id": "${tagObject.id}",
+                          };
+                          Utils.showProgressDialog(context);
+                          ApiController.getAllStores(params: data).then((storesResponse){
+                            Utils.hideProgressDialog(context);
+                            Utils.hideKeyboard(context);
+
+                          });
+                        },
+                        child: Container(
                           margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
@@ -298,6 +353,7 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
                               fit: BoxFit.cover,
                             ),
                           ),
+                        ),
                       );
                     }).toList()
                 ),
@@ -579,16 +635,19 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
 
   void addFilters() {
     TagData filterTag = TagData();
+    filterTag.id = "0";
     filterTag.name = "Filters";
     filterTag.isFilterView = true;
     tagsList.add(filterTag);
 
     TagData filter1 = TagData();
+    filter1.id = "1";
     filter1.name = "Distance";
     filter1.isFilterView = false;
     tagsList.add(filter1);
 
     TagData filter2 = TagData();
+    filter2.id = "2";
     filter2.name = "Newly Added";
     filter2.isFilterView = false;
     tagsList.add(filter2);
