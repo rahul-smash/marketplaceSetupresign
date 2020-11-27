@@ -1037,7 +1037,18 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         Utils.showToast(
                             "Please enter some valid keyword", false);
                       } else {
-                        callSearchAPI();
+                        Map data = {
+                          "lst" : widget.initialPosition.latitude,
+                          "lng": widget.initialPosition.latitude,
+                          "search_by": "Keyword",
+                          "keyward": "${value}",
+                        };
+                        Utils.showProgressDialog(context);
+                        ApiController.getAllStores(params: data).then((storesResponse){
+                          Utils.hideProgressDialog(context);
+                          Utils.hideKeyboard(context);
+                        });
+                        //callSearchAPI();
                       }
                     },
                     onChanged: (text) {
