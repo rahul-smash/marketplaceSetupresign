@@ -437,7 +437,6 @@ class _MarketPlaceHomeCategoryViewState extends State<MarketPlaceHomeCategoryVie
           height: 0,
           width: MediaQuery.of(context).size.width,
         ),
-
         ListView(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
