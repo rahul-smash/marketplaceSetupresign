@@ -78,8 +78,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   BranchData branchData;
   bool isLoading;
   CategoryResponse categoryResponse;
-  List<SubCategoryModel> subCategoryList = List();
-  List<Product> productsList = List();
   int _current = 0;
 
   final _controller = TextEditingController();
@@ -104,6 +102,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   StoreDataModel _selectedSingleStore;
 
   HomeScreenEnum _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+  HomeScreenEnum _previousSelectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
 
   _MarketPlaceHomeScreenState(this.store);
 
@@ -165,9 +164,11 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   void listenEvent() {
     eventBus.on<onViewAllSelected>().listen((event) {
       print("isViewAllSelected=${event.isViewAllSelected}");
+      _selectedHomeScreen = event.selectedScreen;
+      isViewAllSelected = event.isViewAllSelected;
+      allStoreData = event.allStoreData;
       setState(() {
-        isViewAllSelected = event.isViewAllSelected;
-        allStoreData = event.allStoreData;
+
       });
       scrollTop();
     });
@@ -176,7 +177,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       setState(() {
         setState(() {
           _controller.text = '';
-          productsList.clear();
           if (isCategoryViewSelected) {
             isCategoryViewSelected = !isCategoryViewSelected;
           }
@@ -197,8 +197,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             drawer: NavDrawerMenu(store, user == null ? "" : user.fullName, () {
               FocusScope.of(context).unfocus();
               _controller.text = "";
-              subCategoryList.clear();
-              productsList.clear();
               isCategoryViewSelected = false;
               setState(() {});
             }),
@@ -207,42 +205,34 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             ),
           ),
           onWillPop: () {
-            if (productsList.length > 0) {
-              setState(() {
-                _controller.text = '';
-                productsList.clear();
-              });
-              return new Future(() => false);
-            } else {
-              if (isCategoryViewSelected) {
+            switch (_selectedHomeScreen) {
+              case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
                 setState(() {
-                  isCategoryViewSelected = !isCategoryViewSelected;
+                  _selectedHomeScreen = _previousSelectedHomeScreen;
                 });
                 return new Future(() => false);
-              } else {
-                switch (_selectedHomeScreen) {
-                  case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
-                    setState(() {
-                      _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
-                      isViewAllSelected = false;
-                    });
-                    return new Future(() => false);
-                  case HomeScreenEnum.HOME_RESTAURANT_VIEW:
-                  case HomeScreenEnum.HOME_BAND_VIEW:
-                  default:
-                    if(isViewAllSelected){
-                      setState(() {
-                        _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
-                        isViewAllSelected = false;
-                      });
-                      return new Future(() =>false);
-                    }else{
-                      return new Future(() =>true);
-                    }
-
-
+              case HomeScreenEnum.HOME_SEARCH_VIEW:
+                _clearSearchResult();
+                return new Future(() => false);
+                break;
+              case HomeScreenEnum.HOME_RESTAURANT_VIEW:
+                setState(() {
+                  _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+                  isViewAllSelected = false;
+                });
+                return new Future(() => false);
+                break;
+              case HomeScreenEnum.HOME_BAND_VIEW:
+              default:
+                if (isViewAllSelected) {
+                  setState(() {
+                    _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+                    isViewAllSelected = false;
+                  });
+                  return new Future(() => false);
+                } else {
+                  return new Future(() => true);
                 }
-              }
             }
           },
         ));
@@ -518,22 +508,13 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         if (_currentIndex == 1) {
           setState(() {
             _controller.text = '';
-            productsList.clear();
             isCategoryViewSelected = true;
           });
-//          Navigator.push(
-//            context,
-//            MaterialPageRoute(builder: (context) => ContactScreen(store)),
-//          );
-//          Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-//          attributeMap["ScreenName"] = "ContactScreen";
-//          Utils.sendAnalyticsEvent("Clicked ContactScreen", attributeMap);
         }
         if (_currentIndex == 0) {
           //show categories
           setState(() {
             _controller.text = '';
-            productsList.clear();
             isCategoryViewSelected = false;
           });
         }
@@ -650,7 +631,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     eventBus.on<openHome>().listen((event) {
       setState(() {
         _controller.text = '';
-        productsList.clear();
         isCategoryViewSelected = false;
       });
     });
@@ -719,35 +699,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         //getHomeCategoryProductApi();
       });
     });*/
-  }
-
-  void getHomeCategoryProductApi() {
-    if (categoryResponse != null &&
-        categoryResponse.categories != null &&
-        categoryResponse.categories.isNotEmpty) {
-      String subCategoryId =
-          categoryResponse.categories.first.subCategory[0].id;
-      if (selectedCategory == null)
-        selectedCategory = categoryResponse.categories.first;
-
-      if (selectedSubCategoryId != null && selectedSubCategoryId.isNotEmpty) {
-        subCategoryId = selectedSubCategoryId;
-      }
-      ApiController.getSubCategoryProducts(subCategoryId).then((response) {
-        if (response != null && response.success) {
-          subCategory = SubCategoryModel();
-          selectedSubCategoryId = subCategoryId;
-          for (int i = 0; i < response.subCategories.length; i++) {
-            if (subCategoryId == response.subCategories[i].id) {
-              subCategory = response.subCategories[i];
-              break;
-            }
-          }
-          setState(() {});
-        }
-      });
-      eventBus.fire(OnProductTileDbRefresh());
-    }
   }
 
   Future logout(BuildContext context, BranchData selectedStore) async {
@@ -999,12 +950,23 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               : null,
           color: !isCategoryViewSelected ? Colors.white : null,
         ),
-        Padding(
-          padding: EdgeInsets.only(top: 10),
-          child: _getCurrentBody(),
-        ),
+       Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: _getCurrentBody(),
+            ),
+        _getStoreView(),
       ],
     );
+  }
+
+  Widget _getStoreView() {
+    if (_selectedHomeScreen == HomeScreenEnum.HOME_SELECTED_STORE_VIEW)
+      return Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: StoreDashboardScreen(_selectedSingleStore),
+      );
+    else
+      return Container();
   }
 
   Widget _addSearchView() {
@@ -1037,7 +999,27 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         Utils.showToast(
                             "Please enter some valid keyword", false);
                       } else {
-                        callSearchAPI();
+                        Map data = {
+                          "lst": widget.initialPosition.latitude,
+                          "lng": widget.initialPosition.latitude,
+                          "search_by": "Keyword",
+                          "keyward": "${value}",
+                        };
+                        Utils.showProgressDialog(context);
+                        ApiController.getAllStores(params: data)
+                            .then((storesResponse) {
+                          Utils.hideProgressDialog(context);
+                          Utils.hideKeyboard(context);
+                          //TODO: implement here
+                          if (storesResponse != null) {
+                            allStoreData = storesResponse;
+                            setState(() {
+                              _selectedHomeScreen =
+                                  HomeScreenEnum.HOME_SEARCH_VIEW;
+                            });
+                          }
+                        });
+                        //callSearchAPI();
                       }
                     },
                     onChanged: (text) {
@@ -1063,14 +1045,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                           color: appTheme,
                         ),
                         onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          setState(() {
-                            _controller.text = "";
-                            setState(() {
-                              subCategoryList.clear();
-                              productsList.clear();
-                            });
-                          });
+                          _clearSearchResult();
                         }))
               ]),
         ),
@@ -1095,15 +1070,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   Widget _getCurrentBody() {
     switch (_selectedHomeScreen) {
-      case HomeScreenEnum.HOME_SEARCH_VIEW:
-        return HomeSearchView(productsList);
-      case HomeScreenEnum.HOME_RESTAURANT_VIEW:
-        break;
       case HomeScreenEnum.HOME_BAND_CATEGORIES_VIEW:
+      case HomeScreenEnum.HOME_RESTAURANT_VIEW:
+        return _getRestaurantList();
         break;
       case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
         return StoreDashboardScreen(_selectedSingleStore);
         break;
+      case HomeScreenEnum.HOME_SEARCH_VIEW:
       case HomeScreenEnum.HOME_BAND_VIEW:
       default:
         return Column(
@@ -1112,169 +1086,150 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               visible: isViewAllSelected ? false : true,
               child: _addSearchView(),
             ),
-            Expanded(
-                child: SingleChildScrollView(
-              controller: controller,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Visibility(
-                    visible: isViewAllSelected ? false : true,
-                    child: addBanners(),
-                  ),
-                  Visibility(
-                      visible: isViewAllSelected ? false : imgList.length > 1,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: imgList.map((url) {
-                            int index = imgList.indexOf(url);
-                            return _current == index
-                                ? Container(
-                                    width: 7.0,
-                                    height: 7.0,
-                                    margin: EdgeInsets.symmetric(
-                                        vertical: 0.0, horizontal: 2.0),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: dotIncreasedColor,
-                                    ),
-                                  )
-                                : Container(
-                                    width: 6.0,
-                                    height: 6.0,
-                                    margin: EdgeInsets.symmetric(
-                                        vertical: 0.0, horizontal: 2.0),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Color.fromRGBO(0, 0, 0, 0.4),
-                                    ),
-                                  );
-                          }).toList(),
-                        ),
-                      )),
-                  isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : categoriesModel == null
-                          ? Center(child: Text(""))
-                          : !isCategoryViewSelected
-                              ? MarketPlaceHomeCategoryView(
-                                  categoriesModel,
-                                  widget.initialPosition,
-                                  /*categoryResponse,*/
-                                  store,
-                                  subCategory,
-                                  isViewAllRestSelected: isViewAllSelected,
-                                  callback: <Object>({value}) {
-                                    setState(() {
-                                      if (value == null) {
-                                        Utils.showToast('No Data found', false);
-                                        return;
-                                      }
-                                      if (value is StoreDataModel) {
-                                        setState(() {
-                                          _selectedSingleStore =
-                                              value as StoreDataModel;
-                                          _selectedHomeScreen = HomeScreenEnum
-                                              .HOME_SELECTED_STORE_VIEW;
-                                        });
-                                        return;
-                                      }
-
-                                      if (value is String) {
-                                        setState(() {
-                                          isCategoryViewSelected =
-                                              !isCategoryViewSelected;
-                                        });
-                                        return;
-                                      }
-                                      selectedCategory = value as CategoryModel;
-                                      this.selectedSubCategoryId =
-                                          selectedCategory.subCategory.first.id;
-                                      subCategory = null;
-                                      getHomeCategoryProductApi();
-                                    });
-                                    return;
-                                  },
-                                  selectedCategoryId: selectedSubCategoryId,
-                                  selectedCategory: selectedCategory,
-                                )
-                              : Container(
-                                  padding:
-                                      EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                                  /*child: GridView.count(
-                  crossAxisCount: 3,
-                  childAspectRatio: .8,
-                  physics: NeverScrollableScrollPhysics(),
-                  padding:
-                  EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-                  mainAxisSpacing: 1.0,
-                  crossAxisSpacing: 0.0,
-                  shrinkWrap: true,
-                  children: categoryResponse.categories.map((CategoryModel model) {
-                    return GridTile(
-                        child: CategoryView(model, store, false, 0));
-                  }).toList()
-              ),*/
-                                )
-                ],
-              ),
-            )),
+            _getMiddleView()
           ],
         );
     }
   }
 
-  void callSearchAPI() {
-    Utils.hideKeyboard(context);
-    Utils.isNetworkAvailable().then((isNetworkAvailable) async {
-      if (isNetworkAvailable) {
-        Utils.sendSearchAnalyticsEvent(_controller.text);
-        Utils.showProgressDialog(context);
-        SubCategoryResponse subCategoryResponse =
-            await ApiController.getSearchResults(_controller.text);
-        Utils.hideKeyboard(context);
-        Utils.hideProgressDialog(context);
-        if (subCategoryResponse == null ||
-            subCategoryResponse.subCategories.isEmpty) {
-          Utils.showToast("No result found.", false);
-          setState(() {
-            subCategoryList.clear();
-            productsList.clear();
-          });
-        } else {
-          setState(() {
-            subCategoryList = subCategoryResponse.subCategories;
-            productsList.clear();
-            for (int i = 0; i < subCategoryList.length; i++) {
-              productsList.addAll(subCategoryList[i].products);
-            }
-          });
-        }
-      } else {
-        Utils.showToast(AppConstant.noInternet, false);
-      }
-    });
+  Widget _getRestaurantList() {
+    return HomeSearchView(
+      allStoreData,selectedScreen: _selectedHomeScreen,
+      callback: <Object>({value}) {
+        setState(() {
+          if (value == null) {
+            Utils.showToast('No Data found', false);
+            return;
+          }
+          if (value is StoreDataModel) {
+            setState(() {
+              _selectedSingleStore = value;
+              _previousSelectedHomeScreen = _selectedHomeScreen;
+              _selectedHomeScreen = HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+            });
+            return;
+          }
+        });
+        return;
+      },
+    );
+  }
+
+  Widget _getMiddleView() {
+    return (_selectedHomeScreen == HomeScreenEnum.HOME_SEARCH_VIEW)
+        ? _getRestaurantList()
+        : Expanded(
+            child: SingleChildScrollView(
+            controller: controller,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Visibility(
+                  visible: isViewAllSelected ? false : true,
+                  child: addBanners(),
+                ),
+                Visibility(
+                    visible: isViewAllSelected ? false : imgList.length > 1,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: imgList.map((url) {
+                          int index = imgList.indexOf(url);
+                          return _current == index
+                              ? Container(
+                                  width: 7.0,
+                                  height: 7.0,
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 0.0, horizontal: 2.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: dotIncreasedColor,
+                                  ),
+                                )
+                              : Container(
+                                  width: 6.0,
+                                  height: 6.0,
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 0.0, horizontal: 2.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color.fromRGBO(0, 0, 0, 0.4),
+                                  ),
+                                );
+                        }).toList(),
+                      ),
+                    )),
+                isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : categoriesModel == null
+                        ? Center(child: Text(""))
+                        : !isCategoryViewSelected
+                            ? MarketPlaceHomeCategoryView(
+                                categoriesModel,
+                                widget.initialPosition,
+                                /*categoryResponse,*/
+                                store,
+                                subCategory,
+                                isViewAllRestSelected: isViewAllSelected,
+                                callback: <Object>({value}) {
+                                  setState(() {
+                                    if (value == null) {
+                                      Utils.showToast('No Data found', false);
+                                      return;
+                                    }
+                                    if (value is StoreDataModel) {
+                                      setState(() {
+                                        _selectedSingleStore = value;
+                                        _previousSelectedHomeScreen =
+                                            _selectedHomeScreen;
+                                        _selectedHomeScreen = HomeScreenEnum
+                                            .HOME_SELECTED_STORE_VIEW;
+                                      });
+                                      return;
+                                    }
+                                  });
+                                  return;
+                                },
+                                selectedCategoryId: selectedSubCategoryId,
+                                selectedCategory: selectedCategory,
+                              )
+                            : Container()
+              ],
+            ),
+          ));
   }
 
   _getAppBarLeftIcon() {
     switch (_selectedHomeScreen) {
-      case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
+      case HomeScreenEnum.HOME_RESTAURANT_VIEW:
         return IconButton(
           icon: Icon(Icons.keyboard_arrow_left, size: 35),
           onPressed: () {
             setState(() {
-              _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
-              isViewAllSelected = false;
+                _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+                isViewAllSelected = false;
             });
           },
         );
         break;
       case HomeScreenEnum.HOME_BAND_CATEGORIES_VIEW:
+      case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
+        return IconButton(
+          icon: Icon(Icons.keyboard_arrow_left, size: 35),
+          onPressed: () {
+            setState(() {
+              if (_selectedHomeScreen == HomeScreenEnum.HOME_BAND_VIEW) {
+                _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+                isViewAllSelected = false;
+              } else {
+                _selectedHomeScreen = _previousSelectedHomeScreen;
+              }
+            });
+          },
+        );
         break;
-      case HomeScreenEnum.HOME_RESTAURANT_VIEW:
-        break;
+      case HomeScreenEnum.HOME_SEARCH_VIEW:
       case HomeScreenEnum.HOME_BAND_VIEW:
       default:
         return isViewAllSelected
@@ -1293,5 +1248,13 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               );
         break;
     }
+  }
+
+  void _clearSearchResult() {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _controller.text = "";
+      _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+    });
   }
 }

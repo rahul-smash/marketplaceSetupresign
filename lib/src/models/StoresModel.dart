@@ -43,6 +43,8 @@ class StoreData {
     this.image,
     this.image10080,
     this.image300200,
+    this.preparationTime,
+    this.distance,
   });
 
   String id;
@@ -58,6 +60,8 @@ class StoreData {
   String image;
   String image10080;
   String image300200;
+  String preparationTime;
+  String distance;
 
   factory StoreData.fromJson(Map<String, dynamic> json) => StoreData(
     id: json["id"],
@@ -73,6 +77,8 @@ class StoreData {
     image: json["image"],
     image10080: json["image_100_80"],
     image300200: json["image_300_200"],
+    preparationTime: json["preparation_time"],
+    distance: json["distance"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -89,5 +95,7 @@ class StoreData {
     "image": image,
     "image_100_80": image10080,
     "image_300_200": image300200,
+    "preparation_time": preparationTime,
+    "distance": distance,
   };
 }

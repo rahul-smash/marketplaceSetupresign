@@ -1,6 +1,7 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
+import 'package:restroapp/src/utils/Utils.dart';
 
 typedef CustomCallback = T Function<T extends Object>({T value});
 
@@ -10,7 +11,8 @@ EventBus eventBus = EventBus();
 class onViewAllSelected {
   bool isViewAllSelected;
   StoresModel allStoreData;
-  onViewAllSelected(this.isViewAllSelected,this.allStoreData);
+  HomeScreenEnum selectedScreen=HomeScreenEnum.HOME_BAND_VIEW;
+  onViewAllSelected(this.isViewAllSelected,this.allStoreData,{this.selectedScreen});
 }
 
 class updateCartCount {
