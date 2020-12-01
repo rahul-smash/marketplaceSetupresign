@@ -495,7 +495,25 @@ class _MarketPlaceHomeCategoryViewState
         context: context,
         builder: (BuildContext bc){
           return Container(
-            child: RadioGroup()
+            color: Colors.white,
+            child: FilterRadioGroup((selectedFilter) async {
+              print("selectedFilter=${selectedFilter}");
+              bool isNetworkAvailable = await Utils.isNetworkAvailable();
+              if(!isNetworkAvailable){
+                Utils.showToast("No Internet connection",false);
+                return;
+              }
+              Map data = {
+                "lst" : widget.initialPosition.latitude,
+                "lng": widget.initialPosition.latitude,
+                "filter_by":"${selectedFilter}",
+              };
+              Utils.showProgressDialog(context);
+              ApiController.getAllStores(params: data).then((storesResponse){
+                Utils.hideProgressDialog(context);
+                Utils.hideKeyboard(context);
+              });
+            }),
           );
         }
     );
@@ -720,53 +738,121 @@ class _MarketPlaceHomeCategoryViewState
 }
 
 
-class RadioGroup extends StatefulWidget {
+class FilterRadioGroup extends StatefulWidget {
+
+  Function(String) onFilterSelectedCallback;
+  FilterRadioGroup(this.onFilterSelectedCallback);
+
   @override
   RadioGroupWidget createState() => RadioGroupWidget();
+
 }
 
-class RadioGroupWidget extends State {
+class RadioGroupWidget extends State<FilterRadioGroup> {
 
   List<Filter> filters = BrandModel.getInstance().brandVersionModel.brand.filters;
   // Default Radio Button Selected Item.
-  String radioItemHolder = 'One';
+  String radioItemHolder = '';
   // Group Value for Radio Button.
   String id = "";
 
   Widget build(BuildContext context) {
-    return Wrap(
-      children: <Widget>[
-        Padding(
-            padding : EdgeInsets.all(15.0),
+    return Container(
+      color: Colors.white,
+      child: Wrap(
+        children: <Widget>[
+          Padding(
+              padding : EdgeInsets.all(15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Select Filter', style: TextStyle(fontSize: 20)),
+                  InkWell(
+                    onTap: (){
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.clear),
+                  )
+                ],
+              )
+          ),
+          Wrap(
+            children: filters.map((data) {
+              return RadioListTile(
+                title: Text("${data.lable}"),
+                groupValue: id,
+                value: data.value,
+                onChanged: (val) {
+                  setState(() {
+                    radioItemHolder = data.lable ;
+                    id = data.value;
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Select Filter', style: TextStyle(fontSize: 20)),
-                InkWell(
-                  onTap: (){
-                    Navigator.pop(context);
-                  },
-                  child: Icon(Icons.clear),
+                Expanded(
+                  child: ButtonTheme(
+                    height: 40,
+                    minWidth: MediaQuery.of(context).size.width,
+                    child: RaisedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      color: Colors.white,
+                      elevation: 0.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0.0),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Clear All",textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.black, fontSize: 18)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ButtonTheme(
+                    height: 40,
+                    minWidth: MediaQuery.of(context).size.width,
+                    child: RaisedButton(
+                      elevation: 0.0,
+                      onPressed: () {
+                        print("radioItemHolder=${radioItemHolder} and id=${id}");
+                        if(id.isEmpty){
+                          Utils.showToast("Please select filter", true);
+                        }else{
+                          widget.onFilterSelectedCallback(id);
+                          Navigator.pop(context);
+                        }
+
+                      },
+                      color: Colors.grey[400],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Apply", style: TextStyle(color: Colors.white, fontSize: 18)),
+                        ],
+                      ),
+                    ),
+                  ),
                 )
               ],
-            )
-        ),
-        Wrap(
-          children: filters.map((data) {
-            return RadioListTile(
-              title: Text("${data.lable}"),
-              groupValue: id,
-              value: data.value,
-              onChanged: (val) {
-                setState(() {
-                  radioItemHolder = data.lable ;
-                  id = data.value;
-                });
-              },
-            );
-          }).toList(),
-        ),
-      ],
+            ),
+          ),
+
+        ],
+      ),
     );
   }
 }
