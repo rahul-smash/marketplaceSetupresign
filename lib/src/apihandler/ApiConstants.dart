@@ -4,6 +4,7 @@ class ApiConstants{
 
   static String baseUrl = 'https://app.restroapp.com/storeId/api/';
 
+  static String base_Url = 'http://devmarketplace.restroapp.com/brandId/v1/user_authentication/';
   static String baseUrl2 = 'http://devmarketplace.restroapp.com/brandId/v1/marketplace/';
   static String baseUrl3 = 'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 

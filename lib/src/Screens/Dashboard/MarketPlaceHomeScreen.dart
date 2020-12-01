@@ -662,7 +662,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     String storeStatus = "0";
     if (storeStatus == "0") {
       //0 mean Store close
-      return true;
+      return false;
     } else {
       return false;
     }

@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-BrandVersionModel brandVersionModelFromJson(String str) => BrandVersionModel.fromJson(json.decode(str));
+BrandVersionModel brandVersionModelFromJson(String str) =>
+    BrandVersionModel.fromJson(json.decode(str));
 
-String brandVersionModelToJson(BrandVersionModel data) => json.encode(data.toJson());
+String brandVersionModelToJson(BrandVersionModel data) =>
+    json.encode(data.toJson());
 
 class BrandVersionModel {
   BrandVersionModel({
@@ -17,56 +19,57 @@ class BrandVersionModel {
   bool success;
   BrandData brand;
 
-  factory BrandVersionModel.fromJson(Map<String, dynamic> json) => BrandVersionModel(
-    success: json["success"],
-    brand: BrandData.fromJson(json["brand"]),
-  );
+  factory BrandVersionModel.fromJson(Map<String, dynamic> json) =>
+      BrandVersionModel(
+        success: json["success"],
+        brand: BrandData.fromJson(json["brand"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "success": success,
-    "brand": brand.toJson(),
-  };
+        "success": success,
+        "brand": brand.toJson(),
+      };
 }
 
 class BrandData {
-  BrandData({
-    this.id,
-    this.name,
-    this.userId,
-    this.address,
-    this.city,
-    this.state,
-    this.country,
-    this.timeZone,
-    this.zipcode,
-    this.logo,
-    this.currency,
-    this.showCurrency,
-    this.favIcon,
-    this.appIcon,
-    this.appShareLink,
-    this.androidShareLink,
-    this.iphoneShareLink,
-    this.currencyUnicode,
-    this.internationalOtp,
-    this.onlinePayment,
-    this.paymentGatewaySettings,
-    this.banners,
-    this.webBanners,
-    this.footerBanners,
-    this.aboutusBanner,
-    this.forceDownload,
-    this.logo10080,
-    this.logo300200,
-    this.appThemeIcons,
-    this.domain,
-    this.poweredByText,
-    this.poweredByLink,
-    this.blDeviceIdUnique,
-    this.isRefererFnEnable,
-    this.homeScreenSection,
-    this.filters,
-  });
+  BrandData(
+      {this.id,
+      this.name,
+      this.userId,
+      this.address,
+      this.city,
+      this.state,
+      this.country,
+      this.timeZone,
+      this.zipcode,
+      this.logo,
+      this.currency,
+      this.showCurrency,
+      this.favIcon,
+      this.appIcon,
+      this.appShareLink,
+      this.androidShareLink,
+      this.iphoneShareLink,
+      this.currencyUnicode,
+      this.internationalOtp,
+      this.onlinePayment,
+      this.paymentGatewaySettings,
+      this.banners,
+      this.webBanners,
+      this.footerBanners,
+      this.aboutusBanner,
+      this.forceDownload,
+      this.logo10080,
+      this.logo300200,
+      this.appThemeIcons,
+      this.domain,
+      this.poweredByText,
+      this.poweredByLink,
+      this.blDeviceIdUnique,
+      this.isRefererFnEnable,
+      this.homeScreenSection,
+      this.filters,
+      this.webAppThemeColors});
 
   String id;
   String name;
@@ -104,84 +107,97 @@ class BrandData {
   bool isRefererFnEnable;
   List<dynamic> homeScreenSection;
   List<Filter> filters;
+  WebAppThemeColors webAppThemeColors;
 
   factory BrandData.fromJson(Map<String, dynamic> json) => BrandData(
-    id: json["id"],
-    name: json["name"],
-    userId: json["user_id"],
-    address: json["address"],
-    city: json["city"],
-    state: json["state"],
-    country: json["country"],
-    timeZone: json["time_zone"],
-    zipcode: json["zipcode"],
-    logo: json["logo"],
-    currency: json["currency"],
-    showCurrency: json["show_currency"],
-    favIcon: json["fav_icon"],
-    appIcon: json["app_icon"],
-    appShareLink: json["app_share_link"],
-    androidShareLink: json["android_share_link"],
-    iphoneShareLink: json["iphone_share_link"],
-    currencyUnicode: json["currency_unicode"],
-    internationalOtp: json["international_otp"],
-    onlinePayment: json["online_payment"],
-    paymentGatewaySettings: List<dynamic>.from(json["payment_gateway_settings"].map((x) => x)),
-    banners: List<Banner>.from(json["banners"].map((x) => Banner.fromJson(x))),
-    webBanners: List<Banner>.from(json["web_banners"].map((x) => Banner.fromJson(x))),
-    footerBanners: List<dynamic>.from(json["footer_banners"].map((x) => x)),
-    aboutusBanner: List<dynamic>.from(json["aboutus_banner"].map((x) => x)),
-    forceDownload: List<ForceDownload>.from(json["force_download"].map((x) => ForceDownload.fromJson(x))),
-    logo10080: json["logo_100_80"],
-    logo300200: json["logo_300_200"],
-    appThemeIcons: AppThemeIcons.fromJson(json["app_theme_icons"]),
-    domain: json["domain"],
-    poweredByText: json["powered_by_text"],
-    poweredByLink: json["powered_by_link"],
-    blDeviceIdUnique: json["bl_device_id_unique"],
-    isRefererFnEnable: json["is_referer_fn_enable"],
-    homeScreenSection: List<dynamic>.from(json["home_screen_section"].map((x) => x)),
-    filters: List<Filter>.from(json["filters"].map((x) => Filter.fromJson(x))),
-  );
+      id: json["id"],
+      name: json["name"],
+      userId: json["user_id"],
+      address: json["address"],
+      city: json["city"],
+      state: json["state"],
+      country: json["country"],
+      timeZone: json["time_zone"],
+      zipcode: json["zipcode"],
+      logo: json["logo"],
+      currency: json["currency"],
+      showCurrency: json["show_currency"],
+      favIcon: json["fav_icon"],
+      appIcon: json["app_icon"],
+      appShareLink: json["app_share_link"],
+      androidShareLink: json["android_share_link"],
+      iphoneShareLink: json["iphone_share_link"],
+      currencyUnicode: json["currency_unicode"],
+      internationalOtp: json["international_otp"],
+      onlinePayment: json["online_payment"],
+      paymentGatewaySettings:
+          List<dynamic>.from(json["payment_gateway_settings"].map((x) => x)),
+      banners:
+          List<Banner>.from(json["banners"].map((x) => Banner.fromJson(x))),
+      webBanners:
+          List<Banner>.from(json["web_banners"].map((x) => Banner.fromJson(x))),
+      footerBanners: List<dynamic>.from(json["footer_banners"].map((x) => x)),
+      aboutusBanner: List<dynamic>.from(json["aboutus_banner"].map((x) => x)),
+      forceDownload: List<ForceDownload>.from(
+          json["force_download"].map((x) => ForceDownload.fromJson(x))),
+      logo10080: json["logo_100_80"],
+      logo300200: json["logo_300_200"],
+      appThemeIcons: AppThemeIcons.fromJson(json["app_theme_icons"]),
+      domain: json["domain"],
+      poweredByText: json["powered_by_text"],
+      poweredByLink: json["powered_by_link"],
+      blDeviceIdUnique: json["bl_device_id_unique"],
+      isRefererFnEnable: json["is_referer_fn_enable"],
+      homeScreenSection:
+          List<dynamic>.from(json["home_screen_section"].map((x) => x)),
+      filters:
+          List<Filter>.from(json["filters"].map((x) => Filter.fromJson(x))),
+      webAppThemeColors: json["web_app_theme_colors"] == null
+          ? null
+          : WebAppThemeColors.fromJson(json["web_app_theme_colors"]));
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "user_id": userId,
-    "address": address,
-    "city": city,
-    "state": state,
-    "country": country,
-    "time_zone": timeZone,
-    "zipcode": zipcode,
-    "logo": logo,
-    "currency": currency,
-    "show_currency": showCurrency,
-    "fav_icon": favIcon,
-    "app_icon": appIcon,
-    "app_share_link": appShareLink,
-    "android_share_link": androidShareLink,
-    "iphone_share_link": iphoneShareLink,
-    "currency_unicode": currencyUnicode,
-    "international_otp": internationalOtp,
-    "online_payment": onlinePayment,
-    "payment_gateway_settings": List<dynamic>.from(paymentGatewaySettings.map((x) => x)),
-    "banners": List<dynamic>.from(banners.map((x) => x.toJson())),
-    "web_banners": List<dynamic>.from(webBanners.map((x) => x.toJson())),
-    "footer_banners": List<dynamic>.from(footerBanners.map((x) => x)),
-    "aboutus_banner": List<dynamic>.from(aboutusBanner.map((x) => x)),
-    "force_download": List<dynamic>.from(forceDownload.map((x) => x.toJson())),
-    "logo_100_80": logo10080,
-    "logo_300_200": logo300200,
-    "app_theme_icons": appThemeIcons.toJson(),
-    "domain": domain,
-    "powered_by_text": poweredByText,
-    "powered_by_link": poweredByLink,
-    "bl_device_id_unique": blDeviceIdUnique,
-    "is_referer_fn_enable": isRefererFnEnable,
-    "home_screen_section": List<dynamic>.from(homeScreenSection.map((x) => x)),
-    "filters": List<dynamic>.from(filters.map((x) => x.toJson())),
-  };
+        "id": id,
+        "name": name,
+        "user_id": userId,
+        "address": address,
+        "city": city,
+        "state": state,
+        "country": country,
+        "time_zone": timeZone,
+        "zipcode": zipcode,
+        "logo": logo,
+        "currency": currency,
+        "show_currency": showCurrency,
+        "fav_icon": favIcon,
+        "app_icon": appIcon,
+        "app_share_link": appShareLink,
+        "android_share_link": androidShareLink,
+        "iphone_share_link": iphoneShareLink,
+        "currency_unicode": currencyUnicode,
+        "international_otp": internationalOtp,
+        "online_payment": onlinePayment,
+        "payment_gateway_settings":
+            List<dynamic>.from(paymentGatewaySettings.map((x) => x)),
+        "banners": List<dynamic>.from(banners.map((x) => x.toJson())),
+        "web_banners": List<dynamic>.from(webBanners.map((x) => x.toJson())),
+        "footer_banners": List<dynamic>.from(footerBanners.map((x) => x)),
+        "aboutus_banner": List<dynamic>.from(aboutusBanner.map((x) => x)),
+        "force_download":
+            List<dynamic>.from(forceDownload.map((x) => x.toJson())),
+        "logo_100_80": logo10080,
+        "logo_300_200": logo300200,
+        "app_theme_icons": appThemeIcons.toJson(),
+        "domain": domain,
+        "powered_by_text": poweredByText,
+        "powered_by_link": poweredByLink,
+        "bl_device_id_unique": blDeviceIdUnique,
+        "is_referer_fn_enable": isRefererFnEnable,
+        "web_app_theme_colors": webAppThemeColors,
+        "home_screen_section":
+            List<dynamic>.from(homeScreenSection.map((x) => x)),
+        "filters": List<dynamic>.from(filters.map((x) => x.toJson())),
+      };
 }
 
 class Filter {
@@ -194,14 +210,14 @@ class Filter {
   String value;
 
   factory Filter.fromJson(Map<String, dynamic> json) => Filter(
-    lable: json["lable"],
-    value: json["value"],
-  );
+        lable: json["lable"],
+        value: json["value"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "lable": lable,
-    "value": value,
-  };
+        "lable": lable,
+        "value": value,
+      };
 }
 
 class AppThemeIcons {
@@ -228,28 +244,28 @@ class AppThemeIcons {
   String icon512512;
 
   factory AppThemeIcons.fromJson(Map<String, dynamic> json) => AppThemeIcons(
-    id: json["id"],
-    icon7272: json["icon_72_72"],
-    icon9696: json["icon_96_96"],
-    icon128128: json["icon_128_128"],
-    icon144144: json["icon_144_144"],
-    icon152152: json["icon_152_152"],
-    icon192192: json["icon_192_192"],
-    icon384384: json["icon_384_384"],
-    icon512512: json["icon_512_512"],
-  );
+        id: json["id"],
+        icon7272: json["icon_72_72"],
+        icon9696: json["icon_96_96"],
+        icon128128: json["icon_128_128"],
+        icon144144: json["icon_144_144"],
+        icon152152: json["icon_152_152"],
+        icon192192: json["icon_192_192"],
+        icon384384: json["icon_384_384"],
+        icon512512: json["icon_512_512"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "icon_72_72": icon7272,
-    "icon_96_96": icon9696,
-    "icon_128_128": icon128128,
-    "icon_144_144": icon144144,
-    "icon_152_152": icon152152,
-    "icon_192_192": icon192192,
-    "icon_384_384": icon384384,
-    "icon_512_512": icon512512,
-  };
+        "id": id,
+        "icon_72_72": icon7272,
+        "icon_96_96": icon9696,
+        "icon_128_128": icon128128,
+        "icon_144_144": icon144144,
+        "icon_152_152": icon152152,
+        "icon_192_192": icon192192,
+        "icon_384_384": icon384384,
+        "icon_512_512": icon512512,
+      };
 }
 
 class Banner {
@@ -286,38 +302,38 @@ class Banner {
   String platform;
 
   factory Banner.fromJson(Map<String, dynamic> json) => Banner(
-    id: json["id"],
-    storeId: json["store_id"],
-    link: json["link"],
-    title: json["title"],
-    categoryId: json["category_id"],
-    subCategoryId: json["sub_category_id"],
-    productId: json["product_id"],
-    offerId: json["offer_id"],
-    image: json["image"],
-    linkTo: json["link_to"],
-    pageId: json["page_id"],
-    status: json["status"],
-    type: json["type"],
-    platform: json["platform"],
-  );
+        id: json["id"],
+        storeId: json["store_id"],
+        link: json["link"],
+        title: json["title"],
+        categoryId: json["category_id"],
+        subCategoryId: json["sub_category_id"],
+        productId: json["product_id"],
+        offerId: json["offer_id"],
+        image: json["image"],
+        linkTo: json["link_to"],
+        pageId: json["page_id"],
+        status: json["status"],
+        type: json["type"],
+        platform: json["platform"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "store_id": storeId,
-    "link": link,
-    "title": title,
-    "category_id": categoryId,
-    "sub_category_id": subCategoryId,
-    "product_id": productId,
-    "offer_id": offerId,
-    "image": image,
-    "link_to": linkTo,
-    "page_id": pageId,
-    "status": status,
-    "type": type,
-    "platform": platform,
-  };
+        "id": id,
+        "store_id": storeId,
+        "link": link,
+        "title": title,
+        "category_id": categoryId,
+        "sub_category_id": subCategoryId,
+        "product_id": productId,
+        "offer_id": offerId,
+        "image": image,
+        "link_to": linkTo,
+        "page_id": pageId,
+        "status": status,
+        "type": type,
+        "platform": platform,
+      };
 }
 
 class ForceDownload {
@@ -336,18 +352,169 @@ class ForceDownload {
   String forceDownloadMessage;
 
   factory ForceDownload.fromJson(Map<String, dynamic> json) => ForceDownload(
-    iosAppVersion: json["ios_app_version"],
-    androidAppVerison: json["android_app_verison"],
-    windowAppVersion: json["window_app_version"],
-    forceDownload: json["force_download"],
-    forceDownloadMessage: json["force_download_message"],
-  );
+        iosAppVersion: json["ios_app_version"],
+        androidAppVerison: json["android_app_verison"],
+        windowAppVersion: json["window_app_version"],
+        forceDownload: json["force_download"],
+        forceDownloadMessage: json["force_download_message"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "ios_app_version": iosAppVersion,
-    "android_app_verison": androidAppVerison,
-    "window_app_version": windowAppVersion,
-    "force_download": forceDownload,
-    "force_download_message": forceDownloadMessage,
-  };
+        "ios_app_version": iosAppVersion,
+        "android_app_verison": androidAppVerison,
+        "window_app_version": windowAppVersion,
+        "force_download": forceDownload,
+        "force_download_message": forceDownloadMessage,
+      };
+}
+
+class WebAppThemeColors {
+  WebAppThemeColors({
+    this.id,
+    this.storeId,
+    this.webThemePrimaryColor,
+    this.webThemeSecondaryColor,
+    this.webThemeCategoryOpenColor,
+    this.stripsColor,
+    this.footerColor,
+    this.listingBackgroundColor,
+    this.listingBorderColor,
+    this.listingBoxBackgroundColor,
+    this.homeSubHeadingColor,
+    this.homeDescriptionColor,
+    this.categoryListingButtonBorderColor,
+    this.categoryListingBoxBackgroundColor,
+  });
+
+  String id;
+  String storeId;
+  String webThemePrimaryColor;
+  String webThemeSecondaryColor;
+  String webThemeCategoryOpenColor;
+  String stripsColor;
+  String footerColor;
+  String listingBackgroundColor;
+  String listingBorderColor;
+  String listingBoxBackgroundColor;
+  String homeSubHeadingColor;
+  String homeDescriptionColor;
+  String categoryListingButtonBorderColor;
+  String categoryListingBoxBackgroundColor;
+
+  WebAppThemeColors copyWith({
+    String id,
+    String storeId,
+    String webThemePrimaryColor,
+    String webThemeSecondaryColor,
+    String webThemeCategoryOpenColor,
+    String stripsColor,
+    String footerColor,
+    String listingBackgroundColor,
+    String listingBorderColor,
+    String listingBoxBackgroundColor,
+    String homeSubHeadingColor,
+    String homeDescriptionColor,
+    String categoryListingButtonBorderColor,
+    String categoryListingBoxBackgroundColor,
+  }) =>
+      WebAppThemeColors(
+        id: id ?? this.id,
+        storeId: storeId ?? this.storeId,
+        webThemePrimaryColor: webThemePrimaryColor ?? this.webThemePrimaryColor,
+        webThemeSecondaryColor:
+            webThemeSecondaryColor ?? this.webThemeSecondaryColor,
+        webThemeCategoryOpenColor:
+            webThemeCategoryOpenColor ?? this.webThemeCategoryOpenColor,
+        stripsColor: stripsColor ?? this.stripsColor,
+        footerColor: footerColor ?? this.footerColor,
+        listingBackgroundColor:
+            listingBackgroundColor ?? this.listingBackgroundColor,
+        listingBorderColor: listingBorderColor ?? this.listingBorderColor,
+        listingBoxBackgroundColor:
+            listingBoxBackgroundColor ?? this.listingBoxBackgroundColor,
+        homeSubHeadingColor: homeSubHeadingColor ?? this.homeSubHeadingColor,
+        homeDescriptionColor: homeDescriptionColor ?? this.homeDescriptionColor,
+        categoryListingButtonBorderColor: categoryListingButtonBorderColor ??
+            this.categoryListingButtonBorderColor,
+        categoryListingBoxBackgroundColor: categoryListingBoxBackgroundColor ??
+            this.categoryListingBoxBackgroundColor,
+      );
+
+  factory WebAppThemeColors.fromRawJson(String str) =>
+      WebAppThemeColors.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory WebAppThemeColors.fromJson(Map<String, dynamic> json) =>
+      WebAppThemeColors(
+        id: json["id"] == null ? null : json["id"],
+        storeId: json["store_id"] == null ? null : json["store_id"],
+        webThemePrimaryColor: json["web_theme_primary_color"] == null
+            ? null
+            : json["web_theme_primary_color"],
+        webThemeSecondaryColor: json["web_theme_secondary_color"] == null
+            ? null
+            : json["web_theme_secondary_color"],
+        webThemeCategoryOpenColor: json["web_theme_category_open_color"] == null
+            ? null
+            : json["web_theme_category_open_color"],
+        stripsColor: json["strips_color"] == null ? null : json["strips_color"],
+        footerColor: json["footer_color"] == null ? null : json["footer_color"],
+        listingBackgroundColor: json["listing_background_color"] == null
+            ? null
+            : json["listing_background_color"],
+        listingBorderColor: json["listing_border_color"] == null
+            ? null
+            : json["listing_border_color"],
+        listingBoxBackgroundColor: json["listing_box_background_color"] == null
+            ? null
+            : json["listing_box_background_color"],
+        homeSubHeadingColor: json["home_sub_heading_color"] == null
+            ? null
+            : json["home_sub_heading_color"],
+        homeDescriptionColor: json["home_description_color"] == null
+            ? null
+            : json["home_description_color"],
+        categoryListingButtonBorderColor:
+            json["category_listing_button_border_color"] == null
+                ? null
+                : json["category_listing_button_border_color"],
+        categoryListingBoxBackgroundColor:
+            json["category_listing_box_background_color"] == null
+                ? null
+                : json["category_listing_box_background_color"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id == null ? null : id,
+        "store_id": storeId == null ? null : storeId,
+        "web_theme_primary_color":
+            webThemePrimaryColor == null ? null : webThemePrimaryColor,
+        "web_theme_secondary_color":
+            webThemeSecondaryColor == null ? null : webThemeSecondaryColor,
+        "web_theme_category_open_color": webThemeCategoryOpenColor == null
+            ? null
+            : webThemeCategoryOpenColor,
+        "strips_color": stripsColor == null ? null : stripsColor,
+        "footer_color": footerColor == null ? null : footerColor,
+        "listing_background_color":
+            listingBackgroundColor == null ? null : listingBackgroundColor,
+        "listing_border_color":
+            listingBorderColor == null ? null : listingBorderColor,
+        "listing_box_background_color": listingBoxBackgroundColor == null
+            ? null
+            : listingBoxBackgroundColor,
+        "home_sub_heading_color":
+            homeSubHeadingColor == null ? null : homeSubHeadingColor,
+        "home_description_color":
+            homeDescriptionColor == null ? null : homeDescriptionColor,
+        "category_listing_button_border_color":
+            categoryListingButtonBorderColor == null
+                ? null
+                : categoryListingButtonBorderColor,
+        "category_listing_box_background_color":
+            categoryListingBoxBackgroundColor == null
+                ? null
+                : categoryListingBoxBackgroundColor,
+      };
 }

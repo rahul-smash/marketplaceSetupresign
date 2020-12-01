@@ -15,6 +15,7 @@ import 'package:restroapp/src/Screens/SideMenu/FAQScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/ReferEarnData.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
@@ -298,33 +299,35 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
           _showDialog(context);
         } else {
           Navigator.pop(context);
-          SharedPrefs.getStore().then((storeData) {
-            StoreModel model = storeData;
-            print("---internationalOtp--${model.internationalOtp}");
-            //User Login with Mobile and OTP = 0
-            // 1 = email and 0 = ph-no
-            if (model.internationalOtp == "0") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => LoginMobileScreen("menu")),
-              );
-              Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-              attributeMap["ScreenName"] = "LoginMobileScreen";
-              Utils.sendAnalyticsEvent(
-                  "Clicked LoginMobileScreen", attributeMap);
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => LoginEmailScreen("menu")),
-              );
-              Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-              attributeMap["ScreenName"] = "LoginEmailScreen";
-              Utils.sendAnalyticsEvent(
-                  "Clicked LoginEmailScreen", attributeMap);
-            }
-          });
+          BrandData model = BrandModel.getInstance().brandVersionModel.brand;
+          print("---internationalOtp--${model.internationalOtp}");
+          //User Login with Mobile and OTP = 0
+          // 1 = email and 0 = ph-no
+          if (model.internationalOtp == "0") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => LoginMobileScreen("menu")),
+            );
+            Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+            attributeMap["ScreenName"] = "LoginMobileScreen";
+            Utils.sendAnalyticsEvent(
+                "Clicked LoginMobileScreen", attributeMap);
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => LoginEmailScreen("menu")),
+            );
+            Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+            attributeMap["ScreenName"] = "LoginEmailScreen";
+            Utils.sendAnalyticsEvent(
+                "Clicked LoginEmailScreen", attributeMap);
+          }
+
+          /*SharedPrefs.getStore().then((storeData) {
+
+          });*/
         }
         break;
       case DrawerChildConstants.FAQ:
