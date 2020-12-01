@@ -283,11 +283,11 @@ class ApiController {
 
   static Future<UserResponse> registerApiRequest(
       UserData user, String referralCode) async {
-    StoreModel store = await SharedPrefs.getStore();
+    //StoreModel store = await SharedPrefs.getStore();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.base_Url.replaceAll("brandId",AppConstant.brandID) +
         ApiConstants.signUp;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
@@ -322,11 +322,11 @@ class ApiController {
 
   static Future<UserResponse> loginApiRequest(
       String username, String password) async {
-    StoreModel store = await SharedPrefs.getStore();
+    //StoreModel store = await SharedPrefs.getStore();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.base_Url.replaceAll("brandId",AppConstant.brandID) +
         ApiConstants.login;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
@@ -359,11 +359,11 @@ class ApiController {
 
   static Future<GetForgotPwdData> forgotPasswordApiRequest(
       ForgotPasswordData forgotPasswordData) async {
-    StoreModel store = await SharedPrefs.getStore();
+    //StoreModel store = await SharedPrefs.getStore();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
 
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.base_Url.replaceAll("brandId",AppConstant.brandID)+
         ApiConstants.forgetPassword;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
@@ -943,7 +943,7 @@ class ApiController {
       String user_refer_code,
       String gstNumber) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    StoreModel store = await SharedPrefs.getStore();
+    //StoreModel store = await SharedPrefs.getStore();
     String userId;
     if (isComingFromOtpScreen) {
       userId = id;
@@ -954,7 +954,7 @@ class ApiController {
 
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.base_Url.replaceAll("brandId",AppConstant.brandID) +
         ApiConstants.updateProfile;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     print("--url--${url}--");
@@ -1136,13 +1136,13 @@ class ApiController {
     }
   }
 
-  static Future<MobileVerified> mobileVerification(
-      LoginMobile loginData) async {
-    StoreModel store = await SharedPrefs.getStore();
+  static Future<MobileVerified> mobileVerification(LoginMobile loginData) async {
+
+    //StoreModel store = await SharedPrefs.getStore();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.base_Url.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.mobileVerification;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
@@ -1153,10 +1153,14 @@ class ApiController {
         "device_token": deviceToken,
         "platform": Platform.isIOS ? "IOS" : "Android"
       });
-      print('@@mobileVerification' + url + request.fields.toString());
+      //print('@@mobileVerification' + url + request.fields.toString());
+
+      print('--url===  $url');
+      print('--fields===${request.fields.toString()}');
 
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
+      print('--statusCode===${response.statusCode}');
       print('--response===  $respStr');
       final parsed = json.decode(respStr);
       MobileVerified userResponse = MobileVerified.fromJson(parsed);
@@ -1172,15 +1176,14 @@ class ApiController {
     }
   }
 
-  static Future<OtpVerified> otpVerified(
-      OTPData otpData, LoginMobile phone) async {
+  static Future<OtpVerified> otpVerified(OTPData otpData, LoginMobile phone) async {
     UserModelMobile userMobile = await SharedPrefs.getUserMobile();
-    StoreModel store = await SharedPrefs.getStore();
+    //StoreModel store = await SharedPrefs.getStore();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-    var url =
-        ApiConstants.baseUrl.replaceAll("storeId", store.id) + ApiConstants.otp;
+    var url=ApiConstants.base_Url.replaceAll("brandId",AppConstant.brandID)
+        +ApiConstants.otp;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
@@ -1331,11 +1334,11 @@ class ApiController {
   }
 
   static Future<ReferEarnData> referEarn() async {
-    StoreModel store = await SharedPrefs.getStore();
+    //StoreModel store = await SharedPrefs.getStore();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     UserModel user = await SharedPrefs.getUser();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.base_Url.replaceAll("brandId",AppConstant.brandID) +
         ApiConstants.getReferDetails;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
