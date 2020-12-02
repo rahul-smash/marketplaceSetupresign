@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
@@ -188,7 +189,7 @@ class _MarketPlaceHomeCategoryViewState
                                           "No Internet connection", false);
                                       return;
                                     }
-                                    Map data = {
+                                    Map<String, dynamic> data = {
                                       "lst": widget.initialPosition.latitude,
                                       "lng": widget.initialPosition.latitude,
                                       "search_by": "category",
@@ -241,7 +242,7 @@ class _MarketPlaceHomeCategoryViewState
                                           "No Internet connection", false);
                                       return;
                                     }
-                                    Map data = {
+                                    Map<String, dynamic> data = {
                                       "lst": widget.initialPosition.latitude,
                                       "lng": widget.initialPosition.latitude,
                                       "filter_by": tagsList[index].value,
@@ -255,7 +256,9 @@ class _MarketPlaceHomeCategoryViewState
                                           storesResponse.success)
                                         eventBus.fire(onViewAllSelected(
                                             widget.isViewAllRestSelected,
-                                            storesResponse));
+                                            storesResponse,
+                                            selectedScreen: HomeScreenEnum
+                                                .HOME_RESTAURANT_VIEW));
                                     });
                                     setState(() {
                                       selectedFilterIndex = index;
@@ -440,7 +443,7 @@ class _MarketPlaceHomeCategoryViewState
                                         "No Internet connection", false);
                                     return;
                                   }
-                                  Map data = {
+                                  Map<String, dynamic> data = {
                                     "lst": widget.initialPosition.latitude,
                                     "lng": widget.initialPosition.latitude,
                                   };
@@ -489,7 +492,7 @@ class _MarketPlaceHomeCategoryViewState
                 Utils.showToast("No Internet connection", false);
                 return;
               }
-              Map data = {
+              Map<String, dynamic> data = {
                 "lst": widget.initialPosition.latitude,
                 "lng": widget.initialPosition.latitude,
                 "filter_by": "${selectedFilter}",
@@ -523,7 +526,9 @@ class _MarketPlaceHomeCategoryViewState
               shrinkWrap: true,
               physics: ScrollPhysics(),
               itemCount: widget.isViewAllRestSelected
-                  ? allStoreData.data.length
+                  ? allStoreData == null
+                      ? 0
+                      : allStoreData.data.length
                   : storeData.data.length,
               itemBuilder: (context, index) {
                 StoreData storeDataObj = widget.isViewAllRestSelected
@@ -562,22 +567,37 @@ class _MarketPlaceHomeCategoryViewState
                         child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(5),
-                                  bottomRight: Radius.circular(5)),
+                              borderRadius: BorderRadius.all(
+                              Radius.circular(5)),
                             ),
                             child: Column(
                               children: [
                                 Container(
                                     height: 150,
-                                    decoration: BoxDecoration(
+                                    child: ClipRRect(
                                       borderRadius: BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           topLeft: Radius.circular(5)),
-                                      image: DecorationImage(
-                                        image: AssetImage('images/img1.png'),
-                                        fit: BoxFit.cover,
-                                      ),
+                                      child: storeDataObj.image.isNotEmpty
+                                          ? CachedNetworkImage(
+                                              height: 150,
+                                              width: Utils.getDeviceWidth(context),
+                                              imageUrl: "${storeDataObj.image}",
+                                              fit: BoxFit.cover)
+                                          : null,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(5),
+                                          topLeft: Radius.circular(5)),
+                                      image: storeDataObj.image.isEmpty
+                                          ? DecorationImage(
+                                              image:
+                                                  AssetImage('images/img1.png'),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
                                     )),
                                 Padding(
                                     padding: EdgeInsets.only(
@@ -733,7 +753,7 @@ class _MarketPlaceHomeCategoryViewState
                 Utils.showToast("No Internet connection", false);
                 return;
               }
-              Map data = {
+              Map<String, dynamic> data = {
                 "lst": widget.initialPosition.latitude,
                 "lng": widget.initialPosition.latitude,
                 "search_by": "tag",

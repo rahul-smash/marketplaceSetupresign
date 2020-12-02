@@ -167,9 +167,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       _selectedHomeScreen = event.selectedScreen;
       isViewAllSelected = event.isViewAllSelected;
       allStoreData = event.allStoreData;
-      setState(() {
-
-      });
+      setState(() {});
       scrollTop();
     });
 
@@ -466,7 +464,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     } else {
       setState(() {
         _currentIndex = index;
-        if (_currentIndex == 4) {
+        if (_currentIndex == 3) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -479,7 +477,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           attributeMap["ScreenName"] = "MyCartScreen";
           Utils.sendAnalyticsEvent("Clicked MyCartScreen", attributeMap);
         }
-        if (_currentIndex == 2) {
+        if (_currentIndex == 1) {
           if (AppConstant.isLoggedIn) {
             Navigator.push(
               context,
@@ -492,7 +490,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           attributeMap["ScreenName"] = "SearchScreen";
           Utils.sendAnalyticsEvent("Clicked SearchScreen", attributeMap);
         }
-        if (_currentIndex == 3) {
+        if (_currentIndex == 2) {
           if (AppConstant.isLoggedIn) {
             /*Navigator.push(
               context,
@@ -505,12 +503,12 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             Utils.showLoginDialog(context);
           }
         }
-        if (_currentIndex == 1) {
-          setState(() {
-            _controller.text = '';
-            isCategoryViewSelected = true;
-          });
-        }
+//        if (_currentIndex == 1) {
+//          setState(() {
+//            _controller.text = '';
+//            isCategoryViewSelected = true;
+//          });
+//        }
         if (_currentIndex == 0) {
           //show categories
           setState(() {
@@ -875,7 +873,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       leading: _getAppBarLeftIcon(),
       actions: <Widget>[
         Visibility(
-            visible: AppConstant.isLoggedIn,
+//            visible: AppConstant.isLoggedIn,
+            visible: false,
             child: IconButton(
               icon: Icon(
                 Icons.notifications,
@@ -950,10 +949,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               : null,
           color: !isCategoryViewSelected ? Colors.white : null,
         ),
-       Padding(
-              padding: EdgeInsets.only(top: 10),
-              child: _getCurrentBody(),
-            ),
+        Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: _getCurrentBody(),
+        ),
         _getStoreView(),
       ],
     );
@@ -962,7 +961,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   Widget _getStoreView() {
     if (_selectedHomeScreen == HomeScreenEnum.HOME_SELECTED_STORE_VIEW)
       return Padding(
-        padding: EdgeInsets.only(top: 10),
+        padding: EdgeInsets.only(top: 0),
         child: StoreDashboardScreen(_selectedSingleStore),
       );
     else
@@ -999,7 +998,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         Utils.showToast(
                             "Please enter some valid keyword", false);
                       } else {
-                        Map data = {
+                        Map<String, dynamic> data = {
                           "lst": widget.initialPosition.latitude,
                           "lng": widget.initialPosition.latitude,
                           "search_by": "Keyword",
@@ -1010,7 +1009,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                             .then((storesResponse) {
                           Utils.hideProgressDialog(context);
                           Utils.hideKeyboard(context);
-                          //TODO: implement here
                           if (storesResponse != null) {
                             allStoreData = storesResponse;
                             setState(() {
@@ -1094,7 +1092,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   Widget _getRestaurantList() {
     return HomeSearchView(
-      allStoreData,selectedScreen: _selectedHomeScreen,
+      allStoreData,
+      selectedScreen: _selectedHomeScreen,
       callback: <Object>({value}) {
         setState(() {
           if (value == null) {
@@ -1117,7 +1116,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   Widget _getMiddleView() {
     return (_selectedHomeScreen == HomeScreenEnum.HOME_SEARCH_VIEW)
-        ? _getRestaurantList()
+        ? Expanded(child: _getRestaurantList())
         : Expanded(
             child: SingleChildScrollView(
             controller: controller,
@@ -1207,8 +1206,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           icon: Icon(Icons.keyboard_arrow_left, size: 35),
           onPressed: () {
             setState(() {
-                _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
-                isViewAllSelected = false;
+              _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+              isViewAllSelected = false;
             });
           },
         );
