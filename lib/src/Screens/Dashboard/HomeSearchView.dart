@@ -72,20 +72,22 @@ class HomeSearchView extends StatelessWidget {
                                   children: [
                                     Container(
                                         height: 150,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(5),
-                                              topLeft: Radius.circular(5)),
-                                          child: storeDataObj.image.isNotEmpty
-                                              ? CachedNetworkImage(
-                                                  height: 150,
-                                                  width: Utils.getDeviceWidth(
-                                                      context),
-                                                  imageUrl:
-                                                      "${storeDataObj.image}",
-                                                  fit: BoxFit.cover)
-                                              : null,
-                                        ),
+                                        child: storeDataObj.image.isNotEmpty
+                                            ? ClipRRect(
+                                                borderRadius: BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(5),
+                                                    topLeft:
+                                                        Radius.circular(5)),
+                                                child: CachedNetworkImage(
+                                                    height: 150,
+                                                    width: Utils.getDeviceWidth(
+                                                        context),
+                                                    imageUrl:
+                                                        "${storeDataObj.image}",
+                                                    fit: BoxFit.cover),
+                                              )
+                                            : null,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.only(
                                               topRight: Radius.circular(5),
