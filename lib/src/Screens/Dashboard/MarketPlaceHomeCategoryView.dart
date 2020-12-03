@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
@@ -39,7 +40,10 @@ class MarketPlaceHomeCategoryView extends StatefulWidget {
 
   MarketPlaceHomeCategoryView(this.categoriesModel, this.initialPosition,
       this.brandData, this.subCategory,
-      {this.callback, this.selectedCategoryId, this.selectedCategory,this.isViewAllRestSelected=false});
+      {this.callback,
+      this.selectedCategoryId,
+      this.selectedCategory,
+      this.isViewAllRestSelected = false});
 
   @override
   _MarketPlaceHomeCategoryViewState createState() =>
@@ -59,7 +63,6 @@ class _MarketPlaceHomeCategoryViewState
   bool isSeeAll = false;
   bool isCateSeeAll = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -75,9 +78,9 @@ class _MarketPlaceHomeCategoryViewState
     ApiController.tagsApiRequest().then((tagsResponse) {
       setState(() {
         this.tagsModel = tagsResponse;
-        if (this.tagsModel.data.length > 8) {
+        if (this.tagsModel.data.length >
+            (widget.isViewAllRestSelected ? 4 : 8)) {
           tagsDataList = this.tagsModel.data;
-          tagsDataList = tagsDataList.sublist(0, 8);
           isSeeAll = false;
         } else {
           isSeeAll = false;
@@ -165,7 +168,7 @@ class _MarketPlaceHomeCategoryViewState
                         ),
                       ),
                       Padding(
-                        padding:EdgeInsets.fromLTRB(5, 0, 5, 0),
+                        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
                         child: GridView.count(
                             crossAxisCount: 4,
                             childAspectRatio: .75,
@@ -173,39 +176,52 @@ class _MarketPlaceHomeCategoryViewState
                             mainAxisSpacing: 1.0,
                             crossAxisSpacing: 0.0,
                             shrinkWrap: true,
-                            children: categorieslist.map((CategoriesData model) {
+                            children:
+                                categorieslist.map((CategoriesData model) {
                               return GridTile(
                                 child: InkWell(
                                   onTap: () async {
                                     print("onTap===>${model.id}");
-                                    bool isNetworkAvailable = await Utils.isNetworkAvailable();
-                                    if(!isNetworkAvailable){
-                                      Utils.showToast("No Internet connection",false);
+                                    bool isNetworkAvailable =
+                                        await Utils.isNetworkAvailable();
+                                    if (!isNetworkAvailable) {
+                                      Utils.showToast(
+                                          "No Internet connection", false);
                                       return;
                                     }
-                                    Map data = {
-                                      "lst" : widget.initialPosition.latitude,
+                                    Map<String, dynamic> data = {
+                                      "lst": widget.initialPosition.latitude,
                                       "lng": widget.initialPosition.latitude,
                                       "search_by": "category",
                                       "id": "${model.id}",
                                     };
                                     Utils.showProgressDialog(context);
-                                    ApiController.getAllStores(params: data).then((storesResponse){
+                                    ApiController.getAllStores(params: data)
+                                        .then((storesResponse) {
                                       Utils.hideProgressDialog(context);
                                       Utils.hideKeyboard(context);
+                                      if (storesResponse != null &&
+                                          storesResponse.success)
+                                        eventBus.fire(onViewAllSelected(
+                                            widget.isViewAllRestSelected,
+                                            storesResponse,
+                                            selectedScreen: HomeScreenEnum
+                                                .HOME_RESTAURANT_VIEW));
                                     });
                                   },
-                                  child: MarketPlaceCategoryView(model,widget.brandData,
+                                  child: MarketPlaceCategoryView(
+                                    model,
+                                    widget.brandData,
                                     false,
                                     0,
                                     isListView: true,
-                                    selectedSubCategoryId: widget.selectedCategoryId,
+                                    selectedSubCategoryId:
+                                        widget.selectedCategoryId,
                                   ),
                                 ),
                               );
                             }).toList()),
                       ),
-
                       Container(
                         margin: EdgeInsets.only(top: 10, left: 10),
                         height: 30,
@@ -219,21 +235,30 @@ class _MarketPlaceHomeCategoryViewState
                                 onTap: () async {
                                   print("onTap=${index}");
                                   if (index != 0) {
-                                    bool isNetworkAvailable = await Utils.isNetworkAvailable();
-                                    if(!isNetworkAvailable){
-                                      Utils.showToast("No Internet connection",false);
+                                    bool isNetworkAvailable =
+                                        await Utils.isNetworkAvailable();
+                                    if (!isNetworkAvailable) {
+                                      Utils.showToast(
+                                          "No Internet connection", false);
                                       return;
                                     }
-                                    Map data = {
-                                      "lst" : widget.initialPosition.latitude,
+                                    Map<String, dynamic> data = {
+                                      "lst": widget.initialPosition.latitude,
                                       "lng": widget.initialPosition.latitude,
-                                      "filter_by":tagsList[index].value,
+                                      "filter_by": tagsList[index].value,
                                     };
                                     Utils.showProgressDialog(context);
-                                    ApiController.getAllStores(params: data).then((storesResponse){
+                                    ApiController.getAllStores(params: data)
+                                        .then((storesResponse) {
                                       Utils.hideProgressDialog(context);
                                       Utils.hideKeyboard(context);
-
+                                      if (storesResponse != null &&
+                                          storesResponse.success)
+                                        eventBus.fire(onViewAllSelected(
+                                            widget.isViewAllRestSelected,
+                                            storesResponse,
+                                            selectedScreen: HomeScreenEnum
+                                                .HOME_RESTAURANT_VIEW));
                                     });
                                     setState(() {
                                       selectedFilterIndex = index;
@@ -325,12 +350,6 @@ class _MarketPlaceHomeCategoryViewState
                               setState(() {
                                 if (isSeeAll) {
                                   isSeeAll = false;
-                                  if (this.tagsModel.data.length > 8) {
-                                    tagsDataList = this.tagsModel.data;
-                                    tagsDataList = tagsDataList.sublist(0, 8);
-                                  } else {
-                                    tagsDataList = tagsModel.data;
-                                  }
                                 } else {
                                   isSeeAll = true;
                                   tagsDataList = tagsModel.data;
@@ -359,38 +378,7 @@ class _MarketPlaceHomeCategoryViewState
                         mainAxisSpacing: 1.0,
                         crossAxisSpacing: 0.0,
                         shrinkWrap: true,
-                        children: tagsDataList.map((TagData tagObject) {
-                          return InkWell(
-                        onTap: () async {
-                          bool isNetworkAvailable = await Utils.isNetworkAvailable();
-                          if(!isNetworkAvailable){
-                            Utils.showToast("No Internet connection",false);
-                            return;
-                          }
-                          Map data = {
-                            "lst" : widget.initialPosition.latitude,
-                            "lng": widget.initialPosition.latitude,
-                            "search_by": "tag",
-                            "id": "${tagObject.id}",
-                          };
-                          Utils.showProgressDialog(context);
-                          ApiController.getAllStores(params: data).then((storesResponse){
-                            Utils.hideProgressDialog(context);
-                            Utils.hideKeyboard(context);
-
-                          });
-                        },
-                        child:Container(
-                            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.0),
-                              image: DecorationImage(
-                                image: NetworkImage("${tagObject.image}"),
-                                fit: BoxFit.cover,),
-                              ),
-                            ),
-                          );
-                        }).toList()),
+                        children: _getQuickLinksItem()),
                 Padding(
                   padding: EdgeInsets.fromLTRB(10, 15, 10, 5),
                   child: Row(
@@ -407,35 +395,35 @@ class _MarketPlaceHomeCategoryViewState
                               fontWeight: FontWeight.w400),
                         ),
                       ),
-                      widget. isViewAllRestSelected
+                      widget.isViewAllRestSelected
                           ? InkWell(
-                        onTap: (){
-                          showBottomSheet(context);
-                        },
-                        child: Container(
-                          height: 30,
-                          margin: EdgeInsets.only(left: 4, right: 4),
-                          padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: grayLightColor, width: 1),
-                              borderRadius: BorderRadius.circular(2)),
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                "images/filtericon.png",
-                                height: 20,
-                                width: 20,
+                              onTap: () {
+                                showBottomSheet(context);
+                              },
+                              child: Container(
+                                height: 30,
+                                margin: EdgeInsets.only(left: 4, right: 4),
+                                padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: grayLightColor, width: 1),
+                                    borderRadius: BorderRadius.circular(2)),
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      "images/filtericon.png",
+                                      height: 20,
+                                      width: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text('Filters',
+                                        style: TextStyle(color: Colors.grey)),
+                                  ],
+                                ),
                               ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Filters',
-                                  style: TextStyle(color: Colors.grey)),
-                            ],
-                          ),
-                        ),
-                      )
+                            )
                           : Visibility(
                               visible: true,
                               child: InkWell(
@@ -455,7 +443,7 @@ class _MarketPlaceHomeCategoryViewState
                                         "No Internet connection", false);
                                     return;
                                   }
-                                  Map data = {
+                                  Map<String, dynamic> data = {
                                     "lst": widget.initialPosition.latitude,
                                     "lng": widget.initialPosition.latitude,
                                   };
@@ -468,7 +456,8 @@ class _MarketPlaceHomeCategoryViewState
                                       widget.isViewAllRestSelected = true;
                                       allStoreData = storesResponse;
                                       eventBus.fire(onViewAllSelected(
-                                          widget.isViewAllRestSelected, allStoreData));
+                                          widget.isViewAllRestSelected,
+                                          allStoreData));
                                     });
                                   });
                                 },
@@ -484,7 +473,7 @@ class _MarketPlaceHomeCategoryViewState
     );
   }
 
-  void showBottomSheet(context){
+  void showBottomSheet(context) {
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -493,32 +482,33 @@ class _MarketPlaceHomeCategoryViewState
         ),
         clipBehavior: Clip.antiAliasWithSaveLayer,
         context: context,
-        builder: (BuildContext bc){
+        builder: (BuildContext bc) {
           return Container(
             color: Colors.white,
             child: FilterRadioGroup((selectedFilter) async {
               print("selectedFilter=${selectedFilter}");
               bool isNetworkAvailable = await Utils.isNetworkAvailable();
-              if(!isNetworkAvailable){
-                Utils.showToast("No Internet connection",false);
+              if (!isNetworkAvailable) {
+                Utils.showToast("No Internet connection", false);
                 return;
               }
-              Map data = {
-                "lst" : widget.initialPosition.latitude,
+              Map<String, dynamic> data = {
+                "lst": widget.initialPosition.latitude,
                 "lng": widget.initialPosition.latitude,
-                "filter_by":"${selectedFilter}",
+                "filter_by": "${selectedFilter}",
               };
               Utils.showProgressDialog(context);
-              ApiController.getAllStores(params: data).then((storesResponse){
+              ApiController.getAllStores(params: data).then((storesResponse) {
                 Utils.hideProgressDialog(context);
                 Utils.hideKeyboard(context);
+                if (storesResponse != null && storesResponse.success)
+                  eventBus.fire(onViewAllSelected(
+                      widget.isViewAllRestSelected, storesResponse));
               });
             }),
           );
-        }
-    );
+        });
   }
-
 
   Widget getProductsWidget() {
     return Column(
@@ -536,7 +526,9 @@ class _MarketPlaceHomeCategoryViewState
               shrinkWrap: true,
               physics: ScrollPhysics(),
               itemCount: widget.isViewAllRestSelected
-                  ? allStoreData.data.length
+                  ? allStoreData == null
+                      ? 0
+                      : allStoreData.data.length
                   : storeData.data.length,
               itemBuilder: (context, index) {
                 StoreData storeDataObj = widget.isViewAllRestSelected
@@ -575,22 +567,37 @@ class _MarketPlaceHomeCategoryViewState
                         child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(5),
-                                  bottomRight: Radius.circular(5)),
+                              borderRadius: BorderRadius.all(
+                              Radius.circular(5)),
                             ),
                             child: Column(
                               children: [
                                 Container(
                                     height: 150,
-                                    decoration: BoxDecoration(
+                                    child: ClipRRect(
                                       borderRadius: BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           topLeft: Radius.circular(5)),
-                                      image: DecorationImage(
-                                        image: AssetImage('images/img1.png'),
-                                        fit: BoxFit.cover,
-                                      ),
+                                      child: storeDataObj.image.isNotEmpty
+                                          ? CachedNetworkImage(
+                                              height: 150,
+                                              width: Utils.getDeviceWidth(context),
+                                              imageUrl: "${storeDataObj.image}",
+                                              fit: BoxFit.cover)
+                                          : null,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(5),
+                                          topLeft: Radius.circular(5)),
+                                      image: storeDataObj.image.isEmpty
+                                          ? DecorationImage(
+                                              image:
+                                                  AssetImage('images/img1.png'),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
                                     )),
                                 Padding(
                                     padding: EdgeInsets.only(
@@ -735,24 +742,72 @@ class _MarketPlaceHomeCategoryViewState
     tagsList.add(filterTag);
     tagsList.addAll(BrandModel.getInstance().brandVersionModel.brand.filters);
   }
+
+  _getQuickLinksItem() {
+    return tagsDataList
+        .map((TagData tagObject) {
+          return InkWell(
+            onTap: () async {
+              bool isNetworkAvailable = await Utils.isNetworkAvailable();
+              if (!isNetworkAvailable) {
+                Utils.showToast("No Internet connection", false);
+                return;
+              }
+              Map<String, dynamic> data = {
+                "lst": widget.initialPosition.latitude,
+                "lng": widget.initialPosition.latitude,
+                "search_by": "tag",
+                "id": "${tagObject.id}",
+              };
+              Utils.showProgressDialog(context);
+              ApiController.getAllStores(params: data).then((storesResponse) {
+                Utils.hideProgressDialog(context);
+                Utils.hideKeyboard(context);
+                if (storesResponse != null && storesResponse.success)
+                  eventBus.fire(onViewAllSelected(
+                      widget.isViewAllRestSelected, storesResponse,
+                      selectedScreen: HomeScreenEnum.HOME_RESTAURANT_VIEW));
+              });
+            },
+            child: Container(
+              margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                image: DecorationImage(
+                  image: NetworkImage("${tagObject.image}"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          );
+        })
+        .toList()
+        .sublist(
+            0,
+            !isSeeAll
+                ? tagsModel.data.length > (widget.isViewAllRestSelected ? 4 : 8)
+                    ? (widget.isViewAllRestSelected ? 4 : 8)
+                    : tagsModel.data.length
+                : tagsModel.data.length);
+  }
 }
 
-
 class FilterRadioGroup extends StatefulWidget {
-
   Function(String) onFilterSelectedCallback;
+
   FilterRadioGroup(this.onFilterSelectedCallback);
 
   @override
   RadioGroupWidget createState() => RadioGroupWidget();
-
 }
 
 class RadioGroupWidget extends State<FilterRadioGroup> {
+  List<Filter> filters =
+      BrandModel.getInstance().brandVersionModel.brand.filters;
 
-  List<Filter> filters = BrandModel.getInstance().brandVersionModel.brand.filters;
   // Default Radio Button Selected Item.
   String radioItemHolder = '';
+
   // Group Value for Radio Button.
   String id = "";
 
@@ -762,20 +817,19 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
       child: Wrap(
         children: <Widget>[
           Padding(
-              padding : EdgeInsets.all(15.0),
+              padding: EdgeInsets.all(15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Select Filter', style: TextStyle(fontSize: 20)),
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       Navigator.pop(context);
                     },
                     child: Icon(Icons.clear),
                   )
                 ],
-              )
-          ),
+              )),
           Wrap(
             children: filters.map((data) {
               return RadioListTile(
@@ -784,7 +838,7 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
                 value: data.value,
                 onChanged: (val) {
                   setState(() {
-                    radioItemHolder = data.lable ;
+                    radioItemHolder = data.lable;
                     id = data.value;
                   });
                 },
@@ -811,8 +865,10 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text("Clear All",textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.black, fontSize: 18)),
+                          Text("Clear All",
+                              textAlign: TextAlign.center,
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 18)),
                         ],
                       ),
                     ),
@@ -825,14 +881,14 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
                     child: RaisedButton(
                       elevation: 0.0,
                       onPressed: () {
-                        print("radioItemHolder=${radioItemHolder} and id=${id}");
-                        if(id.isEmpty){
+                        print(
+                            "radioItemHolder=${radioItemHolder} and id=${id}");
+                        if (id.isEmpty) {
                           Utils.showToast("Please select filter", true);
-                        }else{
+                        } else {
                           widget.onFilterSelectedCallback(id);
                           Navigator.pop(context);
                         }
-
                       },
                       color: Colors.grey[400],
                       shape: RoundedRectangleBorder(
@@ -841,7 +897,9 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text("Apply", style: TextStyle(color: Colors.white, fontSize: 18)),
+                          Text("Apply",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18)),
                         ],
                       ),
                     ),
@@ -850,7 +908,6 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
               ],
             ),
           ),
-
         ],
       ),
     );

@@ -15,6 +15,7 @@ import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
 
 class StoreDashboardScreen extends StatefulWidget {
   final StoreDataModel store;
@@ -44,9 +45,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
 
   String selectedSubCategoryId;
 
-  SubCategoryModel subCategory;
+  SubCategoryResponse subCategoryResponse;
 
   _StoreDashboardScreenState(this.store);
+
+  List<dynamic> products = List();
 
   @override
   void initState() {
@@ -234,7 +237,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       return Utils.getEmptyView2("No Categories available");
     }
 
-    if (subCategory == null) {
+    if (subCategoryResponse == null) {
       return Container(
         height: 200,
         child: Center(
@@ -245,9 +248,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       );
     } else {
       //print("products.length= ${subCategory.products.length}");
-      if (subCategory.products == null) {
-        return Utils.getEmptyView2("No Products found!");
-      } else if (subCategory.products.length == 0) {
+      if (products.length == 0) {
         return Utils.getEmptyView2("No Products found!");
       } else {
         return Column(
@@ -256,36 +257,59 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                 height: 5,
                 width: MediaQuery.of(context).size.width,
                 color: listingBorderColor),
-            Container(
-              color: Colors.transparent,
-              child: Padding(
-                padding:
-                    EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      subCategory.title,
-                      style: TextStyle(
-                          color: staticHomeDescriptionColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+//            Container(
+//              color: Colors.transparent,
+//              child: Padding(
+//                padding:
+//                    EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 10),
+//                child: Row(
+//                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                  children: <Widget>[
+//                    Text(
+//                      subCategory.title,
+//                      style: TextStyle(
+//                          color: staticHomeDescriptionColor,
+//                          fontSize: 14,
+//                          fontWeight: FontWeight.bold),
+//                    ),
+//                  ],
+//                ),
+//              ),
+//            ),
             ListView.builder(
-              itemCount:
-                  /* widget.subCategory.products.length > 2
-                  ? 2
-                  : */
-                  subCategory.products.length,
+              itemCount: products.length,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                Product product = subCategory.products[index];
-                return ProductTileItem(product, () {}, ClassType.Home);
+                if (products[index] is Product) {
+                  Product product = products[index];
+                  return Container(
+                    child: ProductTileItem(product, () {}, ClassType.Home),
+                  );
+                } else if (products[index] is SubCategoryModel) {
+                  SubCategoryModel subCategory = products[index];
+                  return Container(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, bottom: 5, top: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            subCategory.title,
+                            style: TextStyle(
+                                color: staticHomeDescriptionColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
               },
             )
           ],
@@ -295,7 +319,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   }
 
   void getHomeCategoryProductApi() {
-    subCategory = null;
+    subCategoryResponse = null;
+    products.clear();
     if (categoryResponse != null &&
         categoryResponse.categories != null &&
         categoryResponse.categories.isNotEmpty) {
@@ -309,13 +334,13 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       ApiController.getSubCategoryProducts(subCategoryId, store: store)
           .then((response) {
         if (response != null && response.success) {
-          subCategory = SubCategoryModel();
+          subCategoryResponse = response;
           selectedSubCategoryId = subCategoryId;
           for (int i = 0; i < response.subCategories.length; i++) {
-//            if (subCategoryId == response.subCategories[i].id) {
-            subCategory = response.subCategories[i];
-//              break;
-//            }
+            if (response.subCategories[i].products.isNotEmpty) {
+              products.add(response.subCategories[i]);
+              products.addAll(response.subCategories[i].products);
+            }
           }
           setState(() {});
         }

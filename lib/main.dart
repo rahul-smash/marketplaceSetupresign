@@ -62,7 +62,7 @@ Future<void> main() async {
   BrandVersionModel brandVersionModel = await ApiController.getBrandVersion();
   BrandModel.getInstance(brandVersionModelObj: brandVersionModel).brandVersionModel;
 
-  //setAppThemeColors(brandVersionModel.store);
+  setAppThemeColors(brandVersionModel);
   // Pass all uncaught errors to Crashlytics.
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
   SharedPrefs.storeSharedValue(AppConstant.isAdminLogin, "${isAdminLogin}");
@@ -219,29 +219,29 @@ void setStoreCurrency(BrandVersionModel store, ConfigModel configObject) {
   }
 }
 
-/*void setAppThemeColors(BrandVersionModel store) {
-  AppThemeColors appThemeColors = store.appThemeColors;
-  left_menu_header_bkground =
-      Color(int.parse(appThemeColors.leftMenuHeaderBackgroundColor));
-  left_menu_icon_colors = Color(int.parse(appThemeColors.leftMenuIconColor));
-  left_menu_background_color =
-      Color(int.parse(appThemeColors.leftMenuBackgroundColor));
-  leftMenuWelcomeTextColors =
-      Color(int.parse(appThemeColors.leftMenuUsernameColor));
-  leftMenuUsernameColors =
-      Color(int.parse(appThemeColors.leftMenuUsernameColor));
-  bottomBarIconColor = Color(int.parse(appThemeColors.bottomBarIconColor));
-  bottomBarTextColor = Color(int.parse(appThemeColors.bottomBarTextColor));
-  dotIncreasedColor = Color(int.parse(appThemeColors.dotIncreasedColor));
-  bottomBarBackgroundColor =
-      Color(int.parse(appThemeColors.bottom_bar_background_color));
-  leftMenuLabelTextColors =
-      Color(int.parse(appThemeColors.left_menu_label_Color));
+void setAppThemeColors(BrandVersionModel store) {
+//  AppThemeColors appThemeColors = store.appThemeColors;
+//  left_menu_header_bkground =
+//      Color(int.parse(appThemeColors.leftMenuHeaderBackgroundColor));
+//  left_menu_icon_colors = Color(int.parse(appThemeColors.leftMenuIconColor));
+//  left_menu_background_color =
+//      Color(int.parse(appThemeColors.leftMenuBackgroundColor));
+//  leftMenuWelcomeTextColors =
+//      Color(int.parse(appThemeColors.leftMenuUsernameColor));
+//  leftMenuUsernameColors =
+//      Color(int.parse(appThemeColors.leftMenuUsernameColor));
+//  bottomBarIconColor = Color(int.parse(appThemeColors.bottomBarIconColor));
+//  bottomBarTextColor = Color(int.parse(appThemeColors.bottomBarTextColor));
+//  dotIncreasedColor = Color(int.parse(appThemeColors.dotIncreasedColor));
+//  bottomBarBackgroundColor =
+//      Color(int.parse(appThemeColors.bottom_bar_background_color));
+//  leftMenuLabelTextColors =
+//      Color(int.parse(appThemeColors.left_menu_label_Color));
 
 
   //flow change
-  if (store.webAppThemeColors != null) {
-    WebAppThemeColors webAppThemeColors = store.webAppThemeColors;
+  if (store.brand.webAppThemeColors != null) {
+    WebAppThemeColors webAppThemeColors = store.brand.webAppThemeColors;
     appTheme = Utils.colorGeneralization(
         appTheme, webAppThemeColors.webThemePrimaryColor);
     appThemeLight = appTheme.withOpacity(0.1);
@@ -285,10 +285,10 @@ void setStoreCurrency(BrandVersionModel store, ConfigModel configObject) {
             leftMenuLabelTextColors,
             "#ffffff");
   } else {
-    appTheme = Color(int.parse(appThemeColors.appThemeColor));
+//    appTheme = Color(int.parse(appThemeColors.appThemeColor));
     appThemeLight = appTheme.withOpacity(0.1);
   }
-}*/
+}
 
 Future<String> loadAsset() async {
   return await rootBundle.loadString('assets/app_config.json');
