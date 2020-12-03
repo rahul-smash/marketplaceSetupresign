@@ -23,7 +23,7 @@ class ApiConstants{
   static String getTagsList = 'getTagsList';
 
 
-  static String getAddress = 'deliveryAddress';
+  static String getAddress = '/deliveryAddress';
   static String getAddressArea = 'deliveryAreas/Area';
   static String getStorePickupAddress = 'storePickupAddress';
   static String getStoreRadius = 'storeRadius';

@@ -511,12 +511,12 @@ class ApiController {
   }
 
   static Future<DeliveryAddressResponse> getAddressApiRequest() async {
-    StoreModel store = await SharedPrefs.getStore();
+    StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
 
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
         ApiConstants.getAddress;
-    print("----user.id---${user.id}");
+    print("----user.id---${url}");
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
       request.fields.addAll({
