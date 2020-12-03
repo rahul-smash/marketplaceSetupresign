@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter/material.dart';
@@ -33,8 +34,9 @@ class _CustomSearchScaffoldState extends PlacesAutocompleteState {
     final appBar = AppBar(title: AppBarPlacesAutoCompleteTextField());
 
     final body = PlacesAutocompleteResult(
-      onTap: (p) {
-        //displayPrediction(p, searchScaffoldKey.currentState);
+      onTap: (prediction) {
+        print("onTap = ${prediction}");
+        displayPrediction(prediction);
       },
       logo: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -45,6 +47,22 @@ class _CustomSearchScaffoldState extends PlacesAutocompleteState {
         appBar: appBar,
         body: body
     );
+  }
+
+  Future<Null> displayPrediction(Prediction p) async {
+    if (p != null) {
+      PlacesDetailsResponse detail =
+      await _places.getDetailsByPlaceId(p.placeId);
+
+      var placeId = p.placeId;
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+      print("location = ${lat},${lng}");
+      //var address = await Geocoder.local.findAddressesFromQuery(p.description);
+
+      print(lat);
+      print(lng);
+    }
   }
 
   @override
