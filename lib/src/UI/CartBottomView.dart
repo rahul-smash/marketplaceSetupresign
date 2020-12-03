@@ -157,6 +157,7 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
           ),
           InkWell(
             onTap: () async {
+              print("-------onTap-------");
               if (AppConstant.isLoggedIn) {
                 if (totalPrice == 0.0) {
                   Utils.showToast(AppConstant.addItems, false);
@@ -179,14 +180,14 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                           OrderSelectionScreen(pickupfacility, delieveryAdress),
                     );
                   } else if (pickupfacility == "1") {
-                    StoreModel storeObject = await SharedPrefs.getStore();
-                    bool status = Utils.checkStoreOpenTime(
+                    StoreDataObj storeObject = await SharedPrefs.getStoreData();
+                    /*bool status = Utils.checkStoreOpenTime(
                         storeObject, OrderType.Delivery);
                     if (!status) {
                       Utils.showToast(
                           "${storeObject.closehoursMessage}", false);
                       return;
-                    }
+                    }*/
 
                     Utils.showProgressDialog(context);
                     ApiController.getStorePickupAddress().then((response) {
