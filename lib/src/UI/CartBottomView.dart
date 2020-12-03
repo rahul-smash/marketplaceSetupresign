@@ -219,14 +219,14 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                   } else {
                     //by default delivery
                     //issue reported :=When both delivery address and pickup address are off then user is not able to place order
-                    StoreModel storeObject = await SharedPrefs.getStore();
-                    bool status = Utils.checkStoreOpenTime(
+                    StoreDataObj storeObject = await SharedPrefs.getStoreData();
+                    /*bool status = Utils.checkStoreOpenTime(
                         storeObject, OrderType.Delivery);
                     if (!status) {
                       Utils.showToast(
                           "${storeObject.closehoursMessage}", false);
                       return;
-                    }
+                    }*/
                     Navigator.push(
                       context,
                       MaterialPageRoute(
