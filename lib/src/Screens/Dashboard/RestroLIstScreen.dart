@@ -7,17 +7,27 @@ import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
-class RestroListScreen extends StatelessWidget {
+class RestroListScreen extends StatefulWidget {
   StoresModel allStoreData;
   CustomCallback callback;
   HomeScreenEnum selectedScreen;
 
+  bool isViewAllRestSelected = false;
+
   RestroListScreen(this.allStoreData, {this.callback, this.selectedScreen});
+
+  @override
+  _RestroListScreenState createState() => _RestroListScreenState();
+}
+
+class _RestroListScreenState extends State<RestroListScreen> {
+  var storeData;
 
   @override
   Widget build(BuildContext context) {
     return _getView();
   }
+
   Widget getProductsWidget() {
     return Column(
       children: <Widget>[
@@ -34,13 +44,13 @@ class RestroListScreen extends StatelessWidget {
               shrinkWrap: true,
               physics: ScrollPhysics(),
               itemCount: widget.isViewAllRestSelected
-                  ? allStoreData == null
-                  ? 0
-                  : allStoreData.data.length
+                  ? widget.allStoreData == null
+                      ? 0
+                      : widget.allStoreData.data.length
                   : storeData.data.length,
               itemBuilder: (context, index) {
                 StoreData storeDataObj = widget.isViewAllRestSelected
-                    ? allStoreData.data[index]
+                    ? widget.allStoreData.data[index]
                     : storeData.data[index];
 
                 return InkWell(
@@ -75,8 +85,8 @@ class RestroListScreen extends StatelessWidget {
                         child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(5)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
                             ),
                             child: Column(
                               children: [
@@ -88,10 +98,11 @@ class RestroListScreen extends StatelessWidget {
                                           topLeft: Radius.circular(5)),
                                       child: storeDataObj.image.isNotEmpty
                                           ? CachedNetworkImage(
-                                          height: 150,
-                                          width: Utils.getDeviceWidth(context),
-                                          imageUrl: "${storeDataObj.image}",
-                                          fit: BoxFit.cover)
+                                              height: 150,
+                                              width:
+                                                  Utils.getDeviceWidth(context),
+                                              imageUrl: "${storeDataObj.image}",
+                                              fit: BoxFit.cover)
                                           : null,
                                     ),
                                     decoration: BoxDecoration(
@@ -101,10 +112,10 @@ class RestroListScreen extends StatelessWidget {
                                           topLeft: Radius.circular(5)),
                                       image: storeDataObj.image.isEmpty
                                           ? DecorationImage(
-                                        image:
-                                        AssetImage('images/img1.png'),
-                                        fit: BoxFit.cover,
-                                      )
+                                              image:
+                                                  AssetImage('images/img1.png'),
+                                              fit: BoxFit.cover,
+                                            )
                                           : null,
                                     )),
                                 Padding(
@@ -112,7 +123,7 @@ class RestroListScreen extends StatelessWidget {
                                         left: 16, right: 16, top: 10),
                                     child: Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           '${storeDataObj.storeName}',
@@ -156,7 +167,7 @@ class RestroListScreen extends StatelessWidget {
                                         bottom: 16),
                                     child: Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           '${storeDataObj.state}',
@@ -221,15 +232,16 @@ class RestroListScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          allStoreData == null ||
-                  (allStoreData != null && allStoreData.data.isEmpty)
+          widget.allStoreData == null ||
+                  (widget.allStoreData != null &&
+                      widget.allStoreData.data.isEmpty)
               ? Utils.getEmptyView2("No Result Found")
               : Expanded(
                   child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: allStoreData.data.length,
+                  itemCount: widget.allStoreData.data.length,
                   itemBuilder: (context, index) {
-                    StoreData storeDataObj = allStoreData.data[index];
+                    StoreData storeDataObj = widget.allStoreData.data[index];
                     return InkWell(
                       onTap: () {
                         print("----onTap-${storeDataObj.id}--");
@@ -239,7 +251,7 @@ class RestroListScreen extends StatelessWidget {
                           Utils.hideProgressDialog(context);
                           Utils.hideKeyboard(context);
                           StoreDataModel storeObject = response;
-                          callback(value: storeObject);
+                          widget.callback(value: storeObject);
                         });
                       },
                       child: Stack(
