@@ -108,7 +108,32 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
         onTap: () async {
           print("----addCreateAddressButton-------");
 
-          StoreModel store = await SharedPrefs.getStore();
+          var result = await Navigator.push(context,
+               MaterialPageRoute(
+                builder: (BuildContext context) {
+
+                  return DragMarkerMap();
+                },
+                fullscreenDialog: true,
+              )
+          );
+          /*if (result != null) {
+            setState(() {
+              isLoading = true;
+            });
+            DeliveryAddressResponse response =
+            await ApiController.getAddressApiRequest();
+            //Utils.hideProgressDialog(context);
+            setState(() {
+              print("----setState-------");
+              isLoading = false;
+              //addressList = null;
+              addressList = response.data;
+            });
+          }*/
+
+
+          /*StoreModel store = await SharedPrefs.getStore();
           print("--deliveryArea->--${store.deliveryArea}-------");
           if (store.deliveryArea == "0") {
             var result = await Navigator.push(
@@ -162,7 +187,8 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                               builder: (BuildContext context) =>
                                   DragMarkerMap(data),
                               fullscreenDialog: true,
-                            ));
+                            )
+                        );
                         if (result != null) {
                           radiusArea = result;
                           print("----radiusArea = result-------");
@@ -192,7 +218,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 Utils.showToast(AppConstant.noInternet, false);
               }
             });
-          }
+          }*/
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

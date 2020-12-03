@@ -7,17 +7,18 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+import 'package:restroapp/src/widgets/AutoSearch.dart';
 
 class DragMarkerMap extends StatefulWidget {
 
-  StoreRadiousResponse data;
 
-  DragMarkerMap(this.data);
+  DragMarkerMap();
 
   @override
   _DragMarkerMapState createState() => _DragMarkerMapState();
@@ -34,6 +35,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
   String cityId;
   bool enableDialog;
   List<Area> areaList;
+  final cityController = new TextEditingController();
+  final stateController = new TextEditingController();
 
   @override
   void initState() {
@@ -45,15 +48,6 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
     zipCode = "";
     getLocation();
     cityValue = "Click here...";
-    if (widget.data != null && widget.data.data.length == 1) {
-      cityValue = "${widget.data.data[0].city.city}";
-      cityId = "${widget.data.data[0].city.id}";
-      areaList.addAll(widget.data.data[0].area);
-      enableDialog = false;
-    } else {
-      enableDialog = true;
-    }
-    print("${widget.data.data.length}");
   }
 
   @override
@@ -63,48 +57,29 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       appBar: AppBar(
         title: Text('Choose Your Location'),
         backgroundColor: appTheme,
+        actions: [
+          InkWell(
+            onTap: () async {
+              var result = await Navigator.push(context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+
+                      return CustomSearchScaffold();
+                    },
+                    fullscreenDialog: true,
+                  )
+              );
+            },
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+              child: Icon(Icons.search),
+            ),
+          )
+        ],
       ),
       body: Column(
         children: <Widget>[
-          InkWell(
-              onTap: () async {
-                print("-------onTap---------");
-                if (enableDialog == true) {
-                  RadiousData areaObject = await displayRadiusCityDialog(
-                      context, "Select City", widget.data.data);
-                  //print("-------onTap----${areaObject.city.city}-----");
-                  setState(() {
-                    cityValue = "${areaObject.city.city}";
-                    cityId = "${areaObject.city.id}";
-                    if (areaList != null && areaList.isNotEmpty) {
-                      areaList.clear();
-                    }
-                    areaList.addAll(areaObject.area);
-                  });
-                }
-              },
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(10, 15, 0, 10),
-                  color: Colors.white,
-                  child: cityValue.compareTo("Click here...")==0?
-                  RichText(
-                    text:
-                    TextSpan(text: "Select City:",
-                        style: TextStyle(
-                        color: Colors.black,),children: <TextSpan>[
-                      TextSpan(
-                        text: " ${cityValue}",
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold),
-                      )
-                    ]), textAlign: TextAlign.left,):Text("Select City: ${cityValue}",),
-                ),
-              ),
-          ),
-          Divider(color: Colors.grey, height: 2.0),
+
           Container(
             margin: EdgeInsets.fromLTRB(0, 00, 0, 0),
             height: 50,
@@ -125,6 +100,63 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
               ),
             ),
           ),
+          Divider(color: Colors.grey, height: 2.0),
+          Row(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 0.0),
+                      child: TextFormField(
+                        controller: cityController,
+                        cursorColor: Colors.black,
+                        keyboardType: TextInputType.text,
+                        decoration: new InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding:
+                            EdgeInsets.only(left: 0, bottom: 0, top: 0, right: 0),
+                            hintText: "City"),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 0.0),
+                      child: TextFormField(
+                        controller: stateController,
+                        cursorColor: Colors.black,
+                        keyboardType: TextInputType.text,
+                        decoration: new InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding:
+                            EdgeInsets.only(left: 0, bottom: 0, top: 0, right: 0),
+                            hintText: "State"),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           Expanded(
             child: GoogleMap(
               onMapCreated: _onMapCreated,
@@ -143,7 +175,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
         child: BottomAppBar(
           child: InkWell(
             onTap: () async {
-              StoreModel store = await SharedPrefs.getStore();
+              StoreDataObj store = await SharedPrefs.getStoreData();
 
               print("====${selectedLocation.latitude},${selectedLocation
                   .longitude}===");
@@ -154,10 +186,10 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
 
               print("==distanceInKm==${distanceInKm}=AND=${distanceInKms}=");
 
-              checkIfOrderDeliveryWithInRadious(distanceInKms);
+              //checkIfOrderDeliveryWithInRadious(distanceInKms);
             },
             child: Container(
-              height: 40,
+              height: 45,
               color: appTheme,
               child: Center(
                 child: Padding(

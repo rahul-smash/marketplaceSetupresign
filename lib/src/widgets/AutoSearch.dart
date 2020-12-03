@@ -16,9 +16,9 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 class CustomSearchScaffold extends PlacesAutocompleteWidget {
 
   CustomSearchScaffold()
-      : super(apiKey: kGoogleApiKey,
+      : super(apiKey: kGoogleApiKey,/*
     sessionToken: Uuid().generateV4(),language: "en",
-    components: [Component(Component.country, "uk")],
+    components: [Component(Component.country, "uk")],*/
   );
 
   @override
