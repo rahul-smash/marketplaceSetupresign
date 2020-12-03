@@ -904,6 +904,16 @@ class _ProductTileItemState extends State<ProductTileItem> {
       DatabaseHelper.description: product.description,
       DatabaseHelper.imageType: product.imageType,
       DatabaseHelper.imageUrl: product.imageUrl,
+
+      DatabaseHelper.StoreId: product.storeId,
+      DatabaseHelper.CategoryId: product.categoryIds,
+      DatabaseHelper.Brand: product.brand,
+      DatabaseHelper.GstTaxType: product.gstTaxType,
+      DatabaseHelper.GstTaxRate: product.gstTaxRate,
+      DatabaseHelper.Rating: product.rating,
+      DatabaseHelper.Deleted: product.deleted.toString(),
+      DatabaseHelper.tags: product.tags,
+
       DatabaseHelper.image_100_80:
           product.image == null ? product.image10080 : product.image,
       DatabaseHelper.image_300_200: product.image300200,
@@ -966,6 +976,14 @@ class _ProductTileItemState extends State<ProductTileItem> {
       DatabaseHelper.imageUrl: product.imageUrl,
       DatabaseHelper.image_100_80: product.image10080,
       DatabaseHelper.image_300_200: product.image300200,
+      DatabaseHelper.StoreId: product.storeId,
+      DatabaseHelper.CategoryId: product.categoryIds,
+      DatabaseHelper.Brand: product.brand,
+      DatabaseHelper.GstTaxType: product.gstTaxType,
+      DatabaseHelper.GstTaxRate: product.gstTaxRate,
+      DatabaseHelper.Rating: product.rating,
+      DatabaseHelper.Deleted: product.deleted.toString(),
+      DatabaseHelper.tags: product.tags,
     };
 
     databaseHelper.addProductToFavTable(row).then((count) {

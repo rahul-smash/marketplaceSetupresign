@@ -106,6 +106,7 @@ class Product {
   String image10080;
   String image300200;
   String tags;
+  String rating;
 
   List<Variant> variants;
   SelectedVariant selectedVariant;
@@ -154,12 +155,14 @@ class Product {
     this.variants,
     this.selectedVariant,
     this.tags,
-    this.productImages
+    this.productImages,
+    this.rating
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     Product product = Product();
     product.id = json["id"];
+    product.rating = json["rating"];
     product.isFav = json["fav"];
     product.storeId = json["store_id"];
     product.categoryIds = json["category_ids"];
@@ -201,6 +204,7 @@ class Product {
   Map<String, dynamic> toMap(String category_ids) {
     var map = new Map<String, dynamic>();
     map["id"] = id;
+    map["rating"] = rating;
     map["isfavorite"] = isFav;
     map["store_id"] = storeId;
     map["category_ids"] = categoryIds;
@@ -258,7 +262,8 @@ class Product {
         "image_300_200": image300200,
         "variants": List<dynamic>.from(variants.map((x) => x.toJson())),
         "selectedVariant": selectedVariant.toJson(),
-        "tags":tags
+        "tags":tags,
+        "rating":rating,
       };
 
   static List encodeToJson(List<Product> list) {
