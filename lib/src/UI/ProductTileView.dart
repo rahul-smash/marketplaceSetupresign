@@ -702,8 +702,12 @@ class _ProductTileItemState extends State<ProductTileItem> {
           margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
           child: showAddButton
               ? InkWell(
-                  onTap: () {
-                    //print("add onTap");
+                  onTap: () async {
+                    print("---1-----add onTap------------");
+                    bool checkIfDifferentStore = await checkIfDifferentStoreInCart(widget.product);
+                    if(checkIfDifferentStore){
+                      return;
+                    }
                     if (_checkStockQuantity(counter)) {
                       setState(() {});
                       counter++;
@@ -745,7 +749,12 @@ class _ProductTileItemState extends State<ProductTileItem> {
                           padding: const EdgeInsets.all(0.0),
                           width: 25.0, // you can adjust the width as you need
                           child: GestureDetector(
-                              onTap: () {
+                              onTap: () async {
+                                bool checkIfDifferentStore = await checkIfDifferentStoreInCart(widget.product);
+                                if(checkIfDifferentStore){
+                                  return;
+                                }
+                                print("--2------remove onTap------------");
                                 if (counter != 0) {
                                   setState(() => counter--);
                                   if (counter == 0) {
@@ -806,7 +815,12 @@ class _ProductTileItemState extends State<ProductTileItem> {
                           padding: const EdgeInsets.all(0.0),
                           width: 25.0, // you can adjust the width as you need
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
+                              print("--3------add onTap------------");
+                              bool checkIfDifferentStore = await checkIfDifferentStoreInCart(widget.product);
+                              if(checkIfDifferentStore){
+                                return;
+                              }
                               if (_checkStockQuantity(counter)) {
                                 setState(() => counter++);
                                 if (counter == 0) {
@@ -875,6 +889,35 @@ class _ProductTileItemState extends State<ProductTileItem> {
     );
   }
 
+  Future<bool> checkIfDifferentStoreInCart(Product product) async {
+    bool showInfoToEmptyCart = false;
+    List<Product> cartItemList  = await databaseHelper.getCartItemList();
+    print("count=${cartItemList.length}");
+    if(cartItemList.isEmpty){
+      showInfoToEmptyCart = false;
+    }else{
+      print("--storeId =>${product.storeId}");
+      Product cartProduct = cartItemList[0];
+      if(cartProduct.storeId == product.storeId){
+        // same store and do nothing 389981
+        showInfoToEmptyCart = false;
+      }else{
+        // User has selected differnt store to add in cart.
+        print("--storeName =>${product.storeName} and ${cartProduct.storeName}");
+        String msgBody = AppConstant.getCartReplaceMsg(cartProduct.storeName,product.storeName);
+        bool result = await DialogUtils.displayDialog(context, "Replace Cart?", "${msgBody}", "No", "Yes");
+        print("result=${result}");
+        if(result){
+          await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
+          showInfoToEmptyCart = false;
+        }else{
+          showInfoToEmptyCart = true;
+        }
+      }
+    }
+    return showInfoToEmptyCart;
+  }
+
   void insertInCartTable(Product product, int quantity) {
     String variantId, weight, mrpPrice, price, discount, isUnitType;
     variantId = variant == null ? widget.product.variantId : variant.id;
@@ -904,6 +947,17 @@ class _ProductTileItemState extends State<ProductTileItem> {
       DatabaseHelper.description: product.description,
       DatabaseHelper.imageType: product.imageType,
       DatabaseHelper.imageUrl: product.imageUrl,
+
+      DatabaseHelper.StoreId: product.storeId,
+      DatabaseHelper.CategoryId: product.categoryIds,
+      DatabaseHelper.Brand: product.brand,
+      DatabaseHelper.GstTaxType: product.gstTaxType,
+      DatabaseHelper.GstTaxRate: product.gstTaxRate,
+      DatabaseHelper.Rating: product.rating,
+      DatabaseHelper.Deleted: product.deleted.toString(),
+      DatabaseHelper.tags: product.tags,
+      DatabaseHelper.storeName: product.storeName,
+
       DatabaseHelper.image_100_80:
           product.image == null ? product.image10080 : product.image,
       DatabaseHelper.image_300_200: product.image300200,
@@ -966,6 +1020,16 @@ class _ProductTileItemState extends State<ProductTileItem> {
       DatabaseHelper.imageUrl: product.imageUrl,
       DatabaseHelper.image_100_80: product.image10080,
       DatabaseHelper.image_300_200: product.image300200,
+      DatabaseHelper.StoreId: product.storeId,
+      DatabaseHelper.CategoryId: product.categoryIds,
+      DatabaseHelper.Brand: product.brand,
+      DatabaseHelper.GstTaxType: product.gstTaxType,
+      DatabaseHelper.GstTaxRate: product.gstTaxRate,
+      DatabaseHelper.Rating: product.rating,
+      DatabaseHelper.Deleted: product.deleted.toString(),
+      DatabaseHelper.tags: product.tags,
+      DatabaseHelper.storeName: product.storeName,
+
     };
 
     databaseHelper.addProductToFavTable(row).then((count) {

@@ -48,6 +48,16 @@ class DatabaseHelper {
   static final String image_100_80 = "image_100_80";
   static final String image_300_200 = "image_300_200";
 
+  static final String StoreId = "store_id";
+  static final String CategoryId = "category_id";
+  static final String Brand = "brand";
+  static final String GstTaxType = "gst_tax_type";
+  static final String GstTaxRate = "gst_tax_rate";
+  static final String Rating = "rating";
+  static final String Deleted = "deleted";
+  static final String tags = "tags";
+  static final String storeName = "store_name";
+
   Future<Database> get db async {
     if (_db != null) return _db;
     // if _database is null we instantiate it
@@ -60,16 +70,16 @@ class DatabaseHelper {
   initDb() async {
     // Get the directory path for both Android and iOS to store database.
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "RestroApp.db");
+    String path = join(documentsDirectory.path, "MarketPlace.db");
     // Open/create the database at a given path
     var theDb = await openDatabase(path,
-        version: 2, onCreate: _onCreate, onUpgrade: _onUpgrade);
+        version: 1, onCreate: _onCreate, onUpgrade: _onUpgrade);
     return theDb;
   }
 
   void _onCreate(Database db, int version) async {
     // When creating the db, create the tables
-    await db.execute("CREATE TABLE ${Categories_Table}("
+    /*await db.execute("CREATE TABLE ${Categories_Table}("
         "id TEXT, "
         "title TEXT, "
         "version TEXT, "
@@ -120,28 +130,13 @@ class DatabaseHelper {
         "discount TEXT, "
         "isUnitType TEXT, "
         "variants TEXT"
-        ")");
-    /* await db.execute("CREATE TABLE ${Products_Table}("
-        "id INTEGER PRIMARY KEY, "
-        "store_id TEXT, "
-        "category_ids TEXT, "
-        "title TEXT, "
-        "brand TEXT, "
-        "nutrient TEXT, "
-        "description TEXT, "
-        "tags TEXT, "
-        "isfavorite TEXT, "
-        "image TEXT, "
-        "show_price TEXT, "
-        "isTaxEnable TEXT, "
-        "image_100_80 TEXT, "
-        "image_300_200 TEXT, "
-        "variants TEXT"
         ")");*/
-
     await db.execute("CREATE TABLE ${CART_Table}("
-        //"id INTEGER PRIMARY KEY, "
         "id INTEGER, "
+        "store_id TEXT, " // NEW
+        "store_name TEXT, " // NEW
+        "category_id TEXT, "// NEW
+        "brand TEXT, "// NEW
         "product_name TEXT, "
         "isfavorite TEXT, "
         "nutrient TEXT, "
@@ -156,11 +151,16 @@ class DatabaseHelper {
         "discount TEXT, "
         "quantity TEXT, "
         "isTaxEnable TEXT, "
+        "gst_tax_type TEXT, "// NEW
+        "gst_tax_rate TEXT, "// NEW
+        "rating TEXT, "// NEW
+        "deleted TEXT, "// NEW
+        "tags TEXT, "// NEW
         "image_100_80 TEXT, "
         "image_300_200 TEXT, "
         "unit_type TEXT"
         ")");
-    await db.execute("CREATE TABLE ${Favorite_Table}("
+    /*await db.execute("CREATE TABLE ${Favorite_Table}("
         "id INTEGER, "
         "product_json TEXT, "
         "product_name TEXT, "
@@ -180,7 +180,7 @@ class DatabaseHelper {
         "image_100_80 TEXT, "
         "image_300_200 TEXT, "
         "unit_type TEXT"
-        ")");
+        ")");*/
   }
 
   void _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -647,7 +647,9 @@ class DatabaseHelper {
       imageType,
       imageUrl,
       image_100_80,
-      image_300_200
+      image_300_200,
+      StoreId,CategoryId,Brand,GstTaxType,
+      GstTaxRate,Rating,Deleted,tags,storeName
     ];
 
     List<Map> resultList =
@@ -672,6 +674,16 @@ class DatabaseHelper {
         product.imageUrl = row[imageUrl];
         product.image10080 = row[image_100_80];
         product.image300200 = row[image_300_200];
+
+        product.storeId = row[StoreId].toString();
+        product.categoryIds = row[CategoryId].toString();
+        product.brand = row[Brand].toString();
+        product.gstTaxType = row[GstTaxType].toString();
+        product.gstTaxRate = row[GstTaxRate].toString();
+        product.rating = row[Rating].toString();
+        product.deleted = row[Deleted] == "true" ? true : false;
+        product.tags = row[tags];
+        product.storeName = row[storeName];
 
         cartList.add(product);
       });

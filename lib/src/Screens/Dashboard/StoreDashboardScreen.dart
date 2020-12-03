@@ -117,7 +117,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           addBanners(),
           categoryResponse != null && categoryResponse.categories.isNotEmpty
               ? Container(
-                  height: 180,
+                  height: 190,
                   color: Colors.transparent,
                   margin: EdgeInsets.only(left: 2.5),
                   child: Column(
@@ -257,25 +257,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                 height: 5,
                 width: MediaQuery.of(context).size.width,
                 color: listingBorderColor),
-//            Container(
-//              color: Colors.transparent,
-//              child: Padding(
-//                padding:
-//                    EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 10),
-//                child: Row(
-//                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                  children: <Widget>[
-//                    Text(
-//                      subCategory.title,
-//                      style: TextStyle(
-//                          color: staticHomeDescriptionColor,
-//                          fontSize: 14,
-//                          fontWeight: FontWeight.bold),
-//                    ),
-//                  ],
-//                ),
-//              ),
-//            ),
             ListView.builder(
               itemCount: products.length,
               shrinkWrap: true,
@@ -283,6 +264,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
               itemBuilder: (context, index) {
                 if (products[index] is Product) {
                   Product product = products[index];
+                  product.storeName = store.storeName;
                   return Container(
                     child: ProductTileItem(product, () {}, ClassType.Home),
                   );
