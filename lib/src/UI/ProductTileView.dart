@@ -703,7 +703,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
           child: showAddButton
               ? InkWell(
                   onTap: () {
-                    //print("add onTap");
+                    print("--------add onTap------------");
                     if (_checkStockQuantity(counter)) {
                       setState(() {});
                       counter++;
@@ -746,6 +746,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                           width: 25.0, // you can adjust the width as you need
                           child: GestureDetector(
                               onTap: () {
+                                print("--------remove onTap------------");
                                 if (counter != 0) {
                                   setState(() => counter--);
                                   if (counter == 0) {
