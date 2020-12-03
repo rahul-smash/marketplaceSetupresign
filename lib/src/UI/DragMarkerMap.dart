@@ -249,6 +249,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       setState(() {
         address = first.addressLine;
         zipCode = first.postalCode;
+        cityController.text = first.locality;
+        stateController.text = first.adminArea;
       });
     } catch (e) {
       print(e);
