@@ -96,8 +96,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   LocationData _locationData;
   String locationAddress = "Select Location";
   ScrollController controller = ScrollController();
-  bool isViewAllSelected = false;
-  StoresModel allStoreData;
+//  bool isViewAllSelected = false;
+//  StoresModel allStoreData;
 
   StoreDataModel _selectedSingleStore;
 
@@ -110,18 +110,16 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   void initState() {
     super.initState();
     isStoreClosed = false;
-    isViewAllSelected = false;
+//    isViewAllSelected = false;
     initFirebase();
     _setSetCurrentScreen();
     cartBadgeCount = 0;
+    listenEvent();
     getCartCount();
-    listenCartChanges();
     checkForMultiStore();
     getCategoryApi();
-    listenEvent();
     getAddressFromLocation();
     try {
-      //AppConstant.placeholderUrl = store.banner10080;
       print("-----store.banners-----${store.banners.length}------");
       if (store.banners.isEmpty) {
 //        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
@@ -162,6 +160,16 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   }
 
   void listenEvent() {
+    eventBus.on<updateCartCount>().listen((event) {
+      getCartCount();
+    });
+    eventBus.on<openHome>().listen((event) {
+      setState(() {
+        _controller.text = '';
+        isCategoryViewSelected = false;
+      });
+    });
+
     eventBus.on<onViewAllSelected>().listen((event) {
       print("isViewAllSelected=${event.isViewAllSelected}");
       _selectedHomeScreen = event.selectedScreen;
@@ -620,18 +628,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   Future<void> onDidReceiveLocalNotification(
       int id, String title, String body, String payload) async {
     debugPrint('onDidReceiveLocalNotification : ');
-  }
-
-  void listenCartChanges() {
-    eventBus.on<updateCartCount>().listen((event) {
-      getCartCount();
-    });
-    eventBus.on<openHome>().listen((event) {
-      setState(() {
-        _controller.text = '';
-        isCategoryViewSelected = false;
-      });
-    });
   }
 
   void checkForMultiStore() {

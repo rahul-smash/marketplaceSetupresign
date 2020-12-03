@@ -708,34 +708,6 @@ class _MarketPlaceHomeCategoryViewState
     );
   }
 
-  _showAllSubCategories() {
-    /*if (Utils.checkIfStoreClosed(widget.store)) {
-      DialogUtils.displayCommonDialog(
-          context, widget.store.storeName, widget.store.storeMsg);
-    } else {
-      if (widget.selectedCategory != null &&
-          widget.selectedCategory.subCategory != null &&
-          widget.selectedCategory.subCategory.isNotEmpty) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return SubCategoryProductScreen(widget.selectedCategory, false, 0);
-          }),
-        );
-        Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-        attributeMap["ScreenName"] = "${widget.selectedCategory.title}";
-        Utils.sendAnalyticsEvent("Clicked category", attributeMap);
-      } else {
-        if (widget.selectedCategory != null &&
-            widget.selectedCategory.subCategory != null) {
-          if (widget.selectedCategory.subCategory.isEmpty) {
-            Utils.showToast("No data found!", false);
-          }
-        }
-      }
-    }*/
-  }
-
   void addFilters() {
     Filter filterTag = Filter();
     filterTag.lable = "Filters";
