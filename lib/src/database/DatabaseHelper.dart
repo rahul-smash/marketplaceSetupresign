@@ -56,6 +56,7 @@ class DatabaseHelper {
   static final String Rating = "rating";
   static final String Deleted = "deleted";
   static final String tags = "tags";
+  static final String storeName = "store_name";
 
   Future<Database> get db async {
     if (_db != null) return _db;
@@ -133,6 +134,7 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE ${CART_Table}("
         "id INTEGER, "
         "store_id TEXT, " // NEW
+        "store_name TEXT, " // NEW
         "category_id TEXT, "// NEW
         "brand TEXT, "// NEW
         "product_name TEXT, "
@@ -645,7 +647,9 @@ class DatabaseHelper {
       imageType,
       imageUrl,
       image_100_80,
-      image_300_200
+      image_300_200,
+      StoreId,CategoryId,Brand,GstTaxType,
+      GstTaxRate,Rating,Deleted,tags,storeName
     ];
 
     List<Map> resultList =
@@ -670,6 +674,16 @@ class DatabaseHelper {
         product.imageUrl = row[imageUrl];
         product.image10080 = row[image_100_80];
         product.image300200 = row[image_300_200];
+
+        product.storeId = row[StoreId].toString();
+        product.categoryIds = row[CategoryId].toString();
+        product.brand = row[Brand].toString();
+        product.gstTaxType = row[GstTaxType].toString();
+        product.gstTaxRate = row[GstTaxRate].toString();
+        product.rating = row[Rating].toString();
+        product.deleted = row[Deleted] == "true" ? true : false;
+        product.tags = row[tags];
+        product.storeName = row[storeName];
 
         cartList.add(product);
       });

@@ -264,6 +264,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
               itemBuilder: (context, index) {
                 if (products[index] is Product) {
                   Product product = products[index];
+                  product.storeName = store.storeName;
                   return Container(
                     child: ProductTileItem(product, () {}, ClassType.Home),
                   );

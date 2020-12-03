@@ -628,6 +628,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       DatabaseHelper.Rating: product.rating,
       DatabaseHelper.Deleted: product.deleted.toString(),
       DatabaseHelper.tags: product.tags,
+      DatabaseHelper.storeName: product.storeName,
     };
 
     databaseHelper

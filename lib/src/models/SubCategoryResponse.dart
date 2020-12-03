@@ -85,6 +85,7 @@ class SubCategoryModel {
 }
 
 class Product {
+  String storeName = "";
   String id;
   String storeId;
   String categoryIds;
