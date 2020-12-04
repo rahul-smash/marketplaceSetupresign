@@ -514,7 +514,7 @@ class ApiController {
   }
 
   static Future<DeliveryAddressResponse> getAddressApiRequest() async {
-    StoreDataObj store = await SharedPrefs.getStoreData();
+//    StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
 
     var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
@@ -741,8 +741,8 @@ class ApiController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
-        ApiConstants.validateCoupon;
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
+        ApiConstants.coupons_validate;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     print("----url---${url}");
     try {
@@ -775,12 +775,12 @@ class ApiController {
       String discount,
       String shipping,
       String orderJson) async {
-    StoreModel store = await SharedPrefs.getStore();
+    StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
 
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
         ApiConstants.multipleTaxCalculation_2;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     print("----url---${url}");
@@ -836,10 +836,10 @@ class ApiController {
 
     var url;
     if (deliveryType == OrderType.Delivery) {
-      url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+      url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
           ApiConstants.placeOrder;
     } else {
-      url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+      url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
           ApiConstants.pickupPlaceOrder;
     }
     String storeAddress = "";
@@ -1378,7 +1378,7 @@ class ApiController {
   }
 
   static Future<StripeCheckOutModel> stripePaymentApi(String amount) async {
-    StoreModel store = await SharedPrefs.getStore();
+    StoreDataObj store = await SharedPrefs.getStoreData();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     UserModel user = await SharedPrefs.getUser();
     var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +

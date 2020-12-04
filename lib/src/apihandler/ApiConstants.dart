@@ -31,15 +31,12 @@ class ApiConstants{
 
 
   static String storeOffers = 'storeOffers';
-  static String validateCoupon = 'validateAllCoupons';
+//  static String validateCoupon = 'validateAllCoupons';
   static String multipleTaxCalculation = 'multiple_tax_calculation';
-  static String multipleTaxCalculation_2 = 'multiple_tax_calculation_new';
   static String stripeVerifyTransactionUrl = 'stripeVerifyTransaction?response=success';
 
 
   static String deliveryTimeSlot = 'deliveryTimeSlot';
-  static String placeOrder = 'placeOrder';
-  static String pickupPlaceOrder = 'pickupPlaceOrder';
   static String setStoreQuery = 'setStoreQuery';
   static String orderHistory = 'orderHistory';
   static String getLoyalityPoints = 'getLoyalityPoints';
@@ -102,6 +99,11 @@ class ApiConstants{
 
   static String socialLogin = 'socialLogin';
   static String verifyEmail = 'verifyEmail';
+  static String multipleTaxCalculation_2 = '/tax_calculation';
+  static String coupons_validate = '/coupons/validateCoupon';
+  static String placeOrder = '/orders/placeOrder';
+  static String pickupPlaceOrder = '/orders/pickupPlaceOrder';
+
 
 
 }

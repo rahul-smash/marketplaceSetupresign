@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+
 //import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -13,13 +14,15 @@ import 'package:restroapp/src/Screens/Offers/RedeemPointsScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/CreatePaytmTxnTokenResponse.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/DeliveryTimeSlotModel.dart';
 import 'package:restroapp/src/models/OrderDetailsModel.dart';
-import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/RazorpayOrderData.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
+import 'package:restroapp/src/models/StoreRadiousResponse.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/StripeCheckOutModel.dart';
 import 'package:restroapp/src/models/StripeVerifyModel.dart';
@@ -27,6 +30,7 @@ import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/ValidateCouponsResponse.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -42,7 +46,7 @@ class ConfirmOrderScreen extends StatefulWidget {
   String areaId;
   OrderType deliveryType;
   Area areaObject;
-  var storeModel;
+  StoreDataObj storeModel;
   List<Product> cartList = new List();
   PaymentType _character = PaymentType.COD;
 
@@ -65,7 +69,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   String shippingCharges = "0";
   static const platform = const MethodChannel("razorpay_flutter");
   Razorpay _razorpay;
-  StoreModel storeModel;
+  StoreDataObj storeModel;
   DeliveryTimeSlotModel deliverySlotModel;
   int selctedTag, selectedTimeSlot;
   List<Timeslot> timeslotList;
@@ -92,7 +96,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   bool isOrderVariations = false;
 
-  bool showCOD=true;
+  bool showCOD = true;
+  BrandData _brandData;
 
   ConfirmOrderState({this.storeModel});
 
@@ -103,12 +108,14 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           widget.address.address2.isNotEmpty) {
         if (widget.address.address != null &&
             widget.address.address.isNotEmpty) {
-          address = widget.address.address + ", "+ widget.address.address2+
+          address = widget.address.address +
+              ", " +
+              widget.address.address2 +
               " " +
               widget.address.areaName +
               " " +
               widget.address.city;
-        }else{
+        } else {
           address = widget.address.address2 +
               " " +
               widget.address.areaName +
@@ -129,7 +136,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       if (widget.address.zipCode != null && widget.address.zipCode.isNotEmpty)
         pin = widget.address.zipCode;
     } else if (widget.deliveryType == OrderType.PickUp) {
-      address = widget.areaObject.pickupAdd;
+//      address = widget.areaObject.pickupAdd;
+      //TODO add pickupAdd
+      address = '';
       pin = 'NA';
     }
 
@@ -145,8 +154,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
     //new changes
-    Utils
-        .getCartItemsListToJson(
+    Utils.getCartItemsListToJson(
             isOrderVariations: isOrderVariations,
             responseOrderDetail: responseOrderDetail)
         .then((orderJson) {
@@ -190,7 +198,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => PaytmWebView(value, storeModel)),
+                builder: (context) => PaytmWebView(value)),
           );
         } else {
           Utils.showToast("Api Error", false);
@@ -202,6 +210,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   @override
   void initState() {
     super.initState();
+    _brandData=BrandModel.getInstance().brandVersionModel.brand;
     initRazorPay();
     listenWebViewChanges();
     checkPaytmActive();
@@ -211,61 +220,60 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     //print("-deliveryType--${widget.deliveryType}---");
     constraints();
     try {
-      SharedPrefs.getStore().then((storeData) {
-        storeModel = storeData;
-        checkLoyalityPointsOption();
-        if (widget.deliveryType == OrderType.Delivery) {
-          if (storeModel.deliverySlot == "1") {
-            ApiController.deliveryTimeSlotApi().then((response) {
-              setState(() {
-                if (!response.success) {
-                  isDeliveryResponseFalse = true;
-                  return;
-                }
-                deliverySlotModel = response;
-                print(
-                    "deliverySlotModel.data.is24X7Open =${deliverySlotModel.data.is24X7Open}");
-                isInstantDelivery = deliverySlotModel.data.is24X7Open == "1";
-                for (int i = 0;
-                    i < deliverySlotModel.data.dateTimeCollection.length;
-                    i++) {
-                  timeslotList =
-                      deliverySlotModel.data.dateTimeCollection[i].timeslot;
-                  for (int j = 0; j < timeslotList.length; j++) {
-                    Timeslot timeslot = timeslotList[j];
-                    if (timeslot.isEnable) {
-                      selectedTimeSlot = j;
-                      isSlotSelected = true;
-                      break;
-                    }
-                  }
-                  if (isSlotSelected) {
-                    selctedTag = i;
-                    break;
-                  }
-                }
-              });
-            });
-          }
-        }
-      });
+      checkLoyalityPointsOption();
+//      if (widget.deliveryType == OrderType.Delivery) {
+//        if (storeModel.deliverySlot == "1") {
+//          ApiController.deliveryTimeSlotApi().then((response) {
+//            setState(() {
+//              if (!response.success) {
+//                isDeliveryResponseFalse = true;
+//                return;
+//              }
+//              deliverySlotModel = response;
+//              print(
+//                  "deliverySlotModel.data.is24X7Open =${deliverySlotModel.data.is24X7Open}");
+//              isInstantDelivery = deliverySlotModel.data.is24X7Open == "1";
+//              for (int i = 0;
+//                  i < deliverySlotModel.data.dateTimeCollection.length;
+//                  i++) {
+//                timeslotList =
+//                    deliverySlotModel.data.dateTimeCollection[i].timeslot;
+//                for (int j = 0; j < timeslotList.length; j++) {
+//                  Timeslot timeslot = timeslotList[j];
+//                  if (timeslot.isEnable) {
+//                    selectedTimeSlot = j;
+//                    isSlotSelected = true;
+//                    break;
+//                  }
+//                }
+//                if (isSlotSelected) {
+//                  selctedTag = i;
+//                  break;
+//                }
+//              }
+//            });
+//          });
+//        }
+//      }
     } catch (e) {
       print(e);
     }
     multiTaxCalculationApi();
 
-    if(widget.storeModel != null){
-      if(widget.storeModel.cod == "1"){
+    if (widget.storeModel != null) {
+      if (widget.storeModel.cod == "1") {
         showCOD = true;
         widget.paymentMode = "2";
-      }else if(widget.storeModel.cod == "0"){
+      } else if (widget.storeModel.cod == "0") {
         showCOD = false;
       }
-      if (widget.storeModel.onlinePayment == "0" && widget.storeModel.cod == "0") {
+      if (_brandData.onlinePayment == "0" &&
+          widget.storeModel.cod == "0") {
         showCOD = true;
         widget.paymentMode = "2";
       }
-      if(widget.storeModel.cod == "0" && widget.storeModel.onlinePayment == "1"){
+      if (widget.storeModel.cod == "0" &&
+          _brandData.onlinePayment == "1") {
         widget._character = PaymentType.ONLINE;
         widget.paymentMode = "3";
       }
@@ -604,11 +612,17 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         }
       }
     Color containerColor =
-    detail != null && detail.productStatus.contains('out_of_stock')
-        ? Colors.black12
-        : Colors.transparent;
-    String mrpPrice = detail != null && detail.productStatus.contains('price_changed')? detail.newMrpPrice:product.mrpPrice;
-    String price = detail != null && detail.productStatus.contains('price_changed')? detail.newPrice:product.price;
+        detail != null && detail.productStatus.contains('out_of_stock')
+            ? Colors.black12
+            : Colors.transparent;
+    String mrpPrice =
+        detail != null && detail.productStatus.contains('price_changed')
+            ? detail.newMrpPrice
+            : product.mrpPrice;
+    String price =
+        detail != null && detail.productStatus.contains('price_changed')
+            ? detail.newPrice
+            : product.price;
 
     if (product.taxDetail != null) {
       return Container(
@@ -622,23 +636,23 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   style: TextStyle(color: Colors.black54)),
               detail != null && detail.productStatus.contains('out_of_stock')
                   ? Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.red, width: 1),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Padding(
-                    padding: EdgeInsets.all(3),
-                    child: Text(
-                      "Out of Stock",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ))
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.red, width: 1),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Padding(
+                        padding: EdgeInsets.all(3),
+                        child: Text(
+                          "Out of Stock",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ))
                   : Text("${AppConstant.currency}${product.taxDetail.tax}",
-                  style: TextStyle(
-                      color: detail != null &&
-                          detail.productStatus.contains('out_of_stock')
-                          ? Colors.red
-                          : Colors.black54)),
+                      style: TextStyle(
+                          color: detail != null &&
+                                  detail.productStatus.contains('out_of_stock')
+                              ? Colors.red
+                              : Colors.black54)),
             ],
           ),
         ),
@@ -655,24 +669,24 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   style: TextStyle(color: Colors.black54)),
               detail != null && detail.productStatus.contains('out_of_stock')
                   ? Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.red, width: 1),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Padding(
-                    padding: EdgeInsets.all(3),
-                    child: Text(
-                      "Out of Stock",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ))
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.red, width: 1),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Padding(
+                        padding: EdgeInsets.all(3),
+                        child: Text(
+                          "Out of Stock",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ))
                   : Text(
-                  "${AppConstant.currency}${product.fixedTax.fixedTaxAmount}",
-                  style: TextStyle(
-                      color: detail != null &&
-                          detail.productStatus.contains('out_of_stock')
-                          ? Colors.red
-                          : Colors.black54)),
+                      "${AppConstant.currency}${product.fixedTax.fixedTaxAmount}",
+                      style: TextStyle(
+                          color: detail != null &&
+                                  detail.productStatus.contains('out_of_stock')
+                              ? Colors.red
+                              : Colors.black54)),
             ],
           ),
         ),
@@ -721,25 +735,25 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             ),
             detail != null && detail.productStatus.contains('out_of_stock')
                 ? Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.red, width: 1),
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5)),
-                child: Padding(
-                  padding: EdgeInsets.all(3),
-                  child: Text(
-                    "Out of Stock",
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ))
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.red, width: 1),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Padding(
+                      padding: EdgeInsets.all(3),
+                      child: Text(
+                        "Out of Stock",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ))
                 : Text(
-                "${AppConstant.currency}${databaseHelper.roundOffPrice(int.parse(product.quantity) * double.parse(price), 2).toStringAsFixed(2)}",
-                style: TextStyle(
-                    fontSize: 16,
-                    color: detail != null &&
-                        detail.productStatus.contains('out_of_stock')
-                        ? Colors.red
-                        : Colors.black45)),
+                    "${AppConstant.currency}${databaseHelper.roundOffPrice(int.parse(product.quantity) * double.parse(price), 2).toStringAsFixed(2)}",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: detail != null &&
+                                detail.productStatus.contains('out_of_stock')
+                            ? Colors.red
+                            : Colors.black45)),
           ],
         ),
       );
@@ -763,7 +777,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 Text("Delivery charges:",
                     style: TextStyle(color: Colors.black54)),
                 Text(
-                    "${AppConstant.currency}${widget.address == null ? "0" : widget.address.areaCharges}",
+                    "${AppConstant.currency}${widget.areaObject == null ? "0" : widget.areaObject.charges}",
                     style: TextStyle(color: Colors.black54)),
               ],
             ),
@@ -792,8 +806,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               Text("Items Price", style: TextStyle(color: Colors.black)),
               Text(
 //                  "${AppConstant.currency}${databaseHelper.roundOffPrice((totalPrice - int.parse(shippingCharges)), 2).toStringAsFixed(2)}",
-                  "${AppConstant.currency}${taxModel==null? databaseHelper.roundOffPrice((totalPrice - int.parse(shippingCharges)), 2).toStringAsFixed(2):
-                  taxModel.itemSubTotal}",
+                  "${AppConstant.currency}${taxModel == null ? databaseHelper.roundOffPrice((totalPrice - int.parse(shippingCharges)), 2).toStringAsFixed(2) : taxModel.itemSubTotal}",
                   style: TextStyle(color: Colors.black)),
             ],
           ),
@@ -901,8 +914,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                           .productStatus
                           .compareTo('out_of_stock') ==
                       0 &&
-                  responseOrderDetail[i].productId.compareTo(product.id) == 0
-                  &&responseOrderDetail[i].variantId.compareTo(product.variantId) == 0) {
+                  responseOrderDetail[i].productId.compareTo(product.id) == 0 &&
+                  responseOrderDetail[i]
+                          .variantId
+                          .compareTo(product.variantId) ==
+                      0) {
                 isProductOutOfStock = true;
                 break InnnerFor;
               }
@@ -910,22 +926,30 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                           .productStatus
                           .compareTo('price_changed') ==
                       0 &&
-                  responseOrderDetail[i].productId.compareTo(product.id) == 0
-                  &&responseOrderDetail[i].variantId.compareTo(product.variantId) == 0) {
-                detail=responseOrderDetail[i];
+                  responseOrderDetail[i].productId.compareTo(product.id) == 0 &&
+                  responseOrderDetail[i]
+                          .variantId
+                          .compareTo(product.variantId) ==
+                      0) {
+                detail = responseOrderDetail[i];
                 break InnnerFor;
               }
             }
           }
 
           if (!isProductOutOfStock) {
-            String mrpPrice=detail!=null&&detail.productStatus.contains('price_changed')?detail.newMrpPrice:product.mrpPrice;
-            String price=detail!=null&&detail.productStatus.contains('price_changed')?detail.newPrice:product.price;
-            totalSavings +=
-                (double.parse(mrpPrice) - double.parse(price)) *
-                    double.parse(product.quantity);
-            totalMRpPrice += (double.parse(mrpPrice) *
-                double.parse(product.quantity));
+            String mrpPrice =
+                detail != null && detail.productStatus.contains('price_changed')
+                    ? detail.newMrpPrice
+                    : product.mrpPrice;
+            String price =
+                detail != null && detail.productStatus.contains('price_changed')
+                    ? detail.newPrice
+                    : product.price;
+            totalSavings += (double.parse(mrpPrice) - double.parse(price)) *
+                double.parse(product.quantity);
+            totalMRpPrice +=
+                (double.parse(mrpPrice) * double.parse(product.quantity));
           }
         }
       }
@@ -1116,8 +1140,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //    if (storeModel != null) {
 //      return Container();
 //    }
-    if (widget.storeModel.onlinePayment != null) {
-      if (widget.storeModel.onlinePayment == "1") {
+    if (_brandData.onlinePayment != null) {
+      if (_brandData.onlinePayment == "1") {
         showOptions = true;
       } else {
         showOptions = false; //cod
@@ -1221,8 +1245,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   Widget addPaymentOptions() {
     bool showOptions = false;
-    if (widget.storeModel.onlinePayment != null) {
-      if (widget.storeModel.onlinePayment == "1") {
+    if (_brandData.onlinePayment != null) {
+      if (_brandData.onlinePayment == "1") {
         showOptions = true;
       } else {
         showOptions = false; //cod
@@ -1277,8 +1301,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               ),
             ),
             Visibility(
-              visible: widget.storeModel.onlinePayment != null &&
-                  widget.storeModel.onlinePayment.compareTo('1') == 0,
+              visible: _brandData.onlinePayment != null &&
+                  _brandData.onlinePayment.compareTo('1') == 0,
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: <Widget>[
@@ -1522,13 +1546,13 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             textColor: Colors.white,
             color: appTheme,
             onPressed: () async {
-              StoreModel storeObject = await SharedPrefs.getStore();
+//              StoreDataObj storeObject = await SharedPrefs.getStoreData();
               bool status =
-                  Utils.checkStoreOpenTime(storeObject, widget.deliveryType);
+                  Utils.checkStoreOpenTime(storeModel, widget.deliveryType);
               print("----checkStoreOpenTime----${status}--");
 
               if (!status) {
-                Utils.showToast("${storeObject.closehoursMessage}", false);
+                Utils.showToast("${storeModel.closehoursMessage}", false);
                 return;
               }
               if (widget.deliveryType == OrderType.Delivery &&
@@ -1552,7 +1576,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               if (checkThatItemIsInStocks()) {
                 DialogUtils.displayCommonDialog(
                     context,
-                    storeModel == null ? "" : storeModel.storeName,
+                    _brandData == null ? "" : _brandData.name,
                     "Some Cart items were updated. Please review the cart before procceeding.",
                     buttonText: 'Ok');
                 return;
@@ -1574,7 +1598,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //              }
 
               print("----paymentMod----${widget.paymentMode}--");
-              print("-paymentGateway----${storeObject.paymentGateway}-}-");
 
               bool isNetworkAvailable = await Utils.isNetworkAvailable();
               if (!isNetworkAvailable) {
@@ -1583,18 +1606,18 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               }
 
               if (widget.deliveryType == OrderType.Delivery) {
-                if (storeObject.deliverySlot == "0") {
+                if (storeModel.deliverySlot == "0") {
                   selectedDeliverSlotValue = "";
                 } else {
                   //Store provides instant delivery of the orders.
                   print(isInstantDelivery);
                   if (isDeliveryResponseFalse) {
                     selectedDeliverSlotValue = "";
-                  } else if (storeObject.deliverySlot == "1" &&
+                  } else if (storeModel.deliverySlot == "1" &&
                       isInstantDelivery) {
                     //Store provides instant delivery of the orders.
                     selectedDeliverSlotValue = "";
-                  } else if (storeObject.deliverySlot == "1" &&
+                  } else if (storeModel.deliverySlot == "1" &&
                       !isSlotSelected &&
                       !isInstantDelivery) {
                     Utils.showToast("Please select delivery slot", false);
@@ -1618,10 +1641,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
               if (widget.deliveryType == OrderType.Delivery) {
                 //The "performPlaceOrderOperation" are called in below method
-                checkDeliveryAreaDeleted(storeObject,
+                checkDeliveryAreaDeleted(storeModel,
                     addressId: widget.address.id);
               } else if (widget.deliveryType == OrderType.PickUp) {
-                performPlaceOrderOperation(storeObject);
+                performPlaceOrderOperation(storeModel);
               }
             },
             child: Text(
@@ -1634,7 +1657,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     );
   }
 
-  performPlaceOrderOperation(StoreModel storeObject) async {
+  performPlaceOrderOperation(StoreDataObj storeObject) async {
     String json = await databaseHelper.getCartItemsListToJson(
         isOrderVariations: isOrderVariations,
         responseOrderDetail: responseOrderDetail);
@@ -1721,23 +1744,23 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     if (widget.paymentMode == "3") {
       Utils.hideProgressDialog(context);
       if (ispaytmSelected) {
-        callPaymentGateWay("Paytmpay", storeObject);
+        callPaymentGateWay("Paytmpay");
       } else {
-        String paymentGateway = storeObject.paymentGateway;
-        if (storeObject.paymentGatewaySettings != null &&
-            storeObject.paymentGatewaySettings.isNotEmpty) {
+        String paymentGateway = _brandData.paymentGateway;
+        if (_brandData.paymentGatewaySettings != null &&
+            _brandData.paymentGatewaySettings.isNotEmpty) {
           //case only single gateway is comming
-          if (storeObject.paymentGatewaySettings.length == 1) {
+          if (_brandData.paymentGatewaySettings.length == 1) {
             paymentGateway =
-                storeObject.paymentGatewaySettings.first.paymentGateway;
-            callPaymentGateWay(paymentGateway, storeObject);
+                _brandData.paymentGatewaySettings.first.paymentGateway;
+            callPaymentGateWay(paymentGateway);
           } else {
             //remove paytm option
             int indexToRemove = -1;
             for (int i = 0;
-                i < storeObject.paymentGatewaySettings.length;
+                i < _brandData.paymentGatewaySettings.length;
                 i++) {
-              if (storeObject.paymentGatewaySettings[i].paymentGateway
+              if (_brandData.paymentGatewaySettings[i].paymentGateway
                   .toLowerCase()
                   .contains('paytm')) {
                 indexToRemove = i;
@@ -1745,12 +1768,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               }
             }
             if (indexToRemove != -1) {
-              storeObject.paymentGatewaySettings.removeAt(indexToRemove);
+              _brandData.paymentGatewaySettings.removeAt(indexToRemove);
             }
-            if (storeObject.paymentGatewaySettings.length == 1) {
+            if (_brandData.paymentGatewaySettings.length == 1) {
               paymentGateway =
-                  storeObject.paymentGatewaySettings.first.paymentGateway;
-              callPaymentGateWay(paymentGateway, storeObject);
+                  _brandData.paymentGatewaySettings.first.paymentGateway;
+              callPaymentGateWay(paymentGateway);
             } else {
               String result =
                   await DialogUtils.displayMultipleOnlinePaymentMethodDialog(
@@ -1760,13 +1783,13 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 return;
               }
               paymentGateway = result;
-              callPaymentGateWay(paymentGateway, storeObject);
+              callPaymentGateWay(paymentGateway);
             }
           }
           return;
         } else {
           //case payment gateway setting list empty
-          callPaymentGateWay(paymentGateway, storeObject);
+          callPaymentGateWay(paymentGateway);
         }
       }
     } else {
@@ -1774,11 +1797,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     }
   }
 
-  callPaymentGateWay(String paymentGateway, StoreModel storeObject) {
+  callPaymentGateWay(String paymentGateway) {
     Utils.hideProgressDialog(context);
     switch (paymentGateway) {
       case "Razorpay":
-        callOrderIdApi(storeObject);
+        callOrderIdApi();
         break;
       case "Stripe":
         callStripeApi();
@@ -1789,7 +1812,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     }
   }
 
-  checkDeliveryAreaDeleted(StoreModel storeObject, {String addressId = ""}) {
+  checkDeliveryAreaDeleted(StoreDataObj storeObject, {String addressId = ""}) {
     Utils.showProgressDialog(context);
     ApiController.getAddressApiRequest().then((responses) async {
       int length = responses.data.length;
@@ -1991,7 +2014,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    StripeWebView(stripeCheckOutModel, storeModel)),
+                    StripeWebView(stripeCheckOutModel)),
           );
         } else {
           Utils.showToast("${stripeCheckOutModel.message}!", true);
@@ -2066,7 +2089,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         msg: "EXTERNAL_WALLET: " + response.walletName, timeInSecForIos: 4);*/
   }
 
-  void callOrderIdApi(StoreModel storeObject) async {
+  void callOrderIdApi() async {
     Utils.showProgressDialog(context);
     double price = double.parse(taxModel.total); //totalPrice ;
     print("=======1===${price}===total==${taxModel.total}======");
@@ -2080,8 +2103,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
     //new changes
-    Utils
-        .getCartItemsListToJson(
+    Utils.getCartItemsListToJson(
             isOrderVariations: isOrderVariations,
             responseOrderDetail: responseOrderDetail)
         .then((orderJson) {
@@ -2142,13 +2164,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 isOrderVariations: isOrderVariations,
                 responseOrderDetail: responseOrderDetail)
             .then((json) {*/
-        Utils
-            .getCartItemsListToJson(
+        Utils.getCartItemsListToJson(
                 isOrderVariations: isOrderVariations,
                 responseOrderDetail: responseOrderDetail)
             .then((json) {
-
-
           if (json == null) {
             print("--json == null-json == null-");
             return;
@@ -2190,7 +2209,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             //print("Location = ${storeModel.lat},${storeModel.lng}");
             if (widget.deliveryType == OrderType.PickUp) {
               bool result =
-                  await DialogUtils.displayPickUpDialog(context, storeModel);
+                  await DialogUtils.displayPickUpDialog(context);
               if (result == true) {
                 //print("==result== ${result}");
                 await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
@@ -2394,41 +2413,41 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   }
 
   void checkPaytmActive() {
-    String paymentGateway = storeModel.paymentGateway;
-    if (storeModel.paymentGatewaySettings != null &&
-        storeModel.paymentGatewaySettings.isNotEmpty) {
-      //case only single gateway is comming
-      if (storeModel.paymentGatewaySettings.length == 1) {
-        paymentGateway = storeModel.paymentGatewaySettings.first.paymentGateway;
-        if (paymentGateway.toLowerCase().contains('paytm')) {
-          isPayTmActive = true;
-        }
-      } else {
-        for (int i = 0; i < storeModel.paymentGatewaySettings.length; i++) {
-          paymentGateway = storeModel.paymentGatewaySettings[i].paymentGateway;
-          if (paymentGateway.toLowerCase().contains('paytm')) {
-            isPayTmActive = true;
-            break;
-          }
-        }
-      }
-    } else {
-      if (paymentGateway.toLowerCase().contains('paytm')) {
-        isPayTmActive = true;
-      }
-    }
+    //TODO: Change
+//    String paymentGateway = storeModel.paymentGateway;
+//    if (storeModel.paymentGatewaySettings != null &&
+//        storeModel.paymentGatewaySettings.isNotEmpty) {
+//      //case only single gateway is comming
+//      if (storeModel.paymentGatewaySettings.length == 1) {
+//        paymentGateway = storeModel.paymentGatewaySettings.first.paymentGateway;
+//        if (paymentGateway.toLowerCase().contains('paytm')) {
+//          isPayTmActive = true;
+//        }
+//      } else {
+//        for (int i = 0; i < storeModel.paymentGatewaySettings.length; i++) {
+//          paymentGateway = storeModel.paymentGatewaySettings[i].paymentGateway;
+//          if (paymentGateway.toLowerCase().contains('paytm')) {
+//            isPayTmActive = true;
+//            break;
+//          }
+//        }
+//      }
+//    } else {
+//      if (paymentGateway.toLowerCase().contains('paytm')) {
+//        isPayTmActive = true;
+//      }
+//    }
   }
 
   void constraints() {
     try {
-      if (widget.address != null) {
-        if (widget.address.areaCharges != null) {
+      if (widget.areaObject != null) {
+        if (widget.areaObject.charges != null) {
           if (responseOrderDetail.isNotEmpty && checkThatItemIsInStocks())
             shippingCharges = '0';
           else {
-            shippingCharges = widget.address.areaCharges;
+            shippingCharges = widget.areaObject.charges;
           }
-          //print("-shippingCharges--${widget.address.areaCharges}---");
         }
         //print("----minAmount=${widget.address.minAmount}");
         //print("----notAllow=${widget.address.notAllow}");
@@ -2498,12 +2517,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     return productOutOfStock;
   }
 }
+
 /*Code for ios*/
 class StripeWebView extends StatefulWidget {
   StripeCheckOutModel stripeCheckOutModel;
-  StoreModel storeModel;
 
-  StripeWebView(this.stripeCheckOutModel, this.storeModel);
+  StripeWebView(this.stripeCheckOutModel);
 
   @override
   _StripeWebViewState createState() {
@@ -2560,10 +2579,9 @@ class _StripeWebViewState extends State<StripeWebView> {
 
 class PaytmWebView extends StatelessWidget {
   CreatePaytmTxnTokenResponse stripeCheckOutModel;
-  StoreModel storeModel;
   Completer<WebViewController> _controller = Completer<WebViewController>();
 
-  PaytmWebView(this.stripeCheckOutModel, this.storeModel);
+  PaytmWebView(this.stripeCheckOutModel);
 
   @override
   Widget build(BuildContext context) {
@@ -2596,7 +2614,7 @@ class PaytmWebView extends StatelessWidget {
               print('==2====onLoadStop======: $url');
               if (url.contains("/api/paytmPaymentResult/orderId:")) {
                 String txnId =
-                url.substring(url.indexOf("/TxnId:") + "/TxnId:".length);
+                    url.substring(url.indexOf("/TxnId:") + "/TxnId:".length);
                 url = url.replaceAll("/TxnId:" + txnId, "");
                 String orderId = url
                     .substring(url.indexOf("/orderId:") + "/orderId:".length);
@@ -2617,128 +2635,3 @@ class PaytmWebView extends StatelessWidget {
     );
   }
 }
-
-/*Code for android*/
-/*class StripeWebView extends StatefulWidget {
-  StripeCheckOutModel stripeCheckOutModel;
-  StoreModel storeModel;
-
-  StripeWebView(this.stripeCheckOutModel, this.storeModel);
-
-  @override
-  _StripeWebViewState createState() {
-    return _StripeWebViewState();
-  }
-}
-
-class _StripeWebViewState extends State<StripeWebView> {
-  InAppWebViewController webView;
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        //print("onWillPop onWillPop");
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          automaticallyImplyLeading: false, // Used for removing back buttoon.
-          title: Text('Payment'),
-          centerTitle: true,
-        ),
-        body: Builder(builder: (BuildContext context) {
-          return InAppWebView(
-            initialUrl: "${widget.stripeCheckOutModel.checkoutUrl}",
-            initialHeaders: {},
-            initialOptions: InAppWebViewGroupOptions(
-                crossPlatform: InAppWebViewOptions(
-                    debuggingEnabled: true,
-                    javaScriptEnabled: true,
-                    javaScriptCanOpenWindowsAutomatically: true)),
-            onWebViewCreated: (InAppWebViewController controller) {
-              webView = controller;
-            },
-            onLoadStart: (InAppWebViewController controller, String url) {
-              print('==1====onLoadStart======: $url');
-            },
-            onLoadStop: (InAppWebViewController controller, String url) async {
-              if (url
-                  .contains("api/stripeVerifyTransaction?response=success")) {
-                eventBus.fire(onPageFinished(
-                    widget.stripeCheckOutModel.paymentRequestId));
-                Navigator.pop(context);
-              }
-            },
-            onProgressChanged:
-                (InAppWebViewController controller, int progress) {
-              //print('==3====onProgressChanged======: $progress');
-            },
-          );
-        }),
-      ),
-    );
-  }
-}
-
-class PaytmWebView extends StatelessWidget {
-  CreatePaytmTxnTokenResponse stripeCheckOutModel;
-  InAppWebViewController webView;
-  StoreModel storeModel;
-
-  PaytmWebView(this.stripeCheckOutModel, this.storeModel);
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {},
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          automaticallyImplyLeading: false, // Used for removing back buttoon.
-          title: Text('Payment'),
-          centerTitle: true,
-        ),
-        body: Builder(builder: (BuildContext context) {
-          return InAppWebView(
-            initialUrl: "${stripeCheckOutModel.url}",
-            initialHeaders: {},
-            initialOptions: InAppWebViewGroupOptions(
-                crossPlatform: InAppWebViewOptions(
-                    debuggingEnabled: true,
-                    javaScriptEnabled: true,
-                    javaScriptCanOpenWindowsAutomatically: true)),
-            onWebViewCreated: (InAppWebViewController controller) {
-              webView = controller;
-            },
-            onLoadStart: (InAppWebViewController controller, String url) {
-              print('==1====onLoadStart======: $url');
-            },
-            onLoadStop: (InAppWebViewController controller, String url) async {
-              print('==2====onLoadStop======: $url');
-              if (url.contains("/api/paytmPaymentResult/orderId:")) {
-                String txnId =
-                    url.substring(url.indexOf("/TxnId:") + "/TxnId:".length);
-                url = url.replaceAll("/TxnId:" + txnId, "");
-                String orderId = url
-                    .substring(url.indexOf("/orderId:") + "/orderId:".length);
-                print(txnId);
-                print(orderId);
-                eventBus.fire(
-                    onPayTMPageFinished(url, orderId = orderId, txnId = txnId));
-                Navigator.pop(context);
-              } else if (url.contains("api/paytmPaymentResult/failure:")) {
-                Navigator.pop(context);
-                Utils.showToast("Payment Failed", false);
-              }
-            },
-            onProgressChanged:
-                (InAppWebViewController controller, int progress) {
-              //print('==3====onProgressChanged======: $progress');
-            },
-          );
-        }),
-      ),
-    );
-  }
-}*/

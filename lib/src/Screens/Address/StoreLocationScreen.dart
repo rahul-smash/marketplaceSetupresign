@@ -114,22 +114,22 @@ class _StoreLocationScreenState extends BaseState<StoreLocationScreen> {
               StoreModel storeModel = await SharedPrefs.getStore();
               if(widget.areaObject.note.isEmpty){
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ConfirmOrderScreen(null,true, widget.areaObject.areaId,widget.pickUp,areaObject: widget.areaObject,storeModel: storeModel,)),
-                );
+//                Navigator.push(
+//                  context,
+//                  MaterialPageRoute(
+//                      builder: (context) =>
+//                          ConfirmOrderScreen(null,true, widget.areaObject.areaId,widget.pickUp,areaObject: widget.areaObject,storeModel: storeModel,)),
+//                );
               }else{
                 var result = await DialogUtils.displayOrderConfirmationDialog(context, "Confirmation",widget.areaObject.note,);
                 if(result == true){
                   Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ConfirmOrderScreen(null,true, widget.areaObject.areaId,widget.pickUp,areaObject: widget.areaObject,storeModel: storeModel,)),
-                  );
+//                  Navigator.push(
+//                    context,
+//                    MaterialPageRoute(
+//                        builder: (context) =>
+//                            ConfirmOrderScreen(null,true, widget.areaObject.areaId,widget.pickUp,areaObject: widget.areaObject,storeModel: storeModel,)),
+//                  );
                 }
               }
 

@@ -13,6 +13,7 @@ import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
@@ -346,7 +347,7 @@ class DialogUtils {
   }
 
   static Future<bool> displayPickUpDialog(
-      BuildContext context, StoreModel storeModel) async {
+      BuildContext context) async {
     return await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -1178,7 +1179,7 @@ class DialogUtils {
   }
 
   static Future<void> openMap(
-      StoreModel storeModel, double latitude, double longitude) async {
+      StoreDataObj storeModel, double latitude, double longitude) async {
     String address = "${storeModel.storeName}, ${storeModel.location},"
         "${storeModel.city}, ${storeModel.state}, ${storeModel.country}, ${storeModel.zipcode}";
     print("address= ${address}");
