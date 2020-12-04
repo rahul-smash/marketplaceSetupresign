@@ -143,8 +143,8 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                           ),
 
                           Visibility(
-//                            visible: store == null ? false : store.social_login == "0" ? false : true,
-                            visible: false,
+                            visible: store == null ? false : store.social_login == "0" ? false : true,
+//                            visible: false,
                             child: Container(
                               margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                               width: Utils.getDeviceWidth(context),
@@ -158,8 +158,8 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
 
 
                           Visibility(
-//                            visible: store == null ? false : store.social_login == "0" ? false : true,
-                            visible: false,
+                            visible: store == null ? false : store.social_login == "0" ? false : true,
+//                            visible: false,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
