@@ -42,7 +42,7 @@ class ConfirmOrderScreen extends StatefulWidget {
   String areaId;
   OrderType deliveryType;
   Area areaObject;
-  StoreModel storeModel;
+  var storeModel;
   List<Product> cartList = new List();
   PaymentType _character = PaymentType.COD;
 

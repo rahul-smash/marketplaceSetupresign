@@ -468,7 +468,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       "${zipCode}",
       "${selectedLocation.latitude}",
       "${selectedLocation.longitude}",
-      "","${widget.addressData.id}").then((response) {
+      "","${widget.addressData==null?'':widget.addressData.id}").then((response) {
       Utils.hideProgressDialog(context);
       if (response != null && response.success) {
         Utils.showToast(response.message, false);

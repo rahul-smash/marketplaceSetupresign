@@ -385,17 +385,16 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
             } else {
             }
           }
-          if (area != null) {
-
-          } else {
+          if (area == null) {
             Utils.showToast("We can not deliver at your location!", false);
+            return;
           }
-          print("---radius-- ${area.radius}-charges.and ${area.charges}--");
 
-          /*StoreModel storeModel = await SharedPrefs.getStore();
+          StoreDataObj storeModel = await SharedPrefs.getStoreData();
           if (addressList.length == 0) {
             Utils.showToast(AppConstant.selectAddress, false);
           } else {
+            print("---radius-- ${area.radius}-charges.and ${area.charges}--");
             print("minAmount=${addressList[selectedIndex].minAmount}");
             print("notAllow=${addressList[selectedIndex].notAllow}");
             if (addressList[selectedIndex].note.isEmpty) {
@@ -429,7 +428,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 );
               }
             }
-          }*/
+          }
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
