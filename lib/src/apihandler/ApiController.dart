@@ -660,13 +660,15 @@ class ApiController {
 
   static Future<DeliveryAddressResponse> deleteDeliveryAddressApiRequest(
       String addressId) async {
-    StoreModel store = await SharedPrefs.getStore();
+
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
         ApiConstants.getAddress;
+
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {

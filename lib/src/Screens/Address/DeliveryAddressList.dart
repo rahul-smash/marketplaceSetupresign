@@ -287,7 +287,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                         color: infoLabel, fontWeight: FontWeight.w500)),
               ),
               onTap: () async {
-                var result = await Navigator.push(
+                /*var result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (BuildContext context) =>
@@ -309,7 +309,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                     isLoading = false;
                     addressList = response.data;
                   });
-                }
+                }*/
               },
             ),
           ),
@@ -320,23 +320,24 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
           ),
           Flexible(
               child: InkWell(
-            child: Align(
-              alignment: Alignment.center,
-              child: new Text("Remove Address",
-                  style:
-                      TextStyle(color: infoLabel, fontWeight: FontWeight.w500)),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: new Text("Remove Address",style:TextStyle(color: infoLabel, fontWeight: FontWeight.w500)),
             ),
             onTap: () async {
-              print("--selectedIndex ${selectedIndex} and ${index}");
+              print("--selectedIndex ${selectedIndex} and ${index} and ${area.id}");
               var results = await DialogUtils.displayDialog(
                   context, "Delete", AppConstant.deleteAddress, "Cancel", "OK");
+
               if (results == true) {
                 Utils.showProgressDialog(context);
+
                 ApiController.deleteDeliveryAddressApiRequest(area.id)
                     .then((response) async {
                   Utils.hideProgressDialog(context);
                   if (response != null && response.success) {
                     print("---showDialogForDelete-----");
+                    Utils.showToast(response.message, false);
                     setState(() {
                       addressList.removeAt(index);
                       print("--selectedIndex ${selectedIndex} and ${index}");
@@ -344,16 +345,9 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                         selectedIndex = 0;
                       }
                     });
-                    /*Utils.showProgressDialog(context);
-                    DeliveryAddressResponse response = await ApiController.getAddressApiRequest();
-                    setState(() {
-                      Utils.hideProgressDialog(context);
-                      addressList = response.data;
-                    });*/
                   }
                 });
               }
-              //showDialogForDelete(area);
             },
           )),
         ],
