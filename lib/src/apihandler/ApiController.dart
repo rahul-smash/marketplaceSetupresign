@@ -1246,11 +1246,14 @@ class ApiController {
   }
 
   static Future<StoreRadiousResponse> storeRadiusApi() async {
-    StoreModel store = await SharedPrefs.getStore();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    //StoreModel store = await SharedPrefs.getStore();
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
         ApiConstants.getStoreRadius;
+
+
     var request = new http.MultipartRequest("GET", Uri.parse(url));
-    print('@@storeRadiusApi' + url);
+    print('@@url=${url}');
 
     try {
       final response = await request.send().timeout(Duration(seconds: timeout));

@@ -6,6 +6,7 @@ import 'package:restroapp/src/UI/AddressByRadius.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
@@ -360,7 +361,38 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
       color: appTheme,
       child: InkWell(
         onTap: () async {
-          StoreModel storeModel = await SharedPrefs.getStore();
+
+          StoreDataObj store = await SharedPrefs.getStoreData();
+          print("====${addressList[selectedIndex].lat},${addressList[selectedIndex].lng}===");
+          double distanceInKm = Utils.calculateDistance(
+              double.parse(addressList[selectedIndex].lat),double.parse(addressList[selectedIndex].lng),
+              double.parse(store.lat), double.parse(store.lng));
+
+          int distanceInKms = distanceInKm.toInt();
+
+          print("==distanceInKm==${distanceInKms}");
+
+          StoreRadiousResponse storeRadiousResponse = await ApiController.storeRadiusApi();
+
+          Area area;
+          //print("---${areaList.length}---and-- ${distanceInKms}---");
+          for (int i = 0; i < storeRadiousResponse.data.length; i++) {
+            Area areaObject = storeRadiousResponse.data[i];
+            int radius = int.parse(areaObject.radius);
+            if (distanceInKms < radius && areaObject.radiusCircle == "Within") {
+              area = areaObject;
+              break;
+            } else {
+            }
+          }
+          if (area != null) {
+
+          } else {
+            Utils.showToast("We can not deliver at your location!", false);
+          }
+          print("---radius-- ${area.radius}-charges.and ${area.charges}--");
+
+          /*StoreModel storeModel = await SharedPrefs.getStore();
           if (addressList.length == 0) {
             Utils.showToast(AppConstant.selectAddress, false);
           } else {
@@ -397,7 +429,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 );
               }
             }
-          }
+          }*/
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,

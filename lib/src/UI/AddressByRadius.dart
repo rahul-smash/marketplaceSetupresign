@@ -337,18 +337,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
         child: BottomAppBar(
           child: InkWell(
             onTap: () async {
-              StoreDataObj store = await SharedPrefs.getStoreData();
-
-              print("====${selectedLocation.latitude},${selectedLocation
-                  .longitude}===");
-              double distanceInKm = Utils.calculateDistance(
-                  selectedLocation.latitude, selectedLocation.longitude,
-                  double.parse(store.lat), double.parse(store.lng));
-              int distanceInKms = distanceInKm.toInt();
-
-              print("==distanceInKm==${distanceInKm}=AND=${distanceInKms}=");
-
-              checkIfOrderDeliveryWithInRadious(distanceInKms);
+              checkIfOrderDeliveryWithInRadious();
             },
             child: Container(
               height: 45,
@@ -439,7 +428,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
   }
 
 
-  Future<void> checkIfOrderDeliveryWithInRadious(int distanceInKms) async {
+  Future<void> checkIfOrderDeliveryWithInRadious() async {
 
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
     if (!isNetworkAvailable) {
