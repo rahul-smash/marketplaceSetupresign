@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geocoder/geocoder.dart';
@@ -7,21 +6,18 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
-import 'package:restroapp/src/models/StoreRadiousResponse.dart';
-import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:restroapp/src/widgets/AutoSearch.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
-
 
 class DragMarkerMap extends StatefulWidget {
 
-
-  DragMarkerMap();
+  DeliveryAddressData addressData;
+  DragMarkerMap(this.addressData);
 
   @override
   _DragMarkerMapState createState() => _DragMarkerMapState();
@@ -32,7 +28,6 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
   GoogleMapController _mapController;
   Set<Marker> markers = Set();
   LatLng center, selectedLocation;
-  bool enableDialog;
   final cityController = new TextEditingController();
   final stateController = new TextEditingController();
   final firstNameController = new TextEditingController();
@@ -44,10 +39,38 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
   @override
   void initState() {
     super.initState();
-    center = LatLng(0.0, 0.0);
-    selectedLocation = LatLng(0.0, 0.0);
-    address = "";
-    getLocation();
+    if(widget.addressData != null){
+      //Edit address mode
+      center = LatLng(double.parse(widget.addressData.lat), double.parse(widget.addressData.lng));
+      selectedLocation = LatLng(double.parse(widget.addressData.lat), double.parse(widget.addressData.lng));
+      address = widget.addressData.address;
+      cityController.text = widget.addressData.city.trim();
+      stateController.text = widget.addressData.state.trim();
+      firstNameController.text = widget.addressData.firstName.trim();
+      lastNameController.text = widget.addressData.lastName.trim();
+      mobileController.text = widget.addressData.mobile.trim();
+      emailController.text = widget.addressData.email.trim();
+      markers.addAll([
+        Marker(
+            draggable: true,
+            icon: BitmapDescriptor.defaultMarker,
+            markerId: MarkerId('value'),
+            position: center,
+            onDragEnd: (value) {
+              print(value.latitude);
+              print(value.longitude);
+              getAddressFromLocation(value.latitude, value.longitude);
+            })
+      ]);
+      //_mapController.moveCamera(CameraUpdate.newLatLng(center));
+    }else{
+      //new address adding
+      center = LatLng(0.0, 0.0);
+      selectedLocation = LatLng(0.0, 0.0);
+      address = "";
+      getLocation();
+    }
+
   }
 
   @override
@@ -55,7 +78,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Choose Your Location'),
+        title: Text(widget.addressData != null ? "Edit Address" :'Choose Your Location'),
         backgroundColor: appTheme,
         actions: [
           InkWell(
@@ -335,7 +358,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                   padding: EdgeInsets.only(left: 0.0),
                   child: RichText(
                     text: TextSpan(
-                      text: "Save Address",
+                      text: widget.addressData != null ? "Update Address" :"Save Address",
                       style: TextStyle(fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color: Colors.white),
@@ -445,7 +468,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
 
     Utils.showProgressDialog(context);
     ApiController.saveDeliveryAddressApiRequest(
-      "ADD",
+      widget.addressData != null ? "EDIT" :"ADD",
       "${firstNameController.text.trim()}",
       "${lastNameController.text.trim()}",
       "${mobileController.text.trim()}",
@@ -456,7 +479,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       "${zipCode}",
       "${selectedLocation.latitude}",
       "${selectedLocation.longitude}",
-      "",).then((response) {
+      "","${widget.addressData.id}").then((response) {
       Utils.hideProgressDialog(context);
       if (response != null && response.success) {
         Utils.showToast(response.message, false);

@@ -613,6 +613,7 @@ class ApiController {
       String lat,
       String lng,
       String address_type,
+      String address_id,
       {String address2 = ''}) async {
     UserModel user = await SharedPrefs.getUser();
 
@@ -640,8 +641,13 @@ class ApiController {
         "lat": "${lat}",
         "lng": "${lng}",
         "address_type": address_type,
-
       });
+
+      if(method == "EDIT"){
+        request.fields.addAll({
+          "address_id": address_id,
+        });
+      }
 
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();

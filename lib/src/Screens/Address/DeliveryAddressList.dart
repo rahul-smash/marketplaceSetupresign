@@ -132,7 +132,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                MaterialPageRoute(
                 builder: (BuildContext context) {
 
-                  return DragMarkerMap();
+                  return DragMarkerMap(null);
                 },
                 fullscreenDialog: true,
               )
@@ -287,29 +287,28 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                         color: infoLabel, fontWeight: FontWeight.w500)),
               ),
               onTap: () async {
-                /*var result = await Navigator.push(
-                    context,
+                print("edit=${area.address}");
+
+                var result = await Navigator.push(context,
                     MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          SaveDeliveryAddress(area, () {
-                        print('@@---Edit---SaveDeliveryAddress----------');
-                      }, "", coordinates),
+                      builder: (BuildContext context) => DragMarkerMap(area),
                       fullscreenDialog: true,
-                    ));
+                    )
+                );
                 print("-Edit-result--${result}-------");
                 if (result == true) {
                   setState(() {
                     isLoading = true;
                   });
                   DeliveryAddressResponse response =
-                      await ApiController.getAddressApiRequest();
+                  await ApiController.getAddressApiRequest();
                   //Utils.hideProgressDialog(context);
                   setState(() {
                     //addressList = null;
                     isLoading = false;
                     addressList = response.data;
                   });
-                }*/
+                }
               },
             ),
           ),
