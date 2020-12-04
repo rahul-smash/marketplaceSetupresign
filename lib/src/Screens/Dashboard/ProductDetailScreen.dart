@@ -82,15 +82,15 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       showAddButton = counter == 0 ? true : false;
       setState(() {});
     });
-    databaseHelper
-        .checkProductsExistInFavTable(
-            DatabaseHelper.Favorite_Table, widget.product.id)
-        .then((favValue) {
-      setState(() {
-        widget.isFav = favValue.toString().compareTo('1') == 0;
-        print('is fave == ${widget.isFav}');
-      });
-    });
+//    databaseHelper
+//        .checkProductsExistInFavTable(
+//            DatabaseHelper.Favorite_Table, widget.product.id)
+//        .then((favValue) {
+//      setState(() {
+//        widget.isFav = favValue.toString().compareTo('1') == 0;
+//        print('is fave == ${widget.isFav}');
+//      });
+//    });
   }
 
   Widget build(BuildContext context) {
@@ -940,92 +940,92 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
     return isProductAvailable;
   }
 
-  Widget favIcon() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: InkWell(
-        onTap: () async {
-          int count = await databaseHelper.checkProductsExistInFavTable(
-              DatabaseHelper.Favorite_Table, widget.product.id);
+//  Widget favIcon() {
+//    return Align(
+//      alignment: Alignment.centerRight,
+//      child: InkWell(
+//        onTap: () async {
+//          int count = await databaseHelper.checkProductsExistInFavTable(
+//              DatabaseHelper.Favorite_Table, widget.product.id);
+//
+//          Product product = widget.product;
+//          if (count == 1) {
+//            widget.isFav = false;
+//            await databaseHelper.deleteFav(
+//                DatabaseHelper.Favorite_Table, product.id);
+//          } else if (count == 0) {
+//            String variantId, weight, mrpPrice, price, discount, isUnitType;
+//            variantId = variant == null ? widget.product.variantId : variant.id;
+//            weight = variant == null ? widget.product.weight : variant.weight;
+//            mrpPrice =
+//                variant == null ? widget.product.mrpPrice : variant.mrpPrice;
+//            price = variant == null ? widget.product.price : variant.price;
+//            discount =
+//                variant == null ? widget.product.discount : variant.discount;
+//            isUnitType =
+//                variant == null ? widget.product.isUnitType : variant.unitType;
+//
+//            widget.isFav = true;
+//            product.variantId = variantId;
+//            product.weight = weight;
+//            product.mrpPrice = mrpPrice;
+//            product.price = price;
+//            product.discount = discount;
+//            product.isUnitType = isUnitType;
+//            insertInFavTable(product, counter);
+//          }
+//          setState(() {});
+//        },
+//        child: Container(
+//          height: 30,
+//          width: 30,
+//          decoration: BoxDecoration(
+//            color: favGrayColor,
+//            border: Border.all(
+//              color: favGrayColor,
+//              width: 1,
+//            ),
+//            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+//          ),
+//          margin: EdgeInsets.fromLTRB(0, 5, 20, 0),
+//          child: Visibility(
+//            visible: true,
+//            child: Utils.showFavIcon(widget.isFav ? '1' : '0'),
+//          ),
+//        ),
+//      ),
+//    );
+//  }
 
-          Product product = widget.product;
-          if (count == 1) {
-            widget.isFav = false;
-            await databaseHelper.deleteFav(
-                DatabaseHelper.Favorite_Table, product.id);
-          } else if (count == 0) {
-            String variantId, weight, mrpPrice, price, discount, isUnitType;
-            variantId = variant == null ? widget.product.variantId : variant.id;
-            weight = variant == null ? widget.product.weight : variant.weight;
-            mrpPrice =
-                variant == null ? widget.product.mrpPrice : variant.mrpPrice;
-            price = variant == null ? widget.product.price : variant.price;
-            discount =
-                variant == null ? widget.product.discount : variant.discount;
-            isUnitType =
-                variant == null ? widget.product.isUnitType : variant.unitType;
-
-            widget.isFav = true;
-            product.variantId = variantId;
-            product.weight = weight;
-            product.mrpPrice = mrpPrice;
-            product.price = price;
-            product.discount = discount;
-            product.isUnitType = isUnitType;
-            insertInFavTable(product, counter);
-          }
-          setState(() {});
-        },
-        child: Container(
-          height: 30,
-          width: 30,
-          decoration: BoxDecoration(
-            color: favGrayColor,
-            border: Border.all(
-              color: favGrayColor,
-              width: 1,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          ),
-          margin: EdgeInsets.fromLTRB(0, 5, 20, 0),
-          child: Visibility(
-            visible: true,
-            child: Utils.showFavIcon(widget.isFav ? '1' : '0'),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void insertInFavTable(Product product, int quantity) {
-    var mId = int.parse(product.id);
-    String productJson = JsonEncoder().convert(product.toJson());
-    //print("${productJson}");
-
-    Map<String, dynamic> row = {
-      DatabaseHelper.ID: mId,
-      DatabaseHelper.VARIENT_ID: product.variantId,
-      DatabaseHelper.PRODUCT_ID: product.id,
-      DatabaseHelper.WEIGHT: product.weight,
-      DatabaseHelper.isFavorite: product.isFav,
-      DatabaseHelper.Product_Json: productJson,
-      DatabaseHelper.MRP_PRICE: product.mrpPrice,
-      DatabaseHelper.PRICE: product.price,
-      DatabaseHelper.DISCOUNT: product.discount,
-      DatabaseHelper.QUANTITY: quantity.toString(),
-      DatabaseHelper.IS_TAX_ENABLE: product.isTaxEnable,
-      DatabaseHelper.Product_Name: product.title,
-      DatabaseHelper.UNIT_TYPE: product.isUnitType,
-      DatabaseHelper.nutrient: product.nutrient,
-      DatabaseHelper.description: product.description,
-      DatabaseHelper.imageType: product.imageType,
-      DatabaseHelper.imageUrl: product.imageUrl,
-      DatabaseHelper.image_100_80: product.image10080,
-      DatabaseHelper.image_300_200: product.image300200,
-    };
-
-    databaseHelper.addProductToFavTable(row).then((count) {
-      //print("-------count--------${count}-----");
-    });
-  }
+//  void insertInFavTable(Product product, int quantity) {
+//    var mId = int.parse(product.id);
+//    String productJson = JsonEncoder().convert(product.toJson());
+//    //print("${productJson}");
+//
+//    Map<String, dynamic> row = {
+//      DatabaseHelper.ID: mId,
+//      DatabaseHelper.VARIENT_ID: product.variantId,
+//      DatabaseHelper.PRODUCT_ID: product.id,
+//      DatabaseHelper.WEIGHT: product.weight,
+//      DatabaseHelper.isFavorite: product.isFav,
+//      DatabaseHelper.Product_Json: productJson,
+//      DatabaseHelper.MRP_PRICE: product.mrpPrice,
+//      DatabaseHelper.PRICE: product.price,
+//      DatabaseHelper.DISCOUNT: product.discount,
+//      DatabaseHelper.QUANTITY: quantity.toString(),
+//      DatabaseHelper.IS_TAX_ENABLE: product.isTaxEnable,
+//      DatabaseHelper.Product_Name: product.title,
+//      DatabaseHelper.UNIT_TYPE: product.isUnitType,
+//      DatabaseHelper.nutrient: product.nutrient,
+//      DatabaseHelper.description: product.description,
+//      DatabaseHelper.imageType: product.imageType,
+//      DatabaseHelper.imageUrl: product.imageUrl,
+//      DatabaseHelper.image_100_80: product.image10080,
+//      DatabaseHelper.image_300_200: product.image300200,
+//    };
+//
+//    databaseHelper.addProductToFavTable(row).then((count) {
+//      //print("-------count--------${count}-----");
+//    });
+//  }
 }

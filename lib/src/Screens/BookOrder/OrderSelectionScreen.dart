@@ -8,6 +8,7 @@ import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
@@ -89,7 +90,7 @@ class _OrderSelectionScreen extends State<OrderSelectionScreen> {
                           onTap: () async {
                             print('@@CartBottomView----'+"DeliveryScreen");
 
-                            StoreModel storeObject = await SharedPrefs.getStore();
+                            StoreDataObj storeObject = await SharedPrefs.getStoreData();
                             bool status = Utils.checkStoreOpenTime(storeObject,OrderType.Delivery);
                             if(!status){
                               Utils.showToast("${storeObject.closehoursMessage}", false);
@@ -143,7 +144,7 @@ class _OrderSelectionScreen extends State<OrderSelectionScreen> {
                           onTap: ()  async {
                             print('@@CartBottomView----'+"PickUPActivy");
 
-                            StoreModel storeObject = await SharedPrefs.getStore();
+                            StoreDataObj storeObject = await SharedPrefs.getStoreData();
                             bool status = Utils.checkStoreOpenTime(storeObject,OrderType.Delivery);
                             if(!status){
                               Utils.showToast("${storeObject.closehoursMessage}", false);

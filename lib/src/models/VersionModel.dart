@@ -32,6 +32,8 @@ class BrandVersionModel {
 }
 
 class BrandData {
+  String allowCustomerForGst;
+
   BrandData(
       {this.id,
       this.name,
@@ -45,6 +47,9 @@ class BrandData {
       this.logo,
       this.currency,
       this.showCurrency,
+      this.otpSkip,
+      this.social_login,
+      this.deliveryFacility,
       this.favIcon,
       this.appIcon,
       this.appShareLink,
@@ -65,6 +70,7 @@ class BrandData {
       this.domain,
       this.poweredByText,
       this.poweredByLink,
+      this.allowCustomerForGst,
       this.blDeviceIdUnique,
       this.isRefererFnEnable,
       this.homeScreenSection,
@@ -88,6 +94,9 @@ class BrandData {
   String appShareLink;
   String androidShareLink;
   String iphoneShareLink;
+  String otpSkip;
+  String social_login;
+  String deliveryFacility;
   String currencyUnicode;
   String internationalOtp;
   String onlinePayment;
@@ -121,6 +130,9 @@ class BrandData {
       zipcode: json["zipcode"],
       logo: json["logo"],
       currency: json["currency"],
+      otpSkip: json['otp_skip'],
+      social_login: json['social_login'],
+      deliveryFacility: json['delivery_facility'],
       showCurrency: json["show_currency"],
       favIcon: json["fav_icon"],
       appIcon: json["app_icon"],
@@ -148,6 +160,7 @@ class BrandData {
       poweredByLink: json["powered_by_link"],
       blDeviceIdUnique: json["bl_device_id_unique"],
       isRefererFnEnable: json["is_referer_fn_enable"],
+      allowCustomerForGst: json["allow_customer_for_gst"],
       homeScreenSection:
           List<dynamic>.from(json["home_screen_section"].map((x) => x)),
       filters:
@@ -168,6 +181,9 @@ class BrandData {
         "zipcode": zipcode,
         "logo": logo,
         "currency": currency,
+        'otp_skip': otpSkip,
+        'social_login': social_login,
+        'delivery_facility': deliveryFacility,
         "show_currency": showCurrency,
         "fav_icon": favIcon,
         "app_icon": appIcon,
@@ -194,6 +210,7 @@ class BrandData {
         "bl_device_id_unique": blDeviceIdUnique,
         "is_referer_fn_enable": isRefererFnEnable,
         "web_app_theme_colors": webAppThemeColors,
+        "allow_customer_for_gst": allowCustomerForGst,
         "home_screen_section":
             List<dynamic>.from(homeScreenSection.map((x) => x)),
         "filters": List<dynamic>.from(filters.map((x) => x.toJson())),

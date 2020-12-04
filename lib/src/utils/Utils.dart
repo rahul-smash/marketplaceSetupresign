@@ -469,7 +469,7 @@ class Utils {
   }
 
   static bool checkStoreOpenTime(
-      StoreModel storeObject, OrderType deliveryType) {
+      var storeObject, OrderType deliveryType) {
     // in case of deliver ignore is24x7Open
     bool status = false;
     try {

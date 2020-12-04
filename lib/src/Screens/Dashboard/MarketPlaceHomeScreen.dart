@@ -28,6 +28,7 @@ import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
+import 'package:restroapp/src/models/TagsModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
@@ -37,6 +38,7 @@ import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'RestroLIstScreen.dart';
 import 'SearchScreen.dart';
 import 'dart:io';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
@@ -86,8 +88,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   SubCategoryModel subCategory;
 
-  String selectedSubCategoryId;
-  CategoryModel selectedCategory;
   CategoriesModel categoriesModel;
 
   Location location = new Location();
@@ -96,7 +96,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   LocationData _locationData;
   String locationAddress = "Select Location";
   ScrollController controller = ScrollController();
-  bool isViewAllSelected = false;
+
   StoresModel allStoreData;
 
   StoreDataModel _selectedSingleStore;
@@ -104,24 +104,28 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   HomeScreenEnum _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
   HomeScreenEnum _previousSelectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
 
+  TagsModel tagsModel;
+
+  StoresModel storeData;
+
   _MarketPlaceHomeScreenState(this.store);
 
   @override
   void initState() {
     super.initState();
     isStoreClosed = false;
-    isViewAllSelected = false;
+//    isViewAllSelected = false;
     initFirebase();
     _setSetCurrentScreen();
     cartBadgeCount = 0;
-    getCartCount();
-    listenCartChanges();
-    checkForMultiStore();
-    getCategoryApi();
     listenEvent();
+    getCartCount();
+    checkForMultiStore();
     getAddressFromLocation();
+    getCategoryApi();
+    _getTagApi();
+    _getStoreApi();
     try {
-      //AppConstant.placeholderUrl = store.banner10080;
       print("-----store.banners-----${store.banners.length}------");
       if (store.banners.isEmpty) {
 //        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
@@ -162,14 +166,24 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   }
 
   void listenEvent() {
-    eventBus.on<onViewAllSelected>().listen((event) {
-      print("isViewAllSelected=${event.isViewAllSelected}");
-      _selectedHomeScreen = event.selectedScreen;
-      isViewAllSelected = event.isViewAllSelected;
-      allStoreData = event.allStoreData;
-      setState(() {});
-      scrollTop();
+    eventBus.on<updateCartCount>().listen((event) {
+      getCartCount();
     });
+    eventBus.on<openHome>().listen((event) {
+      setState(() {
+        _controller.text = '';
+        isCategoryViewSelected = false;
+      });
+    });
+
+//    eventBus.on<onViewAllSelected>().listen((event) {
+//      print("isViewAllSelected=${event.isViewAllSelected}");
+//      _selectedHomeScreen = event.selectedScreen;
+//      isViewAllSelected = event.isViewAllSelected;
+//      allStoreData = event.allStoreData;
+//      setState(() {});
+//      scrollTop();
+//    });
 
     eventBus.on<onCartRemoved>().listen((event) {
       setState(() {
@@ -216,21 +230,12 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               case HomeScreenEnum.HOME_RESTAURANT_VIEW:
                 setState(() {
                   _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
-                  isViewAllSelected = false;
                 });
                 return new Future(() => false);
                 break;
               case HomeScreenEnum.HOME_BAND_VIEW:
               default:
-                if (isViewAllSelected) {
-                  setState(() {
-                    _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
-                    isViewAllSelected = false;
-                  });
-                  return new Future(() => false);
-                } else {
-                  return new Future(() => true);
-                }
+                return new Future(() => true);
             }
           },
         ));
@@ -522,17 +527,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   _handleDrawer() async {
     try {
-      if (isViewAllSelected) {
+      if (checkIfStoreClosed()) {
+        DialogUtils.displayCommonDialog(
+            context, store.name, /*store.storeMsg*/ "Store Closed");
       } else {
-        if (checkIfStoreClosed()) {
-          DialogUtils.displayCommonDialog(
-              context, store.name, /*store.storeMsg*/ "Store Closed");
-        } else {
-          _key.currentState.openDrawer();
-          if (AppConstant.isLoggedIn) {
-            user = await SharedPrefs.getUser();
-            if (user != null) setState(() {});
-          }
+        _key.currentState.openDrawer();
+        if (AppConstant.isLoggedIn) {
+          user = await SharedPrefs.getUser();
+          if (user != null) setState(() {});
         }
       }
     } catch (e) {
@@ -622,18 +624,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     debugPrint('onDidReceiveLocalNotification : ');
   }
 
-  void listenCartChanges() {
-    eventBus.on<updateCartCount>().listen((event) {
-      getCartCount();
-    });
-    eventBus.on<openHome>().listen((event) {
-      setState(() {
-        _controller.text = '';
-        isCategoryViewSelected = false;
-      });
-    });
-  }
-
   void checkForMultiStore() {
     print("isMultiStore=${widget.configObject.isMultiStore}");
     /*if (widget.configObject.isMultiStore) {
@@ -697,6 +687,24 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         //getHomeCategoryProductApi();
       });
     });*/
+  }
+
+  void _getTagApi() {
+    ApiController.tagsApiRequest().then((tagsResponse) {
+      setState(() {
+        this.tagsModel = tagsResponse;
+      });
+    });
+  }
+
+  void _getStoreApi() {
+    //----------------------------------------------
+    ApiController.storesApiRequest(widget.initialPosition)
+        .then((storesResponse) {
+      setState(() {
+        this.storeData = storesResponse;
+      });
+    });
   }
 
   Future logout(BuildContext context, BranchData selectedStore) async {
@@ -1081,7 +1089,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         return Column(
           children: [
             Visibility(
-              visible: isViewAllSelected ? false : true,
+              visible: true,
               child: _addSearchView(),
             ),
             _getMiddleView()
@@ -1091,8 +1099,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   }
 
   Widget _getRestaurantList() {
-    return HomeSearchView(
+    return RestroListScreen(
       allStoreData,
+      initialPosition:  widget.initialPosition,
+      tagsModel: tagsModel,
       selectedScreen: _selectedHomeScreen,
       callback: <Object>({value}) {
         setState(() {
@@ -1123,42 +1133,37 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Visibility(
-                  visible: isViewAllSelected ? false : true,
-                  child: addBanners(),
+                addBanners(),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: imgList.map((url) {
+                      int index = imgList.indexOf(url);
+                      return _current == index
+                          ? Container(
+                        width: 7.0,
+                        height: 7.0,
+                        margin: EdgeInsets.symmetric(
+                            vertical: 0.0, horizontal: 2.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: dotIncreasedColor,
+                        ),
+                      )
+                          : Container(
+                        width: 6.0,
+                        height: 6.0,
+                        margin: EdgeInsets.symmetric(
+                            vertical: 0.0, horizontal: 2.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color.fromRGBO(0, 0, 0, 0.4),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
-                Visibility(
-                    visible: isViewAllSelected ? false : imgList.length > 1,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: imgList.map((url) {
-                          int index = imgList.indexOf(url);
-                          return _current == index
-                              ? Container(
-                                  width: 7.0,
-                                  height: 7.0,
-                                  margin: EdgeInsets.symmetric(
-                                      vertical: 0.0, horizontal: 2.0),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: dotIncreasedColor,
-                                  ),
-                                )
-                              : Container(
-                                  width: 6.0,
-                                  height: 6.0,
-                                  margin: EdgeInsets.symmetric(
-                                      vertical: 0.0, horizontal: 2.0),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color.fromRGBO(0, 0, 0, 0.4),
-                                  ),
-                                );
-                        }).toList(),
-                      ),
-                    )),
                 isLoading
                     ? Center(child: CircularProgressIndicator())
                     : categoriesModel == null
@@ -1170,7 +1175,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                                 /*categoryResponse,*/
                                 store,
                                 subCategory,
-                                isViewAllRestSelected: isViewAllSelected,
+                                storeData: storeData,
+                                tagsModel: tagsModel,
                                 callback: <Object>({value}) {
                                   setState(() {
                                     if (value == null) {
@@ -1187,11 +1193,20 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                                       });
                                       return;
                                     }
+
+                                    if (value is StoresModel) {
+                                      setState(() {
+                                        allStoreData = value;
+                                        _previousSelectedHomeScreen =
+                                            _selectedHomeScreen;
+                                        _selectedHomeScreen = HomeScreenEnum
+                                            .HOME_RESTAURANT_VIEW;
+                                      });
+                                      return;
+                                    }
                                   });
                                   return;
                                 },
-                                selectedCategoryId: selectedSubCategoryId,
-                                selectedCategory: selectedCategory,
                               )
                             : Container()
               ],
@@ -1207,7 +1222,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           onPressed: () {
             setState(() {
               _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
-              isViewAllSelected = false;
             });
           },
         );
@@ -1220,7 +1234,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             setState(() {
               if (_selectedHomeScreen == HomeScreenEnum.HOME_BAND_VIEW) {
                 _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
-                isViewAllSelected = false;
               } else {
                 _selectedHomeScreen = _previousSelectedHomeScreen;
               }
@@ -1231,17 +1244,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       case HomeScreenEnum.HOME_SEARCH_VIEW:
       case HomeScreenEnum.HOME_BAND_VIEW:
       default:
-        return isViewAllSelected
-            ? IconButton(
-                icon: Icon(Icons.keyboard_arrow_left, size: 35),
-                onPressed: () {
-                  setState(() {
-                    _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
-                    isViewAllSelected = false;
-                  });
-                },
-              )
-            : IconButton(
+        return  IconButton(
                 icon: Image.asset('images/menuicon.png', width: 25),
                 onPressed: _handleDrawer,
               );

@@ -17,10 +17,10 @@ class DatabaseHelper {
   static Database _db;
 
   // Database table names
-  static final String Categories_Table = "categories";
-  static final String Sub_Categories_Table = "sub_categories";
-  static final String Products_Table = "products";
-  static final String Favorite_Table = "favorite";
+//  static final String Categories_Table = "categories";
+//  static final String Sub_Categories_Table = "sub_categories";
+//  static final String Products_Table = "products";
+//  static final String Favorite_Table = "favorite";
   static final String CART_Table = "cart";
 
 //  static final String VARIANT_Table = "Variant";
@@ -79,58 +79,58 @@ class DatabaseHelper {
 
   void _onCreate(Database db, int version) async {
     // When creating the db, create the tables
-    await db.execute("CREATE TABLE ${Categories_Table}("
-        "id TEXT, "
-        "title TEXT, "
-        "version TEXT, "
-        "deleted TEXT, "
-        "show_product_image TEXT, "
-        "sort TEXT, "
-        "image_100_80 TEXT, "
-        "image_300_200 TEXT, "
-        "sub_category TEXT, "
-        "image TEXT"
-        ")");
-    await db.execute("CREATE TABLE ${Sub_Categories_Table}("
-        "id TEXT, "
-        "parent_id TEXT, "
-        "title TEXT, "
-        "version TEXT, "
-        "status TEXT, "
-        "deleted TEXT, "
-        "sort TEXT"
-        ")");
-    await db.execute("CREATE TABLE ${Products_Table}("
-        "id TEXT, "
-        "store_id TEXT, "
-        "category_ids TEXT, "
-        "title TEXT, "
-        "brand TEXT, "
-        "nutrient TEXT, "
-        "description TEXT, "
-        "tags TEXT, "
-        "isfavorite TEXT, "
-        "image TEXT, "
-        "image_url TEXT, "
-        "status TEXT, "
-        "image_type TEXT, "
-        "show_price TEXT, "
-        "isTaxEnable TEXT, "
-        "image_100_80 TEXT, "
-        "image_300_200 TEXT, "
-        "gst_tax_rate TEXT, "
-        "gst_tax_type TEXT, "
-        "deleted TEXT, "
-        "sort TEXT, "
-        "selectedVariant TEXT, "
-        "variantId TEXT, "
-        "weight TEXT, "
-        "mrpPrice TEXT, "
-        "price TEXT, "
-        "discount TEXT, "
-        "isUnitType TEXT, "
-        "variants TEXT"
-        ")");
+//    await db.execute("CREATE TABLE ${Categories_Table}("
+//        "id TEXT, "
+//        "title TEXT, "
+//        "version TEXT, "
+//        "deleted TEXT, "
+//        "show_product_image TEXT, "
+//        "sort TEXT, "
+//        "image_100_80 TEXT, "
+//        "image_300_200 TEXT, "
+//        "sub_category TEXT, "
+//        "image TEXT"
+//        ")");
+//    await db.execute("CREATE TABLE ${Sub_Categories_Table}("
+//        "id TEXT, "
+//        "parent_id TEXT, "
+//        "title TEXT, "
+//        "version TEXT, "
+//        "status TEXT, "
+//        "deleted TEXT, "
+//        "sort TEXT"
+//        ")");
+//    await db.execute("CREATE TABLE ${Products_Table}("
+//        "id TEXT, "
+//        "store_id TEXT, "
+//        "category_ids TEXT, "
+//        "title TEXT, "
+//        "brand TEXT, "
+//        "nutrient TEXT, "
+//        "description TEXT, "
+//        "tags TEXT, "
+//        "isfavorite TEXT, "
+//        "image TEXT, "
+//        "image_url TEXT, "
+//        "status TEXT, "
+//        "image_type TEXT, "
+//        "show_price TEXT, "
+//        "isTaxEnable TEXT, "
+//        "image_100_80 TEXT, "
+//        "image_300_200 TEXT, "
+//        "gst_tax_rate TEXT, "
+//        "gst_tax_type TEXT, "
+//        "deleted TEXT, "
+//        "sort TEXT, "
+//        "selectedVariant TEXT, "
+//        "variantId TEXT, "
+//        "weight TEXT, "
+//        "mrpPrice TEXT, "
+//        "price TEXT, "
+//        "discount TEXT, "
+//        "isUnitType TEXT, "
+//        "variants TEXT"
+//        ")");
     await db.execute("CREATE TABLE ${CART_Table}("
         "id INTEGER, "
         "store_id TEXT, " // NEW
@@ -160,190 +160,190 @@ class DatabaseHelper {
         "image_300_200 TEXT, "
         "unit_type TEXT"
         ")");
-    await db.execute("CREATE TABLE ${Favorite_Table}("
-        "id INTEGER, "
-        "product_json TEXT, "
-        "product_name TEXT, "
-        "isfavorite TEXT, "
-        "nutrient TEXT, "
-        "description TEXT, "
-        "imageType TEXT, "
-        "imageUrl TEXT, "
-        "variant_id TEXT, "
-        "product_id TEXT, "
-        "weight TEXT, "
-        "mrp_price TEXT, "
-        "price TEXT, "
-        "discount TEXT, "
-        "quantity TEXT, "
-        "isTaxEnable TEXT, "
-        "image_100_80 TEXT, "
-        "image_300_200 TEXT, "
-        "unit_type TEXT"
-        ")");
+//    await db.execute("CREATE TABLE ${Favorite_Table}("
+//        "id INTEGER, "
+//        "product_json TEXT, "
+//        "product_name TEXT, "
+//        "isfavorite TEXT, "
+//        "nutrient TEXT, "
+//        "description TEXT, "
+//        "imageType TEXT, "
+//        "imageUrl TEXT, "
+//        "variant_id TEXT, "
+//        "product_id TEXT, "
+//        "weight TEXT, "
+//        "mrp_price TEXT, "
+//        "price TEXT, "
+//        "discount TEXT, "
+//        "quantity TEXT, "
+//        "isTaxEnable TEXT, "
+//        "image_100_80 TEXT, "
+//        "image_300_200 TEXT, "
+//        "unit_type TEXT"
+//        ")");
   }
 
   void _onUpgrade(Database db, int oldVersion, int newVersion) async {
 //    db.execute("ALTER TABLE ${Products_Table} ADD COLUMN newCol TEXT;");
   }
 
-  Future<int> saveCategories(CategoryModel categoryModel) async {
-    var dbClient = await db;
-    int res = await dbClient.insert(Categories_Table, categoryModel.toMap());
-    return res;
-  }
+//  Future<int> saveCategories(CategoryModel categoryModel) async {
+//    var dbClient = await db;
+//    int res = await dbClient.insert(Categories_Table, categoryModel.toMap());
+//    return res;
+//  }
 
   Future<List<CategoryModel>> getCategories() async {
     List<CategoryModel> categoryList = new List();
-    var dbClient = await db;
-    List<String> columnsToSelect = [
-      ID,
-      TITLE,
-      "version",
-      "deleted",
-      "show_product_image",
-      "sort",
-      image_100_80,
-      image_300_200,
-      "sub_category",
-      "image"
-    ];
-
-    List<Map> resultList =
-        await dbClient.query(Categories_Table, columns: columnsToSelect);
-    if (resultList != null && resultList.isNotEmpty) {
-      resultList.forEach((row) {
-        CategoryModel categoryModel = CategoryModel();
-        categoryModel.id = row[ID].toString();
-        categoryModel.title = row[TITLE];
-        categoryModel.version = row["version"];
-        categoryModel.image300200 = row[image_300_200];
-        categoryList.add(categoryModel);
-      });
-    } else {
-      //print("-empty cart-in db--");
-    }
+//    var dbClient = await db;
+//    List<String> columnsToSelect = [
+//      ID,
+//      TITLE,
+//      "version",
+//      "deleted",
+//      "show_product_image",
+//      "sort",
+//      image_100_80,
+//      image_300_200,
+//      "sub_category",
+//      "image"
+//    ];
+//
+//    List<Map> resultList =
+//        await dbClient.query(Categories_Table, columns: columnsToSelect);
+//    if (resultList != null && resultList.isNotEmpty) {
+//      resultList.forEach((row) {
+//        CategoryModel categoryModel = CategoryModel();
+//        categoryModel.id = row[ID].toString();
+//        categoryModel.title = row[TITLE];
+//        categoryModel.version = row["version"];
+//        categoryModel.image300200 = row[image_300_200];
+//        categoryList.add(categoryModel);
+//      });
+//    } else {
+//      //print("-empty cart-in db--");
+//    }
     return categoryList;
   }
 
-  Future<int> saveSubCategories(
-      SubCategory subCategories, String cat_id) async {
-    var dbClient = await db;
-    int res = await dbClient.insert(
-        Sub_Categories_Table, subCategories.toMap(cat_id));
-    return res;
-  }
+//  Future<int> saveSubCategories(
+//      SubCategory subCategories, String cat_id) async {
+//    var dbClient = await db;
+//    int res = await dbClient.insert(
+//        Sub_Categories_Table, subCategories.toMap(cat_id));
+//    return res;
+//  }
 
   Future<List<SubCategory>> getSubCategories(String parent_id) async {
     List<SubCategory> subCategoryList = new List();
-    var dbClient = await db;
-    List<String> columnsToSelect = [
-      ID,
-      "parent_id",
-      "title",
-      "version",
-      "status",
-      "deleted",
-      "sort"
-    ];
-
-    List<Map> resultList = await dbClient.query(Sub_Categories_Table,
-        columns: columnsToSelect,
-        where: 'parent_id = ?',
-        whereArgs: [parent_id]);
-    if (resultList != null && resultList.isNotEmpty) {
-      resultList.forEach((row) {
-        SubCategory subCategory = SubCategory();
-        subCategory.id = row[ID].toString();
-        subCategory.title = row[TITLE];
-        subCategory.version = row["version"];
-        subCategoryList.add(subCategory);
-      });
-    } else {
-      //print("-empty cart-in db--");
-    }
+//    var dbClient = await db;
+//    List<String> columnsToSelect = [
+//      ID,
+//      "parent_id",
+//      "title",
+//      "version",
+//      "status",
+//      "deleted",
+//      "sort"
+//    ];
+//
+//    List<Map> resultList = await dbClient.query(Sub_Categories_Table,
+//        columns: columnsToSelect,
+//        where: 'parent_id = ?',
+//        whereArgs: [parent_id]);
+//    if (resultList != null && resultList.isNotEmpty) {
+//      resultList.forEach((row) {
+//        SubCategory subCategory = SubCategory();
+//        subCategory.id = row[ID].toString();
+//        subCategory.title = row[TITLE];
+//        subCategory.version = row["version"];
+//        subCategoryList.add(subCategory);
+//      });
+//    } else {
+//      //print("-empty cart-in db--");
+//    }
     return subCategoryList;
   }
 
-  Future<List<SubCategoryModel>> getALLSubCategories() async {
-    List<SubCategoryModel> subCategoryList = new List();
-    var dbClient = await db;
-    List<String> columnsToSelect = [
-      "id",
-      "parent_id",
-      "title",
-      "version",
-      "status",
-      "deleted",
-      "sort"
-    ];
+//  Future<List<SubCategoryModel>> getALLSubCategories() async {
+//    List<SubCategoryModel> subCategoryList = new List();
+//    var dbClient = await db;
+//    List<String> columnsToSelect = [
+//      "id",
+//      "parent_id",
+//      "title",
+//      "version",
+//      "status",
+//      "deleted",
+//      "sort"
+//    ];
+//
+//    List<Map> resultList =
+//        await dbClient.query(Sub_Categories_Table, columns: columnsToSelect);
+//    if (resultList != null && resultList.isNotEmpty) {
+//      resultList.forEach((row) {
+//        SubCategoryModel subCategory = SubCategoryModel();
+//        subCategory.id = row[ID].toString();
+//        subCategory.title = row[TITLE];
+//        subCategory.parentId = row["parent_id"];
+//        subCategory.version = row["version"];
+//        subCategory.status = row["status"];
+//        subCategory.deleted = row["deleted"];
+//        subCategory.sort = row["sort"];
+//
+//        subCategoryList.add(subCategory);
+//      });
+//    } else {
+//      //print("-empty cart-in db--");
+//    }
+//    return subCategoryList;
+//  }
 
-    List<Map> resultList =
-        await dbClient.query(Sub_Categories_Table, columns: columnsToSelect);
-    if (resultList != null && resultList.isNotEmpty) {
-      resultList.forEach((row) {
-        SubCategoryModel subCategory = SubCategoryModel();
-        subCategory.id = row[ID].toString();
-        subCategory.title = row[TITLE];
-        subCategory.parentId = row["parent_id"];
-        subCategory.version = row["version"];
-        subCategory.status = row["status"];
-        subCategory.deleted = row["deleted"];
-        subCategory.sort = row["sort"];
+//  Future<List<SubCategoryModel>> getSubCategoriesFromID(
+//      String subCategoriesID) async {
+//    List<SubCategoryModel> subCategoryList = new List();
+//    var dbClient = await db;
+//    List<String> columnsToSelect = [
+//      "id",
+//      "parent_id",
+//      "title",
+//      "version",
+//      "status",
+//      "deleted",
+//      "sort"
+//    ];
+//
+//    List<Map> resultList = await dbClient.query(Sub_Categories_Table,
+//        columns: columnsToSelect,
+//        where: 'id = ?',
+//        whereArgs: [subCategoriesID]);
+//    if (resultList != null && resultList.isNotEmpty) {
+//      resultList.forEach((row) {
+//        SubCategoryModel subCategory = SubCategoryModel();
+//        subCategory.id = row[ID].toString();
+//        subCategory.title = row[TITLE];
+//        subCategory.parentId = row["parent_id"];
+//        subCategory.version = row["version"];
+//        subCategory.status = row["status"];
+//        subCategory.deleted = row["deleted"];
+//        subCategory.sort = row["sort"];
+//
+//        subCategoryList.add(subCategory);
+//      });
+//    } else {
+//      //print("-empty cart-in db--");
+//    }
+////    print("getSubCategoriesFromID end query ${DateTime.now().millisecondsSinceEpoch}");
+//
+//    return subCategoryList;
+//  }
 
-        subCategoryList.add(subCategory);
-      });
-    } else {
-      //print("-empty cart-in db--");
-    }
-    return subCategoryList;
-  }
-
-  Future<List<SubCategoryModel>> getSubCategoriesFromID(
-      String subCategoriesID) async {
-    List<SubCategoryModel> subCategoryList = new List();
-    var dbClient = await db;
-    List<String> columnsToSelect = [
-      "id",
-      "parent_id",
-      "title",
-      "version",
-      "status",
-      "deleted",
-      "sort"
-    ];
-
-    List<Map> resultList = await dbClient.query(Sub_Categories_Table,
-        columns: columnsToSelect,
-        where: 'id = ?',
-        whereArgs: [subCategoriesID]);
-    if (resultList != null && resultList.isNotEmpty) {
-      resultList.forEach((row) {
-        SubCategoryModel subCategory = SubCategoryModel();
-        subCategory.id = row[ID].toString();
-        subCategory.title = row[TITLE];
-        subCategory.parentId = row["parent_id"];
-        subCategory.version = row["version"];
-        subCategory.status = row["status"];
-        subCategory.deleted = row["deleted"];
-        subCategory.sort = row["sort"];
-
-        subCategoryList.add(subCategory);
-      });
-    } else {
-      //print("-empty cart-in db--");
-    }
-//    print("getSubCategoriesFromID end query ${DateTime.now().millisecondsSinceEpoch}");
-
-    return subCategoryList;
-  }
-
-  Future<int> saveProducts(Product products, String category_ids) async {
-    var dbClient = await db;
-    int res =
-        await dbClient.insert(Products_Table, products.toMap(category_ids));
-    return res;
-  }
+//  Future<int> saveProducts(Product products, String category_ids) async {
+//    var dbClient = await db;
+//    int res =
+//        await dbClient.insert(Products_Table, products.toMap(category_ids));
+//    return res;
+//  }
 
   /*Future<int> saveProductsVariant(Variant variant) async {
     var dbClient = await db;
@@ -351,87 +351,87 @@ class DatabaseHelper {
     return res;
   }*/
 
-  Future<List<Product>> getProducts(String category_ids) async {
-    List<Product> productList = new List();
-    var dbClient = await db;
-    List<String> columnsToSelect = [
-      "id",
-      "store_id",
-      "category_ids",
-      "title",
-      "brand",
-      "nutrient",
-      "description",
-      "tags",
-      "isfavorite",
-      "image",
-      "image_url",
-      "status",
-      "image_type",
-      "show_price",
-      "isTaxEnable",
-      "image_100_80",
-      "image_300_200",
-      "gst_tax_rate",
-      "gst_tax_type",
-      "status",
-      "deleted",
-      "sort",
-      "selectedVariant",
-      "variantId",
-      "weight",
-      "mrpPrice",
-      "price",
-      "discount",
-      "isUnitType",
-      "variants"
-    ];
-
-    List<Map> resultList = await dbClient.query(Products_Table,
-        columns: columnsToSelect,
-        where: 'category_ids = ?',
-        whereArgs: [category_ids]);
-    if (resultList != null && resultList.isNotEmpty) {
-      resultList.forEach((row) {
-        Product product = Product();
-        product.id = row["id"].toString();
-        product.isFav = row["isfavorite"];
-        product.storeId = row["store_id"];
-        product.categoryIds = row["category_ids"];
-        product.title = row["title"];
-        product.brand = row["brand"];
-        product.nutrient = row["nutrient"];
-        product.description = row["description"];
-        product.image = row["image"];
-        product.imageType = row["image_type"];
-        product.imageUrl = row["image_url"] ?? "";
-        product.showPrice = row["show_price"];
-        product.isTaxEnable = row["isTaxEnable"];
-        product.gstTaxType = row["gst_tax_type"];
-        product.gstTaxRate = row["gst_tax_rate"];
-        product.status = row["status"];
-        product.sort = row["sort"];
-        Map<String, dynamic> map = jsonDecode(row["selectedVariant"]);
-        product.selectedVariant = SelectedVariant.fromJson(map);
-        product.deleted = row["deleted"] == 'true';
-        product.image10080 = row["image_100_80"] ?? "";
-        product.image300200 = row["image_300_200"] ?? "";
-        var parsedListJson = jsonDecode(row["variants"]);
-        List<Variant> variantsList =
-            List<Variant>.from(parsedListJson.map((i) => Variant.fromJson(i)));
-        product.variants = variantsList;
-        product.variantId = row["variantId"].toString();
-        product.weight = row["weight"];
-        product.mrpPrice = row["mrpPrice"];
-        product.price = row["price"];
-        product.discount = row["discount"];
-        product.isUnitType = row["isUnitType"];
-        product.tags = row["tags"];
-        productList.add(product);
-      });
-    }
-    return productList;
-  }
+//  Future<List<Product>> getProducts(String category_ids) async {
+//    List<Product> productList = new List();
+//    var dbClient = await db;
+//    List<String> columnsToSelect = [
+//      "id",
+//      "store_id",
+//      "category_ids",
+//      "title",
+//      "brand",
+//      "nutrient",
+//      "description",
+//      "tags",
+//      "isfavorite",
+//      "image",
+//      "image_url",
+//      "status",
+//      "image_type",
+//      "show_price",
+//      "isTaxEnable",
+//      "image_100_80",
+//      "image_300_200",
+//      "gst_tax_rate",
+//      "gst_tax_type",
+//      "status",
+//      "deleted",
+//      "sort",
+//      "selectedVariant",
+//      "variantId",
+//      "weight",
+//      "mrpPrice",
+//      "price",
+//      "discount",
+//      "isUnitType",
+//      "variants"
+//    ];
+//
+//    List<Map> resultList = await dbClient.query(Products_Table,
+//        columns: columnsToSelect,
+//        where: 'category_ids = ?',
+//        whereArgs: [category_ids]);
+//    if (resultList != null && resultList.isNotEmpty) {
+//      resultList.forEach((row) {
+//        Product product = Product();
+//        product.id = row["id"].toString();
+//        product.isFav = row["isfavorite"];
+//        product.storeId = row["store_id"];
+//        product.categoryIds = row["category_ids"];
+//        product.title = row["title"];
+//        product.brand = row["brand"];
+//        product.nutrient = row["nutrient"];
+//        product.description = row["description"];
+//        product.image = row["image"];
+//        product.imageType = row["image_type"];
+//        product.imageUrl = row["image_url"] ?? "";
+//        product.showPrice = row["show_price"];
+//        product.isTaxEnable = row["isTaxEnable"];
+//        product.gstTaxType = row["gst_tax_type"];
+//        product.gstTaxRate = row["gst_tax_rate"];
+//        product.status = row["status"];
+//        product.sort = row["sort"];
+//        Map<String, dynamic> map = jsonDecode(row["selectedVariant"]);
+//        product.selectedVariant = SelectedVariant.fromJson(map);
+//        product.deleted = row["deleted"] == 'true';
+//        product.image10080 = row["image_100_80"] ?? "";
+//        product.image300200 = row["image_300_200"] ?? "";
+//        var parsedListJson = jsonDecode(row["variants"]);
+//        List<Variant> variantsList =
+//            List<Variant>.from(parsedListJson.map((i) => Variant.fromJson(i)));
+//        product.variants = variantsList;
+//        product.variantId = row["variantId"].toString();
+//        product.weight = row["weight"];
+//        product.mrpPrice = row["mrpPrice"];
+//        product.price = row["price"];
+//        product.discount = row["discount"];
+//        product.isUnitType = row["isUnitType"];
+//        product.tags = row["tags"];
+//        productList.add(product);
+//      });
+//    }
+//    return productList;
+//  }
 
   /*Future<List<Variant>> getProductsVariants(String productID) async {
     List<Variant> variantList = new List();
@@ -491,11 +491,11 @@ class DatabaseHelper {
     return res;
   }
 
-  Future<int> addProductToFavTable(Map<String, dynamic> row) async {
-    var dbClient = await db;
-    int res = await dbClient.insert(Favorite_Table, row);
-    return res;
-  }
+//  Future<int> addProductToFavTable(Map<String, dynamic> row) async {
+//    var dbClient = await db;
+//    int res = await dbClient.insert(Favorite_Table, row);
+//    return res;
+//  }
 
   Future<int> updateProductInCart(
       Map<String, dynamic> row, String variantId) async {
@@ -693,66 +693,66 @@ class DatabaseHelper {
     return cartList;
   }
 
-  Future<List<Product>> getFavouritesList() async {
-    //print("------------getFavouritesList--------------");
-    List<Product> cartList = new List();
-    var dbClient = await db;
-    List<String> columnsToSelect = [
-      MRP_PRICE,
-      PRICE,
-      DISCOUNT,
-      isFavorite,
-      QUANTITY,
-      Product_Name,
-      Product_Json,
-      VARIENT_ID,
-      WEIGHT,
-      PRODUCT_ID,
-      UNIT_TYPE,
-      IS_TAX_ENABLE,
-      nutrient,
-      description,
-      imageType,
-      imageUrl,
-      image_100_80,
-      image_300_200
-    ];
-
-    //String whereClause = '${DatabaseHelper.isFavorite} = 1';
-
-    List<Map> resultList =
-        await dbClient.query(Favorite_Table, columns: columnsToSelect);
-
-    if (resultList != null && resultList.isNotEmpty) {
-      resultList.forEach((row) {
-        Product product = new Product();
-        product.mrpPrice = row[MRP_PRICE];
-        product.price = row[PRICE];
-        product.isFav = row[isFavorite];
-        product.discount = row[DISCOUNT];
-        product.quantity = row[QUANTITY];
-        product.productJson = row[Product_Json];
-        product.title = row[Product_Name];
-        product.variantId = row[VARIENT_ID];
-        product.weight = row[WEIGHT];
-        product.id = row[PRODUCT_ID];
-        product.isUnitType = row[UNIT_TYPE] ?? '';
-        product.isTaxEnable = row[IS_TAX_ENABLE] ?? '0';
-        product.nutrient = row[nutrient];
-        product.description = row[description];
-        product.imageType = row[imageType];
-        product.imageUrl = row[imageUrl];
-        product.image10080 = row[image_100_80];
-        product.image300200 = row[image_300_200];
-
-        cartList.add(product);
-      });
-    } else {
-      //print("-empty cart-in db--");
-    }
-    //print("-Fav--List.length===>${cartList.length}--");
-    return cartList;
-  }
+//  Future<List<Product>> getFavouritesList() async {
+//    //print("------------getFavouritesList--------------");
+//    List<Product> cartList = new List();
+//    var dbClient = await db;
+//    List<String> columnsToSelect = [
+//      MRP_PRICE,
+//      PRICE,
+//      DISCOUNT,
+//      isFavorite,
+//      QUANTITY,
+//      Product_Name,
+//      Product_Json,
+//      VARIENT_ID,
+//      WEIGHT,
+//      PRODUCT_ID,
+//      UNIT_TYPE,
+//      IS_TAX_ENABLE,
+//      nutrient,
+//      description,
+//      imageType,
+//      imageUrl,
+//      image_100_80,
+//      image_300_200
+//    ];
+//
+//    //String whereClause = '${DatabaseHelper.isFavorite} = 1';
+//
+//    List<Map> resultList =
+//        await dbClient.query(Favorite_Table, columns: columnsToSelect);
+//
+//    if (resultList != null && resultList.isNotEmpty) {
+//      resultList.forEach((row) {
+//        Product product = new Product();
+//        product.mrpPrice = row[MRP_PRICE];
+//        product.price = row[PRICE];
+//        product.isFav = row[isFavorite];
+//        product.discount = row[DISCOUNT];
+//        product.quantity = row[QUANTITY];
+//        product.productJson = row[Product_Json];
+//        product.title = row[Product_Name];
+//        product.variantId = row[VARIENT_ID];
+//        product.weight = row[WEIGHT];
+//        product.id = row[PRODUCT_ID];
+//        product.isUnitType = row[UNIT_TYPE] ?? '';
+//        product.isTaxEnable = row[IS_TAX_ENABLE] ?? '0';
+//        product.nutrient = row[nutrient];
+//        product.description = row[description];
+//        product.imageType = row[imageType];
+//        product.imageUrl = row[imageUrl];
+//        product.image10080 = row[image_100_80];
+//        product.image300200 = row[image_300_200];
+//
+//        cartList.add(product);
+//      });
+//    } else {
+//      //print("-empty cart-in db--");
+//    }
+//    //print("-Fav--List.length===>${cartList.length}--");
+//    return cartList;
+//  }
 
   Future<String> getCartItemsListToJson(
       {bool isOrderVariations = false,
@@ -873,10 +873,10 @@ class DatabaseHelper {
 
   void clearDataBase() async {
     var dbClient = await db;
-    dbClient.delete(Categories_Table);
-    dbClient.delete(Sub_Categories_Table);
-    dbClient.delete(Products_Table);
-    dbClient.delete(Favorite_Table);
+//    dbClient.delete(Categories_Table);
+//    dbClient.delete(Sub_Categories_Table);
+//    dbClient.delete(Products_Table);
+//    dbClient.delete(Favorite_Table);
 //    dbClient.delete(CART_Table);
   }
 

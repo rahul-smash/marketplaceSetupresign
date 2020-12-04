@@ -434,9 +434,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               storeModel == null ? "" : storeModel.storeName,
               "${model.message}");
           if (result != null && result == true) {
-            databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
+//            databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
             databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-            databaseHelper.deleteTable(DatabaseHelper.Products_Table);
+//            databaseHelper.deleteTable(DatabaseHelper.Products_Table);
             eventBus.fire(updateCartCount());
             eventBus.fire(onCartRemoved());
             Navigator.of(context).popUntil((route) => route.isFirst);
@@ -1422,12 +1422,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                           Utils.hideProgressDialog(context);
                           if (model != null && !model.success) {
                             Utils.showToast(model.message, true);
-                            databaseHelper
-                                .deleteTable(DatabaseHelper.Favorite_Table);
+//                            databaseHelper
+//                                .deleteTable(DatabaseHelper.Favorite_Table);
                             databaseHelper
                                 .deleteTable(DatabaseHelper.CART_Table);
-                            databaseHelper
-                                .deleteTable(DatabaseHelper.Products_Table);
+//                            databaseHelper
+//                                .deleteTable(DatabaseHelper.Products_Table);
                             eventBus.fire(updateCartCount());
                             eventBus.fire(onCartRemoved());
                             Navigator.of(context)
@@ -1654,9 +1654,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
     if (response != null && !response.success) {
       Utils.showToast(response.message, true);
-      databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
+//      databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
       databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-      databaseHelper.deleteTable(DatabaseHelper.Products_Table);
+//      databaseHelper.deleteTable(DatabaseHelper.Products_Table);
       eventBus.fire(updateCartCount());
       Navigator.of(context).popUntil((route) => route.isFirst);
       return;
@@ -1824,9 +1824,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         Utils.hideKeyboard(context);
         if (response != null && !response.success) {
           Utils.showToast(response.message, true);
-          databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
+//          databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
           databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-          databaseHelper.deleteTable(DatabaseHelper.Products_Table);
+//          databaseHelper.deleteTable(DatabaseHelper.Products_Table);
           eventBus.fire(updateCartCount());
           eventBus.fire(onCartRemoved());
           Navigator.of(context).popUntil((route) => route.isFirst);

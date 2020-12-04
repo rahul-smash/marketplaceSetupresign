@@ -51,6 +51,8 @@ class ApiConstants{
   static String mobileVerification = 'mobileVerification';
   static String cancelOrder = 'orderCancel';
 
+
+
   static String deliveryAreasArea = 'deliveryAreas/Area';
 
   static String razorpayCreateOrder = 'razorpayCreateOrder';
@@ -97,6 +99,9 @@ class ApiConstants{
   static final String store_configuration = "/store_configuration";
   static final String getCategories = "/inventory/getCategories";
   static String getProducts = '/inventory/getSubCategoryProducts/';
+
+  static String socialLogin = 'socialLogin';
+  static String verifyEmail = 'verifyEmail';
 
 
 }

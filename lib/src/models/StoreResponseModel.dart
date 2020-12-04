@@ -28,6 +28,7 @@ class StoreModel {
   String city;
   String state;
   String country;
+  String wallet_setting;
   String zipcode;
   String lat;
   String lng;
@@ -39,6 +40,7 @@ class StoreModel {
   String version;
   String currency;
   String showCurrency;
+  String social_login;
   String currency_unicode;
   String appShareLink;
   String androidShareLink;
@@ -123,7 +125,7 @@ class StoreModel {
   AppThemeColors appThemeColors;
   WebAppThemeColors webAppThemeColors;
 
-  //new keys addedappapp
+  //new keys added
   bool homePageTitleStatus;
   String homePageTitle;
   bool homePageSubtitleStatus;
@@ -138,119 +140,121 @@ class StoreModel {
   String reviewRatingDisplay;
   String allowCustomerForGst;
 
-  StoreModel(
-      {this.id,
-      this.storeName,
-      this.aboutusBanner,
-      this.location,
-      this.city,
-      this.state,
-      this.country,
-      this.cod,
-      this.zipcode,
-      this.lat,
-      this.lng,
-      this.appThemeColors,
-        this.webAppThemeColors,
-      this.contactPerson,
-      this.contactNumber,
-      this.contactEmail,
-      this.aboutUs,
-      this.otpSkip,
-      this.version,
-      this.currency,
-      this.showCurrency,
-      this.currency_unicode,
-      this.appShareLink,
-      this.androidShareLink,
-      this.iphoneShareLink,
-      this.theme,
-      this.webTheme,
-      this.type,
-      this.catType,
-      this.storeApp,
-      this.storeLogo,
-      this.favIcon,
-      this.bannerTime,
-      this.webCache,
-      this.currentGoldRate,
-      this.scoMetaTitle,
-      this.scoMetaDescription,
-      this.scoMetaKeywords,
-      this.planType,
-      this.updatedPlanType,
-      this.newPlanToBeUpdate,
-      this.laterUpdatePlanType,
-      this.paymentId,
-      this.payment,
-      this.gstNo,
-      this.laterUpdateDate,
-      this.deliveryArea,
-      this.modifiedPlanDate,
-      this.banner,
-      this.videoLink,
-      this.taxLabelName,
-      this.taxRate,
-      this.istaxenable,
-      this.taxDetail,
-      this.fixedTaxDetail,
-      this.storeStatus,
-      this.storeMsg,
-      this.masterCategory,
-      this.recommendedProducts,
-      this.deliverySlot,
-      this.geofencing,
-      this.loyality,
-      this.onlinePayment,
-      this.pickupFacility,
-      this.deliveryFacility,
-      this.inStore,
-      this.internationalOtp,
-      this.multipleStore,
-      this.webMenuSetting,
-      this.mobileNotifications,
-      this.emailNotifications,
-      this.smsNotifications,
-      this.gst,
-      this.gaCode,
-      this.categoryLayout,
-      this.radiusIn,
-      this.productImage,
-      this.deliverySlots,
-      this.is24x7Open,
-      this.openhoursFrom,
-      this.openhoursTo,
-      this.closehoursMessage,
-      this.storeOpenDays,
-      this.timeZone,
-      this.androidAppShare,
-      this.iphoneAppShare,
-      this.windowAppShare,
-      this.banners,
-      this.forceDownload,
-      /* this.geofencing,*/
-      this.appLabels,
-      this.banner10080,
-      this.banner300200,
-      this.currencyAbbr,
-      this.blDeviceIdUnique,
-      this.paymentGateway,
-      this.paymentSetting,
-      this.paymentGatewaySettings,
-      this.isRefererFnEnable,
-      this.homePageTitleStatus,
-        this.homePageTitle,
-        this.homePageSubtitleStatus,
-        this.homePageSubtitle,
-        this.homePageHeaderRight,
-        this.homePageDisplayNumber,
-        this.homePageDisplayNumberType,
-        this.domain,
-        this.poweredByText,
-        this.poweredByLink,
-        this.reviewRatingDisplay,
-        this.allowCustomerForGst,
-      });
+  StoreModel({
+    this.id,
+    this.storeName,
+    this.aboutusBanner,
+    this.location,
+    this.wallet_setting,
+    this.city,
+    this.state,
+    this.country,
+    this.cod,
+    this.zipcode,
+    this.lat,
+    this.lng,
+    this.social_login,
+    this.appThemeColors,
+    this.webAppThemeColors,
+    this.contactPerson,
+    this.contactNumber,
+    this.contactEmail,
+    this.aboutUs,
+    this.otpSkip,
+    this.version,
+    this.currency,
+    this.showCurrency,
+    this.currency_unicode,
+    this.appShareLink,
+    this.androidShareLink,
+    this.iphoneShareLink,
+    this.theme,
+    this.webTheme,
+    this.type,
+    this.catType,
+    this.storeApp,
+    this.storeLogo,
+    this.favIcon,
+    this.bannerTime,
+    this.webCache,
+    this.currentGoldRate,
+    this.scoMetaTitle,
+    this.scoMetaDescription,
+    this.scoMetaKeywords,
+    this.planType,
+    this.updatedPlanType,
+    this.newPlanToBeUpdate,
+    this.laterUpdatePlanType,
+    this.paymentId,
+    this.payment,
+    this.gstNo,
+    this.laterUpdateDate,
+    this.deliveryArea,
+    this.modifiedPlanDate,
+    this.banner,
+    this.videoLink,
+    this.taxLabelName,
+    this.taxRate,
+    this.istaxenable,
+    this.taxDetail,
+    this.fixedTaxDetail,
+    this.storeStatus,
+    this.storeMsg,
+    this.masterCategory,
+    this.recommendedProducts,
+    this.deliverySlot,
+    this.geofencing,
+    this.loyality,
+    this.onlinePayment,
+    this.pickupFacility,
+    this.deliveryFacility,
+    this.inStore,
+    this.internationalOtp,
+    this.multipleStore,
+    this.webMenuSetting,
+    this.mobileNotifications,
+    this.emailNotifications,
+    this.smsNotifications,
+    this.gst,
+    this.gaCode,
+    this.categoryLayout,
+    this.radiusIn,
+    this.productImage,
+    this.deliverySlots,
+    this.is24x7Open,
+    this.openhoursFrom,
+    this.openhoursTo,
+    this.closehoursMessage,
+    this.storeOpenDays,
+    this.timeZone,
+    this.androidAppShare,
+    this.iphoneAppShare,
+    this.windowAppShare,
+    this.banners,
+    this.forceDownload,
+    /* this.geofencing,*/
+    this.appLabels,
+    this.banner10080,
+    this.banner300200,
+    this.currencyAbbr,
+    this.blDeviceIdUnique,
+    this.paymentGateway,
+    this.paymentSetting,
+    this.paymentGatewaySettings,
+    this.isRefererFnEnable,
+    this.homePageTitleStatus,
+    this.homePageTitle,
+    this.homePageSubtitleStatus,
+    this.homePageSubtitle,
+    this.homePageHeaderRight,
+    this.homePageDisplayNumber,
+    this.homePageDisplayNumberType,
+    this.domain,
+    this.poweredByText,
+    this.poweredByLink,
+    this.reviewRatingDisplay,
+    this.allowCustomerForGst,
+  });
 
   StoreModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -267,6 +271,8 @@ class StoreModel {
     cod = json['cod'];
     lat = json['lat'];
     lng = json['lng'];
+    social_login = json['social_login'];
+    wallet_setting = json['wallet_setting'];
     contactPerson = json['contact_person'];
     contactNumber = json['contact_number'];
     contactEmail = json['contact_email'];
@@ -312,11 +318,10 @@ class StoreModel {
       if (json['payment_gateway_settings'] is String) {
         paymentGatewaySettings = null;
       } else {
-        paymentGatewaySettings=
-        json["payment_gateway_settings"] == null ? null : List<
-            PaymentGatewaySettings>.from(
-            json["payment_gateway_settings"].map((x) =>
-                PaymentGatewaySettings.fromJson(x)));
+        paymentGatewaySettings = json["payment_gateway_settings"] == null
+            ? null
+            : List<PaymentGatewaySettings>.from(json["payment_gateway_settings"]
+                .map((x) => PaymentGatewaySettings.fromJson(x)));
 //    paymentGatewaySettings = new List<PaymentGatewaySettings>();
 //    json['payment_gateway_settings'].forEach((v) {
 //    paymentGatewaySettings.add(new PaymentGatewaySettings.fromJson(v));
@@ -324,7 +329,9 @@ class StoreModel {
       }
     }
     appThemeColors = AppThemeColors.fromJson(json["app_theme_colors"]);
-    webAppThemeColors= json["web_app_theme_colors"] == null ? null : WebAppThemeColors.fromJson(json["web_app_theme_colors"]);
+    webAppThemeColors = json["web_app_theme_colors"] == null
+        ? null
+        : WebAppThemeColors.fromJson(json["web_app_theme_colors"]);
     /* if (json['tax_detail'] != null) {
       taxDetail = new List<Null>();
       json['tax_detail'].forEach((v) {
@@ -411,11 +418,15 @@ class StoreModel {
     homePageHeaderRight = json['home_page_header_right'];
     homePageDisplayNumber = json['home_page_display_number'];
     homePageDisplayNumberType = json['home_page_display_number_type'];
-    domain=json["domain"];
-    poweredByText=json["powered_by_text"];
-    poweredByLink=json["powered_by_link"];
-    reviewRatingDisplay=json["review_rating_display"]==null?null:json["review_rating_display"];
-    allowCustomerForGst=json["allow_customer_for_gst"]==null?null:json["allow_customer_for_gst"];
+    domain = json["domain"];
+    poweredByText = json["powered_by_text"];
+    poweredByLink = json["powered_by_link"];
+    reviewRatingDisplay = json["review_rating_display"] == null
+        ? null
+        : json["review_rating_display"];
+    allowCustomerForGst = json["allow_customer_for_gst"] == null
+        ? null
+        : json["allow_customer_for_gst"];
   }
 
   Map<String, dynamic> toJson() {
@@ -434,6 +445,7 @@ class StoreModel {
     data['contact_number'] = this.contactNumber;
     data['contact_email'] = this.contactEmail;
     data['about_us'] = this.aboutUs;
+    data['wallet_setting'] = this.wallet_setting;
     data['otp_skip'] = this.otpSkip;
     data['app_theme_colors'] = this.appThemeColors;
     data['web_app_theme_colors'] = this.webAppThemeColors;
@@ -448,6 +460,7 @@ class StoreModel {
     data['web_theme'] = this.webTheme;
     data['aboutus_banner'] = this.aboutusBanner;
     data['type'] = this.type;
+    data['social_login'] = this.social_login;
     data['cat_type'] = this.catType;
     data['store_app'] = this.storeApp;
     data['store_logo'] = this.storeLogo;
@@ -547,11 +560,11 @@ class StoreModel {
     data['home_page_header_right'] = this.homePageHeaderRight;
     data['home_page_display_number'] = this.homePageDisplayNumber;
     data['home_page_display_number_type'] = this.homePageDisplayNumberType;
-    data['domain']=this.domain;
-    data['powered_by_text']=this.poweredByText;
-    data['powered_by_link']=this.poweredByLink;
-    data['review_rating_display']=this.reviewRatingDisplay;
-    data['allow_customer_for_gst']=this.allowCustomerForGst;
+    data['domain'] = this.domain;
+    data['powered_by_text'] = this.poweredByText;
+    data['powered_by_link'] = this.poweredByLink;
+    data['review_rating_display'] = this.reviewRatingDisplay;
+    data['allow_customer_for_gst'] = this.allowCustomerForGst;
     return data;
   }
 }
@@ -597,7 +610,6 @@ class PaymentGatewaySettings {
     return data;
   }
 }
-
 
 class AppThemeColors {
   String id;
@@ -713,56 +725,102 @@ class WebAppThemeColors {
         id: id ?? this.id,
         storeId: storeId ?? this.storeId,
         webThemePrimaryColor: webThemePrimaryColor ?? this.webThemePrimaryColor,
-        webThemeSecondaryColor: webThemeSecondaryColor ?? this.webThemeSecondaryColor,
-        webThemeCategoryOpenColor: webThemeCategoryOpenColor ?? this.webThemeCategoryOpenColor,
+        webThemeSecondaryColor:
+            webThemeSecondaryColor ?? this.webThemeSecondaryColor,
+        webThemeCategoryOpenColor:
+            webThemeCategoryOpenColor ?? this.webThemeCategoryOpenColor,
         stripsColor: stripsColor ?? this.stripsColor,
         footerColor: footerColor ?? this.footerColor,
-        listingBackgroundColor: listingBackgroundColor ?? this.listingBackgroundColor,
+        listingBackgroundColor:
+            listingBackgroundColor ?? this.listingBackgroundColor,
         listingBorderColor: listingBorderColor ?? this.listingBorderColor,
-        listingBoxBackgroundColor: listingBoxBackgroundColor ?? this.listingBoxBackgroundColor,
+        listingBoxBackgroundColor:
+            listingBoxBackgroundColor ?? this.listingBoxBackgroundColor,
         homeSubHeadingColor: homeSubHeadingColor ?? this.homeSubHeadingColor,
         homeDescriptionColor: homeDescriptionColor ?? this.homeDescriptionColor,
-        categoryListingButtonBorderColor: categoryListingButtonBorderColor ?? this.categoryListingButtonBorderColor,
-        categoryListingBoxBackgroundColor: categoryListingBoxBackgroundColor ?? this.categoryListingBoxBackgroundColor,
+        categoryListingButtonBorderColor: categoryListingButtonBorderColor ??
+            this.categoryListingButtonBorderColor,
+        categoryListingBoxBackgroundColor: categoryListingBoxBackgroundColor ??
+            this.categoryListingBoxBackgroundColor,
       );
 
-  factory WebAppThemeColors.fromRawJson(String str) => WebAppThemeColors.fromJson(json.decode(str));
+  factory WebAppThemeColors.fromRawJson(String str) =>
+      WebAppThemeColors.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory WebAppThemeColors.fromJson(Map<String, dynamic> json) => WebAppThemeColors(
-    id: json["id"] == null ? null : json["id"],
-    storeId: json["store_id"] == null ? null : json["store_id"],
-    webThemePrimaryColor: json["web_theme_primary_color"] == null ? null : json["web_theme_primary_color"],
-    webThemeSecondaryColor: json["web_theme_secondary_color"] == null ? null : json["web_theme_secondary_color"],
-    webThemeCategoryOpenColor: json["web_theme_category_open_color"] == null ? null : json["web_theme_category_open_color"],
-    stripsColor: json["strips_color"] == null ? null : json["strips_color"],
-    footerColor: json["footer_color"] == null ? null : json["footer_color"],
-    listingBackgroundColor: json["listing_background_color"] == null ? null : json["listing_background_color"],
-    listingBorderColor: json["listing_border_color"] == null ? null : json["listing_border_color"],
-    listingBoxBackgroundColor: json["listing_box_background_color"] == null ? null : json["listing_box_background_color"],
-    homeSubHeadingColor: json["home_sub_heading_color"] == null ? null : json["home_sub_heading_color"],
-    homeDescriptionColor: json["home_description_color"] == null ? null : json["home_description_color"],
-    categoryListingButtonBorderColor: json["category_listing_button_border_color"] == null ? null : json["category_listing_button_border_color"],
-    categoryListingBoxBackgroundColor: json["category_listing_box_background_color"] == null ? null : json["category_listing_box_background_color"],
-  );
+  factory WebAppThemeColors.fromJson(Map<String, dynamic> json) =>
+      WebAppThemeColors(
+        id: json["id"] == null ? null : json["id"],
+        storeId: json["store_id"] == null ? null : json["store_id"],
+        webThemePrimaryColor: json["web_theme_primary_color"] == null
+            ? null
+            : json["web_theme_primary_color"],
+        webThemeSecondaryColor: json["web_theme_secondary_color"] == null
+            ? null
+            : json["web_theme_secondary_color"],
+        webThemeCategoryOpenColor: json["web_theme_category_open_color"] == null
+            ? null
+            : json["web_theme_category_open_color"],
+        stripsColor: json["strips_color"] == null ? null : json["strips_color"],
+        footerColor: json["footer_color"] == null ? null : json["footer_color"],
+        listingBackgroundColor: json["listing_background_color"] == null
+            ? null
+            : json["listing_background_color"],
+        listingBorderColor: json["listing_border_color"] == null
+            ? null
+            : json["listing_border_color"],
+        listingBoxBackgroundColor: json["listing_box_background_color"] == null
+            ? null
+            : json["listing_box_background_color"],
+        homeSubHeadingColor: json["home_sub_heading_color"] == null
+            ? null
+            : json["home_sub_heading_color"],
+        homeDescriptionColor: json["home_description_color"] == null
+            ? null
+            : json["home_description_color"],
+        categoryListingButtonBorderColor:
+            json["category_listing_button_border_color"] == null
+                ? null
+                : json["category_listing_button_border_color"],
+        categoryListingBoxBackgroundColor:
+            json["category_listing_box_background_color"] == null
+                ? null
+                : json["category_listing_box_background_color"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "store_id": storeId == null ? null : storeId,
-    "web_theme_primary_color": webThemePrimaryColor == null ? null : webThemePrimaryColor,
-    "web_theme_secondary_color": webThemeSecondaryColor == null ? null : webThemeSecondaryColor,
-    "web_theme_category_open_color": webThemeCategoryOpenColor == null ? null : webThemeCategoryOpenColor,
-    "strips_color": stripsColor == null ? null : stripsColor,
-    "footer_color": footerColor == null ? null : footerColor,
-    "listing_background_color": listingBackgroundColor == null ? null : listingBackgroundColor,
-    "listing_border_color": listingBorderColor == null ? null : listingBorderColor,
-    "listing_box_background_color": listingBoxBackgroundColor == null ? null : listingBoxBackgroundColor,
-    "home_sub_heading_color": homeSubHeadingColor == null ? null : homeSubHeadingColor,
-    "home_description_color": homeDescriptionColor == null ? null : homeDescriptionColor,
-    "category_listing_button_border_color": categoryListingButtonBorderColor == null ? null : categoryListingButtonBorderColor,
-    "category_listing_box_background_color": categoryListingBoxBackgroundColor == null ? null : categoryListingBoxBackgroundColor,
-  };
+        "id": id == null ? null : id,
+        "store_id": storeId == null ? null : storeId,
+        "web_theme_primary_color":
+            webThemePrimaryColor == null ? null : webThemePrimaryColor,
+        "web_theme_secondary_color":
+            webThemeSecondaryColor == null ? null : webThemeSecondaryColor,
+        "web_theme_category_open_color": webThemeCategoryOpenColor == null
+            ? null
+            : webThemeCategoryOpenColor,
+        "strips_color": stripsColor == null ? null : stripsColor,
+        "footer_color": footerColor == null ? null : footerColor,
+        "listing_background_color":
+            listingBackgroundColor == null ? null : listingBackgroundColor,
+        "listing_border_color":
+            listingBorderColor == null ? null : listingBorderColor,
+        "listing_box_background_color": listingBoxBackgroundColor == null
+            ? null
+            : listingBoxBackgroundColor,
+        "home_sub_heading_color":
+            homeSubHeadingColor == null ? null : homeSubHeadingColor,
+        "home_description_color":
+            homeDescriptionColor == null ? null : homeDescriptionColor,
+        "category_listing_button_border_color":
+            categoryListingButtonBorderColor == null
+                ? null
+                : categoryListingButtonBorderColor,
+        "category_listing_box_background_color":
+            categoryListingBoxBackgroundColor == null
+                ? null
+                : categoryListingBoxBackgroundColor,
+      };
 }
 
 class Banner {
