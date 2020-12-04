@@ -137,7 +137,8 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 fullscreenDialog: true,
               )
           );
-          /*if (result != null) {
+          if (result == true) {
+            //Utils.showProgressDialog(context);
             setState(() {
               isLoading = true;
             });
@@ -145,100 +146,13 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
             await ApiController.getAddressApiRequest();
             //Utils.hideProgressDialog(context);
             setState(() {
-              print("----setState-------");
               isLoading = false;
-              //addressList = null;
               addressList = response.data;
             });
-          }*/
+          } else {
+            print("--result--else------");
+          }
 
-
-          /*StoreModel store = await SharedPrefs.getStore();
-          print("--deliveryArea->--${store.deliveryArea}-------");
-          if (store.deliveryArea == "0") {
-            var result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      SaveDeliveryAddress(null, () {
-                    print("--Route-SaveDeliveryAddress-------");
-                  }, "", coordinates),
-                  fullscreenDialog: true,
-                ));
-            print("--result--${result}-------");
-            if (result == true) {
-              //Utils.showProgressDialog(context);
-              setState(() {
-                isLoading = true;
-              });
-              DeliveryAddressResponse response =
-                  await ApiController.getAddressApiRequest();
-              //Utils.hideProgressDialog(context);
-              setState(() {
-                //addressList = null;
-                isLoading = false;
-                addressList = response.data;
-              });
-            } else {
-              print("--result--else------");
-            }
-          } else if (store.deliveryArea == "1") {
-            Utils.isNetworkAvailable().then((isConnected) {
-              if (isConnected) {
-                Utils.showProgressDialog(context);
-                ApiController.storeRadiusApi().then((response) async {
-                  Utils.hideProgressDialog(context);
-                  if (response != null && response.success) {
-                    StoreRadiousResponse data = response;
-                    Geolocator()
-                        .isLocationServiceEnabled()
-                        .then((isLocationServiceEnabled) async {
-                      print(
-                          "----isLocationServiceEnabled----${isLocationServiceEnabled}--");
-                      if (isLocationServiceEnabled) {
-                        var geoLocator = Geolocator();
-                        var status =
-                            await geoLocator.checkGeolocationPermissionStatus();
-                        print("--status--=${status}");
-
-                        var result = await Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  DragMarkerMap(data),
-                              fullscreenDialog: true,
-                            )
-                        );
-                        if (result != null) {
-                          radiusArea = result;
-                          print("----radiusArea = result-------");
-                          //Utils.showProgressDialog(context);
-                          setState(() {
-                            isLoading = true;
-                          });
-                          DeliveryAddressResponse response =
-                              await ApiController.getAddressApiRequest();
-                          //Utils.hideProgressDialog(context);
-                          setState(() {
-                            print("----setState-------");
-                            isLoading = false;
-                            //addressList = null;
-                            addressList = response.data;
-                          });
-                        }
-                      } else {
-                        Utils.showToast("Please turn on gps!", false);
-                      }
-                    });
-                  } else {
-                    Utils.showToast("No data found!", false);
-                  }
-                });
-              } else {
-                Utils.showToast(AppConstant.noInternet, false);
-              }
-            });
-          }*/
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -5,10 +5,13 @@ import 'package:flutter/rendering.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
+import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
+import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:restroapp/src/widgets/AutoSearch.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
@@ -32,8 +35,11 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
   bool enableDialog;
   final cityController = new TextEditingController();
   final stateController = new TextEditingController();
+  final firstNameController = new TextEditingController();
+  final lastNameController = new TextEditingController();
+  final mobileController = new TextEditingController();
+  final emailController = new TextEditingController();
   String address;
-
 
   @override
   void initState() {
@@ -70,6 +76,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                 print("location = ${lat},${lng}");
 
                 center = LatLng(lat, lng);
+                selectedLocation = LatLng(lat, lng);
                 getAddressFromLocation(lat, lng);
                 markers.addAll([
                   Marker(
@@ -98,7 +105,120 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       ),
       body: Column(
         children: <Widget>[
-
+          Row(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 0.0),
+                      child: TextFormField(
+                        controller: firstNameController,
+                        cursorColor: Colors.black,
+                        keyboardType: TextInputType.text,
+                        decoration: new InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding:
+                            EdgeInsets.only(left: 0, bottom: 0, top: 0, right: 0),
+                            hintText: "First Name*"),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 0.0),
+                      child: TextFormField(
+                        controller: lastNameController,
+                        cursorColor: Colors.black,
+                        keyboardType: TextInputType.text,
+                        decoration: new InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding:
+                            EdgeInsets.only(left: 0, bottom: 0, top: 0, right: 0),
+                            hintText: "Last Name*"),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Divider(color: Colors.grey, height: 2.0),
+          Row(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 0.0),
+                      child: TextFormField(
+                        controller: mobileController,
+                        cursorColor: Colors.black,
+                        keyboardType: TextInputType.text,
+                        decoration: new InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding:
+                            EdgeInsets.only(left: 0, bottom: 0, top: 0, right: 0),
+                            hintText: "Mobile No*"),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 0.0),
+                      child: TextFormField(
+                        controller: emailController,
+                        cursorColor: Colors.black,
+                        keyboardType: TextInputType.text,
+                        decoration: new InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding:
+                            EdgeInsets.only(left: 0, bottom: 0, top: 0, right: 0),
+                            hintText: "Email"),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Divider(color: Colors.grey, height: 2.0),
           Container(
             margin: EdgeInsets.fromLTRB(0, 00, 0, 0),
             height: 50,
@@ -205,7 +325,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
 
               print("==distanceInKm==${distanceInKm}=AND=${distanceInKms}=");
 
-              //checkIfOrderDeliveryWithInRadious(distanceInKms);
+              checkIfOrderDeliveryWithInRadious(distanceInKms);
             },
             child: Container(
               height: 45,
@@ -254,6 +374,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
     });
   }
 
+  String zipCode = "";
   getAddressFromLocation(double latitude, double longitude) async {
     try {
       selectedLocation = LatLng(latitude, longitude);
@@ -265,6 +386,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       print("----------${first.featureName} and ${first
           .addressLine}-postalCode-${first.postalCode}------");
 
+      this.zipCode = "${first.postalCode}";
       setState(() {
         address = first.addressLine;
         cityController.text = first.locality;
@@ -295,6 +417,56 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
 
 
   Future<void> checkIfOrderDeliveryWithInRadious(int distanceInKms) async {
+
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    if (!isNetworkAvailable) {
+      Utils.showToast(AppConstant.noInternet, false);
+      return;
+    }
+    if (firstNameController.text.trim().isEmpty) {
+      Utils.showToast("Please enter first name", false);
+      return;
+    }
+    if (lastNameController.text.trim().isEmpty) {
+      Utils.showToast("Please enter last name", false);
+      return;
+    }
+    if (mobileController.text.trim().isEmpty) {
+      Utils.showToast("Please enter mobile number", false);
+      return;
+    }
+    if(emailController.text.trim().isNotEmpty){
+      if(!Utils.validateEmail(emailController.text.trim())){
+        Utils.showToast("Please enter valid email", true);
+        return;
+      }
+    }
+
+
+    Utils.showProgressDialog(context);
+    ApiController.saveDeliveryAddressApiRequest(
+      "ADD",
+      "${firstNameController.text.trim()}",
+      "${lastNameController.text.trim()}",
+      "${mobileController.text.trim()}",
+      "${emailController.text.trim()}",
+      "${address}",
+      "${cityController.text.trim()}",
+      "${stateController.text.trim()}",
+      "${zipCode}",
+      "${selectedLocation.latitude}",
+      "${selectedLocation.longitude}",
+      "",).then((response) {
+      Utils.hideProgressDialog(context);
+      if (response != null && response.success) {
+        Utils.showToast(response.message, false);
+        Navigator.pop(context,true);
+      } else {
+        if (response != null)
+          Utils.showToast(response.message, false);
+      }
+    });
+
     /*try {
       Area area;
       //print("---${areaList.length}---and-- ${distanceInKms}---");
