@@ -5,15 +5,15 @@ import 'package:flutter/rendering.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
-import 'package:restroapp/src/models/StoreResponseModel.dart';
-import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:restroapp/src/widgets/AutoSearch.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:google_maps_webservice/places.dart';
+
 
 class DragMarkerMap extends StatefulWidget {
 
@@ -29,25 +29,19 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
   GoogleMapController _mapController;
   Set<Marker> markers = Set();
   LatLng center, selectedLocation;
-  String address;
-  String zipCode;
-  String cityValue;
-  String cityId;
   bool enableDialog;
-  List<Area> areaList;
   final cityController = new TextEditingController();
   final stateController = new TextEditingController();
+  String address;
+
 
   @override
   void initState() {
     super.initState();
-    areaList = List();
     center = LatLng(0.0, 0.0);
     selectedLocation = LatLng(0.0, 0.0);
     address = "";
-    zipCode = "";
     getLocation();
-    cityValue = "Click here...";
   }
 
   @override
@@ -69,6 +63,31 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                     fullscreenDialog: true,
                   )
               );
+              if(result != null){
+                PlacesDetailsResponse detail  = result;
+                double lat = detail.result.geometry.location.lat;
+                double lng = detail.result.geometry.location.lng;
+                print("location = ${lat},${lng}");
+
+                center = LatLng(lat, lng);
+                getAddressFromLocation(lat, lng);
+                markers.addAll([
+                  Marker(
+                      draggable: true,
+                      icon: BitmapDescriptor.defaultMarker,
+                      markerId: MarkerId('value'),
+                      position: center,
+                      onDragEnd: (value) {
+                        print(value.latitude);
+                        print(value.longitude);
+                        getAddressFromLocation(value.latitude, value.longitude);
+                      })
+                ]);
+                setState(() {
+                  _mapController.moveCamera(CameraUpdate.newLatLng(center));
+                });
+              }
+
             },
             child: Padding(
               padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -248,7 +267,6 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
 
       setState(() {
         address = first.addressLine;
-        zipCode = first.postalCode;
         cityController.text = first.locality;
         stateController.text = first.adminArea;
       });
@@ -337,7 +355,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
   }
 
   Future<void> checkIfOrderDeliveryWithInRadious(int distanceInKms) async {
-    try {
+    /*try {
       Area area;
       //print("---${areaList.length}---and-- ${distanceInKms}---");
       for (int i = 0; i < areaList.length; i++) {
@@ -382,7 +400,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       print("---radius-- ${area.radius}-charges.and ${area.charges}--");
     } catch (e) {
       print(e);
-    }
+    }*/
   }
 
 

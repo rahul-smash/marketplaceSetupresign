@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:restroapp/src/Screens/Address/SaveDeliveryAddress.dart';
 import 'package:restroapp/src/UI/DragMarkerMap.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
@@ -16,6 +13,8 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import '../BookOrder/ConfirmOrderScreen.dart';
+import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart' as permission_handler;
 
 class DeliveryAddressList extends StatefulWidget {
   final bool showProceedBar;
@@ -28,12 +27,16 @@ class DeliveryAddressList extends StatefulWidget {
 }
 
 class _AddDeliveryAddressState extends State<DeliveryAddressList> {
+
   int selectedIndex = 0;
   List<DeliveryAddressData> addressList = [];
   Area radiusArea;
   Coordinates coordinates;
   bool isLoading = false;
   DeliveryAddressResponse responsesData;
+  Location location = new Location();
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
 
   @override
   void initState() {
@@ -107,7 +110,24 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
       child: InkWell(
         onTap: () async {
           print("----addCreateAddressButton-------");
-
+          _serviceEnabled = await location.serviceEnabled();
+          if (!_serviceEnabled) {
+            _serviceEnabled = await location.requestService();
+            if (!_serviceEnabled) {
+              print("----!_serviceEnabled----$_serviceEnabled");
+              return;
+            }
+          }
+          _permissionGranted = await location.hasPermission();
+          print("permission sttsu $_permissionGranted");
+          if (_permissionGranted == PermissionStatus.denied) {
+            print("permission deniedddd");
+            _permissionGranted = await location.requestPermission();
+            if (_permissionGranted != PermissionStatus.granted) {
+              print("permission not grantedd");
+              return;
+            }
+          }
           var result = await Navigator.push(context,
                MaterialPageRoute(
                 builder: (BuildContext context) {

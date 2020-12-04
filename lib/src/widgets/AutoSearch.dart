@@ -17,16 +17,13 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 class CustomSearchScaffold extends PlacesAutocompleteWidget {
 
   CustomSearchScaffold()
-      : super(apiKey: kGoogleApiKey,/*
-    sessionToken: Uuid().generateV4(),language: "en",
-    components: [Component(Component.country, "uk")],*/
-  );
+      : super(apiKey: kGoogleApiKey);
 
   @override
-  _CustomSearchScaffoldState createState() => _CustomSearchScaffoldState();
+  CustomSearchScaffoldState createState() => CustomSearchScaffoldState();
 }
 
-class _CustomSearchScaffoldState extends PlacesAutocompleteState {
+class CustomSearchScaffoldState extends PlacesAutocompleteState {
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +56,7 @@ class _CustomSearchScaffoldState extends PlacesAutocompleteState {
       double lng = detail.result.geometry.location.lng;
       print("location = ${lat},${lng}");
       //var address = await Geocoder.local.findAddressesFromQuery(p.description);
-
-      print(lat);
-      print(lng);
+      Navigator.pop(context,detail);
     }
   }
 
