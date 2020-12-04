@@ -294,66 +294,6 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
   }
 
 
-  Future<RadiousData> displayRadiusCityDialog(BuildContext context,
-      String title, List<RadiousData> data,) async {
-    return await showDialog<RadiousData>(
-      context: context,
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () {},
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            title: Text(
-              title,
-              textAlign: TextAlign.center,
-            ),
-            content: Container(
-              width: double.maxFinite,
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: data.length,
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider();
-                },
-                itemBuilder: (context, index) {
-                  RadiousData areaObject = data[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.pop(context, areaObject);
-                    },
-                    child: ListTile(
-                      title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(areaObject.city.city,
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 16)),
-                            ),
-                          ]),
-                    ),
-                  );
-                },
-              ),
-            ),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text("Cancel"),
-                textColor: Colors.blue,
-                onPressed: () {
-                  Navigator.pop(context, null);
-                  // true here means you clicked ok
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> checkIfOrderDeliveryWithInRadious(int distanceInKms) async {
     /*try {
       Area area;
