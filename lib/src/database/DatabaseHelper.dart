@@ -79,7 +79,7 @@ class DatabaseHelper {
 
   void _onCreate(Database db, int version) async {
     // When creating the db, create the tables
-    /*await db.execute("CREATE TABLE ${Categories_Table}("
+    await db.execute("CREATE TABLE ${Categories_Table}("
         "id TEXT, "
         "title TEXT, "
         "version TEXT, "
@@ -130,7 +130,7 @@ class DatabaseHelper {
         "discount TEXT, "
         "isUnitType TEXT, "
         "variants TEXT"
-        ")");*/
+        ")");
     await db.execute("CREATE TABLE ${CART_Table}("
         "id INTEGER, "
         "store_id TEXT, " // NEW
@@ -160,7 +160,7 @@ class DatabaseHelper {
         "image_300_200 TEXT, "
         "unit_type TEXT"
         ")");
-    /*await db.execute("CREATE TABLE ${Favorite_Table}("
+    await db.execute("CREATE TABLE ${Favorite_Table}("
         "id INTEGER, "
         "product_json TEXT, "
         "product_name TEXT, "
@@ -180,7 +180,7 @@ class DatabaseHelper {
         "image_100_80 TEXT, "
         "image_300_200 TEXT, "
         "unit_type TEXT"
-        ")");*/
+        ")");
   }
 
   void _onUpgrade(Database db, int oldVersion, int newVersion) async {

@@ -404,7 +404,7 @@ class _SaveDeliveryAddressState extends State<SaveDeliveryAddress> {
                               print(
                                   "--addressController---${addressController.text}---");
 
-                              Utils.showProgressDialog(context);
+                              /*Utils.showProgressDialog(context);
                               ApiController.saveDeliveryAddressApiRequest(
                                       widget.selectedAddress == null
                                           ? "ADD"
@@ -435,7 +435,7 @@ class _SaveDeliveryAddressState extends State<SaveDeliveryAddress> {
                                   Utils.showToast(
                                       "Error while saving address!", true);
                                 }
-                              });
+                              });*/
                             },
                             color: appTheme,
                             padding: EdgeInsets.all(5.0),
