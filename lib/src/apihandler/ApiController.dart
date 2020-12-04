@@ -1801,8 +1801,7 @@ class ApiController {
   }
 
   static Future<MobileVerified> verifyEmail(String email) async {
-    StoreModel store = await SharedPrefs.getStore();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) + ApiConstants.verifyEmail;
+    var url = ApiConstants.base_Url+ ApiConstants.verifyEmail;
 
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
@@ -1834,12 +1833,11 @@ class ApiController {
       String user_refer_code,
       String gstNumber) async {
 
-    StoreModel store = await SharedPrefs.getStore();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.base_Url +
         ApiConstants.socialLogin;
 
     var request = new http.MultipartRequest("POST", Uri.parse(url));
@@ -1854,7 +1852,7 @@ class ApiController {
     try {
       request.fields.addAll({
         "phone": phoneNumber,
-        "country": store.internationalOtp == "0" ? "92" :"0",
+        "country": /*store.internationalOtp == "0" ?*/ "92"/* :"0"*/,
         "email": emailId,
         "social_platform": socialPlatform,
         "full_name": fullName,

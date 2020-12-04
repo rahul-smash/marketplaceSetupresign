@@ -115,27 +115,27 @@ class _SubCategoryProductScreenState extends State<SubCategoryProductScreen>
         )),
       ]),
       bottomNavigationBar: bottomBar,
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: appThemeSecondary,
-        onPressed: () async {
-          CategoryModel result = await DialogUtils.displayMenuDialog(context);
-          if (result != null) {
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) {
-                return SubCategoryProductScreen(result, false, 0);
-              }),
-            );
-          }
-        },
-        icon: Image.asset(
-          'images/restauranticon.png',
-          width: 20,
-          color: Colors.white,
-        ),
-        label: Text("Menu"),
-      ),
+//      floatingActionButton: FloatingActionButton.extended(
+//        backgroundColor: appThemeSecondary,
+//        onPressed: () async {
+//          CategoryModel result = await DialogUtils.displayMenuDialog(context);
+//          if (result != null) {
+//            Navigator.pop(context);
+//            Navigator.push(
+//              context,
+//              MaterialPageRoute(builder: (context) {
+//                return SubCategoryProductScreen(result, false, 0);
+//              }),
+//            );
+//          }
+//        },
+//        icon: Image.asset(
+//          'images/restauranticon.png',
+//          width: 20,
+//          color: Colors.white,
+//        ),
+//        label: Text("Menu"),
+//      ),
     );
   }
 

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
@@ -27,7 +29,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileState extends State<ProfileScreen> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  UserModel user;
+  UserModelMobile user;
   bool showGstNumber=false;
   final firstNameController = new TextEditingController();
   final lastNameController = new TextEditingController();
@@ -38,7 +40,7 @@ class _ProfileState extends State<ProfileScreen> {
   bool isLoginViaSocial = false;
 
   File image;
-  StoreModel storeModel;
+  BrandData storeModel;
   bool isEmailEditable = false;
   bool isPhonereadOnly = true;
   bool showReferralCodeView = false;
@@ -53,11 +55,11 @@ class _ProfileState extends State<ProfileScreen> {
     //User Login with Mobile and OTP
     // 1 = email and 0 = ph-no
     try {
-      user = await SharedPrefs.getUser();
+      user = await SharedPrefs.getUserMobile();
     } catch (e) {
       print(e);
     }
-    storeModel = await SharedPrefs.getStore();
+    storeModel = await BrandModel.getInstance().brandVersionModel.brand;
     setState(() {
       if(user != null){
         firstNameController.text = user.fullName;
@@ -369,13 +371,13 @@ class _ProfileState extends State<ProfileScreen> {
           Utils.hideProgressDialog(context);
           if (response.success) {
             if (widget.isComingFromOtpScreen) {
-              UserModel user = UserModel();
+              UserModelMobile user = UserModelMobile();
               user.fullName = firstNameController.text.trim();
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();
               user.id = widget.id;
               Utils.showToast(response.message, true);
-              SharedPrefs.saveUser(user);
+              SharedPrefs.saveUserMobile(user);
               SharedPrefs.setUserLoggedIn(true);
               Navigator.pop(context);
             } else {
@@ -383,7 +385,7 @@ class _ProfileState extends State<ProfileScreen> {
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();
               Utils.showToast(response.message, true);
-              SharedPrefs.saveUser(user);
+              SharedPrefs.saveUserMobile(user);
               Navigator.pop(context);
             }
           } else {

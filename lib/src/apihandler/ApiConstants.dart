@@ -51,8 +51,7 @@ class ApiConstants{
   static String mobileVerification = 'mobileVerification';
   static String cancelOrder = 'orderCancel';
 
-  static String socialLogin = 'socialLogin';
-  static String verifyEmail = 'verifyEmail';
+
 
   static String deliveryAreasArea = 'deliveryAreas/Area';
 
@@ -100,6 +99,9 @@ class ApiConstants{
   static final String store_configuration = "/store_configuration";
   static final String getCategories = "/inventory/getCategories";
   static String getProducts = '/inventory/getSubCategoryProducts/';
+
+  static String socialLogin = 'socialLogin';
+  static String verifyEmail = 'verifyEmail';
 
 
 }

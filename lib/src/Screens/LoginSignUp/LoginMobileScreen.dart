@@ -7,11 +7,11 @@ import 'package:restroapp/src/Screens/LoginSignUp/OtpScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/ProfileScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
-import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
-import 'package:restroapp/src/models/VerifyEmailModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
@@ -32,7 +32,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   LoginMobile loginMobile = new LoginMobile();
   final phoneController = new TextEditingController();
-  StoreModel store;
+  BrandData store;
   String otpSkip;
   FacebookLogin facebookSignIn = new FacebookLogin();
   GoogleSignIn _googleSignIn;
@@ -57,7 +57,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
 
   }
   void getOTPSkip() async {
-    store = await SharedPrefs.getStore();
+    store =  BrandModel.getInstance().brandVersionModel.brand;
     setState(() {
       otpSkip = store.otpSkip;
       String delieveryAdress=  store.deliveryFacility;
@@ -151,7 +151,8 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                           ),
 
                           Visibility(
-                            visible: store == null ? false : store.social_login == "0" ? false : true,
+//                            visible: store == null ? false : store.social_login == "0" ? false : true,
+                            visible: false,
                             child: Container(
                               margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                               width: Utils.getDeviceWidth(context),
@@ -165,7 +166,8 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
 
 
                           Visibility(
-                            visible: /*store == null ? false : store.social_login == "0" ? false :*/ true,
+//                            visible: store == null ? false : store.social_login == "0" ? false : true,
+                            visible: false,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

@@ -250,19 +250,19 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         }
 
         break;
-      case DrawerChildConstants.MY_FAVORITES:
-        if (AppConstant.isLoggedIn) {
-          Navigator.pop(context);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Favourites(() {})),
-          );
-          Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-          attributeMap["ScreenName"] = "Favourites";
-          Utils.sendAnalyticsEvent("Clicked Favourites", attributeMap);
-        } else {
-          Utils.showLoginDialog(context);
-        }
+//      case DrawerChildConstants.MY_FAVORITES:
+//        if (AppConstant.isLoggedIn) {
+//          Navigator.pop(context);
+//          Navigator.push(
+//            context,
+//            MaterialPageRoute(builder: (context) => Favourites(() {})),
+//          );
+//          Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+//          attributeMap["ScreenName"] = "Favourites";
+//          Utils.sendAnalyticsEvent("Clicked Favourites", attributeMap);
+//        } else {
+//          Utils.showLoginDialog(context);
+//        }
         break;
       case DrawerChildConstants.ABOUT_US:
         Navigator.pop(context);
@@ -436,11 +436,11 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
 
       AppConstant.isLoggedIn = false;
       DatabaseHelper databaseHelper = new DatabaseHelper();
-      databaseHelper.deleteTable(DatabaseHelper.Categories_Table);
-      databaseHelper.deleteTable(DatabaseHelper.Sub_Categories_Table);
-      databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
+//      databaseHelper.deleteTable(DatabaseHelper.Categories_Table);
+//      databaseHelper.deleteTable(DatabaseHelper.Sub_Categories_Table);
+//      databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
       databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-      databaseHelper.deleteTable(DatabaseHelper.Products_Table);
+//      databaseHelper.deleteTable(DatabaseHelper.Products_Table);
       eventBus.fire(updateCartCount());
       eventBus.fire(onCartRemoved());
       Utils.showToast(AppConstant.logoutSuccess, true);
