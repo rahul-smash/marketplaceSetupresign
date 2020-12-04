@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
+import 'package:restroapp/src/Screens/Address/PickUpOrderScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/ProfileScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -12,6 +14,7 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 import 'LoginMobileScreen.dart';
+import 'RegisterScreen.dart';
 
 class OtpScreen extends StatefulWidget {
 
@@ -246,7 +249,7 @@ class _OtpScreen extends State<OtpScreen> {
       Navigator.pop(context);
       Navigator.push(context,
         MaterialPageRoute(
-            builder: (context) => ProfileScreen(true,widget.response.user.id,widget.response.user.fullName)),
+            builder: (context) => ProfileScreen(true,widget.response.user.id,widget.response.user.fullName,null,null)),
       );
       //Navigator.pop(context);
     }

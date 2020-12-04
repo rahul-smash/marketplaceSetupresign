@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:flutter_share/flutter_share.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:restroapp/src/Screens/Favourites/Favourite.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginMobileScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
@@ -10,13 +13,13 @@ import 'package:restroapp/src/Screens/SideMenu/AboutScreen.dart';
 import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginEmailScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
-import 'package:restroapp/src/Screens/SideMenu/ReferEarn.dart';
 import 'package:restroapp/src/Screens/SideMenu/FAQScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/ReferEarnData.dart';
+import 'package:restroapp/src/models/SocialModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
@@ -46,12 +49,21 @@ class NavDrawerMenu extends StatefulWidget {
 
 class _NavDrawerMenuState extends State<NavDrawerMenu> {
   List<dynamic> _drawerItems = List();
+  SocialModel socialModel;
+  double iconHeight = 25;
+  GoogleSignIn _googleSignIn;
 
   _NavDrawerMenuState();
 
   @override
   void initState() {
     super.initState();
+    _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
     //print("isRefererFnEnable=${widget.store.isRefererFnEnable}");
     _drawerItems
         .add(DrawerChildItem(DrawerChildConstants.HOME, "images/home.png"));
@@ -184,12 +196,13 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ProfileScreen(false, "", "")),
+                builder: (context) => ProfileScreen(false, "", "", null, null)),
           );
           Map<String, dynamic> attributeMap = new Map<String, dynamic>();
           attributeMap["ScreenName"] = "ProfileScreen";
           Utils.sendAnalyticsEvent("Clicked ProfileScreen", attributeMap);
         } else {
+          Navigator.pop(context);
           Utils.showLoginDialog(context);
         }
         break;
@@ -402,10 +415,25 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
 
   Future logout(BuildContext context) async {
     try {
+      FacebookLogin facebookSignIn = new FacebookLogin();
+      bool isFbLoggedIn = await facebookSignIn.isLoggedIn;
+      print("isFbLoggedIn=${isFbLoggedIn}");
+      if (isFbLoggedIn) {
+        await facebookSignIn.logOut();
+      }
+
+      bool isGoogleSignedIn = await _googleSignIn.isSignedIn();
+      print("isGoogleSignedIn=${isGoogleSignedIn}");
+      if (isGoogleSignedIn) {
+        await _googleSignIn.signOut();
+      }
+
       SharedPrefs.setUserLoggedIn(false);
       SharedPrefs.storeSharedValue(AppConstant.isAdminLogin, "false");
       SharedPrefs.removeKey(AppConstant.showReferEarnAlert);
       SharedPrefs.removeKey(AppConstant.referEarnMsg);
+      SharedPrefs.removeKey("user");
+
       AppConstant.isLoggedIn = false;
       DatabaseHelper databaseHelper = new DatabaseHelper();
       databaseHelper.deleteTable(DatabaseHelper.Categories_Table);
@@ -416,6 +444,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       eventBus.fire(updateCartCount());
       eventBus.fire(onCartRemoved());
       Utils.showToast(AppConstant.logoutSuccess, true);
+
       setState(() {
         widget.userName == null;
       });

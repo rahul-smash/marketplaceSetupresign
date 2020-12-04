@@ -1,19 +1,25 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/FacebookModel.dart';
+import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class ProfileScreen extends StatefulWidget {
-  bool isComingFromOtpScreen;
 
+  bool isComingFromOtpScreen;
   String id;
   String fullName = "";
+  FacebookModel fbModel;
+  GoogleSignInAccount googleResult;
 
-  ProfileScreen(this.isComingFromOtpScreen, this.id, String fullName);
+  ProfileScreen(this.isComingFromOtpScreen, this.id, String fullName,
+      this.fbModel,this.googleResult);
 
   @override
   _ProfileState createState() => new _ProfileState();
@@ -29,6 +35,7 @@ class _ProfileState extends State<ProfileScreen> {
   final phoneController = new TextEditingController();
   final referCodeController = new TextEditingController();
   final gstCodeController = new TextEditingController();
+  bool isLoginViaSocial = false;
 
   File image;
   StoreModel storeModel;
@@ -45,13 +52,19 @@ class _ProfileState extends State<ProfileScreen> {
   getProfileData() async {
     //User Login with Mobile and OTP
     // 1 = email and 0 = ph-no
-    user = await SharedPrefs.getUser();
+    try {
+      user = await SharedPrefs.getUser();
+    } catch (e) {
+      print(e);
+    }
     storeModel = await SharedPrefs.getStore();
     setState(() {
-      firstNameController.text = user.fullName;
-      emailController.text = user.email;
-      phoneController.text = user.phone;
-      print(storeModel.isRefererFnEnable);
+      if(user != null){
+        firstNameController.text = user.fullName;
+        emailController.text = user.email;
+        phoneController.text = user.phone;
+      }
+      print("storeModel.isRefererFnEnable=${storeModel.isRefererFnEnable}");
       if (storeModel.isRefererFnEnable && widget.fullName.isEmpty) {
         showReferralCodeView = true;
       } else {
@@ -73,6 +86,45 @@ class _ProfileState extends State<ProfileScreen> {
         showReferralCodeView = false;
       }
 
+      if(widget.fbModel != null){
+        print("----------widget.fbModel != null---------");
+        firstNameController.text = widget.fbModel.name;
+        emailController.text = widget.fbModel.email;
+        isPhonereadOnly = false;
+        isLoginViaSocial = true;
+      }
+      if(widget.googleResult != null){
+        print("----------widget.googleResult != null---------");
+        firstNameController.text = widget.googleResult.displayName;
+        emailController.text = widget.googleResult.email;
+        isPhonereadOnly = false;
+        isLoginViaSocial = true;
+      }
+
+      if (isLoginViaSocial) {
+        if(widget.fbModel != null){
+          if(widget.fbModel.email.isEmpty){
+            isEmailEditable = false;
+          }
+        }else if(widget.googleResult != null){
+          if(widget.googleResult.email.isEmpty){
+            isEmailEditable = false;
+          }
+        }
+      }
+
+      if (storeModel.internationalOtp == "1" && isLoginViaSocial) {
+        if(widget.fbModel != null){
+          if(widget.fbModel.email.isNotEmpty){
+            isEmailEditable = true;
+          }
+        }else if(widget.googleResult != null){
+          if(widget.googleResult.email.isNotEmpty){
+            isEmailEditable = true;
+          }
+        }
+      }
+
       print(
           "showReferralCodeView=${showReferralCodeView} and ${storeModel.isRefererFnEnable}");
     });
@@ -83,7 +135,13 @@ class _ProfileState extends State<ProfileScreen> {
     //print("showReferralCodeView=${showReferralCodeView} and ${storeModel.isRefererFnEnable}");
     return WillPopScope(
         onWillPop: () async {
-          return await nameValidation() && isValidEmail(emailController.text);
+          if(storeModel != null){
+            if (phoneController.text.trim().isEmpty) {
+              Utils.showToast("Please enter your valid mobile number", false);
+              return false;
+            }
+          }
+          return await nameValidation() && isValidEmail(emailController.text) ;
         },
         child: new Scaffold(
           backgroundColor: Colors.white,
@@ -257,11 +315,11 @@ class _ProfileState extends State<ProfileScreen> {
     }
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (!nameValidation()) {
       return;
     }
-    if (!isValidEmail(emailController.text)) {
+    if (!isValidEmail(emailController.text.trim())) {
       Utils.showToast("Please enter valid email", false);
       return;
     }
@@ -269,39 +327,71 @@ class _ProfileState extends State<ProfileScreen> {
     if (!form.validate()) {
     } else {
       form.save();
-      Utils.showProgressDialog(context);
-      ApiController.updateProfileRequest(
-              firstNameController.text,
-              emailController.text,
-              phoneController.text,
-              widget.isComingFromOtpScreen,
-              widget.id,
-              referCodeController.text,gstCodeController.text)
-          .then((response) {
-        Utils.hideProgressDialog(context);
-        if (response.success) {
-          if (widget.isComingFromOtpScreen) {
-            UserModel user = UserModel();
-            user.fullName = firstNameController.text.trim();
-            user.email = emailController.text.trim();
-            user.phone = phoneController.text.trim();
-            user.id = widget.id;
-            Utils.showToast(response.message, true);
-            SharedPrefs.saveUser(user);
-            SharedPrefs.setUserLoggedIn(true);
-            Navigator.pop(context);
-          } else {
-            user.fullName = firstNameController.text.trim();
-            user.email = emailController.text.trim();
-            user.phone = phoneController.text.trim();
-            Utils.showToast(response.message, true);
-            SharedPrefs.saveUser(user);
-            Navigator.pop(context);
+
+      if(storeModel != null){
+//        if(storeModel.internationalOtp == "0"){
+          if (phoneController.text.trim().isEmpty) {
+            Utils.showToast("Please enter your valid mobile number", false);
+            return;
           }
-        } else {
-          Utils.showToast(response.message, true);
-        }
-      });
+//        }
+      }
+
+      if(isLoginViaSocial){
+        Utils.showProgressDialog(context);
+        MobileVerified userResponse = await ApiController.socialSignUp(widget.fbModel,widget.googleResult,
+          firstNameController.text.trim(),
+          emailController.text.trim(),
+          phoneController.text.trim(),
+          referCodeController.text.trim(),
+          gstCodeController.text.trim()
+        );
+
+        UserModel user = UserModel();
+        user.fullName = firstNameController.text.trim();
+        user.email = emailController.text.trim();
+        user.phone = phoneController.text.trim();
+        user.id = userResponse.user.id;
+        SharedPrefs.saveUser(user);
+
+        Utils.hideProgressDialog(context);
+        Navigator.pop(context);
+
+      }else{
+        ApiController.updateProfileRequest(
+            firstNameController.text.trim(),
+            emailController.text.trim(),
+            phoneController.text.trim(),
+            widget.isComingFromOtpScreen,
+            widget.id,
+            referCodeController.text.trim(),gstCodeController.text.trim())
+            .then((response) {
+          Utils.hideProgressDialog(context);
+          if (response.success) {
+            if (widget.isComingFromOtpScreen) {
+              UserModel user = UserModel();
+              user.fullName = firstNameController.text.trim();
+              user.email = emailController.text.trim();
+              user.phone = phoneController.text.trim();
+              user.id = widget.id;
+              Utils.showToast(response.message, true);
+              SharedPrefs.saveUser(user);
+              SharedPrefs.setUserLoggedIn(true);
+              Navigator.pop(context);
+            } else {
+              user.fullName = firstNameController.text.trim();
+              user.email = emailController.text.trim();
+              user.phone = phoneController.text.trim();
+              Utils.showToast(response.message, true);
+              SharedPrefs.saveUser(user);
+              Navigator.pop(context);
+            }
+          } else {
+            Utils.showToast(response.message, true);
+          }
+        });
+      }
+
     }
   }
 }
