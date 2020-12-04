@@ -25,7 +25,9 @@ class DeliveryAddressResponse {
 }
 
 class DeliveryAddressData {
+
   String id;
+  String brand_id;
   String userId;
   String storeId;
   String firstName;
@@ -52,6 +54,7 @@ class DeliveryAddressData {
 
   DeliveryAddressData({
     this.id,
+    this.brand_id,
     this.userId,
     this.storeId,
     this.firstName,
@@ -80,6 +83,7 @@ class DeliveryAddressData {
   factory DeliveryAddressData.fromJson(Map<String, dynamic> json) =>
       DeliveryAddressData(
         id: json["id"],
+        brand_id: json["brand_id"],
         lat: json["lat"],
         lng: json["lng"],
         userId: json["user_id"],
@@ -107,6 +111,7 @@ class DeliveryAddressData {
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "brand_id": brand_id,
         "lat": lat,
         "lng": lng,
         "user_id": userId,

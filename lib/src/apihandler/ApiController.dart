@@ -514,12 +514,12 @@ class ApiController {
   }
 
   static Future<DeliveryAddressResponse> getAddressApiRequest() async {
-    StoreModel store = await SharedPrefs.getStore();
+    StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
 
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
         ApiConstants.getAddress;
-    print("----user.id---${user.id}");
+    print("----url--${url}");
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
       request.fields.addAll({
@@ -608,48 +608,49 @@ class ApiController {
 
   static Future<DeliveryAddressResponse> saveDeliveryAddressApiRequest(
       String method,
-      String zipCode,
+      String firstName,String lastName, String mobile, String email,
       String address,
-      String areaId,
-      String areaName,
-      String addressId,
-      String fullname,
       String city,
-      String cityId,
+      String state,
+      String zipCode,
       String lat,
       String lng,
+      String address_type,
+      String address_id,
       {String address2 = ''}) async {
-    StoreModel store = await SharedPrefs.getStore();
     UserModel user = await SharedPrefs.getUser();
 
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
         ApiConstants.getAddress;
+
+    print(url);
+
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
       request.fields.addAll({
-        "method": method,
-        "user_id": user.id,
+        "method": method,//
+        "user_id": user.id,//
+        "first_name": firstName,
+        "last_name": lastName,
+        "mobile": mobile,
+        "email": email,
+        "address": address,
+        "address2": address2,
+        "city": "${city}",
+        "state": "${state}",
         "zipcode": zipCode,
         "country": "",
-        "address": address,
-        "city": "${city}",
-        "area_name": areaName,
-        "mobile": user.phone,
-        "state": "",
         "lat": "${lat}",
         "lng": "${lng}",
-        "area_id": areaId,
-        "first_name": fullname,
-        "email": user.email,
-        "address2": address2
+        "address_type": address_type,
       });
 
-      if (addressId != null) {
-        request.fields["address_id"] = addressId;
+      if(method == "EDIT"){
+        request.fields.addAll({
+          "address_id": address_id,
+        });
       }
-      print(
-          '@@saveDeliveryAddressApiRequest' + url + request.fields.toString());
 
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
@@ -668,13 +669,15 @@ class ApiController {
 
   static Future<DeliveryAddressResponse> deleteDeliveryAddressApiRequest(
       String addressId) async {
-    StoreModel store = await SharedPrefs.getStore();
+
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
         ApiConstants.getAddress;
+
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
@@ -1246,11 +1249,14 @@ class ApiController {
   }
 
   static Future<StoreRadiousResponse> storeRadiusApi() async {
-    StoreModel store = await SharedPrefs.getStore();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    //StoreModel store = await SharedPrefs.getStore();
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
         ApiConstants.getStoreRadius;
+
+
     var request = new http.MultipartRequest("GET", Uri.parse(url));
-    print('@@storeRadiusApi' + url);
+    print('@@url=${url}');
 
     try {
       final response = await request.send().timeout(Duration(seconds: timeout));

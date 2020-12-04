@@ -7,6 +7,7 @@ import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
+import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
@@ -266,7 +267,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                   Product product = products[index];
                   product.storeName = store.storeName;
                   return Container(
-                    child: ProductTileItem(product, () {}, ClassType.Home),
+                    child: ProductTileItem(product, () {
+                      SharedPrefs.saveStoreData(store);
+                    }, ClassType.Home),
                   );
                 } else if (products[index] is SubCategoryModel) {
                   SubCategoryModel subCategory = products[index];

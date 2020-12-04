@@ -1,11 +1,12 @@
 import 'dart:async';
 
+import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-const kGoogleApiKey = "AIzaSyDIrOUg5njtkZcWcnpfoMht1Ol1l7Q8Bys";
+const kGoogleApiKey = "AIzaSyCJFo82HR55bnLYFb2GUA8-d-E-o8uBpos";
 
 // to get places detail (lat/lng)
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
@@ -16,16 +17,13 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 class CustomSearchScaffold extends PlacesAutocompleteWidget {
 
   CustomSearchScaffold()
-      : super(apiKey: kGoogleApiKey,
-    sessionToken: Uuid().generateV4(),language: "en",
-    components: [Component(Component.country, "uk")],
-  );
+      : super(apiKey: kGoogleApiKey);
 
   @override
-  _CustomSearchScaffoldState createState() => _CustomSearchScaffoldState();
+  CustomSearchScaffoldState createState() => CustomSearchScaffoldState();
 }
 
-class _CustomSearchScaffoldState extends PlacesAutocompleteState {
+class CustomSearchScaffoldState extends PlacesAutocompleteState {
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +31,9 @@ class _CustomSearchScaffoldState extends PlacesAutocompleteState {
     final appBar = AppBar(title: AppBarPlacesAutoCompleteTextField());
 
     final body = PlacesAutocompleteResult(
-      onTap: (p) {
-        //displayPrediction(p, searchScaffoldKey.currentState);
+      onTap: (prediction) {
+        print("onTap = ${prediction}");
+        displayPrediction(prediction);
       },
       logo: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -45,6 +44,20 @@ class _CustomSearchScaffoldState extends PlacesAutocompleteState {
         appBar: appBar,
         body: body
     );
+  }
+
+  Future<Null> displayPrediction(Prediction p) async {
+    if (p != null) {
+      PlacesDetailsResponse detail =
+      await _places.getDetailsByPlaceId(p.placeId);
+
+      var placeId = p.placeId;
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+      print("location = ${lat},${lng}");
+      //var address = await Geocoder.local.findAddressesFromQuery(p.description);
+      Navigator.pop(context,detail);
+    }
   }
 
   @override

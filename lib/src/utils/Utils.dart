@@ -14,10 +14,13 @@ import 'package:restroapp/src/Screens/LoginSignUp/LoginMobileScreen.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginEmailScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/TaxCalulationResponse.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 
@@ -91,7 +94,8 @@ class Utils {
     try {
       //User Login with Mobile and OTP
       // 1 = email and 0 = ph-no
-      StoreModel model = await SharedPrefs.getStore();
+      //StoreDataObj model = await SharedPrefs.getStoreData();
+      BrandData model = BrandModel.getInstance().brandVersionModel.brand;
       if (model.internationalOtp == "0") {
         Navigator.push(
           context,
@@ -465,7 +469,7 @@ class Utils {
   }
 
   static bool checkStoreOpenTime(
-      StoreModel storeObject, OrderType deliveryType) {
+      var storeObject, OrderType deliveryType) {
     // in case of deliver ignore is24x7Open
     bool status = false;
     try {

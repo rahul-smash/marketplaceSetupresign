@@ -1,6 +1,7 @@
 import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/OTPVerified.dart';
 import 'package:restroapp/src/models/ReferEarnData.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
@@ -8,6 +9,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class SharedPrefs {
+
+  static void saveStoreData(StoreDataObj model) async {
+    SharedPreferences sharedUser = await SharedPreferences.getInstance();
+    dynamic storeResponse = model.toJson();
+    String jsonString = jsonEncode(storeResponse);
+    sharedUser.setString('store', jsonString);
+  }
+
+  static Future<StoreDataObj> getStoreData() async {
+    SharedPreferences sharedUser = await SharedPreferences.getInstance();
+    Map<String, dynamic> storeMap = json.decode(sharedUser.getString('store'));
+    var user = StoreDataObj.fromJson(storeMap);
+    return user;
+  }
+
+
   static void saveStore(StoreModel model) async {
     SharedPreferences sharedUser = await SharedPreferences.getInstance();
     dynamic storeResponse = model.toJson();

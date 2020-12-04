@@ -10,6 +10,7 @@ import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/Screens/BookOrder/MyCartScreen.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
@@ -29,7 +30,7 @@ class CartTotalPriceBottomBar extends StatefulWidget {
 class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
   DatabaseHelper databaseHelper = new DatabaseHelper();
   double totalPrice = 0.00;
-  StoreModel store;
+  StoreDataObj store;
   String pickupfacility, delieveryAdress;
 
   @override
@@ -39,8 +40,7 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
   }
 
   void getAddresKey() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    store = await SharedPrefs.getStore();
+    store = await SharedPrefs.getStoreData();
     setState(() {
       pickupfacility = store.pickupFacility;
       delieveryAdress = store.deliveryFacility;
@@ -51,7 +51,7 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
     databaseHelper.getTotalPrice().then((mTotalPrice) {
       setState(() {
         totalPrice = mTotalPrice;
-        //print("----mTotalPrice==== ${mTotalPrice}--");
+        print("----mTotalPrice==== ${mTotalPrice}--");
       });
     });
   }
@@ -157,6 +157,7 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
           ),
           InkWell(
             onTap: () async {
+              print("-------onTap-------");
               if (AppConstant.isLoggedIn) {
                 if (totalPrice == 0.0) {
                   Utils.showToast(AppConstant.addItems, false);
@@ -167,11 +168,11 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                   attributeMap["action"] = "Clicked on Place Order button";
                   attributeMap["value"] = "totalPrice=${totalPrice}";
                   Utils.sendAnalyticsEvent("Clicked Place Order", attributeMap);
-                  store = await SharedPrefs.getStore();
+                  store = await SharedPrefs.getStoreData();
                   pickupfacility = store.pickupFacility;
                   delieveryAdress = store.deliveryFacility;
 
-                  //print('---------${pickupfacility} and ${delieveryAdress}--------');
+                  print('---------${pickupfacility} and ${delieveryAdress}--------');
                   if (delieveryAdress == "1" && pickupfacility == "1") {
                     showDialog(
                       context: context,
@@ -179,14 +180,14 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                           OrderSelectionScreen(pickupfacility, delieveryAdress),
                     );
                   } else if (pickupfacility == "1") {
-                    StoreModel storeObject = await SharedPrefs.getStore();
-                    bool status = Utils.checkStoreOpenTime(
+                    StoreDataObj storeObject = await SharedPrefs.getStoreData();
+                    /*bool status = Utils.checkStoreOpenTime(
                         storeObject, OrderType.Delivery);
                     if (!status) {
                       Utils.showToast(
                           "${storeObject.closehoursMessage}", false);
                       return;
-                    }
+                    }*/
 
                     Utils.showProgressDialog(context);
                     ApiController.getStorePickupAddress().then((response) {
@@ -219,14 +220,14 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                   } else {
                     //by default delivery
                     //issue reported :=When both delivery address and pickup address are off then user is not able to place order
-                    StoreModel storeObject = await SharedPrefs.getStore();
-                    bool status = Utils.checkStoreOpenTime(
+                    StoreDataObj storeObject = await SharedPrefs.getStoreData();
+                    /*bool status = Utils.checkStoreOpenTime(
                         storeObject, OrderType.Delivery);
                     if (!status) {
                       Utils.showToast(
                           "${storeObject.closehoursMessage}", false);
                       return;
-                    }
+                    }*/
                     Navigator.push(
                       context,
                       MaterialPageRoute(
