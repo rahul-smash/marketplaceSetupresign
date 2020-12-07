@@ -398,7 +398,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
             print("minAmount=${addressList[selectedIndex].minAmount}");
             print("notAllow=${addressList[selectedIndex].notAllow}");
             if (addressList[selectedIndex].note.isEmpty) {
-              Navigator.push(
+              /*Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => ConfirmOrderScreen(
@@ -408,7 +408,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                           widget.delivery,
                           storeModel: storeModel,
                         )),
-              );
+              );*/
             } else {
               var result = await DialogUtils.displayOrderConfirmationDialog(
                 context,
@@ -416,7 +416,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 addressList[selectedIndex].note,
               );
               if (result == true) {
-                Navigator.push(
+                /*Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => ConfirmOrderScreen(
@@ -425,7 +425,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                           "",
                           widget.delivery,
                           storeModel: storeModel)),
-                );
+                );*/
               }
             }
           }
