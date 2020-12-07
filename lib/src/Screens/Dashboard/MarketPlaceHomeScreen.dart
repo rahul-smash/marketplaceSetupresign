@@ -497,10 +497,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         }
         if (_currentIndex == 2) {
           if (AppConstant.isLoggedIn) {
-            /*Navigator.push(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => MyOrderScreenVersion2(store)),
-            );*/
+            );
             Map<String, dynamic> attributeMap = new Map<String, dynamic>();
             attributeMap["ScreenName"] = "MyOrderScreen";
             Utils.sendAnalyticsEvent("Clicked MyOrderScreen", attributeMap);

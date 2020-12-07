@@ -19,6 +19,7 @@ import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/CreatePaytmTxnTokenResponse.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/DeliveryTimeSlotModel.dart';
+import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/OrderDetailsModel.dart';
 import 'package:restroapp/src/models/RazorpayOrderData.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
@@ -197,8 +198,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         if (value != null && value.success) {
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => PaytmWebView(value)),
+            MaterialPageRoute(builder: (context) => PaytmWebView(value)),
           );
         } else {
           Utils.showToast("Api Error", false);
@@ -210,7 +210,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   @override
   void initState() {
     super.initState();
-    _brandData=BrandModel.getInstance().brandVersionModel.brand;
+    _brandData = BrandModel.getInstance().brandVersionModel.brand;
     initRazorPay();
     listenWebViewChanges();
     checkPaytmActive();
@@ -267,13 +267,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       } else if (widget.storeModel.cod == "0") {
         showCOD = false;
       }
-      if (_brandData.onlinePayment == "0" &&
-          widget.storeModel.cod == "0") {
+      if (_brandData.onlinePayment == "0" && widget.storeModel.cod == "0") {
         showCOD = true;
         widget.paymentMode = "2";
       }
-      if (widget.storeModel.cod == "0" &&
-          _brandData.onlinePayment == "1") {
+      if (widget.storeModel.cod == "0" && _brandData.onlinePayment == "1") {
         widget._character = PaymentType.ONLINE;
         widget.paymentMode = "3";
       }
@@ -1555,24 +1553,24 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 Utils.showToast("${storeModel.closehoursMessage}", false);
                 return;
               }
-              if (widget.deliveryType == OrderType.Delivery &&
-                  widget.address.notAllow) {
-                if (!minOrderCheck) {
-                  Utils.showToast(
-                      "Your order amount is too low. Minimum order amount is ${widget.address.minAmount}",
-                      false);
-                  return;
-                }
-              }
-              if (widget.deliveryType == OrderType.PickUp &&
-                  widget.areaObject != null) {
-                if (!minOrderCheck) {
-                  Utils.showToast(
-                      "Your order amount is too low. Minimum order amount is ${widget.areaObject.minOrder}",
-                      false);
-                  return;
-                }
-              }
+//              if (widget.deliveryType == OrderType.Delivery &&
+//                  widget.address.notAllow) {
+//                if (!minOrderCheck) {
+//                  Utils.showToast(
+//                      "Your order amount is too low. Minimum order amount is ${widget.address.minAmount}",
+//                      false);
+//                  return;
+//                }
+//              }
+//              if (widget.deliveryType == OrderType.PickUp &&
+//                  widget.areaObject != null) {
+//                if (!minOrderCheck) {
+//                  Utils.showToast(
+//                      "Your order amount is too low. Minimum order amount is ${widget.areaObject.minOrder}",
+//                      false);
+//                  return;
+//                }
+//              }
               if (checkThatItemIsInStocks()) {
                 DialogUtils.displayCommonDialog(
                     context,
@@ -1639,13 +1637,14 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 selectedDeliverSlotValue = "";
               }
 
-              if (widget.deliveryType == OrderType.Delivery) {
-                //The "performPlaceOrderOperation" are called in below method
-                checkDeliveryAreaDeleted(storeModel,
-                    addressId: widget.address.id);
-              } else if (widget.deliveryType == OrderType.PickUp) {
-                performPlaceOrderOperation(storeModel);
-              }
+//              if (widget.deliveryType == OrderType.Delivery) {
+//                //The "performPlaceOrderOperation" are called in below method
+//                checkDeliveryAreaDeleted(storeModel,
+//                    addressId: widget.address.id);
+//              } else if (widget.deliveryType == OrderType.PickUp) {
+//                performPlaceOrderOperation(storeModel);
+//              }
+              performPlaceOrderOperation(storeModel);
             },
             child: Text(
               "Confirm Order",
@@ -1757,9 +1756,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           } else {
             //remove paytm option
             int indexToRemove = -1;
-            for (int i = 0;
-                i < _brandData.paymentGatewaySettings.length;
-                i++) {
+            for (int i = 0; i < _brandData.paymentGatewaySettings.length; i++) {
               if (_brandData.paymentGatewaySettings[i].paymentGateway
                   .toLowerCase()
                   .contains('paytm')) {
@@ -1777,7 +1774,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             } else {
               String result =
                   await DialogUtils.displayMultipleOnlinePaymentMethodDialog(
-                      context, storeObject);
+                      context, _brandData);
               if (result.isEmpty) {
                 Utils.hideProgressDialog(context);
                 return;
@@ -1812,21 +1809,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     }
   }
 
-  checkDeliveryAreaDeleted(StoreDataObj storeObject, {String addressId = ""}) {
-    Utils.showProgressDialog(context);
-    ApiController.getAddressApiRequest().then((responses) async {
-      int length = responses.data.length;
-      List<DeliveryAddressData> list = await Utils.checkDeletedAreaFromStore(
-          context, responses.data,
-          showDialogBool: true, hitApi: false, id: addressId);
-      if (length != responses.data.length) {
-//        print("Area deleted list.length${list.length}");
-        Navigator.of(context).pop();
-      } else {
-        performPlaceOrderOperation(storeObject);
-      }
-    });
-  }
 
   Future<void> removeCoupon() async {
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
@@ -2013,8 +1995,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    StripeWebView(stripeCheckOutModel)),
+                builder: (context) => StripeWebView(stripeCheckOutModel)),
           );
         } else {
           Utils.showToast("${stripeCheckOutModel.message}!", true);
@@ -2027,13 +2008,25 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   String razorpay_orderId = "";
 
-  void openCheckout(String razorpay_order_id, StoreModel storeObject) async {
+  void openCheckout(String razorpay_order_id, BrandData storeObject) async {
     Utils.hideProgressDialog(context);
-    UserModel user = await SharedPrefs.getUser();
+    if (storeObject.paymentGatewaySettings.isEmpty) {
+      Utils.showToast('Payment Gateway is not configured', false);
+      return;
+    }
+    //find razor pay key
+    String key='';
+    for(var pgs in storeObject.paymentGatewaySettings){
+      if(pgs.paymentGateway.contains('Razorpay')){
+        key=pgs.apiKey;
+        break;
+      }
+    }
+    UserModelMobile user = await SharedPrefs.getUserMobile();
     //double price = totalPrice ;
     razorpay_orderId = razorpay_order_id;
     var options = {
-      'key': '${storeObject.paymentSetting.apiKey}',
+      'key': '${key}',
       'currency': "INR",
       'order_id': razorpay_order_id,
       //'amount': taxModel == null ? (price * 100) : (double.parse(taxModel.total) * 100),
@@ -2098,7 +2091,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     String mPrice =
         price.toString().substring(0, price.toString().indexOf('.'));
     print("=======mPrice===${mPrice}===========");
-    UserModel user = await SharedPrefs.getUser();
+    UserModelMobile user = await SharedPrefs.getUserMobile();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
@@ -2145,7 +2138,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         CreateOrderData model = response;
         if (model != null && response.success) {
           print("----razorpayCreateOrderApi----${response.data.id}--");
-          openCheckout(model.data.id, storeObject);
+          openCheckout(model.data.id, _brandData);
         } else {
           Utils.showToast("${model.message}", true);
           Utils.hideProgressDialog(context);
@@ -2208,8 +2201,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             print("${widget.deliveryType}");
             //print("Location = ${storeModel.lat},${storeModel.lng}");
             if (widget.deliveryType == OrderType.PickUp) {
-              bool result =
-                  await DialogUtils.displayPickUpDialog(context);
+              bool result = await DialogUtils.displayPickUpDialog(context);
               if (result == true) {
                 //print("==result== ${result}");
                 await databaseHelper.deleteTable(DatabaseHelper.CART_Table);

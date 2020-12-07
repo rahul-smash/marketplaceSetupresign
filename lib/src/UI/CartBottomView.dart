@@ -172,7 +172,8 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                   pickupfacility = store.pickupFacility;
                   delieveryAdress = store.deliveryFacility;
 
-                  print('---------${pickupfacility} and ${delieveryAdress}--------');
+                  print(
+                      '---------${pickupfacility} and ${delieveryAdress}--------');
                   if (delieveryAdress == "1" && pickupfacility == "1") {
                     showDialog(
                       context: context,
@@ -181,14 +182,13 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                     );
                   } else if (pickupfacility == "1") {
                     StoreDataObj storeObject = await SharedPrefs.getStoreData();
-                    /*bool status = Utils.checkStoreOpenTime(
+                    bool status = Utils.checkStoreOpenTime(
                         storeObject, OrderType.Delivery);
                     if (!status) {
                       Utils.showToast(
                           "${storeObject.closehoursMessage}", false);
                       return;
-                    }*/
-
+                    }
                     Utils.showProgressDialog(context);
                     ApiController.getStorePickupAddress().then((response) {
                       Utils.hideProgressDialog(context);
@@ -210,7 +210,9 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                             context,
                             MaterialPageRoute(
 //                                builder: (context) => PickUpOrderScreen(storeArea, OrderType.PickUp)),
-                                builder: (context) => StoreLocationScreenWithMultiplePick(storeArea,OrderType.PickUp)),
+                                builder: (context) =>
+                                    StoreLocationScreenWithMultiplePick(
+                                        storeArea, OrderType.PickUp)),
                           );
                         }
                       } else {

@@ -1306,7 +1306,7 @@ class DialogUtils {
   }
 
   static Future<String> displayMultipleOnlinePaymentMethodDialog(
-      BuildContext context, StoreModel storeObject) async {
+      BuildContext context, BrandData storeObject) async {
     return await showDialog<String>(
         context: context,
         barrierDismissible: true,
@@ -1334,7 +1334,7 @@ class DialogUtils {
                     return Divider();
                   },
                   itemBuilder: (context, index) {
-                    PaymentGatewaySettings paymentGatewaySettings =
+                    var paymentGatewaySettings =
                         storeObject.paymentGatewaySettings[index];
                     return InkWell(
                       onTap: () {

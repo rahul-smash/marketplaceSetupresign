@@ -704,10 +704,10 @@ class ApiController {
 
   static Future<StoreOffersResponse> storeOffersApiRequest(
       String areaId) async {
-    StoreModel store = await SharedPrefs.getStore();
-    UserModel user = await SharedPrefs.getUser();
+    StoreDataObj store = await SharedPrefs.getStoreData();
+    UserModelMobile user = await SharedPrefs.getUserMobile();
 
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
         ApiConstants.storeOffers;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
@@ -736,7 +736,7 @@ class ApiController {
 
   static Future<ValidateCouponResponse> validateOfferApiRequest(
       String couponCode, String paymentMode, String orderJson) async {
-    StoreModel store = await SharedPrefs.getStore();
+    StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
@@ -828,8 +828,8 @@ class ApiController {
       String online_method,
       String selectedDeliverSlotValue,
       {String cart_saving = "0.00"}) async {
-    StoreModel store = await SharedPrefs.getStore();
-    UserModel user = await SharedPrefs.getUser();
+    StoreDataObj store = await SharedPrefs.getStoreData();
+    UserModelMobile user = await SharedPrefs.getUserMobile();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
@@ -1028,10 +1028,9 @@ class ApiController {
   }
 
   static Future<GetOrderHistory> getOrderHistory() async {
-    StoreModel store = await SharedPrefs.getStore();
     UserModel user = await SharedPrefs.getUser();
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", '3') +
         ApiConstants.orderHistory;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     if (isNetworkAvailable) {
@@ -1228,7 +1227,7 @@ class ApiController {
 
   static Future<StoreOffersResponse> myOffersApiRequest() async {
     StoreModel store = await SharedPrefs.getStore();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
         ApiConstants.storeOffers;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     print('@@myOffersApiRequest' + url);
@@ -1274,8 +1273,8 @@ class ApiController {
 
   static Future<CreateOrderData> razorpayCreateOrderApi(
       String amount, String orderJson, dynamic detailsJson) async {
-    StoreModel store = await SharedPrefs.getStore();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    StoreDataObj store = await SharedPrefs.getStoreData();
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
         ApiConstants.razorpayCreateOrder;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
@@ -1305,8 +1304,8 @@ class ApiController {
 
   static Future<RazorpayOrderData> razorpayVerifyTransactionApi(
       String razorpay_order_id) async {
-    StoreModel store = await SharedPrefs.getStore();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    StoreDataObj store = await SharedPrefs.getStoreData();
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
         ApiConstants.razorpayVerifyTransaction;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
