@@ -30,15 +30,12 @@ class StoreDashboardScreen extends StatefulWidget {
 }
 
 class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
-  //StoreModel store;
   StoreDataObj store;
   List<NetworkImage> imgList = [];
-  int _currentIndex = 0;
   UserModel user;
   bool isStoreClosed;
   final DatabaseHelper databaseHelper = new DatabaseHelper();
   bool isLoading = true;
-  int _current = 0;
 
   CategoryResponse categoryResponse;
 
@@ -159,7 +156,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                   selectedCategory = (value as CategoryModel);
                                   selectedSubCategoryId = selectedCategory.id;
                                   getHomeCategoryProductApi();
-//                              widget.callback(value: widget.selectedCategory);
                                 });
                                 return;
                               },
