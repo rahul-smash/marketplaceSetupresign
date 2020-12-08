@@ -478,14 +478,14 @@ class ApiController {
     bool isNetworkAviable = await Utils.isNetworkAvailable();
     try {
       if (isNetworkAviable) {
-        StoreModel store = await SharedPrefs.getStore();
+        StoreDataObj store = await SharedPrefs.getStoreData();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String deviceId = prefs.getString(AppConstant.deviceId);
         print("deviceID $deviceId");
         String deviceToken = prefs.getString(AppConstant.deviceToken);
         print("deviceToken $deviceToken");
 
-        var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+        var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
             ApiConstants.getProductDetail;
         print(url);
         FormData formData = new FormData.fromMap({
@@ -586,11 +586,15 @@ class ApiController {
   }
 
   static Future<PickUpModel> getStorePickupAddress() async {
-    StoreModel store = await SharedPrefs.getStore();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    StoreDataObj store = await SharedPrefs.getStoreData();
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", '') +
         ApiConstants.getStorePickupAddress;
 
-    var request = new http.MultipartRequest("GET", Uri.parse(url));
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    request.fields.addAll({
+      "store_id": store.id,
+      "method": "POST",
+    });
     try {
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
@@ -608,7 +612,10 @@ class ApiController {
 
   static Future<DeliveryAddressResponse> saveDeliveryAddressApiRequest(
       String method,
-      String firstName,String lastName, String mobile, String email,
+      String firstName,
+      String lastName,
+      String mobile,
+      String email,
       String address,
       String city,
       String state,
@@ -629,8 +636,8 @@ class ApiController {
 
     try {
       request.fields.addAll({
-        "method": method,//
-        "user_id": user.id,//
+        "method": method, //
+        "user_id": user.id, //
         "first_name": firstName,
         "last_name": lastName,
         "mobile": mobile,
@@ -646,7 +653,7 @@ class ApiController {
         "address_type": address_type,
       });
 
-      if(method == "EDIT"){
+      if (method == "EDIT") {
         request.fields.addAll({
           "address_id": address_id,
         });
@@ -669,7 +676,6 @@ class ApiController {
 
   static Future<DeliveryAddressResponse> deleteDeliveryAddressApiRequest(
       String addressId) async {
-
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
@@ -929,11 +935,12 @@ class ApiController {
         "cart_saving": cart_saving,
       });
 
-      //print("----${url}");
-      //print("--fields--${request.fields.toString()}--");
+      print("----${url}");
+      print("--fields--${request.fields.toString()}--");
       final response = await request.send();
-      final respStr = await response.stream.bytesToString();
-      //print("--respStr--${respStr}--");
+      var respStr = await response.stream.bytesToString();
+      print("--respStr--${respStr}--");
+      respStr = respStr.replaceAll('ion{', '{');
       final parsed = json.decode(respStr);
 
       ResponseModel model = ResponseModel.fromJson(parsed);
@@ -1043,7 +1050,8 @@ class ApiController {
         print('--user.id=== ${user.id}');
         final response =
             await request.send().timeout(Duration(seconds: timeout));
-        final respStr = await response.stream.bytesToString();
+        var respStr = await response.stream.bytesToString();
+        respStr = respStr.replaceAll('ion{', '{');
         final parsed = json.decode(respStr);
         print('--respStr===  $respStr');
         GetOrderHistory getOrderHistory = GetOrderHistory.fromJson(parsed);
@@ -1059,10 +1067,10 @@ class ApiController {
   }
 
   static Future<GetOrderHistory> getOrderDetail(String orderID) async {
-    StoreModel store = await SharedPrefs.getStore();
-    UserModel user = await SharedPrefs.getUser();
+    StoreDataObj store = await SharedPrefs.getStoreData();
+    UserModelMobile user = await SharedPrefs.getUserMobile();
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
         ApiConstants.orderDetailHistory;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     if (isNetworkAvailable) {
@@ -1076,7 +1084,8 @@ class ApiController {
         print('--user.id=== ${user.id}');
         final response =
             await request.send().timeout(Duration(seconds: timeout));
-        final respStr = await response.stream.bytesToString();
+        var respStr = await response.stream.bytesToString();
+        respStr = respStr.replaceAll('ion{', '{');
         final parsed = json.decode(respStr);
         print('--respStr===  $respStr');
         GetOrderHistory getOrderHistory = GetOrderHistory.fromJson(parsed);
@@ -1252,7 +1261,6 @@ class ApiController {
 
     var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
         ApiConstants.getStoreRadius;
-
 
     var request = new http.MultipartRequest("GET", Uri.parse(url));
     print('@@url=${url}');
@@ -1430,10 +1438,9 @@ class ApiController {
   }
 
   static Future<SearchTagsModel> searchTagsAPI() async {
-    StoreModel store = await SharedPrefs.getStore();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
         ApiConstants.getTagsList;
-
+    print("----respStr---${url}");
     var request = new http.MultipartRequest("GET", Uri.parse(url));
     try {
       final response = await request.send().timeout(Duration(seconds: timeout));
@@ -1451,13 +1458,12 @@ class ApiController {
   }
 
   static Future<SubCategoryResponse> getSearchResults(String keyword) async {
-    StoreModel store = await SharedPrefs.getStore();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
-        ApiConstants.search;
+    var url =
+        ApiConstants.baseUrl3.replaceAll("storeId", '0') + ApiConstants.search;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
@@ -1505,10 +1511,10 @@ class ApiController {
   static Future<CancelOrderModel> orderCancelApi(String order_id) async {
     // 0 => 'pending' ,  1 =>'processing', 2 =>'rejected',
     // 4 =>'shipped', 5 =>'delivered', 6 => 'cancel'
-    StoreModel store = await SharedPrefs.getStore();
+    StoreDataObj store = await SharedPrefs.getStoreData();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    UserModel user = await SharedPrefs.getUser();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    UserModelMobile user = await SharedPrefs.getUserMobile();
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
         ApiConstants.orderCancel;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
@@ -1575,10 +1581,10 @@ class ApiController {
   }
 
   static Future<LoyalityPointsModel> getLoyalityPointsApiRequest() async {
-    StoreModel store = await SharedPrefs.getStore();
-    UserModel user = await SharedPrefs.getUser();
+    StoreDataObj store = await SharedPrefs.getStoreData();
+    UserModelMobile user = await SharedPrefs.getUserMobile();
 
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
         ApiConstants.getLoyalityPoints;
 
     print("----url--${url}");
@@ -1749,12 +1755,12 @@ class ApiController {
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
     try {
       if (isNetworkAvailable) {
-        StoreModel store = await SharedPrefs.getStore();
+        StoreDataObj store = await SharedPrefs.getStoreData();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String deviceId = prefs.getString(AppConstant.deviceId);
         String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-        var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+        var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
             ApiConstants.recommendedProduct;
         var request = new http.MultipartRequest("POST", Uri.parse(url));
         request.fields.addAll({
@@ -1783,15 +1789,14 @@ class ApiController {
   }
 
   static Future<FacebookModel> getFbUserData(String fbtoken) async {
-
     //String url1 = "https://graph.facebook.com/${user_id}?fields=name,first_name,last_name,email,&access_token=${fbtoken}";
-    String url = 'https://graph.facebook.com/v8.0/me?fields=name,first_name,last_name,email&access_token=${fbtoken}';
+    String url =
+        'https://graph.facebook.com/v8.0/me?fields=name,first_name,last_name,email&access_token=${fbtoken}';
 
     var request = new http.MultipartRequest("GET", Uri.parse(url));
 
     try {
-      final response = await request.send()
-          .timeout(Duration(seconds: timeout));
+      final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
       print("----url---${url}");
       print("----respStr---${respStr}");
@@ -1806,14 +1811,12 @@ class ApiController {
   }
 
   static Future<MobileVerified> verifyEmail(String email) async {
-    var url = ApiConstants.base_Url+ ApiConstants.verifyEmail;
+    var url = ApiConstants.base_Url + ApiConstants.verifyEmail;
 
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
-      request.fields.addAll({
-        "email": email,
-        "platform": Platform.isIOS ? "IOS" : "Android"
-      });
+      request.fields.addAll(
+          {"email": email, "platform": Platform.isIOS ? "IOS" : "Android"});
       print('@@url=${url}');
 
       final response = await request.send().timeout(Duration(seconds: timeout));
@@ -1829,35 +1832,33 @@ class ApiController {
     }
   }
 
-
-  static Future<MobileVerified> socialSignUp(FacebookModel fbModel,
+  static Future<MobileVerified> socialSignUp(
+      FacebookModel fbModel,
       GoogleSignInAccount googleResult,
       String fullName,
       String emailId,
       String phoneNumber,
       String user_refer_code,
       String gstNumber) async {
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-    var url = ApiConstants.base_Url +
-        ApiConstants.socialLogin;
+    var url = ApiConstants.base_Url + ApiConstants.socialLogin;
 
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     String socialPlatform;
-    if(fbModel != null){
+    if (fbModel != null) {
       socialPlatform = "facebook";
-    }else if(googleResult != null){
+    } else if (googleResult != null) {
       socialPlatform = "google";
     }
 
     try {
       request.fields.addAll({
         "phone": phoneNumber,
-        "country": /*store.internationalOtp == "0" ?*/ "92"/* :"0"*/,
+        "country": /*store.internationalOtp == "0" ?*/ "92" /* :"0"*/,
         "email": emailId,
         "social_platform": socialPlatform,
         "full_name": fullName,
@@ -1885,5 +1886,4 @@ class ApiController {
       return null;
     }
   }
-
 }

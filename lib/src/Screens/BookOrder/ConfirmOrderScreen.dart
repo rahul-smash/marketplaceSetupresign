@@ -1603,39 +1603,39 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 return;
               }
 
-              if (widget.deliveryType == OrderType.Delivery) {
-                if (storeModel.deliverySlot == "0") {
-                  selectedDeliverSlotValue = "";
-                } else {
-                  //Store provides instant delivery of the orders.
-                  print(isInstantDelivery);
-                  if (isDeliveryResponseFalse) {
-                    selectedDeliverSlotValue = "";
-                  } else if (storeModel.deliverySlot == "1" &&
-                      isInstantDelivery) {
-                    //Store provides instant delivery of the orders.
-                    selectedDeliverSlotValue = "";
-                  } else if (storeModel.deliverySlot == "1" &&
-                      !isSlotSelected &&
-                      !isInstantDelivery) {
-                    Utils.showToast("Please select delivery slot", false);
-                    return;
-                  } else {
-                    String slotDate = deliverySlotModel
-                        .data.dateTimeCollection[selctedTag].label;
-                    String timeSlot = deliverySlotModel
-                        .data
-                        .dateTimeCollection[selctedTag]
-                        .timeslot[selectedTimeSlot]
-                        .label;
-                    selectedDeliverSlotValue =
-                        "${Utils.convertDateFormat(slotDate)} ${timeSlot}";
-                    //print("selectedDeliverSlotValue= ${selectedDeliverSlotValue}");
-                  }
-                }
-              } else {
-                selectedDeliverSlotValue = "";
-              }
+//              if (widget.deliveryType == OrderType.Delivery) {
+//                if (storeModel.deliverySlot == "0") {
+//                  selectedDeliverSlotValue = "";
+//                } else {
+//                  //Store provides instant delivery of the orders.
+//                  print(isInstantDelivery);
+//                  if (isDeliveryResponseFalse) {
+//                    selectedDeliverSlotValue = "";
+//                  } else if (storeModel.deliverySlot == "1" &&
+//                      isInstantDelivery) {
+//                    //Store provides instant delivery of the orders.
+//                    selectedDeliverSlotValue = "";
+//                  } else if (storeModel.deliverySlot == "1" &&
+//                      !isSlotSelected &&
+//                      !isInstantDelivery) {
+//                    Utils.showToast("Please select delivery slot", false);
+//                    return;
+//                  } else {
+//                    String slotDate = deliverySlotModel
+//                        .data.dateTimeCollection[selctedTag].label;
+//                    String timeSlot = deliverySlotModel
+//                        .data
+//                        .dateTimeCollection[selctedTag]
+//                        .timeslot[selectedTimeSlot]
+//                        .label;
+//                    selectedDeliverSlotValue =
+//                        "${Utils.convertDateFormat(slotDate)} ${timeSlot}";
+//                    //print("selectedDeliverSlotValue= ${selectedDeliverSlotValue}");
+//                  }
+//                }
+//              } else {
+//                selectedDeliverSlotValue = "";
+//              }
 
 //              if (widget.deliveryType == OrderType.Delivery) {
 //                //The "performPlaceOrderOperation" are called in below method
@@ -1680,6 +1680,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       databaseHelper.deleteTable(DatabaseHelper.CART_Table);
 //      databaseHelper.deleteTable(DatabaseHelper.Products_Table);
       eventBus.fire(updateCartCount());
+      eventBus.fire(onCartRemoved());
       Navigator.of(context).popUntil((route) => route.isFirst);
       return;
     }
@@ -1808,7 +1809,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         break;
     }
   }
-
 
   Future<void> removeCoupon() async {
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
@@ -2015,10 +2015,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       return;
     }
     //find razor pay key
-    String key='';
-    for(var pgs in storeObject.paymentGatewaySettings){
-      if(pgs.paymentGateway.contains('Razorpay')){
-        key=pgs.apiKey;
+    String key = '';
+    for (var pgs in storeObject.paymentGatewaySettings) {
+      if (pgs.paymentGateway.contains('Razorpay')) {
+        key = pgs.apiKey;
         break;
       }
     }
@@ -2150,6 +2150,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   void placeOrderApiCall(
       String payment_request_id, String payment_id, String onlineMethod) {
     Utils.hideKeyboard(context);
+    Utils.showProgressDialog(context);
     Utils.isNetworkAvailable().then((isNetworkAvailable) async {
       if (isNetworkAvailable == true) {
         /*databaseHelper
@@ -2197,6 +2198,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               print("--response == null-response == null-");
               return;
             }
+            if (response.success == false) {
+              DialogUtils.displayCommonDialog(
+                  context, _brandData.name, response.message);
+              return;
+            }
             eventBus.fire(updateCartCount());
             print("${widget.deliveryType}");
             //print("Location = ${storeModel.lat},${storeModel.lng}");
@@ -2207,12 +2213,14 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 eventBus.fire(updateCartCount());
+                eventBus.fire(onCartRemoved());
                 DialogUtils.openMap(storeModel, double.parse(storeModel.lat),
                     double.parse(storeModel.lng));
               } else {
                 //print("==result== ${result}");
                 await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
                 eventBus.fire(updateCartCount());
+                eventBus.fire(onCartRemoved());
                 Navigator.of(context).popUntil((route) => route.isFirst);
               }
             } else {
@@ -2221,6 +2229,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               if (result == true) {
                 await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
                 Navigator.of(context).popUntil((route) => route.isFirst);
+                eventBus.fire(onCartRemoved());
                 eventBus.fire(updateCartCount());
               }
             }

@@ -111,7 +111,7 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Flexible(
-          child: Text('Order - ${cardOrderHistoryItems.displayOrderId}',
+          child: Text('Order - ${cardOrderHistoryItems.orderId}',
               style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w400,

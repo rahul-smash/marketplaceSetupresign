@@ -126,8 +126,68 @@ class DialogUtils {
     );
   }
 
-  static Future<Datum> displayCityDialog(
-      BuildContext context, String title, PickUpModel storeArea) async {
+//  static Future<Datum> displayCityDialog(
+//      BuildContext context, String title, PickUpModel storeArea) async {
+//    return await showDialog<Datum>(
+//      context: context,
+//      builder: (BuildContext context) {
+//        return WillPopScope(
+//          onWillPop: () {},
+//          child: AlertDialog(
+//            shape: RoundedRectangleBorder(
+//                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+//            title: Text(
+//              title,
+//              textAlign: TextAlign.center,
+//            ),
+//            content: Container(
+//              width: double.maxFinite,
+//              child: ListView.separated(
+//                shrinkWrap: true,
+//                itemCount: storeArea.data.length,
+//                separatorBuilder: (BuildContext context, int index) {
+//                  return Divider();
+//                },
+//                itemBuilder: (context, index) {
+//                  Datum areaObject = storeArea.data[index];
+//                  return InkWell(
+//                    onTap: () {
+//                      Navigator.pop(context, areaObject);
+//                    },
+//                    child: ListTile(
+//                      title: Row(
+//                          crossAxisAlignment: CrossAxisAlignment.center,
+//                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                          children: <Widget>[
+//                            Expanded(
+//                              child: Text(areaObject.city.city,
+//                                  style: TextStyle(
+//                                      color: Colors.black, fontSize: 16)),
+//                            ),
+//                          ]),
+//                    ),
+//                  );
+//                },
+//              ),
+//            ),
+//            actions: <Widget>[
+//              new FlatButton(
+//                child: new Text("Cancel"),
+//                textColor: Colors.blue,
+//                onPressed: () {
+//                  Navigator.pop(context, null);
+//                  // true here means you clicked ok
+//                },
+//              ),
+//            ],
+//          ),
+//        );
+//      },
+//    );
+//  }
+
+  static Future<Datum> displayAreaDialog(
+      BuildContext context, String title, PickUpModel pickUpModel) async {
     return await showDialog<Datum>(
       context: context,
       builder: (BuildContext context) {
@@ -144,72 +204,12 @@ class DialogUtils {
               width: double.maxFinite,
               child: ListView.separated(
                 shrinkWrap: true,
-                itemCount: storeArea.data.length,
+                itemCount: pickUpModel.data.length,
                 separatorBuilder: (BuildContext context, int index) {
                   return Divider();
                 },
                 itemBuilder: (context, index) {
-                  Datum areaObject = storeArea.data[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.pop(context, areaObject);
-                    },
-                    child: ListTile(
-                      title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(areaObject.city.city,
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 16)),
-                            ),
-                          ]),
-                    ),
-                  );
-                },
-              ),
-            ),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text("Cancel"),
-                textColor: Colors.blue,
-                onPressed: () {
-                  Navigator.pop(context, null);
-                  // true here means you clicked ok
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  static Future<Area> displayAreaDialog(
-      BuildContext context, String title, Datum cityObject) async {
-    return await showDialog<Area>(
-      context: context,
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () {},
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            title: Text(
-              title,
-              textAlign: TextAlign.center,
-            ),
-            content: Container(
-              width: double.maxFinite,
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: cityObject.area.length,
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider();
-                },
-                itemBuilder: (context, index) {
-                  Area object = cityObject.area[index];
+                  Datum object = pickUpModel.data[index];
                   return InkWell(
                     onTap: () {
                       Navigator.pop(context, object);

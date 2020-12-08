@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
-import 'package:restroapp/src/Screens/Address/PickUpOrderScreen.dart';
 import 'package:restroapp/src/Screens/Address/StoreLocationScreen.dart';
 import 'package:restroapp/src/Screens/Address/StoreLocationScreenWithMultiplePick.dart';
 import 'package:restroapp/src/Screens/BookOrder/OrderSelectionScreen.dart';
@@ -196,9 +195,8 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
 
                       print('---PickUpModel---${storeArea.data.length}--');
                       if (storeArea != null && storeArea.data.isNotEmpty) {
-                        if (storeArea.data.length == 1 &&
-                            storeArea.data[0].area.length == 1) {
-                          Area areaObject = storeArea.data[0].area[0];
+                        if (storeArea.data.length == 1 ) {
+                          Datum areaObject = storeArea.data[0];
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -209,7 +207,6 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-//                                builder: (context) => PickUpOrderScreen(storeArea, OrderType.PickUp)),
                                 builder: (context) =>
                                     StoreLocationScreenWithMultiplePick(
                                         storeArea, OrderType.PickUp)),
@@ -223,13 +220,13 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                     //by default delivery
                     //issue reported :=When both delivery address and pickup address are off then user is not able to place order
                     StoreDataObj storeObject = await SharedPrefs.getStoreData();
-                    /*bool status = Utils.checkStoreOpenTime(
+                    bool status = Utils.checkStoreOpenTime(
                         storeObject, OrderType.Delivery);
                     if (!status) {
                       Utils.showToast(
                           "${storeObject.closehoursMessage}", false);
                       return;
-                    }*/
+                    }
                     Navigator.push(
                       context,
                       MaterialPageRoute(

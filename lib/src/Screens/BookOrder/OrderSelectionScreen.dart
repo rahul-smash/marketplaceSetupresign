@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
-import 'package:restroapp/src/Screens/Address/PickUpOrderScreen.dart';
 import 'package:restroapp/src/Screens/Address/StoreLocationScreen.dart';
 import 'package:restroapp/src/Screens/Address/StoreLocationScreenWithMultiplePick.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
-import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
-import 'package:restroapp/src/models/StoreResponseModel.dart';
-import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class OrderSelectionScreen extends StatefulWidget {
@@ -160,8 +156,8 @@ class _OrderSelectionScreen extends State<OrderSelectionScreen> {
 
                               print('---PickUpModel---${storeArea.data.length}--');
                               if(storeArea != null && storeArea.data.isNotEmpty){
-                                if(storeArea.data.length == 1 && storeArea.data[0].area.length == 1){
-                                  Area areaObject = storeArea.data[0].area[0];
+                                if(storeArea.data.length == 1){
+                                  Datum areaObject = storeArea.data[0];
                                   Navigator.pop(context);
                                   Navigator.push(
                                     context,

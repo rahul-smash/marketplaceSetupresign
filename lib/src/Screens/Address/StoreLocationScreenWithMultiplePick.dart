@@ -11,14 +11,12 @@ import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class StoreLocationScreenWithMultiplePick extends StatefulWidget {
-  Area areaObject;
+  Datum areaObject;
   PickUpModel storeArea;
   OrderType pickUp;
-  Datum cityObject;
 
   StoreLocationScreenWithMultiplePick(this.storeArea, this.pickUp) {
-    this.areaObject = storeArea.data.first.area.first;
-    cityObject = storeArea.data.first;
+    this.areaObject = storeArea.data.first;
   }
 
   @override
@@ -75,36 +73,36 @@ class _StoreLocationScreenWithMultiplePickState
       ),
       body: Column(
         children: <Widget>[
+//          InkWell(
+//            onTap: () async {
+//              Datum result = await DialogUtils.displayCityDialog(
+//                  context, "Select City", widget.storeArea);
+//              if (result == null) {
+//                return;
+//              }
+//              widget.cityObject = result;
+//              setState(() {
+//                widget.areaObject = null;
+//              });
+//            },
+//            child: Align(
+//                alignment: Alignment.centerLeft,
+//                child: Container(
+//                  padding: EdgeInsets.fromLTRB(10, 15, 0, 10),
+//                  color: Colors.white,
+//                  child: Text(
+//                    widget.cityObject == null
+//                        ? "Select City"
+//                        : "City: ${widget.cityObject.city.city}",
+//                    textAlign: TextAlign.left,
+//                  ),
+//                )),
+//          ),
+//          Divider(color: Colors.grey, height: 2.0),
           InkWell(
             onTap: () async {
-              Datum result = await DialogUtils.displayCityDialog(
-                  context, "Select City", widget.storeArea);
-              if (result == null) {
-                return;
-              }
-              widget.cityObject = result;
-              setState(() {
-                widget.areaObject = null;
-              });
-            },
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(10, 15, 0, 10),
-                  color: Colors.white,
-                  child: Text(
-                    widget.cityObject == null
-                        ? "Select City"
-                        : "City: ${widget.cityObject.city.city}",
-                    textAlign: TextAlign.left,
-                  ),
-                )),
-          ),
-          Divider(color: Colors.grey, height: 2.0),
-          InkWell(
-            onTap: () async {
-              Area result = await DialogUtils.displayAreaDialog(
-                  context, "Select Area", widget.cityObject);
+              Datum result = await DialogUtils.displayAreaDialog(
+                  context, "Select Area", widget.storeArea);
               if (result == null) return;
               widget.areaObject = result;
               setState(() {

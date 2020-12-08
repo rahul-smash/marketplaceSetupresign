@@ -189,9 +189,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       setState(() {
         setState(() {
           _controller.text = '';
-          if (isCategoryViewSelected) {
-            isCategoryViewSelected = !isCategoryViewSelected;
-          }
+          _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
         });
       });
     });
@@ -393,36 +391,15 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               icon: Image.asset('images/homeicon.png',
                   width: 24,
                   fit: BoxFit.scaleDown,
-                  color: isCategoryViewSelected
+                  color: _selectedHomeScreen!=HomeScreenEnum.HOME_BAND_VIEW
                       ? staticHomeDescriptionColor
                       : appThemeSecondary),
               title: Text('Home',
                   style: TextStyle(
-                      color: isCategoryViewSelected
+                      color: _selectedHomeScreen!=HomeScreenEnum.HOME_BAND_VIEW
                           ? staticHomeDescriptionColor
                           : appThemeSecondary)),
             ),
-//            BottomNavigationBarItem(
-//              icon: Image.asset('images/unselectedcategoryicon.png',
-//                  width: 24,
-//                  fit: BoxFit.scaleDown,
-//                  color: !isCategoryViewSelected
-//                      ? staticHomeDescriptionColor
-//                      : appThemeSecondary),
-//              title: Text('Category',
-//                  style: TextStyle(
-//                      color: !isCategoryViewSelected
-//                          ? staticHomeDescriptionColor
-//                          : appThemeSecondary)),
-//            ),
-//            BottomNavigationBarItem(
-//              icon: Image.asset('images/contacticon.png',
-//                  width: 24,
-//                  fit: BoxFit.scaleDown,
-//                  color: staticHomeDescriptionColor),
-//              title: Text('Contact',
-//                  style: TextStyle(color: staticHomeDescriptionColor)),
-//            ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedexploreicon.png',
                   width: 24,
@@ -486,7 +463,23 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           if (AppConstant.isLoggedIn) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SearchScreen()),
+              MaterialPageRoute(builder: (context) => SearchScreen(widget.initialPosition,<Object>({value}){
+                setState(() {
+                  if (value == null) {
+                    Utils.showToast('No Data found', false);
+                    return;
+                  }
+                  if (value is StoreDataModel) {
+                    setState(() {
+                      _selectedSingleStore = value;
+                      _previousSelectedHomeScreen = _selectedHomeScreen;
+                      _selectedHomeScreen = HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+                    });
+                    return;
+                  }
+                });
+                return;
+              })),
             );
           } else {
             Utils.showLoginDialog(context);
@@ -499,7 +492,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           if (AppConstant.isLoggedIn) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MyOrderScreenVersion2(store)),
+              MaterialPageRoute(
+                  builder: (context) => MyOrderScreenVersion2(store)),
             );
             Map<String, dynamic> attributeMap = new Map<String, dynamic>();
             attributeMap["ScreenName"] = "MyOrderScreen";
@@ -518,7 +512,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           //show categories
           setState(() {
             _controller.text = '';
-            isCategoryViewSelected = false;
+            _selectedHomeScreen=HomeScreenEnum.HOME_BAND_VIEW;
           });
         }
       });
@@ -1101,7 +1095,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   Widget _getRestaurantList() {
     return RestroListScreen(
       allStoreData,
-      initialPosition:  widget.initialPosition,
+      initialPosition: widget.initialPosition,
       tagsModel: tagsModel,
       selectedScreen: _selectedHomeScreen,
       callback: <Object>({value}) {
@@ -1142,25 +1136,25 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                       int index = imgList.indexOf(url);
                       return _current == index
                           ? Container(
-                        width: 7.0,
-                        height: 7.0,
-                        margin: EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 2.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: dotIncreasedColor,
-                        ),
-                      )
+                              width: 7.0,
+                              height: 7.0,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 0.0, horizontal: 2.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: dotIncreasedColor,
+                              ),
+                            )
                           : Container(
-                        width: 6.0,
-                        height: 6.0,
-                        margin: EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 2.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color.fromRGBO(0, 0, 0, 0.4),
-                        ),
-                      );
+                              width: 6.0,
+                              height: 6.0,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 0.0, horizontal: 2.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color.fromRGBO(0, 0, 0, 0.4),
+                              ),
+                            );
                     }).toList(),
                   ),
                 ),
@@ -1199,8 +1193,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                                         allStoreData = value;
                                         _previousSelectedHomeScreen =
                                             _selectedHomeScreen;
-                                        _selectedHomeScreen = HomeScreenEnum
-                                            .HOME_RESTAURANT_VIEW;
+                                        _selectedHomeScreen =
+                                            HomeScreenEnum.HOME_RESTAURANT_VIEW;
                                       });
                                       return;
                                     }
@@ -1244,10 +1238,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       case HomeScreenEnum.HOME_SEARCH_VIEW:
       case HomeScreenEnum.HOME_BAND_VIEW:
       default:
-        return  IconButton(
-                icon: Image.asset('images/menuicon.png', width: 25),
-                onPressed: _handleDrawer,
-              );
+        return IconButton(
+          icon: Image.asset('images/menuicon.png', width: 25),
+          onPressed: _handleDrawer,
+        );
         break;
     }
   }

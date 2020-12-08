@@ -32,7 +32,7 @@ class ProductDetailsScreen extends StatefulWidget {
   bool isApiLoading = false, isFav = false;
   Variant passedVariant;
 
-  ProductDetailsScreen(this.product,this.passedVariant);
+  ProductDetailsScreen(this.product, this.passedVariant);
 
   @override
   State<StatefulWidget> createState() {
@@ -68,7 +68,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
     selctedTag = 0;
     showAddButton = false;
     _carouselController = CarouselController();
-    variant=widget.passedVariant;
+    variant = widget.passedVariant;
     getDataFromDB();
 //    getProductDetail(widget.product.id);
   }
@@ -119,7 +119,8 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
     return WillPopScope(
       onWillPop: () {
         print("onWillPop onWillPop");
-        Navigator.pop(context, variant==null?widget.passedVariant:variant);
+        Navigator.pop(
+            context, variant == null ? widget.passedVariant : variant);
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -135,8 +136,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                   ),
                   onPressed: () {
                     share(widget.product,
-                        '${_storeModel.domain}/shop/product/${widget.product
-                            .id}');
+                        '${_storeModel.domain}/shop/product/${widget.product.id}');
                   },
                 )),
             InkWell(
@@ -146,7 +146,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
               },
               child: Padding(
                 padding:
-                EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
+                    EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
                 child: Icon(
                   Icons.home,
                   color: Colors.white,
@@ -158,7 +158,8 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
-              return Navigator.pop(context, variant==null?widget.passedVariant:variant);
+              return Navigator.pop(
+                  context, variant == null ? widget.passedVariant : variant);
             },
           ),
           title: Text("${widget.product.title}"),
@@ -189,7 +190,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
           children: <Widget>[
             Padding(
               padding:
-              EdgeInsets.only(top: 10.0, bottom: 10.0, left: 0, right: 0),
+                  EdgeInsets.only(top: 10.0, bottom: 10.0, left: 0, right: 0),
 //              EdgeInsets.all(0),
               child: _getImageView(),
             ),
@@ -262,30 +263,30 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                 Padding(
                   padding: EdgeInsets.only(top: 10.0, left: 20.0),
                   child: (discount == "0.00" ||
-                      discount == "0" ||
-                      discount == "0.0")
+                          discount == "0" ||
+                          discount == "0.0")
                       ? Text(
-                    "${AppConstant.currency}${price}",
-                    style: TextStyle(
-                        color: grayColorTitle,
-                        fontWeight: FontWeight.w600),
-                  )
-                      : Row(
-                    children: <Widget>[
-                      Text(
-                        "${AppConstant.currency}${price}",
-                        style: TextStyle(
-                            color: grayColorTitle,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      Text(" "),
-                      Text("${AppConstant.currency}${mrpPrice}",
+                          "${AppConstant.currency}${price}",
                           style: TextStyle(
-                              decoration: TextDecoration.lineThrough,
                               color: grayColorTitle,
-                              fontWeight: FontWeight.w400)),
-                    ],
-                  ),
+                              fontWeight: FontWeight.w600),
+                        )
+                      : Row(
+                          children: <Widget>[
+                            Text(
+                              "${AppConstant.currency}${price}",
+                              style: TextStyle(
+                                  color: grayColorTitle,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                            Text(" "),
+                            Text("${AppConstant.currency}${mrpPrice}",
+                                style: TextStyle(
+                                    decoration: TextDecoration.lineThrough,
+                                    color: grayColorTitle,
+                                    fontWeight: FontWeight.w400)),
+                          ],
+                        ),
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 0, 10),
@@ -326,66 +327,66 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
         ),
 
         !widget.isApiLoading &&
-            widget.product.description != null &&
-            widget.product.description.isNotEmpty
+                widget.product.description != null &&
+                widget.product.description.isNotEmpty
             ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Visibility(
-              visible: isVisible,
-              child: addDividerView(),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(20, 10, 0, 10),
-              child: Text(
-                "Product Detail",
-                style: TextStyle(fontSize: 16.0),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  top: 5.0, left: 10.0, right: 10.0),
-              child: Html(
-                data: "${widget.product.description}",
-                padding: EdgeInsets.all(10.0),
-              ),
-            )
-          ],
-        )
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Visibility(
+                    visible: isVisible,
+                    child: addDividerView(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 10, 0, 10),
+                    child: Text(
+                      "Product Detail",
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 5.0, left: 10.0, right: 10.0),
+                    child: Html(
+                      data: "${widget.product.description}",
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                  )
+                ],
+              )
             : !widget.isApiLoading
-            ? Container()
-            : Center(
-          child: CircularProgressIndicator(
-              backgroundColor: Colors.black26,
-              valueColor:
-              AlwaysStoppedAnimation<Color>(Colors.black26)),
-        ),
+                ? Container()
+                : Center(
+                    child: CircularProgressIndicator(
+                        backgroundColor: Colors.black26,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.black26)),
+                  ),
         _recommendedProducts.length > 0
             ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            addDividerView(),
-            Padding(
-              padding: EdgeInsets.fromLTRB(20, 10, 0, 10),
-              child: Text(
-                "Recommended Products",
-                style: TextStyle(
-                    fontSize: 16.0, fontWeight: FontWeight.bold),
-              ),
-            ),
-            ListView.builder(
-              itemCount: _recommendedProducts.length,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                Product product = _recommendedProducts[index];
-                return ProductTileItem(product, () {
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  addDividerView(),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 10, 0, 10),
+                    child: Text(
+                      "Recommended Products",
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ListView.builder(
+                    itemCount: _recommendedProducts.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      Product product = _recommendedProducts[index];
+                      return ProductTileItem(product, () {
 //              bottomBar.state.updateTotalPrice();
-                }, ClassType.SubCategory);
-              },
-            )
-          ],
-        )
+                      }, ClassType.SubCategory);
+                    },
+                  )
+                ],
+              )
             : Container(),
       ],
     );
@@ -405,8 +406,9 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
         itemBuilder: (context, index) {
           Variant tagName = variants[index];
           if (selctedTag == index) {
-            chipSelectedColor =
-                variants[index].weight.trim() == "" ? whiteColor : appThemeSecondary;
+            chipSelectedColor = variants[index].weight.trim() == ""
+                ? whiteColor
+                : appThemeSecondary;
             textColor = Color(0xFFFFFFFF);
           } else {
             chipSelectedColor = Color(0xFFBDBDBD);
@@ -458,135 +460,141 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
   }
 
   Widget addQuantityView() {
-    return
-      Visibility(
-          visible: !_isProductOutOfStock,
-          child:Container(
-      width: 100,
-      height: 30,
-      decoration: BoxDecoration(
-        color: showAddButton == false ? whiteColor : appThemeSecondary,
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-      ),
-      margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-      child: showAddButton == true
-          ? InkWell(
-              onTap: () {
-              //print("add onTap");
-              if (_checkStockQuantity(counter)){
-    setState(() {
-      counter++;
-      showAddButton = false;
-      // insert/update to cart table
-      insertInCartTable(widget.product, counter);
-    });
-    eventBus.fire(onCounterUpdate(counter, widget.product.id, variantId));
-  }
-              },
-              child: Container(
-                child: Center(
-                  child: Text(
-                    "Add",
-                    style: TextStyle(color: whiteColor),
-                  ),
-                ),
-              ),
-            )
-          : Visibility(
-              visible: showAddButton == true ? false : true,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(0.0),
-                    width: 30.0, // you can adjust the width as you need
-                    child: GestureDetector(
-                        onTap: () {
-                          if (counter != 0) {
-                            setState(() => counter--);
-                            if (counter == 0) {
-                              // delete from cart table
-                              removeFromCartTable(widget.product.variantId);
-                            } else {
-                              // insert/update to cart table
-                              insertInCartTable(widget.product, counter);
-                            }
-                            //widget.callback();
-                          }
-                          eventBus.fire(onCounterUpdate(counter, widget.product.id,variantId));
-                        },
-                        child: Container(
-                          width: 35,
-                          height: 25,
-                          decoration: BoxDecoration(
-                            color: grayColor,
-                            border: Border.all(
-                              color: grayColor,
-                              width: 1,
-                            ),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          child:
-                              Icon(Icons.remove, color: Colors.white, size: 20),
-                        )),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                    width: 30.0,
-                    height: 30.0,
-                    decoration: new BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          new BorderRadius.all(new Radius.circular(15.0)),
-                      border: new Border.all(
-                        color: Colors.white,
-                        width: 1.0,
+    return Visibility(
+        visible: !_isProductOutOfStock,
+        child: Container(
+          width: 100,
+          height: 30,
+          decoration: BoxDecoration(
+            color: showAddButton == false ? whiteColor : appThemeSecondary,
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          ),
+          margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+          child: showAddButton == true
+              ? InkWell(
+                  onTap: () async{
+                    bool checkIfDifferentStore = await checkIfDifferentStoreInCart(widget.product);
+                    if(checkIfDifferentStore){
+                      return;
+                    }
+                    //print("add onTap");
+                    if (_checkStockQuantity(counter)) {
+                      setState(() {
+                        counter++;
+                        showAddButton = false;
+                        // insert/update to cart table
+                        insertInCartTable(widget.product, counter);
+                      });
+                      eventBus.fire(onCounterUpdate(
+                          counter, widget.product.id, variantId));
+                    }
+                  },
+                  child: Container(
+                    child: Center(
+                      child: Text(
+                        "Add",
+                        style: TextStyle(color: whiteColor),
                       ),
                     ),
-                    child: Center(
-                        child: Text(
-                      "$counter",
-                      style: TextStyle(fontSize: 18),
-                    )),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(0.0),
-                    width: 30.0, // you can adjust the width as you need
-                    child: GestureDetector(
-                      onTap: () {
-                        if (_checkStockQuantity(counter)){
-                          setState(() => counter++);
-                        if (counter == 0) {
-                          // delete from cart table
-                          removeFromCartTable(widget.product.variantId);
-                        } else {
-                          // insert/update to cart table
-                          insertInCartTable(widget.product, counter);
-                        }
-                        eventBus.fire(onCounterUpdate(counter, widget.product.id,variantId));
-                        }
-                      },
-                      child: Container(
-                          width: 35,
-                          height: 25,
-                          decoration: BoxDecoration(
-                            color: appThemeSecondary,
-                            border: Border.all(
-                              color: appThemeSecondary,
-                              width: 1,
-                            ),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
+                )
+              : Visibility(
+                  visible: showAddButton == true ? false : true,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.all(0.0),
+                        width: 30.0, // you can adjust the width as you need
+                        child: GestureDetector(
+                            onTap: () {
+                              if (counter != 0) {
+                                setState(() => counter--);
+                                if (counter == 0) {
+                                  // delete from cart table
+                                  removeFromCartTable(widget.product.variantId);
+                                } else {
+                                  // insert/update to cart table
+                                  insertInCartTable(widget.product, counter);
+                                }
+                                //widget.callback();
+                              }
+                              eventBus.fire(onCounterUpdate(
+                                  counter, widget.product.id, variantId));
+                            },
+                            child: Container(
+                              width: 35,
+                              height: 25,
+                              decoration: BoxDecoration(
+                                color: grayColor,
+                                border: Border.all(
+                                  color: grayColor,
+                                  width: 1,
+                                ),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0)),
+                              ),
+                              child: Icon(Icons.remove,
+                                  color: Colors.white, size: 20),
+                            )),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                        width: 30.0,
+                        height: 30.0,
+                        decoration: new BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              new BorderRadius.all(new Radius.circular(15.0)),
+                          border: new Border.all(
+                            color: Colors.white,
+                            width: 1.0,
                           ),
-                          child:
-                              Icon(Icons.add, color: Colors.white, size: 20)),
-                    ),
+                        ),
+                        child: Center(
+                            child: Text(
+                          "$counter",
+                          style: TextStyle(fontSize: 18),
+                        )),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(0.0),
+                        width: 30.0, // you can adjust the width as you need
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_checkStockQuantity(counter)) {
+                              setState(() => counter++);
+                              if (counter == 0) {
+                                // delete from cart table
+                                removeFromCartTable(widget.product.variantId);
+                              } else {
+                                // insert/update to cart table
+                                insertInCartTable(widget.product, counter);
+                              }
+                              eventBus.fire(onCounterUpdate(
+                                  counter, widget.product.id, variantId));
+                            }
+                          },
+                          child: Container(
+                              width: 35,
+                              height: 25,
+                              decoration: BoxDecoration(
+                                color: appThemeSecondary,
+                                border: Border.all(
+                                  color: appThemeSecondary,
+                                  width: 1,
+                                ),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0)),
+                              ),
+                              child: Icon(Icons.add,
+                                  color: Colors.white, size: 20)),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-    ));
+                ),
+        ));
   }
 
   void insertInCartTable(Product product, int quantity) {
@@ -663,10 +671,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
   Widget addDividerView() {
     return Container(
       height: 1,
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
+      width: MediaQuery.of(context).size.width,
       color: grayColor,
       margin: EdgeInsets.only(top: 5.0, bottom: 10.0, left: 20, right: 20),
     );
@@ -715,97 +720,97 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
 
   Widget _getImageView() {
     return widget.product.productImages != null &&
-        widget.product.productImages.isNotEmpty
+            widget.product.productImages.isNotEmpty
         ? Column(
-      children: <Widget>[
-        Container(
-          child: CarouselSlider.builder(
-            itemCount: widget.product.productImages.length,
-            carouselController: _carouselController,
-            options: CarouselOptions(
+            children: <Widget>[
+              Container(
+                child: CarouselSlider.builder(
+                  itemCount: widget.product.productImages.length,
+                  carouselController: _carouselController,
+                  options: CarouselOptions(
 //                    aspectRatio: 16 / 9,
-              height: 280,
-              initialPage: 0,
-              enableInfiniteScroll: false,
-              reverse: false,
-              autoPlay: false,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _current = index;
-                });
-              },
-              enlargeCenterPage: false,
-              autoPlayInterval: Duration(seconds: 3),
-              autoPlayAnimationDuration: Duration(milliseconds: 800),
-              autoPlayCurve: Curves.ease,
-              scrollDirection: Axis.horizontal,
-            ),
-            itemBuilder: (BuildContext context, int itemIndex) =>
-                Container(
-                  child: _makeBanner(context, itemIndex),
+                    height: 280,
+                    initialPage: 0,
+                    enableInfiniteScroll: false,
+                    reverse: false,
+                    autoPlay: false,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _current = index;
+                      });
+                    },
+                    enlargeCenterPage: false,
+                    autoPlayInterval: Duration(seconds: 3),
+                    autoPlayAnimationDuration: Duration(milliseconds: 800),
+                    autoPlayCurve: Curves.ease,
+                    scrollDirection: Axis.horizontal,
+                  ),
+                  itemBuilder: (BuildContext context, int itemIndex) =>
+                      Container(
+                    child: _makeBanner(context, itemIndex),
+                  ),
                 ),
-          ),
-        ),
-        Visibility(
-            visible: widget.product.productImages.length > 1,
-            child: Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: widget.product.productImages.map((url) {
-                  int index = widget.product.productImages.indexOf(url);
-                  return _current == index
-                      ? Container(
-                    width: 7.0,
-                    height: 7.0,
-                    margin: EdgeInsets.symmetric(
-                        vertical: 0.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: dotIncreasedColor,
-                    ),
-                  )
-                      : Container(
-                    width: 6.0,
-                    height: 6.0,
-                    margin: EdgeInsets.symmetric(
-                        vertical: 0.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color.fromRGBO(0, 0, 0, 0.4),
-                    ),
-                  );
-                }).toList(),
               ),
-            ))
-      ],
-    )
+              Visibility(
+                  visible: widget.product.productImages.length > 1,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: widget.product.productImages.map((url) {
+                        int index = widget.product.productImages.indexOf(url);
+                        return _current == index
+                            ? Container(
+                                width: 7.0,
+                                height: 7.0,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 0.0, horizontal: 2.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: dotIncreasedColor,
+                                ),
+                              )
+                            : Container(
+                                width: 6.0,
+                                height: 6.0,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 0.0, horizontal: 2.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color.fromRGBO(0, 0, 0, 0.4),
+                                ),
+                              );
+                      }).toList(),
+                    ),
+                  ))
+            ],
+          )
         : imageUrl == ""
-        ? Container(
-      child: Center(
-        child: Utils.getImgPlaceHolder(),
-      ),
-    )
-        : Padding(
-        padding: EdgeInsets.all(0),
-        child: Container(
-          /*child: AspectRatio(
+            ? Container(
+                child: Center(
+                  child: Utils.getImgPlaceHolder(),
+                ),
+              )
+            : Padding(
+                padding: EdgeInsets.all(0),
+                child: Container(
+                  /*child: AspectRatio(
                   aspectRatio: 16 / 9,
                   child: CachedNetworkImage(
                     imageUrl: "${imageUrl}", fit: BoxFit.cover
                   ),
                 ),*/
-          child: Center(
-            child: CachedNetworkImage(
-              imageUrl: "${imageUrl}",
-              height: 280,
-              fit: BoxFit.scaleDown,
-              placeholder: (context, url) =>
-                  CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ),
-          ),
-        ));
+                  child: Center(
+                    child: CachedNetworkImage(
+                      imageUrl: "${imageUrl}",
+                      height: 280,
+                      fit: BoxFit.scaleDown,
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+                  ),
+                ));
   }
 
   Widget _makeBanner(BuildContext context, int _index) {
@@ -831,7 +836,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
 //3)continue_selling -> no out of stock
 
     Variant selectedVariant =
-    variant != null ? variant : findVariant(widget.product.variantId);
+        variant != null ? variant : findVariant(widget.product.variantId);
     if (selectedVariant != null &&
         selectedVariant.stockType != null &&
         selectedVariant.stockType.isNotEmpty) {
@@ -892,7 +897,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
 //3)continue_selling -> no out of stock
 
     Variant selectedVariant =
-    variant != null ? variant : findVariant(widget.product.variantId);
+        variant != null ? variant : findVariant(widget.product.variantId);
     if (selectedVariant != null &&
         selectedVariant.stockType != null &&
         selectedVariant.stockType.isNotEmpty) {
@@ -920,7 +925,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
             if (stock <= 0) {
               isProductAvailable = false;
               Utils.showToast("Out of Stock", true);
-            } else if (counter>=(stock-minStockAlert)) {
+            } else if (counter >= (stock - minStockAlert)) {
               isProductAvailable = false;
               Utils.showToast(
                   "Only ${counter} Items Available in Stocks", true);
@@ -938,6 +943,35 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       }
     }
     return isProductAvailable;
+  }
+
+  Future<bool> checkIfDifferentStoreInCart(Product product) async {
+    bool showInfoToEmptyCart = false;
+    List<Product> cartItemList  = await databaseHelper.getCartItemList();
+    print("count=${cartItemList.length}");
+    if(cartItemList.isEmpty){
+      showInfoToEmptyCart = false;
+    }else{
+      print("--storeId =>${product.storeId}");
+      Product cartProduct = cartItemList[0];
+      if(cartProduct.storeId == product.storeId){
+        // same store and do nothing 389981
+        showInfoToEmptyCart = false;
+      }else{
+        // User has selected differnt store to add in cart.
+        print("--storeName =>${product.storeName} and ${cartProduct.storeName}");
+        String msgBody = AppConstant.getCartReplaceMsg(cartProduct.storeName,product.storeName);
+        bool result = await DialogUtils.displayDialog(context, "Replace Cart?", "${msgBody}", "No", "Yes");
+        print("result=${result}");
+        if(result){
+          await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
+          showInfoToEmptyCart = false;
+        }else{
+          showInfoToEmptyCart = true;
+        }
+      }
+    }
+    return showInfoToEmptyCart;
   }
 
 //  Widget favIcon() {
