@@ -13,6 +13,7 @@ import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
@@ -125,8 +126,68 @@ class DialogUtils {
     );
   }
 
-  static Future<Datum> displayCityDialog(
-      BuildContext context, String title, PickUpModel storeArea) async {
+//  static Future<Datum> displayCityDialog(
+//      BuildContext context, String title, PickUpModel storeArea) async {
+//    return await showDialog<Datum>(
+//      context: context,
+//      builder: (BuildContext context) {
+//        return WillPopScope(
+//          onWillPop: () {},
+//          child: AlertDialog(
+//            shape: RoundedRectangleBorder(
+//                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+//            title: Text(
+//              title,
+//              textAlign: TextAlign.center,
+//            ),
+//            content: Container(
+//              width: double.maxFinite,
+//              child: ListView.separated(
+//                shrinkWrap: true,
+//                itemCount: storeArea.data.length,
+//                separatorBuilder: (BuildContext context, int index) {
+//                  return Divider();
+//                },
+//                itemBuilder: (context, index) {
+//                  Datum areaObject = storeArea.data[index];
+//                  return InkWell(
+//                    onTap: () {
+//                      Navigator.pop(context, areaObject);
+//                    },
+//                    child: ListTile(
+//                      title: Row(
+//                          crossAxisAlignment: CrossAxisAlignment.center,
+//                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                          children: <Widget>[
+//                            Expanded(
+//                              child: Text(areaObject.city.city,
+//                                  style: TextStyle(
+//                                      color: Colors.black, fontSize: 16)),
+//                            ),
+//                          ]),
+//                    ),
+//                  );
+//                },
+//              ),
+//            ),
+//            actions: <Widget>[
+//              new FlatButton(
+//                child: new Text("Cancel"),
+//                textColor: Colors.blue,
+//                onPressed: () {
+//                  Navigator.pop(context, null);
+//                  // true here means you clicked ok
+//                },
+//              ),
+//            ],
+//          ),
+//        );
+//      },
+//    );
+//  }
+
+  static Future<Datum> displayAreaDialog(
+      BuildContext context, String title, PickUpModel pickUpModel) async {
     return await showDialog<Datum>(
       context: context,
       builder: (BuildContext context) {
@@ -143,72 +204,12 @@ class DialogUtils {
               width: double.maxFinite,
               child: ListView.separated(
                 shrinkWrap: true,
-                itemCount: storeArea.data.length,
+                itemCount: pickUpModel.data.length,
                 separatorBuilder: (BuildContext context, int index) {
                   return Divider();
                 },
                 itemBuilder: (context, index) {
-                  Datum areaObject = storeArea.data[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.pop(context, areaObject);
-                    },
-                    child: ListTile(
-                      title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(areaObject.city.city,
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 16)),
-                            ),
-                          ]),
-                    ),
-                  );
-                },
-              ),
-            ),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text("Cancel"),
-                textColor: Colors.blue,
-                onPressed: () {
-                  Navigator.pop(context, null);
-                  // true here means you clicked ok
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  static Future<Area> displayAreaDialog(
-      BuildContext context, String title, Datum cityObject) async {
-    return await showDialog<Area>(
-      context: context,
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () {},
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            title: Text(
-              title,
-              textAlign: TextAlign.center,
-            ),
-            content: Container(
-              width: double.maxFinite,
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: cityObject.area.length,
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider();
-                },
-                itemBuilder: (context, index) {
-                  Area object = cityObject.area[index];
+                  Datum object = pickUpModel.data[index];
                   return InkWell(
                     onTap: () {
                       Navigator.pop(context, object);
@@ -345,8 +346,83 @@ class DialogUtils {
     );
   }
 
+
+  static Future<SubCategoryModel> displayMenuAlert(
+      BuildContext context, String title, List<SubCategoryModel> subCategoryList) async {
+    return await showDialog<SubCategoryModel>(
+      context: context,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () {},
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            title: Container(
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            content: Container(
+              width: double.maxFinite,
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: subCategoryList.length,
+                separatorBuilder: (BuildContext context, int index) {
+                  return Divider(height: 0,color: Colors.white,);
+                },
+                itemBuilder: (context, index) {
+                  SubCategoryModel areaObject = subCategoryList[index];
+                  return InkWell(
+                    onTap: () {
+                      Navigator.pop(context, areaObject);
+                    },
+                    child: ListTile(
+                      title: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(areaObject.title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: Colors.black)
+                              ),
+                            ),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text("${areaObject.products.length}",
+                                    style: TextStyle(color: Colors.black)
+                                ),
+                              ),
+                            )
+//
+                          ]),
+                    ),
+                  );
+                },
+              ),
+            ),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text("Cancel"),
+                textColor: Colors.blue,
+                onPressed: () {
+                  Navigator.pop(context);
+                  // true here means you clicked ok
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   static Future<bool> displayPickUpDialog(
-      BuildContext context, StoreModel storeModel) async {
+      BuildContext context) async {
     return await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -1178,7 +1254,7 @@ class DialogUtils {
   }
 
   static Future<void> openMap(
-      StoreModel storeModel, double latitude, double longitude) async {
+      StoreDataObj storeModel, double latitude, double longitude) async {
     String address = "${storeModel.storeName}, ${storeModel.location},"
         "${storeModel.city}, ${storeModel.state}, ${storeModel.country}, ${storeModel.zipcode}";
     print("address= ${address}");
@@ -1305,7 +1381,7 @@ class DialogUtils {
   }
 
   static Future<String> displayMultipleOnlinePaymentMethodDialog(
-      BuildContext context, StoreModel storeObject) async {
+      BuildContext context, BrandData storeObject) async {
     return await showDialog<String>(
         context: context,
         barrierDismissible: true,
@@ -1333,7 +1409,7 @@ class DialogUtils {
                     return Divider();
                   },
                   itemBuilder: (context, index) {
-                    PaymentGatewaySettings paymentGatewaySettings =
+                    var paymentGatewaySettings =
                         storeObject.paymentGatewaySettings[index];
                     return InkWell(
                       onTap: () {

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -15,8 +17,10 @@ import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 class StoreDashboardScreen extends StatefulWidget {
   final StoreDataModel store;
@@ -30,15 +34,12 @@ class StoreDashboardScreen extends StatefulWidget {
 }
 
 class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
-  //StoreModel store;
   StoreDataObj store;
   List<NetworkImage> imgList = [];
-  int _currentIndex = 0;
   UserModel user;
   bool isStoreClosed;
   final DatabaseHelper databaseHelper = new DatabaseHelper();
   bool isLoading = true;
-  int _current = 0;
 
   CategoryResponse categoryResponse;
 
@@ -51,11 +52,20 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   _StoreDashboardScreenState(this.store);
 
   List<dynamic> products = List();
+  AutoScrollController controller;
+  final scrollDirection = Axis.vertical;
+  ScrollController _scrollController = new ScrollController();
 
   @override
   void initState() {
     super.initState();
     isStoreClosed = false;
+    controller = AutoScrollController(
+        viewportBoundaryGetter: () {
+          return Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom);
+        },
+        axis: scrollDirection
+    );
     getCategoryApi();
     listenEvent();
     try {
@@ -74,6 +84,20 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     } catch (e) {
       print(e);
     }
+    /*try {
+      _scrollController.addListener(() {
+            double currentScroll = _scrollController.position.pixels;
+            //print("------isScrollingNotifier=${_scrollController.position.isScrollingNotifier}");
+            //print("------addListener--------${currentScroll}");
+            double maxScroll = _scrollController.position.maxScrollExtent;
+            double delta = 200.0; // or something else..
+            if (maxScroll - currentScroll <= delta) { // whatever you determine here
+              //print("------load more--------${currentScroll}");
+            }
+          });
+    } catch (e) {
+      print(e);
+    }*/
   }
 
   void listenEvent() {}
@@ -95,29 +119,88 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       overflow: Overflow.visible,
       children: <Widget>[
         Container(
-//          decoration: BoxDecoration(
-//            image: DecorationImage(
-//              image: AssetImage("images/backgroundimg.png"),
-//              fit: BoxFit.cover,
-//            ),
-//          ),
           color: Colors.white,
         ),
         Padding(
           padding: EdgeInsets.only(top: 0),
           child: _getCurrentBody(),
         ),
+
+        Positioned.fill(
+          child: Visibility(
+            visible: true,
+            child: Align(
+                alignment: Alignment.bottomCenter,
+                child: InkWell(
+                  onTap: () async {
+                    print("--onTap---${products.length}");
+
+                    var result = await DialogUtils.displayMenuAlert(context, "Menu", subCategoryResponse.subCategories);
+                    if(result != null){
+                      SubCategoryModel object = result;
+                      print("--selected---${object.id} and ${object.title}");
+                      print("Index=${subCathashMap['${object.id}']}");
+                      await controller.scrollToIndex(int.parse(subCathashMap['${object.id}']));
+                      controller.highlight(int.parse(subCathashMap['${object.id}']));
+
+                    }
+
+                  },
+                  child: Container(
+                    width: 140,height: 50,
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(40)
+                        )
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                            child: Image.asset(
+                              'images/restauranticon.png',
+                              width: 25,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 30, 0),
+                            child: Text("Menu",style: TextStyle(color: Colors.white,fontSize: 16),),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+            ),
+          )
+        )
       ],
     );
   }
 
   Widget _getCurrentBody() {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          addBanners(),
-          categoryResponse != null && categoryResponse.categories.isNotEmpty
-              ? Container(
+    return NotificationListener(
+      onNotification: (scrollNotification) {
+        if (scrollNotification is ScrollStartNotification) {
+          _onStartScroll(scrollNotification.metrics);
+        } else if (scrollNotification is ScrollUpdateNotification) {
+          _onUpdateScroll(scrollNotification.metrics);
+        } else if (scrollNotification is ScrollEndNotification) {
+          _onEndScroll(scrollNotification.metrics);
+        }
+      },
+      child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            children: <Widget>[
+              addBanners(),
+              categoryResponse != null && categoryResponse.categories.isNotEmpty
+                  ? Container(
                   height: 190,
                   color: Colors.transparent,
                   margin: EdgeInsets.only(left: 2.5),
@@ -146,7 +229,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
                             CategoryModel model =
-                                categoryResponse.categories[index];
+                            categoryResponse.categories[index];
                             return CategoryView(
                               model,
                               store,
@@ -159,7 +242,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                   selectedCategory = (value as CategoryModel);
                                   selectedSubCategoryId = selectedCategory.id;
                                   getHomeCategoryProductApi();
-//                              widget.callback(value: widget.selectedCategory);
                                 });
                                 return;
                               },
@@ -169,21 +251,41 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                       )
                     ],
                   ))
-              : categoryResponse != null && categoryResponse.categories.isEmpty
+                  : categoryResponse != null && categoryResponse.categories.isEmpty
                   ? Utils.getEmptyView2('')
                   : Container(
-                      height: 200,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                            backgroundColor: Colors.black26,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.black26)),
-                      ),
-                    ),
-          getProductsWidget(),
-        ],
+                height: 200,
+                child: Center(
+                  child: CircularProgressIndicator(
+                      backgroundColor: Colors.black26,
+                      valueColor:
+                      AlwaysStoppedAnimation<Color>(Colors.black26)),
+                ),
+              ),
+              getProductsWidget(),
+            ],
+          ),
       ),
     );
+  }
+
+  bool showBrowseMenuButton = true;
+  _onStartScroll(ScrollMetrics metrics) {
+    print("--------Scroll Start--------");
+    /*setState(() {
+      this.showBrowseMenuButton = false;
+    });*/
+  }
+
+  _onUpdateScroll(ScrollMetrics metrics) {
+    //print("--------Scroll Update--------");
+    /*setState(() {
+      this.showBrowseMenuButton = true;
+    });*/
+  }
+
+  _onEndScroll(ScrollMetrics metrics) {
+    print("--------Scroll End--------");
   }
 
   Widget addBanners() {
@@ -273,22 +375,29 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                   );
                 } else if (products[index] is SubCategoryModel) {
                   SubCategoryModel subCategory = products[index];
-                  return Container(
-                    color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left: 10, right: 10, bottom: 5, top: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            subCategory.title,
-                            style: TextStyle(
-                                color: staticHomeDescriptionColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                  subCathashMap['${subCategory.id}'] = "${index}";
+
+                  return AutoScrollTag(
+                    key: ValueKey(index),
+                    controller: controller,
+                    index: index,
+                    child: Container(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: 10, right: 10, bottom: 5, top: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              subCategory.title,
+                              style: TextStyle(
+                                  color: staticHomeDescriptionColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -302,7 +411,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       }
     }
   }
-
+  
+  HashMap subCathashMap = new HashMap<String, String>();
   void getHomeCategoryProductApi() {
     subCategoryResponse = null;
     products.clear();
@@ -332,5 +442,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       });
       eventBus.fire(OnProductTileDbRefresh());
     }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // it is a good practice to dispose the controller
+    super.dispose();
   }
 }

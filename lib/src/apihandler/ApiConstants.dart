@@ -15,34 +15,23 @@ class ApiConstants{
   static String storeLogin = 'storeLogin';
 
 
-  static String getProductDetail = 'productDetail/';
 
   static String getStoreBranches = 'getStoreBranches';
 
-  static String search = 'searchProducts';
-  static String getTagsList = 'getTagsList';
 
 
-  static String getAddress = '/deliveryAddress';
   static String getAddressArea = 'deliveryAreas/Area';
-  static String getStorePickupAddress = 'storePickupAddress';
   static String getStoreRadius = '/storeRadius';
   static String getStoreArea = 'storearea';
 
 
-  static String storeOffers = 'storeOffers';
-  static String validateCoupon = 'validateAllCoupons';
+//  static String validateCoupon = 'validateAllCoupons';
   static String multipleTaxCalculation = 'multiple_tax_calculation';
-  static String multipleTaxCalculation_2 = 'multiple_tax_calculation_new';
   static String stripeVerifyTransactionUrl = 'stripeVerifyTransaction?response=success';
 
 
   static String deliveryTimeSlot = 'deliveryTimeSlot';
-  static String placeOrder = 'placeOrder';
-  static String pickupPlaceOrder = 'pickupPlaceOrder';
   static String setStoreQuery = 'setStoreQuery';
-  static String orderHistory = 'orderHistory';
-  static String getLoyalityPoints = 'getLoyalityPoints';
 
   static String login = 'userLogin';
   static String signUp = 'userSignup';
@@ -55,10 +44,7 @@ class ApiConstants{
 
   static String deliveryAreasArea = 'deliveryAreas/Area';
 
-  static String razorpayCreateOrder = 'razorpayCreateOrder';
-  static String razorpayVerifyTransaction = 'razorpayVerifyTransaction';
   static String getReferDetails = 'getReferDetails';
-  static String orderCancel = 'orderCancel';
 
   static String stripePaymentCheckout = 'stripePaymentCheckout';
   static String stripeVerifyTransaction = 'stripeVerifyTransaction';
@@ -67,8 +53,6 @@ class ApiConstants{
 
   static String faqs = 'faqs';
   static String allNotifications = 'allNotifications';
-  static String recommendedProduct = 'recommendedProduct';
-  static String orderDetailHistory = 'orderDetailHistory';
   static String reviewRating = 'review_rating';
 
 
@@ -102,6 +86,26 @@ class ApiConstants{
 
   static String socialLogin = 'socialLogin';
   static String verifyEmail = 'verifyEmail';
+  static String multipleTaxCalculation_2 = '/tax_calculation';
+  static String coupons_validate = '/coupons/validateCoupon';
+  static String placeOrder = '/orders/placeOrder';
+  static String pickupPlaceOrder = '/orders/pickupPlaceOrder';
+  static String razorpayCreateOrder = '/razorpay/razorpayCreateOrder';
+  static String razorpayVerifyTransaction = '/razorpay/razorpayVerifyTransaction';
+  static String orderHistory = '/orders/orderHistory';
+  static String storeOffers = '/coupons/offersList';
+  static String getStorePickupAddress = 'delivery_zones/storePickupAddress';
+  static String getLoyalityPoints = '/coupons/getLoyalityPoints';
+  static String orderCancel = '/orders/orderCancel';
+  static String orderDetailHistory = '/orders/orderDetailHistory';
+  static String recommendedProduct = '/inventory/recommendedProduct';
+  static String getTagsList = '/inventory/getTagsList';
+  static String getProductDetail = '/inventory/productDetail/';
+  static String search = '/inventory/searchProducts';
+  static String getAddress = '/deliveryAddress';
+
+
+
 
 
 }

@@ -4,66 +4,41 @@
 
 import 'dart:convert';
 
-PickUpModel pickUpModelFromJson(String str) => PickUpModel.fromJson(json.decode(str));
-
-String pickUpModelToJson(PickUpModel data) => json.encode(data.toJson());
-
 class PickUpModel {
-  bool success;
-  List<Datum> data;
-
   PickUpModel({
     this.success,
     this.data,
   });
 
+  bool success;
+  List<Datum> data;
+
+  PickUpModel copyWith({
+    bool success,
+    List<Datum> data,
+  }) =>
+      PickUpModel(
+        success: success ?? this.success,
+        data: data ?? this.data,
+      );
+
+  factory PickUpModel.fromRawJson(String str) => PickUpModel.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
   factory PickUpModel.fromJson(Map<String, dynamic> json) => PickUpModel(
-    success: json["success"],
-    data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+    success: json["success"] == null ? null : json["success"],
+    data: json["data"] == null ? null : List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
-    "success": success,
-    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+    "success": success == null ? null : success,
+    "data": data == null ? null : List<dynamic>.from(data.map((x) => x.toJson())),
   };
 }
 
 class Datum {
-  City city;
-  List<Area> area;
-
   Datum({
-    this.city,
-    this.area,
-  });
-
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    city: City.fromJson(json["City"]),
-    area: List<Area>.from(json["Area"].map((x) => Area.fromJson(x))),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "City": city.toJson(),
-    "Area": List<dynamic>.from(area.map((x) => x.toJson())),
-  };
-}
-
-class Area {
-  String areaId;
-  String areaName;
-  String pickupAdd;
-  String pickupPhone;
-  String pickupEmail;
-  String pickupLat;
-  String pickupLng;
-  String cityId;
-  String storeId;
-  String minOrder;
-  String charges;
-  String note;
-  bool notAllow;
-
-  Area({
     this.areaId,
     this.areaName,
     this.pickupAdd,
@@ -72,62 +47,85 @@ class Area {
     this.pickupLat,
     this.pickupLng,
     this.cityId,
-    this.storeId,
     this.minOrder,
     this.charges,
     this.note,
     this.notAllow,
   });
 
-  factory Area.fromJson(Map<String, dynamic> json) => Area(
-    areaId: json["area_id"],
-    areaName: json["area_name"],
-    pickupAdd: json["pickup_add"],
-    pickupPhone: json["pickup_phone"],
-    pickupEmail: json["pickup_email"],
-    pickupLat: json["pickup_lat"],
-    pickupLng: json["pickup_lng"],
-    cityId: json["city_id"],
-    storeId: json["store_id"],
-    minOrder: json["min_order"],
-    charges: json["charges"],
-    note: json["note"],
-    notAllow: json["not_allow"],
+  int areaId;
+  String areaName;
+  String pickupAdd;
+  String pickupPhone;
+  String pickupEmail;
+  String pickupLat;
+  String pickupLng;
+  int cityId;
+  int minOrder;
+  int charges;
+  String note;
+  int notAllow;
+
+  Datum copyWith({
+    int areaId,
+    String areaName,
+    String pickupAdd,
+    String pickupPhone,
+    String pickupEmail,
+    String pickupLat,
+    String pickupLng,
+    int cityId,
+    int minOrder,
+    int charges,
+    String note,
+    int notAllow,
+  }) =>
+      Datum(
+        areaId: areaId ?? this.areaId,
+        areaName: areaName ?? this.areaName,
+        pickupAdd: pickupAdd ?? this.pickupAdd,
+        pickupPhone: pickupPhone ?? this.pickupPhone,
+        pickupEmail: pickupEmail ?? this.pickupEmail,
+        pickupLat: pickupLat ?? this.pickupLat,
+        pickupLng: pickupLng ?? this.pickupLng,
+        cityId: cityId ?? this.cityId,
+        minOrder: minOrder ?? this.minOrder,
+        charges: charges ?? this.charges,
+        note: note ?? this.note,
+        notAllow: notAllow ?? this.notAllow,
+      );
+
+  factory Datum.fromRawJson(String str) => Datum.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+    areaId: json["area_id"] == null ? null : json["area_id"],
+    areaName: json["area_name"] == null ? null : json["area_name"],
+    pickupAdd: json["pickup_add"] == null ? null : json["pickup_add"],
+    pickupPhone: json["pickup_phone"] == null ? null : json["pickup_phone"],
+    pickupEmail: json["pickup_email"] == null ? null : json["pickup_email"],
+    pickupLat: json["pickup_lat"] == null ? null : json["pickup_lat"],
+    pickupLng: json["pickup_lng"] == null ? null : json["pickup_lng"],
+    cityId: json["city_id"] == null ? null : json["city_id"],
+    minOrder: json["min_order"] == null ? null : json["min_order"],
+    charges: json["charges"] == null ? null : json["charges"],
+    note: json["note"] == null ? null : json["note"],
+    notAllow: json["not_allow"] == null ? null : json["not_allow"],
   );
 
   Map<String, dynamic> toJson() => {
-    "area_id": areaId,
-    "area_name": areaName,
-    "pickup_add": pickupAdd,
-    "pickup_phone": pickupPhone,
-    "pickup_email": pickupEmail,
-    "pickup_lat": pickupLat,
-    "pickup_lng": pickupLng,
-    "city_id": cityId,
-    "store_id": storeId,
-    "min_order": minOrder,
-    "charges": charges,
-    "note": note,
-    "not_allow": notAllow,
-  };
-}
-
-class City {
-  String city;
-  String id;
-
-  City({
-    this.city,
-    this.id,
-  });
-
-  factory City.fromJson(Map<String, dynamic> json) => City(
-    city: json["city"],
-    id: json["id"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "city": city,
-    "id": id,
+    "area_id": areaId == null ? null : areaId,
+    "area_name": areaName == null ? null : areaName,
+    "pickup_add": pickupAdd == null ? null : pickupAdd,
+    "pickup_phone": pickupPhone == null ? null : pickupPhone,
+    "pickup_email": pickupEmail == null ? null : pickupEmail,
+    "pickup_lat": pickupLat == null ? null : pickupLat,
+    "pickup_lng": pickupLng == null ? null : pickupLng,
+    "city_id": cityId == null ? null : cityId,
+    "min_order": minOrder == null ? null : minOrder,
+    "charges": charges == null ? null : charges,
+    "note": note == null ? null : note,
+    "not_allow": notAllow == null ? null : notAllow,
   };
 }

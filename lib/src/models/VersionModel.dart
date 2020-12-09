@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:restroapp/src/models/StoreResponseModel.dart';
+
 BrandVersionModel brandVersionModelFromJson(String str) =>
     BrandVersionModel.fromJson(json.decode(str));
 
@@ -69,7 +71,9 @@ class BrandData {
       this.appThemeIcons,
       this.domain,
       this.poweredByText,
+      this.reviewRatingDisplay,
       this.poweredByLink,
+      this.paymentGateway,
       this.allowCustomerForGst,
       this.blDeviceIdUnique,
       this.isRefererFnEnable,
@@ -100,7 +104,7 @@ class BrandData {
   String currencyUnicode;
   String internationalOtp;
   String onlinePayment;
-  List<dynamic> paymentGatewaySettings;
+  List<PaymentGatewaySettings> paymentGatewaySettings;
   List<Banner> banners;
   List<Banner> webBanners;
   List<dynamic> footerBanners;
@@ -111,12 +115,14 @@ class BrandData {
   AppThemeIcons appThemeIcons;
   String domain;
   String poweredByText;
+  String reviewRatingDisplay;
   String poweredByLink;
   bool blDeviceIdUnique;
   bool isRefererFnEnable;
   List<dynamic> homeScreenSection;
   List<Filter> filters;
   WebAppThemeColors webAppThemeColors;
+  String paymentGateway;
 
   factory BrandData.fromJson(Map<String, dynamic> json) => BrandData(
       id: json["id"],
@@ -142,8 +148,11 @@ class BrandData {
       currencyUnicode: json["currency_unicode"],
       internationalOtp: json["international_otp"],
       onlinePayment: json["online_payment"],
-      paymentGatewaySettings:
-          List<dynamic>.from(json["payment_gateway_settings"].map((x) => x)),
+      reviewRatingDisplay: json["review_rating_display"],
+      paymentGatewaySettings: json["payment_gateway_settings"] == null
+          ? null
+          : List<PaymentGatewaySettings>.from(json["payment_gateway_settings"]
+              .map((x) => PaymentGatewaySettings.fromJson(x))),
       banners:
           List<Banner>.from(json["banners"].map((x) => Banner.fromJson(x))),
       webBanners:
@@ -161,6 +170,7 @@ class BrandData {
       blDeviceIdUnique: json["bl_device_id_unique"],
       isRefererFnEnable: json["is_referer_fn_enable"],
       allowCustomerForGst: json["allow_customer_for_gst"],
+      paymentGateway: json["payment_gateway"],
       homeScreenSection:
           List<dynamic>.from(json["home_screen_section"].map((x) => x)),
       filters:
@@ -194,7 +204,7 @@ class BrandData {
         "international_otp": internationalOtp,
         "online_payment": onlinePayment,
         "payment_gateway_settings":
-            List<dynamic>.from(paymentGatewaySettings.map((x) => x)),
+            paymentGatewaySettings.map((v) => v.toJson()).toList(),
         "banners": List<dynamic>.from(banners.map((x) => x.toJson())),
         "web_banners": List<dynamic>.from(webBanners.map((x) => x.toJson())),
         "footer_banners": List<dynamic>.from(footerBanners.map((x) => x)),
@@ -211,6 +221,7 @@ class BrandData {
         "is_referer_fn_enable": isRefererFnEnable,
         "web_app_theme_colors": webAppThemeColors,
         "allow_customer_for_gst": allowCustomerForGst,
+        "payment_gateway": paymentGateway,
         "home_screen_section":
             List<dynamic>.from(homeScreenSection.map((x) => x)),
         "filters": List<dynamic>.from(filters.map((x) => x.toJson())),
@@ -383,6 +394,28 @@ class ForceDownload {
         "force_download": forceDownload,
         "force_download_message": forceDownloadMessage,
       };
+}
+
+class PaymentGatewaySettings {
+  String apiKey;
+  String secretKey;
+  String paymentGateway;
+
+  PaymentGatewaySettings({this.apiKey, this.secretKey, this.paymentGateway});
+
+  PaymentGatewaySettings.fromJson(Map<String, dynamic> json) {
+    apiKey = json['api_key'];
+    secretKey = json['secret_key'];
+    paymentGateway = json['payment_gateway'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['api_key'] = this.apiKey;
+    data['secret_key'] = this.secretKey;
+    data['payment_gateway'] = this.paymentGateway;
+    return data;
+  }
 }
 
 class WebAppThemeColors {

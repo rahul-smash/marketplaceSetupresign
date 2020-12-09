@@ -4,6 +4,7 @@ import 'package:restroapp/src/UI/CardOrderHistoryItems.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/GetOrderHistory.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -14,7 +15,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'OrderDetailScreen.dart';
 
 class MyOrderScreenVersion2 extends StatefulWidget {
-  StoreModel store;
+  BrandData store;
 
   MyOrderScreenVersion2(this.store);
 
@@ -110,7 +111,7 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Flexible(
-          child: Text('Order - ${cardOrderHistoryItems.displayOrderId}',
+          child: Text('Order - ${cardOrderHistoryItems.orderId}',
               style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w400,

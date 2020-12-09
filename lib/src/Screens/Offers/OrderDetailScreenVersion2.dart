@@ -9,7 +9,7 @@ import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/CancelOrderModel.dart';
 import 'package:restroapp/src/models/GetOrderHistory.dart';
-import 'package:restroapp/src/models/UserResponseModel.dart';
+import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -48,7 +48,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
 
   Future<Null> getOrderListApi({bool isLoading = true}) async {
     this.isLoading = isLoading;
-    UserModel user = await SharedPrefs.getUser();
+    UserModelMobile user = await SharedPrefs.getUserMobile();
     userId = user.id;
 
     return ApiController.getOrderDetail(widget.orderHistoryData.orderId)
@@ -133,7 +133,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Order - ${widget.orderHistoryData.displayOrderId}',
+                    'Order - ${widget.orderHistoryData.orderId}',
                     style: TextStyle(),
                     textAlign: TextAlign.left,
                   ),

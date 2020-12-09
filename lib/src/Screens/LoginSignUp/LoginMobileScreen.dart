@@ -33,7 +33,6 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
   LoginMobile loginMobile = new LoginMobile();
   final phoneController = new TextEditingController();
   BrandData store;
-  String otpSkip;
   FacebookLogin facebookSignIn = new FacebookLogin();
   GoogleSignIn _googleSignIn;
   GoogleSignInAccount _currentUser;
@@ -43,7 +42,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
   @override
   void initState() {
     super.initState();
-    getOTPSkip();
+    store =  BrandModel.getInstance().brandVersionModel.brand;
     _googleSignIn = GoogleSignIn(
     scopes: ['email','https://www.googleapis.com/auth/contacts.readonly',],);
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
@@ -56,14 +55,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
     });
 
   }
-  void getOTPSkip() async {
-    store =  BrandModel.getInstance().brandVersionModel.brand;
-    setState(() {
-      otpSkip = store.otpSkip;
-      String delieveryAdress=  store.deliveryFacility;
-      print('@@HomeModel   ${otpSkip} and ${delieveryAdress}');
-    });
-  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -151,8 +143,8 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                           ),
 
                           Visibility(
-//                            visible: store == null ? false : store.social_login == "0" ? false : true,
-                            visible: false,
+                            visible: store == null ? false : store.social_login == "0" ? false : true,
+//                            visible: false,
                             child: Container(
                               margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                               width: Utils.getDeviceWidth(context),
@@ -166,8 +158,8 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
 
 
                           Visibility(
-//                            visible: store == null ? false : store.social_login == "0" ? false : true,
-                            visible: false,
+                            visible: store == null ? false : store.social_login == "0" ? false : true,
+//                            visible: false,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -377,7 +369,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
             Utils.hideProgressDialog(context);
             if (response != null && response.success) {
               print("=====otpVerify===${response.user.otpVerify}--and--${response.userExists}-----");
-              if(response.userExists == 1 || otpSkip == "yes"){
+              if(response.userExists == 1){
                 print('@@userExists=${response.userExists} and otpSkip = ${response.user.otpVerify}');
                 if (response.success) {
                   SharedPrefs.setUserLoggedIn(true);
