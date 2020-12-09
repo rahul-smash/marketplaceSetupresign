@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_pro/carousel_pro.dart';
@@ -140,9 +141,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                       SubCategoryModel object = result;
                       print("--selected---${object.id} and ${object.title}");
                       print("Index=${subCathashMap['${object.id}']}");
-                      await controller.scrollToIndex(int.parse(subCathashMap['${object.id}']));
-                      controller.highlight(int.parse(subCathashMap['${object.id}']));
+                      print("subCathashMap=${subCathashMap.toString()}");
+                      //await controller.scrollToIndex(int.parse(subCathashMap['${object.id}']));
+                      //controller.highlight(int.parse(subCathashMap['${object.id}']));
 
+                      await _scrollControllers.scrollTo(index: int.parse(subCathashMap['${object.id}']), duration: Duration(seconds: 1));
                     }
 
                   },
@@ -330,7 +333,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       });
     });
   }
-
+  ItemScrollController _scrollControllers = ItemScrollController();
   Widget getProductsWidget() {
     if (categoryResponse == null) {
       return Container();
@@ -360,28 +363,25 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                 height: 5,
                 width: MediaQuery.of(context).size.width,
                 color: listingBorderColor),
-            ListView.builder(
-              itemCount: products.length,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                if (products[index] is Product) {
-                  Product product = products[index];
-                  product.storeName = store.storeName;
-                  return Container(
-                    child: ProductTileItem(product, () {
-                      SharedPrefs.saveStoreData(store);
-                    }, ClassType.Home),
-                  );
-                } else if (products[index] is SubCategoryModel) {
-                  SubCategoryModel subCategory = products[index];
-                  subCathashMap['${subCategory.id}'] = "${index}";
-
-                  return AutoScrollTag(
-                    key: ValueKey(index),
-                    controller: controller,
-                    index: index,
-                    child: Container(
+            Container(
+              height: Utils.getDeviceHeight(context),
+              child: ScrollablePositionedList.builder(
+                itemCount: products.length,
+                itemScrollController: _scrollControllers,
+                //shrinkWrap: true,
+                //physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  if (products[index] is Product) {
+                    Product product = products[index];
+                    product.storeName = store.storeName;
+                    return Container(
+                      child: ProductTileItem(product, () {
+                        SharedPrefs.saveStoreData(store);
+                      }, ClassType.Home),
+                    );
+                  } else if (products[index] is SubCategoryModel) {
+                    SubCategoryModel subCategory = products[index];
+                    return Container(
                       color: Colors.white,
                       child: Padding(
                         padding: EdgeInsets.only(
@@ -399,12 +399,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                           ],
                         ),
                       ),
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              },
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
             )
           ],
         );
@@ -437,8 +437,19 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
               products.addAll(response.subCategories[i].products);
             }
           }
+
+          for (int i = 0; i < products.length; i++) {
+            if (products[i] is SubCategoryModel){
+              SubCategoryModel subCategory = products[i];
+              subCathashMap['${subCategory.id}'] = "${i}";
+            }
+
+          }
           setState(() {});
         }
+
+
+
       });
       eventBus.fire(OnProductTileDbRefresh());
     }
