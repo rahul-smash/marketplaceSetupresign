@@ -394,7 +394,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                 itemCount: products.length,
                 itemScrollController: _scrollControllers,
                 //shrinkWrap: true,
-                //physics: NeverScrollableScrollPhysics(),
+                physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   if (products[index] is Product) {
                     Product product = products[index];
