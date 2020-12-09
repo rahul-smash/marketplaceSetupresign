@@ -242,6 +242,10 @@ class Utils {
     return MediaQuery.of(context).size.width;
   }
 
+  static double getDeviceHeight(BuildContext context) {
+    return MediaQuery.of(context).size.height;
+  }
+
   static Widget showDivider(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,

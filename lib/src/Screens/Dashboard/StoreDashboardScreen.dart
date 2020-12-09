@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_pro/carousel_pro.dart';
@@ -64,7 +65,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
         viewportBoundaryGetter: () {
           return Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom);
         },
-        axis: scrollDirection);
+        axis: scrollDirection
+    );
     getCategoryApi();
     listenEvent();
     try {
@@ -124,58 +126,62 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           padding: EdgeInsets.only(top: 0),
           child: _getCurrentBody(),
         ),
-        Positioned.fill(
-            child: Visibility(
-          visible: true,
-          child: Align(
-              alignment: Alignment.bottomCenter,
-              child: InkWell(
-                onTap: () async {
-                  print("--onTap---${products.length}");
 
-                  var result = await DialogUtils.displayMenuAlert(
-                      context, "Menu", subCategoryResponse.subCategories);
-                  if (result != null) {
-                    SubCategoryModel object = result;
-                    print("--selected---${object.id} and ${object.title}");
-                    print("Index=${subCathashMap['${object.id}']}");
-                    await controller.scrollToIndex(
-                        int.parse(subCathashMap['${object.id}']));
-                    controller
-                        .highlight(int.parse(subCathashMap['${object.id}']));
-                  }
-                },
-                child: Container(
-                  width: 140,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.all(Radius.circular(40))),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                          child: Image.asset(
-                            'images/restauranticon.png',
-                            width: 25,
-                            color: Colors.white,
+        Positioned.fill(
+          child: Visibility(
+            visible: true,
+            child: Align(
+                alignment: Alignment.bottomCenter,
+                child: InkWell(
+                  onTap: () async {
+                    print("--onTap---${products.length}");
+
+                    var result = await DialogUtils.displayMenuAlert(context, "Menu", subCategoryResponse.subCategories);
+                    if(result != null){
+                      SubCategoryModel object = result;
+                      print("--selected---${object.id} and ${object.title}");
+                      print("Index=${subCathashMap['${object.id}']}");
+                      print("subCathashMap=${subCathashMap.toString()}");
+                      //await controller.scrollToIndex(int.parse(subCathashMap['${object.id}']));
+                      //controller.highlight(int.parse(subCathashMap['${object.id}']));
+
+                      await _scrollControllers.scrollTo(index: int.parse(subCathashMap['${object.id}']), duration: Duration(seconds: 1));
+                    }
+
+                  },
+                  child: Container(
+                    width: 140,height: 50,
+                    decoration: BoxDecoration(
+                        color:appTheme,
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(40)
+                        )
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                            child: Image.asset(
+                              'images/restauranticon.png',
+                              width: 25,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 0, 30, 0),
-                          child: Text(
-                            "Menu",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 30, 0),
+                            child: Text("Menu",style: TextStyle(color: Colors.white,fontSize: 16),),
                           ),
-                        ),
-                      ],
+
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              )),
-        ))
+                )
+            ),
+          )
+        )
       ],
     );
   }
@@ -192,83 +198,81 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
         }
       },
       child: SingleChildScrollView(
-        controller: _scrollController,
-        child: Column(
-          children: <Widget>[
-            addBanners(),
-            categoryResponse != null && categoryResponse.categories.isNotEmpty
-                ? Container(
-                    height: 190,
-                    color: Colors.transparent,
-                    margin: EdgeInsets.only(left: 2.5),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                "Categories",
-                                style: TextStyle(
-                                    color: staticHomeDescriptionColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Flexible(
-                          child: ListView.builder(
-                            itemCount: categoryResponse.categories.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              CategoryModel model =
-                                  categoryResponse.categories[index];
-                              return CategoryView(
-                                model,
-                                store,
-                                false,
-                                0,
-                                isListView: true,
-                                selectedSubCategoryId: selectedSubCategoryId,
-                                callback: <Object>({value}) {
-                                  setState(() {
-                                    selectedCategory = (value as CategoryModel);
-                                    selectedSubCategoryId = selectedCategory.id;
-                                    getHomeCategoryProductApi();
-                                  });
-                                  return;
-                                },
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ))
-                : categoryResponse != null &&
-                        categoryResponse.categories.isEmpty
-                    ? Utils.getEmptyView2('')
-                    : Container(
-                        height: 200,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                              backgroundColor: Colors.black26,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.black26)),
+          controller: _scrollController,
+          child: Column(
+            children: <Widget>[
+              addBanners(),
+              categoryResponse != null && categoryResponse.categories.isNotEmpty
+                  ? Container(
+                  height: 190,
+                  color: Colors.transparent,
+                  margin: EdgeInsets.only(left: 2.5),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              "Categories",
+                              style: TextStyle(
+                                  color: staticHomeDescriptionColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
                       ),
-            getProductsWidget(),
-          ],
-        ),
+                      Flexible(
+                        child: ListView.builder(
+                          itemCount: categoryResponse.categories.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            CategoryModel model =
+                            categoryResponse.categories[index];
+                            return CategoryView(
+                              model,
+                              store,
+                              false,
+                              0,
+                              isListView: true,
+                              selectedSubCategoryId: selectedSubCategoryId,
+                              callback: <Object>({value}) {
+                                setState(() {
+                                  selectedCategory = (value as CategoryModel);
+                                  selectedSubCategoryId = selectedCategory.id;
+                                  getHomeCategoryProductApi();
+                                });
+                                return;
+                              },
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ))
+                  : categoryResponse != null && categoryResponse.categories.isEmpty
+                  ? Utils.getEmptyView2('')
+                  : Container(
+                height: 200,
+                child: Center(
+                  child: CircularProgressIndicator(
+                      backgroundColor: Colors.black26,
+                      valueColor:
+                      AlwaysStoppedAnimation<Color>(Colors.black26)),
+                ),
+              ),
+              getProductsWidget(),
+            ],
+          ),
       ),
     );
   }
 
   bool showBrowseMenuButton = true;
-
   _onStartScroll(ScrollMetrics metrics) {
     print("--------Scroll Start--------");
     /*setState(() {
@@ -354,7 +358,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       });
     });
   }
-
+  ItemScrollController _scrollControllers = ItemScrollController();
   Widget getProductsWidget() {
     if (categoryResponse == null) {
       return Container();
@@ -384,28 +388,25 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                 height: 5,
                 width: MediaQuery.of(context).size.width,
                 color: listingBorderColor),
-            ListView.builder(
-              itemCount: products.length,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                if (products[index] is Product) {
-                  Product product = products[index];
-                  product.storeName = store.storeName;
-                  return Container(
-                    child: ProductTileItem(product, () {
-                      SharedPrefs.saveStoreData(store);
-                    }, ClassType.Home),
-                  );
-                } else if (products[index] is SubCategoryModel) {
-                  SubCategoryModel subCategory = products[index];
-                  subCathashMap['${subCategory.id}'] = "${index}";
-
-                  return AutoScrollTag(
-                    key: ValueKey(index),
-                    controller: controller,
-                    index: index,
-                    child: Container(
+            Container(
+              height: Utils.getDeviceHeight(context),
+              child: ScrollablePositionedList.builder(
+                itemCount: products.length,
+                itemScrollController: _scrollControllers,
+                //shrinkWrap: true,
+                //physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  if (products[index] is Product) {
+                    Product product = products[index];
+                    product.storeName = store.storeName;
+                    return Container(
+                      child: ProductTileItem(product, () {
+                        SharedPrefs.saveStoreData(store);
+                      }, ClassType.Home),
+                    );
+                  } else if (products[index] is SubCategoryModel) {
+                    SubCategoryModel subCategory = products[index];
+                    return Container(
                       color: Colors.white,
                       child: Padding(
                         padding: EdgeInsets.only(
@@ -423,12 +424,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                           ],
                         ),
                       ),
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              },
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
             )
           ],
         );
@@ -437,7 +438,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   }
 
   HashMap subCathashMap = new HashMap<String, String>();
-
   void getHomeCategoryProductApi() {
     subCategoryResponse = null;
     products.clear();
@@ -462,8 +462,19 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
               products.addAll(response.subCategories[i].products);
             }
           }
+
+          for (int i = 0; i < products.length; i++) {
+            if (products[i] is SubCategoryModel){
+              SubCategoryModel subCategory = products[i];
+              subCathashMap['${subCategory.id}'] = "${i}";
+            }
+
+          }
           setState(() {});
         }
+
+
+
       });
       eventBus.fire(OnProductTileDbRefresh());
     }
@@ -471,8 +482,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
 
   @override
   void dispose() {
-    _scrollController
-        .dispose(); // it is a good practice to dispose the controller
+    _scrollController.dispose(); // it is a good practice to dispose the controller
     super.dispose();
   }
 }
