@@ -166,6 +166,7 @@ flutter:
     - images/image_placeholder.jpg
     - images/f_logo_white.png
     - images/google_logo.png
+    - images/gradint.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
