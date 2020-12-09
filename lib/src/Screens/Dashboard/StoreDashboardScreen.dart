@@ -121,7 +121,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                   child: Container(
                     width: 140,height: 50,
                     decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color:appTheme,
                         borderRadius: BorderRadius.all(
                             Radius.circular(40)
                         )
@@ -215,6 +215,31 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
             ),
           ),
         ),
+        Container(
+            margin: EdgeInsets.only(top: 80),
+            height: 70,
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.bottomRight,
+//                    stops: [0.1, 0.3, 0.7, 1],
+                    colors: [
+                  Colors.black12,
+                  Colors.black38,
+                  Colors.black38,
+                  Colors.black38
+                ])),
+            child: Align(
+              alignment: Alignment.bottomLeft ,
+              child: Text(
+                store.storeName,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+            )),
       ],
     );
   }
@@ -319,7 +344,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       }
     }
   }
-  
+
   HashMap subCathashMap = new HashMap<String, String>();
   void getHomeCategoryProductApi() {
     subCategoryResponse = null;

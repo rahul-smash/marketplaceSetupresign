@@ -240,11 +240,11 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       case DrawerChildConstants.LOYALITY_POINTS:
         if (AppConstant.isLoggedIn) {
           Navigator.pop(context);
-          /*Navigator.push(
+          Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => LoyalityPointsScreen(widget.store)),
-          );*/
+                builder: (context) => LoyalityPointsScreen(widget.brandData)),
+          );
         } else {
           Utils.showLoginDialog(context);
         }
