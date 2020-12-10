@@ -1886,4 +1886,25 @@ class ApiController {
       return null;
     }
   }
+
+  static Future<StoreOffersResponse> homeOffersApiRequest(
+      ) async {
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
+        ApiConstants.homeOffers;
+    var request = new http.MultipartRequest("GET", Uri.parse(url));
+
+    try {
+      print("----url---${url}");
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      final parsed = json.decode(respStr);
+      print("----respStr---${respStr}");
+      StoreOffersResponse res = StoreOffersResponse.fromJson(parsed);
+      return res;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
 }

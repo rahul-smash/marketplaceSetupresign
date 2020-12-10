@@ -15,6 +15,7 @@ import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeCategoryView.dart
 import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
+import 'package:restroapp/src/Screens/SideMenu/OffersList.dart';
 import 'package:restroapp/src/Screens/SideMenu/SideMenu.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
@@ -409,6 +410,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                   style: TextStyle(color: staticHomeDescriptionColor)),
             ),
             BottomNavigationBarItem(
+              icon: Image.asset('images/offericon.png',
+                  width: 24,
+                  fit: BoxFit.scaleDown,
+                  color: staticHomeDescriptionColor),
+              title: Text('Offers',
+                  style: TextStyle(color: staticHomeDescriptionColor)),
+            ),
+            BottomNavigationBarItem(
               icon: Image.asset('images/unselectedmyordericon.png',
                   width: 24,
                   fit: BoxFit.scaleDown,
@@ -446,7 +455,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     } else {
       setState(() {
         _currentIndex = index;
-        if (_currentIndex == 3) {
+        if (_currentIndex == 4) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -488,7 +497,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           attributeMap["ScreenName"] = "SearchScreen";
           Utils.sendAnalyticsEvent("Clicked SearchScreen", attributeMap);
         }
-        if (_currentIndex == 2) {
+        if (_currentIndex == 3) {
           if (AppConstant.isLoggedIn) {
             Navigator.push(
               context,
@@ -498,6 +507,20 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             Map<String, dynamic> attributeMap = new Map<String, dynamic>();
             attributeMap["ScreenName"] = "MyOrderScreen";
             Utils.sendAnalyticsEvent("Clicked MyOrderScreen", attributeMap);
+          } else {
+            Utils.showLoginDialog(context);
+          }
+        }
+        if (_currentIndex == 2) {
+          if (AppConstant.isLoggedIn) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => OffersListScreenScreen()),
+            );
+            Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+            attributeMap["ScreenName"] = "OffersListScreen";
+            Utils.sendAnalyticsEvent("Clicked OffersListScreen", attributeMap);
           } else {
             Utils.showLoginDialog(context);
           }
