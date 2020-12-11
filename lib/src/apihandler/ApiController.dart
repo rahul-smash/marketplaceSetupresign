@@ -1080,7 +1080,9 @@ class ApiController {
           "order_id": orderID,
           "platform": Platform.isIOS ? "IOS" : "android",
         });
+
         print('--url===  $url');
+        print('--url===  ${request.fields.toString()}');
         print('--user.id=== ${user.id}');
         final response =
             await request.send().timeout(Duration(seconds: timeout));
@@ -1101,12 +1103,11 @@ class ApiController {
   }
 
   static Future<ProductRatingResponse> postProductRating(
-      String orderID, String productID, String rating,
+      String orderID, String productID, String rating,String storeID,
       {String desc = '', File imageFile}) async {
-    StoreModel store = await SharedPrefs.getStore();
-    UserModel user = await SharedPrefs.getUser();
+    UserModelMobile user = await SharedPrefs.getUserMobile();
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
         ApiConstants.reviewRating;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     if (isNetworkAvailable) {

@@ -53,7 +53,6 @@ class ApiConstants{
 
   static String faqs = 'faqs';
   static String allNotifications = 'allNotifications';
-  static String reviewRating = 'review_rating';
 
 
 
@@ -105,6 +104,6 @@ class ApiConstants{
   static String getAddress = '/deliveryAddress';
   static String homeOffers = '/coupons/homeOffersList';
   static String couponDetails = '/coupons/couponDetail';
-
+  static String reviewRating = '/review_rating';
 
 }

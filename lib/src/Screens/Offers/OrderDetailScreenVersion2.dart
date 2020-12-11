@@ -430,8 +430,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                       fontWeight: FontWeight.w400,
                                     )),
                               ),
-                              Text(
-                                  "${AppConstant.currency} ${_totalPrice}",
+                              Text("${AppConstant.currency} ${_totalPrice}",
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
@@ -959,7 +958,9 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
   Color getStatusColor(status) {
     return status == "0"
         ? Color(0xFFA1BF4C)
-        : status == "1" ? Color(0xFFA0C057) : Color(0xFFCF0000);
+        : status == "1"
+            ? Color(0xFFA0C057)
+            : Color(0xFFCF0000);
   }
 
   String getDeliveryAddress() {
@@ -1026,27 +1027,46 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
 
 //    bool isPickup =widget.orderHistoryData.orderFacility.contains('Pick');
 
-    Color orderPlaced=Colors.black;
-    Color orderConfirmed= widget.orderHistoryData.status=='1'||
-        widget.orderHistoryData.status=='4'||
-        widget.orderHistoryData.status=='5'? Colors.black:grayLightColorSecondary;
+    Color orderPlaced = Colors.black;
+    Color orderConfirmed = widget.orderHistoryData.status == '1' ||
+            widget.orderHistoryData.status == '4' ||
+            widget.orderHistoryData.status == '5'
+        ? Colors.black
+        : grayLightColorSecondary;
 
-    Color orderShipped=  widget.orderHistoryData.status=='4'||
-        widget.orderHistoryData.status=='5'? Colors.black:grayLightColorSecondary;
-    Color orderDelivered=  widget.orderHistoryData.status=='2'|| widget.orderHistoryData.status=='6'?Colors.red:
-        widget.orderHistoryData.status=='5'? Colors.black:grayLightColorSecondary;
+    Color orderShipped = widget.orderHistoryData.status == '4' ||
+            widget.orderHistoryData.status == '5'
+        ? Colors.black
+        : grayLightColorSecondary;
+    Color orderDelivered = widget.orderHistoryData.status == '2' ||
+            widget.orderHistoryData.status == '6'
+        ? Colors.red
+        : widget.orderHistoryData.status == '5'
+            ? Colors.black
+            : grayLightColorSecondary;
 
-    double orderPlacedProgress=100;
-    double orderConfirmedProgress= widget.orderHistoryData.status=='1'||
-        widget.orderHistoryData.status=='4'||
-        widget.orderHistoryData.status=='5'? 100:0;
+    double orderPlacedProgress = 100;
+    double orderConfirmedProgress = widget.orderHistoryData.status == '1' ||
+            widget.orderHistoryData.status == '4' ||
+            widget.orderHistoryData.status == '5'
+        ? 100
+        : 0;
 
-    double orderShippedProgress=  widget.orderHistoryData.status=='4'||
-        widget.orderHistoryData.status=='5'? 100:0;
-    double orderDeliveredProgress=  widget.orderHistoryData.status=='2'|| widget.orderHistoryData.status=='6'?100:
-        widget.orderHistoryData.status=='5'? 100:0;
-    bool isOrderCanceledOrRejected=widget.orderHistoryData.status=='2'|| widget.orderHistoryData.status=='6'? true:false;
-   return  Column(
+    double orderShippedProgress = widget.orderHistoryData.status == '4' ||
+            widget.orderHistoryData.status == '5'
+        ? 100
+        : 0;
+    double orderDeliveredProgress = widget.orderHistoryData.status == '2' ||
+            widget.orderHistoryData.status == '6'
+        ? 100
+        : widget.orderHistoryData.status == '5'
+            ? 100
+            : 0;
+    bool isOrderCanceledOrRejected = widget.orderHistoryData.status == '2' ||
+            widget.orderHistoryData.status == '6'
+        ? true
+        : false;
+    return Column(
       children: <Widget>[
         Stack(
           children: <Widget>[
@@ -1074,60 +1094,66 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                 ),
                 Expanded(
                     child: Text(
-                      'Order Placed',
-                      style: TextStyle(fontSize: 16,color: orderPlaced),
-                    )),
+                  'Order Placed',
+                  style: TextStyle(fontSize: 16, color: orderPlaced),
+                )),
                 Text(
-                    '${Utils.convertOrderDate(widget.orderHistoryData.orderDate)}',style: TextStyle(color: orderPlaced),)
-              ],
-            )
-          ],
-        ),
-        Visibility(visible: !isOrderCanceledOrRejected,child:  Stack(
-          children: <Widget>[
-            Container(
-              height: 30,
-              margin: EdgeInsets.only(
-                left: 4,
-              ),
-              width: 2,
-              child: LinearProgressIndicator(
-                backgroundColor: grayLightColorSecondary,
-                value: orderConfirmedProgress,
-                valueColor: AlwaysStoppedAnimation<Color>(appTheme),
-              ),
-            ),
-            Row(
-              children: <Widget>[
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10 / 2),
-                      color: orderConfirmed==Colors.black?appTheme:grayLightColorSecondary),
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Expanded(
-                    child: Text(
-                      'Order Confirmed',
-                      style: TextStyle(
-                          fontSize: 16, color: orderConfirmed),
-                    )),
-                Text(
-                  orderConfirmed==Colors.black?'Done': 'Pending',
-                  style: TextStyle(
-                      color: orderConfirmed, fontSize: 16),
+                  '${Utils.convertOrderDate(widget.orderHistoryData.orderDate)}',
+                  style: TextStyle(color: orderPlaced),
                 )
               ],
             )
           ],
-        ),),
+        ),
         Visibility(
-          visible: !isOrderCanceledOrRejected&& !widget.orderHistoryData.orderFacility
-              .toLowerCase()
-              .contains('pick'),
+          visible: !isOrderCanceledOrRejected,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                height: 30,
+                margin: EdgeInsets.only(
+                  left: 4,
+                ),
+                width: 2,
+                child: LinearProgressIndicator(
+                  backgroundColor: grayLightColorSecondary,
+                  value: orderConfirmedProgress,
+                  valueColor: AlwaysStoppedAnimation<Color>(appTheme),
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10 / 2),
+                        color: orderConfirmed == Colors.black
+                            ? appTheme
+                            : grayLightColorSecondary),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Expanded(
+                      child: Text(
+                    'Order Confirmed',
+                    style: TextStyle(fontSize: 16, color: orderConfirmed),
+                  )),
+                  Text(
+                    orderConfirmed == Colors.black ? 'Done' : 'Pending',
+                    style: TextStyle(color: orderConfirmed, fontSize: 16),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+        Visibility(
+          visible: !isOrderCanceledOrRejected &&
+              !widget.orderHistoryData.orderFacility
+                  .toLowerCase()
+                  .contains('pick'),
           child: Stack(
             children: <Widget>[
               Container(
@@ -1149,21 +1175,21 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                     height: 10,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10 / 2),
-                        color: orderShipped==Colors.black?appTheme:grayLightColorSecondary),
+                        color: orderShipped == Colors.black
+                            ? appTheme
+                            : grayLightColorSecondary),
                   ),
                   SizedBox(
                     width: 5,
                   ),
                   Expanded(
                       child: Text(
-                        'Order Shipped',
-                        style: TextStyle(
-                            fontSize: 16, color: orderShipped),
-                      )),
+                    'Order Shipped',
+                    style: TextStyle(fontSize: 16, color: orderShipped),
+                  )),
                   Text(
-                    orderShipped==Colors.black?'Done': 'Pending',
-                    style: TextStyle(
-                        color: orderShipped, fontSize: 16),
+                    orderShipped == Colors.black ? 'Done' : 'Pending',
+                    style: TextStyle(color: orderShipped, fontSize: 16),
                   )
                 ],
               )
@@ -1191,26 +1217,31 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                   height: 10,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10 / 2),
-                      color: orderDelivered==Colors.black?appTheme:orderDelivered),
+                      color: orderDelivered == Colors.black
+                          ? appTheme
+                          : orderDelivered),
                 ),
                 SizedBox(
                   width: 5,
                 ),
                 Expanded(
-                    child: Text( isOrderCanceledOrRejected? widget.orderHistoryData.status=='2'?'Order Rejected':
-                    'Order Canceled':
-                      !widget.orderHistoryData.orderFacility
-                          .toLowerCase()
-                          .contains('pick')
+                    child: Text(
+                  isOrderCanceledOrRejected
+                      ? widget.orderHistoryData.status == '2'
+                          ? 'Order Rejected'
+                          : 'Order Canceled'
+                      : !widget.orderHistoryData.orderFacility
+                              .toLowerCase()
+                              .contains('pick')
                           ? 'Order Delivered'
                           : 'Order Picked',
-                      style: TextStyle(
-                          fontSize: 16, color: orderDelivered),
-                    )),
+                  style: TextStyle(fontSize: 16, color: orderDelivered),
+                )),
                 Text(
-                  orderDelivered==Colors.black||orderDelivered==Colors.red?'Done': 'Pending',
-                  style: TextStyle(
-                      color: orderDelivered, fontSize: 16),
+                  orderDelivered == Colors.black || orderDelivered == Colors.red
+                      ? 'Done'
+                      : 'Pending',
+                  style: TextStyle(color: orderDelivered, fontSize: 16),
                 )
               ],
             )
@@ -1218,8 +1249,6 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
         ),
       ],
     );
-
-
   }
 
   showAlertDialog(BuildContext context, setState) {
@@ -1294,6 +1323,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             cardOrderHistoryItems.orderId,
             cardOrderHistoryItems.orderItems[index].productId,
             _rating.toString(),
+            cardOrderHistoryItems.orderItems[index].storeId,
             desc: desc,
             imageFile: imageFile)
         .then((value) {

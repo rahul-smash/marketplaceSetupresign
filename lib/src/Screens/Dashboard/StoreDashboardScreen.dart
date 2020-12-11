@@ -101,7 +101,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
         ),
         Positioned.fill(
             child: Visibility(
-          visible: true,
+          visible: subCategoryResponse != null &&
+              subCategoryResponse.subCategories.isNotEmpty,
           child: Align(
               alignment: Alignment.bottomCenter,
               child: InkWell(
@@ -121,6 +122,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                 },
                 child: Container(
                   width: 140,
+                  margin: EdgeInsets.only(bottom: 10),
                   height: 50,
                   decoration: BoxDecoration(
                       color: appTheme,
@@ -292,10 +294,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       } else {
         return Column(
           children: <Widget>[
-            Container(
-                height: 5,
-                width: MediaQuery.of(context).size.width,
-                color: listingBorderColor),
+//            Container(
+//                height: 5,
+//                width: MediaQuery.of(context).size.width,
+//                color: listingBorderColor),
             Container(
               height: (Utils.getDeviceHeight(context) / 1.3),
               child: ScrollablePositionedList.builder(
@@ -333,14 +335,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                         ),
                       ),
                     );
-                  } else if (products[index] is Stack) {
-                    Stack stack = products[index];
-                    return stack;
-                  } else if (products[index] is Container) {
-                    Container stack = products[index];
-                    return stack;
-                  } else {
-                    return Container();
+                  }
+                  else {
+                    return products[index];
                   }
                 },
               ),
@@ -432,6 +429,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                 AlwaysStoppedAnimation<Color>(Colors.black26)),
                       ),
                     ));
+      products.add(Container(
+          height: 5,
+          width: MediaQuery.of(context).size.width,
+          color: listingBorderColor));
 
       ApiController.getSubCategoryProducts(subCategoryId, store: store)
           .then((response) {
