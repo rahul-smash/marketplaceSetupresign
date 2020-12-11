@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:restroapp/src/UI/OffersListDetail.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/StoreOffersResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
@@ -189,7 +190,13 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
 
   Widget getView(int index) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => OffersListDetail(offersResponse.offers[index])),
+        );
+      },
       child: Stack(
         children: [
           Container(

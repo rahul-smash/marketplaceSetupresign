@@ -15,7 +15,7 @@ import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeCategoryView.dart
 import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
-import 'package:restroapp/src/Screens/SideMenu/OffersList.dart';
+import 'package:restroapp/src/UI/OffersList.dart';
 import 'package:restroapp/src/Screens/SideMenu/SideMenu.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
