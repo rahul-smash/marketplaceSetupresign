@@ -40,6 +40,7 @@ class OfferModel {
   String offerTermCondition;
   String offer_description;
   String image;
+  String banner;
   String discount_type;
   String discount_upto;
   String image10080;
@@ -59,6 +60,7 @@ class OfferModel {
       this.validTo,
       this.offerTermCondition,
       this.image,
+      this.banner,
       this.discount_type,
       this.discount_upto,
       this.image10080,
@@ -80,6 +82,7 @@ class OfferModel {
     validTo = json['valid_to'];
     offerTermCondition = json['offer_term_condition'];
     image = json['image'];
+    banner = json['banner'];
     discount_type = json['discount_type'];
     discount_upto = json['discount_upto'];
     image10080 = json['image_100_80'];
@@ -103,6 +106,7 @@ class OfferModel {
     data['valid_to'] = this.validTo;
     data['offer_term_condition'] = this.offerTermCondition;
     data['image'] = this.image;
+    data['banner'] = this.banner;
     data['discount_type'] = this.discount_type;
     data['discount_upto'] = this.discount_upto;
     data['image_100_80'] = this.image10080;

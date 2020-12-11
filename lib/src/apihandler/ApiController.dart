@@ -1907,4 +1907,27 @@ class ApiController {
       return null;
     }
   }
+  static Future<StoreOffersResponse> homeOffersDetails({String coupon_id}
+      ) async {
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
+        ApiConstants.couponDetails;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+    try {
+      print("----url---${url}");
+        request.fields.addAll({
+         'coupon_id':coupon_id
+        });
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      final parsed = json.decode(respStr);
+      print("----respStr---${respStr}");
+      StoreOffersResponse res = StoreOffersResponse.fromJson(parsed);
+      return res;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
 }

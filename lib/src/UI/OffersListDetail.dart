@@ -20,6 +20,18 @@ class _OffersListDetailState extends State<OffersListDetail> {
   @override
   void initState() {
     super.initState();
+    if (widget.offerModel.image == null ||
+        (widget.offerModel.image != null && widget.offerModel.image.isEmpty)) {
+      if (widget.offerModel.banner != null &&
+          widget.offerModel.banner.isNotEmpty) {
+        if (!widget.offerModel.banner
+            .contains('https://d39vol41m7feya.cloudfront.net/'))
+          widget.offerModel.image = 'https://d39vol41m7feya.cloudfront.net/' +
+              widget.offerModel.banner;
+        else
+          widget.offerModel.image = widget.offerModel.banner;
+      }
+    }
   }
 
   @override
@@ -33,14 +45,31 @@ class _OffersListDetailState extends State<OffersListDetail> {
             Stack(
               children: [
                 Container(
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: Image.asset(
-                      "images/offerdetailgraphic.png",
-                      width: Utils.getDeviceWidth(context),
-                    ),
-                  ),
-                ),
+                    height: 170,
+                    child: widget.offerModel.image.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(5),
+                                topLeft: Radius.circular(5)),
+                            child: CachedNetworkImage(
+                                width: Utils.getDeviceWidth(context),
+                                imageUrl: "${widget.offerModel.image}",
+                                fit: BoxFit.cover),
+                          )
+                        : null,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(5),
+                          topLeft: Radius.circular(5)),
+                      image: widget.offerModel.image.isEmpty
+                          ? DecorationImage(
+                              image:
+                                  AssetImage('images/offerdetailgraphic.png'),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
+                    )),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -61,6 +90,118 @@ class _OffersListDetailState extends State<OffersListDetail> {
               shrinkWrap: true,
               padding: EdgeInsets.all(16),
               children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(bottom: 16, left: 16),
+                          child: Text("${widget.offerModel.name}",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 18)),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          child: Text(
+                              "${getOfferTypeFullVersion(widget.offerModel)}",
+                              style: TextStyle(
+                                  color: Colors.black54, fontSize: 13)),
+                        ),
+                      ],
+                    )),
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            height: 45,
+                            width: 1,
+                            color: Colors.grey,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(bottom: 12),
+                                  child: Text(
+                                    'Use Code',
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.grey),
+                                  )),
+                              FDottedLine(
+                                corner: FDottedLineCorner(
+                                    leftTopCorner: 5,
+                                    leftBottomCorner: 5,
+                                    rightBottomCorner: 5,
+                                    rightTopCorner: 5),
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
+                                  child: Text(
+                                    widget.offerModel.couponCode,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                color: yellowColor,
+                                strokeWidth: 2.0,
+                                dottedLength: 2.0,
+                                space: 2.0,
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(right: 5),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 2.0,
+                                    color: Colors.blue,
+                                    style: BorderStyle.none,
+                                  ),
+                                  shape: BoxShape.rectangle,
+                                ),
+//                                    child:  Text(
+//                                      offersResponse.offers[index].couponCode,
+//                                      style: TextStyle(
+//                                          fontSize: 14, color: Colors.grey),
+//                                    )
+                              ),
+                            ],
+                          ),
+                          Visibility(
+                            visible: widget.offerModel.minimumOrderAmount !=
+                                    null &&
+                                widget.offerModel.minimumOrderAmount.isNotEmpty,
+                            child: Column(
+                              children: [
+                                Container(
+                                    margin: EdgeInsets.only(bottom: 16),
+                                    child: Text(
+                                      'Min Order',
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.grey),
+                                    )),
+                                Text(
+                                  '${widget.offerModel.minimumOrderAmount}',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                Container(
+                  height: 1,
+                  color: Colors.black45,
+                ),
                 Visibility(
                   visible: widget.offerModel.offerTermCondition != null &&
                       widget.offerModel.offerTermCondition.isNotEmpty,
@@ -79,7 +220,36 @@ class _OffersListDetailState extends State<OffersListDetail> {
                           margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
                           child: Text("${widget.offerModel.offerTermCondition}",
                               style: TextStyle(
-                                  color: Colors.black87, fontSize: 13)),
+                                  color: Colors.black54, fontSize: 13)),
+                        ),
+                        Container(
+                          height: 1,
+                          color: Colors.black45,
+                        )
+                      ]),
+                ),
+                Visibility(
+                  visible: widget.offerModel.validFrom != null &&
+                      widget.offerModel.validFrom.isNotEmpty &&
+                      widget.offerModel.validTo != null &&
+                      widget.offerModel.validTo.isNotEmpty,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(16),
+                          child: Text("Offer Validity",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 18)),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          child: Text(
+                              "${widget.offerModel.validFrom} - ${widget.offerModel.validTo}",
+                              style: TextStyle(
+                                  color: Colors.black54, fontSize: 13)),
                         ),
                         Container(
                           height: 1,

@@ -19,7 +19,14 @@ class RestroCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: () async{
+        bool isNetworkAvailable =
+            await Utils.isNetworkAvailable();
+        if (!isNetworkAvailable) {
+          Utils.showToast(
+              "No Internet connection", false);
+          return;
+        }
         print("----onTap-${storeDataObj.id}--");
         Utils.showProgressDialog(context);
         ApiController.getStoreVersionData(storeDataObj.id).then((response) {

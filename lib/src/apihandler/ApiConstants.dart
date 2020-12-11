@@ -104,6 +104,7 @@ class ApiConstants{
   static String search = '/inventory/searchProducts';
   static String getAddress = '/deliveryAddress';
   static String homeOffers = '/coupons/homeOffersList';
+  static String couponDetails = '/coupons/couponDetail';
 
 
 }
