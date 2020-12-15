@@ -488,7 +488,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           Utils.sendAnalyticsEvent("Clicked MyCartScreen", attributeMap);
         }
         if (_currentIndex == 1) {
-          if (AppConstant.isLoggedIn) {
+//          if (AppConstant.isLoggedIn) {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -512,9 +512,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         return;
                       })),
             );
-          } else {
-            Utils.showLoginDialog(context);
-          }
+//          } else {
+//            Utils.showLoginDialog(context);
+//          }
           Map<String, dynamic> attributeMap = new Map<String, dynamic>();
           attributeMap["ScreenName"] = "SearchScreen";
           Utils.sendAnalyticsEvent("Clicked SearchScreen", attributeMap);
@@ -534,7 +534,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           }
         }
         if (_currentIndex == 2) {
-          if (AppConstant.isLoggedIn) {
+//          if (AppConstant.isLoggedIn) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => OffersListScreenScreen()),
@@ -542,9 +542,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             Map<String, dynamic> attributeMap = new Map<String, dynamic>();
             attributeMap["ScreenName"] = "OffersListScreen";
             Utils.sendAnalyticsEvent("Clicked OffersListScreen", attributeMap);
-          } else {
-            Utils.showLoginDialog(context);
-          }
+//          } else {
+//            Utils.showLoginDialog(context);
+//          }
         }
 //        if (_currentIndex == 1) {
 //          setState(() {
