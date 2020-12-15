@@ -195,48 +195,82 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
       child: Padding(
           padding: EdgeInsets.only(top: 10, left: 6),
           child: Column(children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: (Utils.getDeviceWidth(context) - 100),
-                    child: Text(
-                      "${area.firstName}",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontSize: 16.0),
-                    ),
-                  ),
-                  addAddressInfoRow(Icons.phone, area.mobile),
-                  addAddressInfoRow(
-                    Icons.location_on,
-                    area.address2 != null && area.address2.trim().isNotEmpty
-                        ? '${area.address != null && area.address.trim().isNotEmpty ? '${area.address}, ${area.address2}' : "${area.address2}"}'
-                        : area.address,
-                  ),
-                  addAddressInfoRow(Icons.email, area.email),
-                ],
-              ),
-              Container(
-                child: Transform.scale(
-                    scale: 1.5,
-                    child: Checkbox(
-                      activeColor: Color(0xFFE0E0E0),
-                      checkColor: Colors.green,
-                      value: selectedIndex == index,
-                      onChanged: (value) {
-                        setState(() {
-                          print("index = ${index}");
-                          selectedIndex = index;
-                        });
-                      },
+            Stack(
+              children: [
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: (Utils.getDeviceWidth(context) - 100),
+                            child: Text(
+                              "${area.firstName}",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 16.0),
+                            ),
+                          ),
+                          addAddressInfoRow(Icons.phone, area.mobile),
+                          addAddressInfoRow(
+                            Icons.location_on,
+                            area.address2 != null &&
+                                    area.address2.trim().isNotEmpty
+                                ? '${area.address != null && area.address.trim().isNotEmpty ? '${area.address}, ${area.address2}' : "${area.address2}"}'
+                                : area.address,
+                          ),
+                          addAddressInfoRow(Icons.email, area.email),
+                        ],
+                      ),
+                      Container(
+                        child: Transform.scale(
+                            scale: 1.5,
+                            child: Checkbox(
+                              activeColor: Color(0xFFE0E0E0),
+                              checkColor: Colors.green,
+                              value: selectedIndex == index,
+                              onChanged: (value) {
+                                setState(() {
+                                  print("index = ${index}");
+                                  selectedIndex = index;
+                                });
+                              },
+                            )),
+                      )
+                    ]),
+                Align(
+                    alignment: Alignment.topRight,
+                    child: Visibility(
+                      child: Container(
+                        width: 70,
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, top: 5, bottom: 5),
+                        decoration: BoxDecoration(
+                          color: grey2,
+                          border: Border.all(color: grayLightColorSecondary),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            area.addressType != null &&
+                                    area.addressType.isNotEmpty
+                                ? area.addressType
+                                : '',
+                            style: TextStyle(fontSize: 13, color: Colors.black),
+                          ),
+                        ),
+                      ),
+                      visible: area.addressType != null &&
+                          area.addressType.isNotEmpty,
                     )),
-              )
-            ]),
+              ],
+            ),
             Padding(
               padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
               child: Divider(color: Color(0xFFBDBDBD), thickness: 1.0),
@@ -386,48 +420,72 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
             } else {}
           }
           if (area == null) {
-            Utils.showToast("We can not deliver at your location!", false);
-            return;
-          }
-
-          StoreDataObj storeModel = await SharedPrefs.getStoreData();
-          if (addressList.length == 0) {
-            Utils.showToast(AppConstant.selectAddress, false);
-          } else {
-            print("---radius-- ${area.radius}-charges.and ${area.charges}--");
-            print("minAmount=${addressList[selectedIndex].minAmount}");
-            print("notAllow=${addressList[selectedIndex].notAllow}");
-            if (area.note.isEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ConfirmOrderScreen(
-                          addressList[selectedIndex],
-                          false,
-                          "",
-                          widget.delivery,
-                          areaObject: area,
-                          storeModel: storeModel,
-                        )),
-              );
-            } else {
-              var result = await DialogUtils.displayOrderConfirmationDialog(
-                context,
-                "Confirmation",
-                area.note,
-              );
+            bool dialogResult =
+                await DialogUtils.displayLocationNotAvailbleDialog(
+                    context, 'We dont\'t serve\nin your area');
+            if (dialogResult != null && dialogResult) {
+              var result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        DragMarkerMap(addressList[selectedIndex]),
+                    fullscreenDialog: true,
+                  ));
+              print("-Edit-result--${result}-------");
               if (result == true) {
+                setState(() {
+                  isLoading = true;
+                });
+                DeliveryAddressResponse response =
+                    await ApiController.getAddressApiRequest();
+                //Utils.hideProgressDialog(context);
+                setState(() {
+                  //addressList = null;
+                  isLoading = false;
+                  addressList = response.data;
+                });
+              }
+            }
+          } else {
+            StoreDataObj storeModel = await SharedPrefs.getStoreData();
+            if (addressList.length == 0) {
+              Utils.showToast(AppConstant.selectAddress, false);
+            } else {
+              print("---radius-- ${area.radius}-charges.and ${area.charges}--");
+              print("minAmount=${addressList[selectedIndex].minAmount}");
+              print("notAllow=${addressList[selectedIndex].notAllow}");
+              if (area.note.isEmpty) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => ConfirmOrderScreen(
-                          addressList[selectedIndex],
-                          false,
-                          "",
-                          widget.delivery,
-                          areaObject: area,
-                          storeModel: storeModel)),
+                            addressList[selectedIndex],
+                            false,
+                            "",
+                            widget.delivery,
+                            areaObject: area,
+                            storeModel: storeModel,
+                          )),
                 );
+              } else {
+                var result = await DialogUtils.displayOrderConfirmationDialog(
+                  context,
+                  "Confirmation",
+                  area.note,
+                );
+                if (result == true) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ConfirmOrderScreen(
+                            addressList[selectedIndex],
+                            false,
+                            "",
+                            widget.delivery,
+                            areaObject: area,
+                            storeModel: storeModel)),
+                  );
+                }
               }
             }
           }

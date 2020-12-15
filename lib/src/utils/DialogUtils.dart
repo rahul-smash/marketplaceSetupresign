@@ -346,9 +346,8 @@ class DialogUtils {
     );
   }
 
-
-  static Future<SubCategoryModel> displayMenuAlert(
-      BuildContext context, String title, List<SubCategoryModel> subCategoryList) async {
+  static Future<SubCategoryModel> displayMenuAlert(BuildContext context,
+      String title, List<SubCategoryModel> subCategoryList) async {
     return await showDialog<SubCategoryModel>(
       context: context,
       builder: (BuildContext context) {
@@ -370,7 +369,10 @@ class DialogUtils {
                 shrinkWrap: true,
                 itemCount: subCategoryList.length,
                 separatorBuilder: (BuildContext context, int index) {
-                  return Divider(height: 0,color: Colors.white,);
+                  return Divider(
+                    height: 0,
+                    color: Colors.white,
+                  );
                 },
                 itemBuilder: (context, index) {
                   SubCategoryModel areaObject = subCategoryList[index];
@@ -387,15 +389,13 @@ class DialogUtils {
                               child: Text(areaObject.title,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.black)
-                              ),
+                                  style: TextStyle(color: Colors.black)),
                             ),
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text("${areaObject.products.length}",
-                                    style: TextStyle(color: Colors.black)
-                                ),
+                                    style: TextStyle(color: Colors.black)),
                               ),
                             )
 //
@@ -421,8 +421,7 @@ class DialogUtils {
     );
   }
 
-  static Future<bool> displayPickUpDialog(
-      BuildContext context) async {
+  static Future<bool> displayPickUpDialog(BuildContext context) async {
     return await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -1380,6 +1379,261 @@ class DialogUtils {
         });
   }
 
+  static Future<bool> displayCartReplaceDialog(
+      BuildContext context, String message) async {
+    return await showDialog<bool>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return WillPopScope(
+            onWillPop: () {
+              return Future(() => false);
+            },
+            child: Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                //title: Text(title,textAlign: TextAlign.center,),
+                child: Container(
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Wrap(
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).pop(false);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(5, 15, 5, 5),
+                              child: Icon(
+                                Icons.cancel,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(10.0, 00.0, 10.0, 10.0),
+                          padding: EdgeInsets.all(10.0),
+                          child: new Row(
+                            children: [
+                              new Expanded(
+                                child: new Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          10.0, 0.0, 10.0, 10.0),
+                                      height: 150.0,
+                                      width: 150.0,
+                                      decoration: new BoxDecoration(
+                                        image: DecorationImage(
+                                          image: new AssetImage(
+                                            'images/deliver.png',
+                                          ),
+                                          fit: BoxFit.scaleDown,
+                                        ),
+                                        shape: BoxShape.rectangle,
+                                      ),
+                                    ),
+                                    // Code to create the view for address.
+                                  ],
+                                ),
+                              ),
+                              // Icon to indicate the phone number.
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(30, 15, 30, 10),
+                          child: Center(
+                            child: Text(
+                              "${message}",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20, top: 20),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(20, 0, 5, 0),
+                                child: Container(
+                                  child: FlatButton(
+                                    child: Text('Cancel'),
+                                    color: Colors.grey,
+                                    textColor: Colors.black,
+                                    onPressed: () {
+                                      Utils.hideKeyboard(context);
+                                      Navigator.of(context).pop(false);
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(5, 0, 10, 0),
+                                  child: Container(
+                                    child: FlatButton(
+                                      child: Text('Procced'),
+                                      color: appThemeSecondary,
+                                      textColor: Colors.white,
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ))),
+          );
+        });
+  }
+
+  static Future<bool> displayLocationNotAvailbleDialog(
+      BuildContext context, String message) async {
+    return await showDialog<bool>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return WillPopScope(
+            onWillPop: () {
+              return Future(() => false);
+            },
+            child: Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                //title: Text(title,textAlign: TextAlign.center,),
+                child: Container(
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Wrap(
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).pop(false);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(5, 15, 5, 5),
+                              child: Icon(
+                                Icons.cancel,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(10.0, 00.0, 10.0, 10.0),
+                          padding: EdgeInsets.all(10.0),
+                          child: new Row(
+                            children: [
+                              new Expanded(
+                                child: new Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          10.0, 0.0, 10.0, 10.0),
+                                      height: 150.0,
+                                      width: 150.0,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient: LinearGradient(
+                                            begin: Alignment.bottomCenter,
+                                            end: Alignment.topCenter,
+                                            colors: [Colors.transparent,Colors.transparent,Colors.black12, Colors.black12],
+
+                                          )),
+                                      child:
+                                      Icon(
+                                        Icons.location_off_rounded,
+                                        size: 90,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Oops!\nSorry',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                          color: Colors.black),
+                                    ),
+                                    Container(
+                                      width: 30,
+                                      margin: EdgeInsets.only(
+                                        top: 5,
+                                      ),
+                                      height: 2,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: appTheme),
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                    ),
+                                    // Code to create the view for address.
+                                  ],
+                                ),
+                              ),
+                              // Icon to indicate the phone number.
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(30, 0, 30, 10),
+                          child: Center(
+                            child: Text(
+                              "${message}",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20, top: 20),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: ButtonTheme(
+                              minWidth: 180.0,
+                              height: 40.0,
+                              child: RaisedButton(
+                                shape: new RoundedRectangleBorder(
+                                    borderRadius:
+                                        new BorderRadius.circular(5.0),
+                                    side: BorderSide(color: appTheme)),
+                                onPressed: () async {
+                                  Navigator.pop(context, true);
+                                },
+                                color: appTheme,
+                                padding: EdgeInsets.all(5.0),
+                                textColor: Colors.white,
+                                child: Text("Change Location"),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ))),
+          );
+        });
+  }
+
   static Future<String> displayMultipleOnlinePaymentMethodDialog(
       BuildContext context, BrandData storeObject) async {
     return await showDialog<String>(
@@ -1446,6 +1700,7 @@ class DialogUtils {
           );
         });
   }
+
   static Future<bool> showAreaRemovedDialog(
       BuildContext context, String area) async {
     StoreModel storeModel = await SharedPrefs.getStore();
@@ -1493,7 +1748,7 @@ class DialogUtils {
       for (var i = 0; i < categoryResponse.categories.length; i++) {
         String parent_id = categoryResponse.categories[i].id;
         categoryResponse.categories[i].subCategory =
-        await databaseHelper.getSubCategories(parent_id);
+            await databaseHelper.getSubCategories(parent_id);
       }
       categoryResponse.success = true;
       return await showDialog<CategoryModel>(
@@ -1536,47 +1791,52 @@ class DialogUtils {
                       },
                       child: Container(
                         padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(border: Border.all(
-                          color: appTheme.withOpacity(0.4),
-                          width: 2,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: appTheme.withOpacity(0.4),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                          borderRadius: BorderRadius.circular(10),),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            Container(child:  categoryList[index].image300200.isNotEmpty
-                                ? ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
-                              child: CachedNetworkImage(
-                                imageUrl:
-                                "${categoryList[index].image300200}",
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.scaleDown,
-                                //placeholder: (context, url) => CircularProgressIndicator(),
-                                errorWidget: (context, url, error) {
-                                  print('image error ${url}');
-                                  return Container();
-                                },
-                              ),
-                            )
-                                : Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                    BorderRadius.circular(10.0))),),
+                            Container(
+                              child: categoryList[index].image300200.isNotEmpty
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            "${categoryList[index].image300200}",
+                                        width: 80,
+                                        height: 80,
+                                        fit: BoxFit.scaleDown,
+                                        //placeholder: (context, url) => CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) {
+                                          print('image error ${url}');
+                                          return Container();
+                                        },
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10.0))),
+                            ),
                             Expanded(
-                                child:
-                                Padding(padding: EdgeInsets.only(left: 10),
-                                    child:Text(
+                                child: Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Text(
                                         "${categoryResponse.categories[index].title}",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black, fontSize: 14))))
+                                            color: Colors.black,
+                                            fontSize: 14))))
                           ],
                         ),
                       ),

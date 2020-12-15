@@ -120,7 +120,8 @@ class AppConstant {
   static final String txt_share = "SHARE";
 
   static String getCartReplaceMsg(String oldStoreName1, newStoreName2){
-    String replaceCartMsg = "Your cart contains dishes from ${oldStoreName1}. Do you want to discard the selection and add dishes from ${newStoreName2}?";
+//    String replaceCartMsg = "Your cart contains dishes from ${oldStoreName1}. Do you want to discard the selection and add dishes from ${newStoreName2}?";
+    String replaceCartMsg = "We will remove items of ${oldStoreName1} from your cart";
     return replaceCartMsg;
   }
 

@@ -961,7 +961,8 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
         // User has selected differnt store to add in cart.
         print("--storeName =>${product.storeName} and ${cartProduct.storeName}");
         String msgBody = AppConstant.getCartReplaceMsg(cartProduct.storeName,product.storeName);
-        bool result = await DialogUtils.displayDialog(context, "Replace Cart?", "${msgBody}", "No", "Yes");
+//        bool result = await DialogUtils.displayDialog(context, "Replace Cart?", "${msgBody}", "No", "Yes");
+        bool result = await DialogUtils.displayCartReplaceDialog(context, "${msgBody}");
         print("result=${result}");
         if(result){
           await databaseHelper.deleteTable(DatabaseHelper.CART_Table);

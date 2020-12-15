@@ -25,8 +25,6 @@ class DragMarkerMap extends StatefulWidget {
 }
 
 class _DragMarkerMapState extends State<DragMarkerMap> {
-  GoogleMapController _mapController;
-  Set<Marker> markers = Set();
   LatLng center, selectedLocation;
   final cityController = new TextEditingController();
   final stateController = new TextEditingController();
@@ -37,19 +35,19 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
   final addressController = new TextEditingController();
   String address;
   bool isButtonPressed = false;
-  List<AddressTags> addressList = List();
+  List<String> addressList = List();
   ScrollController controller = ScrollController();
 
   UserModelMobile user;
 
-  AddressTags _selectedTag;
+  String _selectedTag;
 
   @override
   void initState() {
     super.initState();
-    addressList.add(AddressTags('Home'));
-    addressList.add(AddressTags('Work'));
-    addressList.add(AddressTags('Other'));
+    addressList.add('Home');
+    addressList.add('Work');
+    addressList.add('Other');
     _selectedTag = addressList.first;
 
     if (widget.addressData != null) {
@@ -65,18 +63,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       lastNameController.text = widget.addressData.lastName.trim();
       mobileController.text = widget.addressData.mobile.trim();
       emailController.text = widget.addressData.email.trim();
-      markers.addAll([
-        Marker(
-            draggable: true,
-            icon: BitmapDescriptor.defaultMarker,
-            markerId: MarkerId('value'),
-            position: center,
-            onDragEnd: (value) {
-              print(value.latitude);
-              print(value.longitude);
-              getAddressFromLocation(value.latitude, value.longitude);
-            })
-      ]);
+      _selectedTag=widget.addressData.addressType.trim();
       //_mapController.moveCamera(CameraUpdate.newLatLng(center));
     } else {
       //new address adding
@@ -96,50 +83,6 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
           title:
               Text(widget.addressData != null ? "Edit Address" : 'Add Address'),
           backgroundColor: appTheme,
-          actions: [
-//            InkWell(
-//              onTap: () async {
-//                var result = await Navigator.push(
-//                    context,
-//                    MaterialPageRoute(
-//                      builder: (BuildContext context) {
-//                        return CustomSearchScaffold();
-//                      },
-//                      fullscreenDialog: true,
-//                    ));
-//                if (result != null) {
-//                  PlacesDetailsResponse detail = result;
-//                  double lat = detail.result.geometry.location.lat;
-//                  double lng = detail.result.geometry.location.lng;
-//                  print("location = ${lat},${lng}");
-//
-//                  center = LatLng(lat, lng);
-//                  selectedLocation = LatLng(lat, lng);
-//                  getAddressFromLocation(lat, lng);
-//                  markers.addAll([
-//                    Marker(
-//                        draggable: true,
-//                        icon: BitmapDescriptor.defaultMarker,
-//                        markerId: MarkerId('value'),
-//                        position: center,
-//                        onDragEnd: (value) {
-//                          print(value.latitude);
-//                          print(value.longitude);
-//                          getAddressFromLocation(
-//                              value.latitude, value.longitude);
-//                        })
-//                  ]);
-//                  setState(() {
-//                    _mapController.moveCamera(CameraUpdate.newLatLng(center));
-//                  });
-//                }
-//              },
-//              child: Padding(
-//                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-//                child: Icon(Icons.search),
-//              ),
-//            )
-          ],
         ),
         body: GestureDetector(
           onTap: () {
@@ -214,7 +157,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                             ),
                             InkWell(
                                 onTap: () {
-                                  showBottomSheet(context);
+                                  showBottomSheet(
+                                      context, center, selectedLocation);
                                 },
                                 child: Text('Change',
                                     style: TextStyle(
@@ -278,7 +222,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                                   padding: EdgeInsets.only(left: 5, right: 5),
                                   height: 30,
                                   decoration: BoxDecoration(
-                                    color: _selectedTag.title == tag.title
+                                    color: _selectedTag.toLowerCase() == tag.toLowerCase()
                                         ? webThemeCategoryOpenColor
                                         : grey2,
                                     borderRadius: BorderRadius.circular(4),
@@ -286,10 +230,10 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                      tag.title,
+                                      tag,
                                       style: TextStyle(
                                           fontSize: 16,
-                                          color: _selectedTag.title == tag.title
+                                          color: _selectedTag.toLowerCase() == tag.toLowerCase()
                                               ? appTheme
                                               : Colors.black),
                                     ),
@@ -342,319 +286,12 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
         curve: Curves.linear, duration: Duration(milliseconds: 100));
   }
 
-  Widget build2(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title:
-            Text(widget.addressData != null ? "Edit Address" : 'Add Address'),
-        backgroundColor: appTheme,
-        actions: [
-          InkWell(
-            onTap: () async {
-              var result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return CustomSearchScaffold();
-                    },
-                    fullscreenDialog: true,
-                  ));
-              if (result != null) {
-                PlacesDetailsResponse detail = result;
-                double lat = detail.result.geometry.location.lat;
-                double lng = detail.result.geometry.location.lng;
-                print("location = ${lat},${lng}");
-
-                center = LatLng(lat, lng);
-                selectedLocation = LatLng(lat, lng);
-                getAddressFromLocation(lat, lng);
-                markers.addAll([
-                  Marker(
-                      draggable: true,
-                      icon: BitmapDescriptor.defaultMarker,
-                      markerId: MarkerId('value'),
-                      position: center,
-                      onDragEnd: (value) {
-                        print(value.latitude);
-                        print(value.longitude);
-                        getAddressFromLocation(value.latitude, value.longitude);
-                      })
-                ]);
-                setState(() {
-                  _mapController.moveCamera(CameraUpdate.newLatLng(center));
-                });
-              }
-            },
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-              child: Icon(Icons.search),
-            ),
-          )
-        ],
-      ),
-      body: Column(
-        children: <Widget>[
-          Row(
-            children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 0.0),
-                      child: TextFormField(
-                        controller: firstNameController,
-                        cursorColor: Colors.black,
-                        keyboardType: TextInputType.text,
-                        decoration: new InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                                left: 0, bottom: 0, top: 0, right: 0),
-                            hintText: "First Name*"),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 0.0),
-                      child: TextFormField(
-                        controller: lastNameController,
-                        cursorColor: Colors.black,
-                        keyboardType: TextInputType.text,
-                        decoration: new InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                                left: 0, bottom: 0, top: 0, right: 0),
-                            hintText: "Last Name*"),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Divider(color: Colors.grey, height: 2.0),
-          Row(
-            children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 0.0),
-                      child: TextFormField(
-                        controller: mobileController,
-                        cursorColor: Colors.black,
-                        keyboardType: TextInputType.text,
-                        decoration: new InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                                left: 0, bottom: 0, top: 0, right: 0),
-                            hintText: "Mobile No*"),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 0.0),
-                      child: TextFormField(
-                        controller: emailController,
-                        cursorColor: Colors.black,
-                        keyboardType: TextInputType.text,
-                        decoration: new InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                                left: 0, bottom: 0, top: 0, right: 0),
-                            hintText: "Email"),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Divider(color: Colors.grey, height: 2.0),
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 00, 0, 0),
-            height: 50,
-            color: Colors.white,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding:
-                    EdgeInsets.only(left: 10.0, right: 10, top: 5, bottom: 5),
-                child: RichText(
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  text: TextSpan(
-                    text: "Address: ${address}",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Divider(color: Colors.grey, height: 2.0),
-          Row(
-            children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 0.0),
-                      child: TextFormField(
-                        controller: cityController,
-                        cursorColor: Colors.black,
-                        keyboardType: TextInputType.text,
-                        decoration: new InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                                left: 0, bottom: 0, top: 0, right: 0),
-                            hintText: "City"),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 0.0),
-                      child: TextFormField(
-                        controller: stateController,
-                        cursorColor: Colors.black,
-                        keyboardType: TextInputType.text,
-                        decoration: new InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                                left: 0, bottom: 0, top: 0, right: 0),
-                            hintText: "State"),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: GoogleMap(
-              onMapCreated: _onMapCreated,
-              myLocationEnabled: true,
-              initialCameraPosition: CameraPosition(
-                target: center,
-                zoom: 15.0,
-              ),
-              mapType: MapType.normal,
-              markers: markers,
-              onCameraMove: _onCameraMove,
-              //onCameraMove: _onCameraMove,
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: SafeArea(
-        child: BottomAppBar(
-          child: InkWell(
-            onTap: () async {
-              checkIfOrderDeliveryWithInRadious();
-            },
-            child: Container(
-              height: 45,
-              color: appTheme,
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 0.0),
-                  child: RichText(
-                    text: TextSpan(
-                      text: widget.addressData != null
-                          ? "Update Address"
-                          : "Save Address",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Future<void> getLocation() async {
-    Utils.showToast("Getting your location...", true);
+//    Utils.showToast("Getting your location...", true);
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    // final coordinates = new Coordinates(position.latitude, position.longitude);
     center = LatLng(position.latitude, position.longitude);
     getAddressFromLocation(position.latitude, position.longitude);
-    markers.addAll([
-      Marker(
-          draggable: true,
-          icon: BitmapDescriptor.defaultMarker,
-          markerId: MarkerId('value'),
-          position: center,
-          onDragEnd: (value) {
-            print(value.latitude);
-            print(value.longitude);
-            getAddressFromLocation(value.latitude, value.longitude);
-          })
-    ]);
-    setState(() {
-      _mapController.moveCamera(CameraUpdate.newLatLng(center));
-    });
   }
 
   String zipCode = "";
@@ -681,19 +318,6 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       print(e);
       address = "No address found!";
     }
-  }
-
-  void _onCameraMove(CameraPosition position) {
-    CameraPosition newPos = CameraPosition(target: position.target);
-    Marker marker = markers.first;
-
-    setState(() {
-      markers.first.copyWith(positionParam: newPos.target);
-    });
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    _mapController = controller;
   }
 
   Future<void> checkIfOrderDeliveryWithInRadious() async {
@@ -734,7 +358,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
             "${zipCode}",
             "${selectedLocation.latitude}",
             "${selectedLocation.longitude}",
-            _selectedTag.title,
+            _selectedTag,
             "${widget.addressData == null ? '' : widget.addressData.id}")
         .then((response) {
       Utils.hideProgressDialog(context);
@@ -860,10 +484,47 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
     });
   }
 
-  void showBottomSheet(context,LatLng center,LatLng selectedLocation) {
+  void showBottomSheet(context, LatLng center, LatLng selectedLocation) {
     LatLng localCenter, localSelectedLocation;
+    GoogleMapController _mapController;
+    localCenter = center;
+    localSelectedLocation = selectedLocation;
+    Set<Marker> markers = Set();
+    String localAddress = address;
+    getAddressFromLocationFromMap(double latitude, double longitude,
+        {StateSetter setState}) async {
+      try {
 
+        localCenter = LatLng(latitude, longitude);
+        localSelectedLocation = LatLng(latitude, longitude);
+        Coordinates coordinates = new Coordinates(latitude, longitude);
+        var addresses =
+            await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        var first = addresses.first;
+        localAddress = first.addressLine;
+        if (setState != null)
+          setState(() {
+            localAddress = first.addressLine;
+          });
+      } catch (e) {
+        print(e);
+        address = "No address found!";
+      }
+    }
+
+    markers.addAll([
+      Marker(
+          draggable: true,
+          icon: BitmapDescriptor.defaultMarker,
+          markerId: MarkerId('value'),
+          position: localCenter,
+          onDragEnd: (value) {
+            getAddressFromLocationFromMap(value.latitude, value.longitude);
+          })
+    ]);
+    getAddressFromLocationFromMap(localCenter.latitude, localCenter.longitude);
     showModalBottomSheet(
+        enableDrag: false,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -873,159 +534,205 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
         clipBehavior: Clip.antiAliasWithSaveLayer,
         context: context,
         builder: (BuildContext bc) {
-          return Wrap(children: <Widget>[
-            Container(
-              color: Colors.white,
-              child: Column(
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(5, 15, 5, 5),
-                        child: Icon(
-                          Icons.cancel,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-                    child: Text(
-                      'Set Location',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Container(
-                      margin: EdgeInsets.all(20),
-                      //padding: EdgeInsets.all(5.0),
-                      decoration: BoxDecoration(
-                          color: searchGrayColor,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                          border: Border.all(
-                            color: searchGrayColor,
-                          )),
+          return StatefulBuilder(builder: (BuildContext context, setState) {
+            return Wrap(children: <Widget>[
+              Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.centerRight,
                       child: InkWell(
-                          onTap: () async {
-                            var result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                    return CustomSearchScaffold();
-                                  },
-                                  fullscreenDialog: true,
-                                ));
-                            if (result != null) {
-                              PlacesDetailsResponse detail = result;
-                              double lat = detail.result.geometry.location.lat;
-                              double lng = detail.result.geometry.location.lng;
-                              print("location = ${lat},${lng}");
-
-                              center = LatLng(lat, lng);
-                              selectedLocation = LatLng(lat, lng);
-                              getAddressFromLocation(lat, lng);
-                              markers.addAll([
-                                Marker(
-                                    draggable: true,
-                                    icon: BitmapDescriptor.defaultMarker,
-                                    markerId: MarkerId('value'),
-                                    position: center,
-                                    onDragEnd: (value) {
-                                      print(value.latitude);
-                                      print(value.longitude);
-                                      getAddressFromLocation(
-                                          value.latitude, value.longitude);
-                                    })
-                              ]);
-                              setState(() {
-                                _mapController
-                                    .moveCamera(CameraUpdate.newLatLng(center));
-                              });
-                            }
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.all(5),
-                            child: Center(
-                              child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(3, 3, 10, 3),
-                                        child: Image.asset(
-                                            'images/searchicon.png',
-                                            width: 20,
-                                            fit: BoxFit.scaleDown,
-                                            color: appTheme)),
-                                    Expanded(
-                                      child: RichText(
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                        text: TextSpan(
-                                          text: "${address}",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    )
-                                  ]),
-                            ),
-                          ))),
-                  Container(
-                      height: Utils.getDeviceHeight(context) >
-                              Utils.getDeviceWidth(context)
-                          ? Utils.getDeviceWidth(context) - 50
-                          : Utils.getDeviceHeight(context) / 2 - 50,
-                      margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                      child: GoogleMap(
-                        onMapCreated: _onMapCreated,
-                        myLocationEnabled: true,
-                        initialCameraPosition: CameraPosition(
-                          target: center,
-                          zoom: 15.0,
-                        ),
-                        mapType: MapType.normal,
-                        markers: markers,
-                        onCameraMove: _onCameraMove,
-                        //onCameraMove: _onCameraMove,
-                      )),
-                  Align(
-                    alignment: Alignment.center,
-                    child: ButtonTheme(
-                      minWidth: 180.0,
-                      height: 40.0,
-                      child: RaisedButton(
-                        shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(25.0),
-                            side: BorderSide(color: appTheme)),
-                        onPressed: () async {
+                        onTap: () {
                           Navigator.pop(context);
                         },
-                        color: appTheme,
-                        padding: EdgeInsets.all(5.0),
-                        textColor: Colors.white,
-                        child: Text("Submit"),
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(5, 15, 5, 5),
+                          child: Icon(
+                            Icons.cancel,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  )
-                ],
-              ),
-            )
-          ]);
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      child: Text(
+                        'Set Location',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        //padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color: searchGrayColor,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0)),
+                            border: Border.all(
+                              color: searchGrayColor,
+                            )),
+                        child: InkWell(
+                            onTap: () async {
+                              var result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return CustomSearchScaffold();
+                                    },
+                                    fullscreenDialog: true,
+                                  ));
+                              if (result != null) {
+                                PlacesDetailsResponse detail = result;
+                                double lat =
+                                    detail.result.geometry.location.lat;
+                                double lng =
+                                    detail.result.geometry.location.lng;
+                                print("location = ${lat},${lng}");
+
+                                localCenter = LatLng(lat, lng);
+                                localSelectedLocation = LatLng(lat, lng);
+                                getAddressFromLocationFromMap(lat, lng,
+                                    setState: setState);
+                                markers.clear();
+                                markers.addAll([
+                                  Marker(
+                                      draggable: true,
+                                      icon: BitmapDescriptor.defaultMarker,
+                                      markerId: MarkerId('value'),
+                                      position: localCenter,
+                                      onDragEnd: (value) {
+                                        getAddressFromLocationFromMap(
+                                            value.latitude, value.longitude,
+                                            setState: setState);
+                                      })
+                                ]);
+                                setState(() {
+                                  _mapController.moveCamera(
+                                      CameraUpdate.newLatLng(localCenter));
+                                });
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Center(
+                                child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                          padding:
+                                              EdgeInsets.fromLTRB(3, 3, 10, 3),
+                                          child: Image.asset(
+                                              'images/searchicon.png',
+                                              width: 20,
+                                              fit: BoxFit.scaleDown,
+                                              color: appTheme)),
+                                      Expanded(
+                                        child: RichText(
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          text: TextSpan(
+                                            text: "${localAddress}",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      )
+                                    ]),
+                              ),
+                            ))),
+                    Container(
+                        height: Utils.getDeviceHeight(context) >
+                                Utils.getDeviceWidth(context)
+                            ? Utils.getDeviceWidth(context) - 50
+                            : Utils.getDeviceHeight(context) / 2 - 50,
+                        margin:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        child: GoogleMap(
+                          onMapCreated: (GoogleMapController controller) {
+                            _mapController = controller;
+                          },
+                          myLocationEnabled: true,
+                          initialCameraPosition: CameraPosition(
+                            target: localCenter,
+                            zoom: 15.0,
+                          ),
+                          mapType: MapType.normal,
+                          markers: markers,
+                          onTap: (latLng) {
+                            if (markers.length >= 1) {
+                              markers.clear();
+                            }
+                            setState(() {
+
+                              markers.add(Marker(
+                                  draggable: true,
+                                  icon: BitmapDescriptor.defaultMarker,
+                                  markerId: MarkerId('value'),
+                                  position: latLng,
+                                  onDragEnd: (value) {
+                                    print(value.latitude);
+                                    print(value.longitude);
+                                    getAddressFromLocationFromMap(
+                                        value.latitude, value.longitude,
+                                        setState: setState);
+                                  }));
+                              getAddressFromLocationFromMap(
+                                  latLng.latitude, latLng.longitude,
+                                  setState: setState);
+                            });
+                          },
+                          onCameraMove: (CameraPosition position) {
+                            CameraPosition newPos =
+                                CameraPosition(target: position.target);
+                            Marker marker = markers.first;
+
+                            setState(() {
+                              markers.first
+                                  .copyWith(positionParam: newPos.target);
+                            });
+                          },
+                          //onCameraMove: _onCameraMove,
+                        )),
+                    Align(
+                      alignment: Alignment.center,
+                      child: ButtonTheme(
+                        minWidth: 180.0,
+                        height: 40.0,
+                        child: RaisedButton(
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(25.0),
+                              side: BorderSide(color: appTheme)),
+                          onPressed: () async {
+                            this.center=localCenter;
+                            this.selectedLocation=localSelectedLocation;
+                            getAddressFromLocation(
+                                localCenter.latitude, localCenter.longitude);
+                            Navigator.pop(context);
+                          },
+                          color: appTheme,
+                          padding: EdgeInsets.all(5.0),
+                          textColor: Colors.white,
+                          child: Text("Submit"),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    )
+                  ],
+                ),
+              )
+            ]);
+          });
         });
   }
 }
