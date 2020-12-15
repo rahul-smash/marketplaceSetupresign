@@ -1429,7 +1429,7 @@ class DialogUtils {
                                       decoration: new BoxDecoration(
                                         image: DecorationImage(
                                           image: new AssetImage(
-                                            'images/deliver.png',
+                                            'images/removeimg.png',
                                           ),
                                           fit: BoxFit.scaleDown,
                                         ),
@@ -1547,14 +1547,23 @@ class DialogUtils {
                                           10.0, 0.0, 10.0, 10.0),
                                       height: 150.0,
                                       width: 150.0,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          gradient: LinearGradient(
-                                            begin: Alignment.bottomCenter,
-                                            end: Alignment.topCenter,
-                                            colors: [Colors.transparent,Colors.transparent,Colors.black12, Colors.black12],
-
-                                          )),
+                                      decoration: new BoxDecoration(
+                                        image: DecorationImage(
+                                          image: new AssetImage(
+                                            'images/oppsorryimg.png',
+                                          ),
+                                          fit: BoxFit.scaleDown,
+                                        ),
+                                        shape: BoxShape.rectangle,
+                                      ),
+//                                      decoration: BoxDecoration(
+//                                          shape: BoxShape.circle,
+//                                          gradient: LinearGradient(
+//                                            begin: Alignment.bottomCenter,
+//                                            end: Alignment.topCenter,
+//                                            colors: [Colors.transparent,Colors.transparent,Colors.black12, Colors.black12],
+//
+//                                          )),
                                       child:
                                       Icon(
                                         Icons.location_off_rounded,
