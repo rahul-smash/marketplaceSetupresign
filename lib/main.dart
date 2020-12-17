@@ -17,7 +17,8 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:restroapp/src/utils/Utils.dart';
-import 'package:permission_handler/permission_handler.dart' as permission_handler;
+import 'package:permission_handler/permission_handler.dart'
+    as permission_handler;
 import 'src/models/BrandModel.dart';
 import 'src/models/VersionModel.dart';
 import 'src/utils/DialogUtils.dart';
@@ -60,7 +61,8 @@ Future<void> main() async {
       await ApiController.versionApiRequest("${configObject.storeId}");*/
 
   BrandVersionModel brandVersionModel = await ApiController.getBrandVersion();
-  BrandModel.getInstance(brandVersionModelObj: brandVersionModel).brandVersionModel;
+  BrandModel.getInstance(brandVersionModelObj: brandVersionModel)
+      .brandVersionModel;
 
   setAppThemeColors(brandVersionModel);
   // Pass all uncaught errors to Crashlytics.
@@ -70,19 +72,18 @@ Future<void> main() async {
   PackageInfo packageInfo = await Utils.getAppVersionDetails();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
+  await Utils.getDeviceInfo();
   // To turn off landscape mode
   runZoned(() {
     runApp(MarketPlaceApp(packageInfo, configObject, brandVersionModel));
   }, onError: Crashlytics.instance.recordError);
-
 }
 
 class MarketPlaceApp extends StatefulWidget {
-
   ConfigModel configObject;
   static FirebaseAnalytics analytics = FirebaseAnalytics();
-  static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
   BrandVersionModel storeData;
   PackageInfo packageInfo;
 
@@ -90,11 +91,9 @@ class MarketPlaceApp extends StatefulWidget {
 
   @override
   _MarketPlaceAppState createState() => _MarketPlaceAppState();
-
 }
 
 class _MarketPlaceAppState extends State<MarketPlaceApp> {
-
   Location location = new Location();
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
@@ -123,14 +122,15 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
       home: Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("images/mk_splash.jpg"),
-                fit: BoxFit.cover)
-        ),
+                image: AssetImage("images/mk_splash.jpg"), fit: BoxFit.cover)),
         child: Scaffold(
           backgroundColor: Colors.transparent,
           body: initialPosition == null
-              ? userDisabledGps?Container(child: LocationAlertDialog()):Container()
-              : showHomeScreen(widget.storeData,widget.configObject,widget.packageInfo,initialPosition),
+              ? userDisabledGps
+                  ? Container(child: LocationAlertDialog())
+                  : Container()
+              : showHomeScreen(widget.storeData, widget.configObject,
+                  widget.packageInfo, initialPosition),
         ),
       ),
     );
@@ -162,18 +162,22 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
       }
     }
     if (Platform.isAndroid) {
-      await location.changeSettings(accuracy: LocationAccuracy.high,distanceFilter: 0,interval: 1000,);
+      await location.changeSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 0,
+        interval: 1000,
+      );
     }
     _locationData = await location.getLocation();
-    initialPosition = LatLng(_locationData.latitude,_locationData.longitude);
+    initialPosition = LatLng(_locationData.latitude, _locationData.longitude);
     setState(() {
       print("----initialPosition----=$initialPosition");
     });
   }
 }
 
-
-Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject, PackageInfo packageInfo, LatLng initialPosition) {
+Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject,
+    PackageInfo packageInfo, LatLng initialPosition) {
   String version = packageInfo.version;
   if (model.success) {
     setStoreCurrency(model, configObject);
@@ -198,9 +202,11 @@ Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject, Package
     //print("--currentVesrion--${currentVesrion} and ${apiVesrion}");
     if (apiVesrion > currentVesrion) {
       //return ForceUpdateAlert(forceDownload[0].forceDownloadMessage,appName);
-      return MarketPlaceHomeScreen(model.brand, configObject, true,initialPosition);
+      return MarketPlaceHomeScreen(
+          model.brand, configObject, true, initialPosition);
     } else {
-      return MarketPlaceHomeScreen(model.brand, configObject, false,initialPosition);
+      return MarketPlaceHomeScreen(
+          model.brand, configObject, false, initialPosition);
     }
   } else {
     return Container();
@@ -242,7 +248,6 @@ void setAppThemeColors(BrandVersionModel store) {
 //  leftMenuLabelTextColors =
 //      Color(int.parse(appThemeColors.left_menu_label_Color));
 
-
   //flow change
   if (store.brand.webAppThemeColors != null) {
     WebAppThemeColors webAppThemeColors = store.brand.webAppThemeColors;
@@ -252,7 +257,7 @@ void setAppThemeColors(BrandVersionModel store) {
     appThemeSecondary = Utils.colorGeneralization(
         appThemeSecondary, webAppThemeColors.webThemeSecondaryColor);
 
-    dotIncreasedColor=appThemeSecondary;
+    dotIncreasedColor = appThemeSecondary;
     webThemeCategoryOpenColor = Utils.colorGeneralization(
         appThemeLight, webAppThemeColors.webThemeCategoryOpenColor);
     stripsColor =
@@ -276,18 +281,13 @@ void setAppThemeColors(BrandVersionModel store) {
         categoryListingBoxBackgroundColor,
         webAppThemeColors.categoryListingBoxBackgroundColor);
 
-    bottomBarTextColor = Utils.colorGeneralization(
-        bottomBarBackgroundColor,
-        "#000000");
-    bottomBarIconColor= appTheme;
+    bottomBarTextColor =
+        Utils.colorGeneralization(bottomBarBackgroundColor, "#000000");
+    bottomBarIconColor = appTheme;
     bottomBarBackgroundColor =
-        Utils.colorGeneralization(
-            bottomBarBackgroundColor,
-            "#ffffff");
+        Utils.colorGeneralization(bottomBarBackgroundColor, "#ffffff");
     leftMenuLabelTextColors =
-        Utils.colorGeneralization(
-            leftMenuLabelTextColors,
-            "#ffffff");
+        Utils.colorGeneralization(leftMenuLabelTextColors, "#ffffff");
   } else {
 //    appTheme = Color(int.parse(appThemeColors.appThemeColor));
     appThemeLight = appTheme.withOpacity(0.1);
@@ -299,19 +299,18 @@ Future<String> loadAsset() async {
 }
 
 class LocationAlertDialog extends StatelessWidget {
-
   LocationAlertDialog();
 
   @override
   Widget build(BuildContext context) {
-
     return AlertDialog(
       title: Text("Location Required!"),
-      content: Text("Please enable location permissions in settings.",
-        textAlign: TextAlign.center,),
+      content: Text(
+        "Please enable location permissions in settings.",
+        textAlign: TextAlign.center,
+      ),
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       actions: <Widget>[
         FlatButton(
           child: Text("Open Settings"),
