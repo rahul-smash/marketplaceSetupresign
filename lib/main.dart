@@ -123,7 +123,7 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
       home: Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("images/mk_splash.png"),
+                image: AssetImage("images/mk_splash.jpg"),
                 fit: BoxFit.cover)
         ),
         child: Scaffold(
