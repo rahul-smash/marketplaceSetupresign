@@ -1509,11 +1509,9 @@ class ApiController {
     }
   }
 
-  static Future<CancelOrderModel> orderCancelApi(String order_id) async {
+  static Future<CancelOrderModel> orderCancelApi(String order_id,{String order_rejection_note=""}) async {
     // 0 => 'pending' ,  1 =>'processing', 2 =>'rejected',
     // 4 =>'shipped', 5 =>'delivered', 6 => 'cancel'
-    StoreDataObj store = await SharedPrefs.getStoreData();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     UserModelMobile user = await SharedPrefs.getUserMobile();
     var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
         ApiConstants.orderCancel;
@@ -1522,6 +1520,7 @@ class ApiController {
       request.fields.addAll({
         "user_id": user.id,
         "order_id": order_id,
+        "order_rejection_note":order_rejection_note
       });
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();

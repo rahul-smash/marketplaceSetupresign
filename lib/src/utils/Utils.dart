@@ -638,6 +638,22 @@ class Utils {
     }
     return returnedColor;
   }
+ static DateTime loginClickTime;
+
+  static bool isRedundentClick(DateTime currentTime){
+    if(loginClickTime==null){
+      loginClickTime = currentTime;
+      print("first click");
+      return false;
+    }
+    print('diff is ${currentTime.difference(loginClickTime).inSeconds}');
+    if(currentTime.difference(loginClickTime).inMilliseconds<1200){//set this difference time in seconds
+      return true;
+    }
+
+    loginClickTime = currentTime;
+    return false;
+  }
 
   static void getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();

@@ -230,7 +230,7 @@ class _RestroListScreenState extends State<RestroListScreen> {
         clipBehavior: Clip.antiAliasWithSaveLayer,
         context: context,
         builder: (BuildContext bc) {
-          return Container(
+         return StatefulBuilder(builder: (BuildContext context, setState_){    return Container(
             color: Colors.white,
             child: FilterRadioGroup((selectedFilter) async {
               print("selectedFilter=${selectedFilter}");
@@ -249,22 +249,29 @@ class _RestroListScreenState extends State<RestroListScreen> {
                 Utils.hideProgressDialog(context);
                 Utils.hideKeyboard(context);
                 if (storesResponse != null && storesResponse.success) {
-                widget.allStoreData=storesResponse;
+                  widget.allStoreData=storesResponse;
+                }else{
+                  Utils.showToast('Something went wrong', false);
                 }
+                setState(() {
+                });
+                Navigator.pop(context);
               });
-            }),
-          );
+            },setState_),
+          );});
+
         });
   }
 }
 
 class FilterRadioGroup extends StatefulWidget {
   Function(String) onFilterSelectedCallback;
+  StateSetter setState_;
 
-  FilterRadioGroup(this.onFilterSelectedCallback);
+  FilterRadioGroup(this.onFilterSelectedCallback,this.setState_);
 
   @override
-  RadioGroupWidget createState() => RadioGroupWidget();
+  RadioGroupWidget createState() => RadioGroupWidget(this.setState_);
 }
 
 class RadioGroupWidget extends State<FilterRadioGroup> {
@@ -276,6 +283,8 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
 
   // Group Value for Radio Button.
   String id = "";
+  StateSetter setState_;
+  RadioGroupWidget(this.setState_);
 
   Widget build(BuildContext context) {
     return Container(
@@ -303,9 +312,13 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
                 groupValue: id,
                 value: data.value,
                 onChanged: (val) {
-                  setState(() {
+                  setState_(() {
                     radioItemHolder = data.lable;
                     id = data.value;
+//                    setState_(){
+//                      radioItemHolder = data.lable;
+//                      id = data.value;
+//                    }
                   });
                 },
               );
@@ -321,7 +334,11 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
                     minWidth: MediaQuery.of(context).size.width,
                     child: RaisedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        setState_(() {
+                          radioItemHolder = '';
+                          id = '';
+                        });
+
                       },
                       color: Colors.white,
                       elevation: 0.0,
@@ -353,10 +370,10 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
                           Utils.showToast("Please select filter", true);
                         } else {
                           widget.onFilterSelectedCallback(id);
-                          Navigator.pop(context);
+//                          Navigator.pop(context);
                         }
                       },
-                      color: Colors.grey[400],
+                      color: id.isEmpty? Colors.grey[400]:appThemeSecondary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),

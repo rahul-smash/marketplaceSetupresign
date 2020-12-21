@@ -120,22 +120,22 @@ class _OtpScreen extends State<OtpScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+//                          Container(
+//                              padding: EdgeInsets.only( left: 0.0, top: 10.0, right: 20.0),
+//                              child: new RaisedButton(
+//                                color: appThemeSecondary,
+//                                shape: RoundedRectangleBorder(
+//                                  borderRadius: BorderRadius.circular(5.0),
+//                                ),
+//                                textColor: Colors.white,
+//                                child: Text(_start != 0 ? "${_start} sec" : "Skip",style: TextStyle(
+//                                  color: Colors.white,
+//                                ),
+//                                ),
+//                                onPressed: onSkipButtonPressed,
+//                              )),
                           Container(
-                              padding: EdgeInsets.only( left: 0.0, top: 10.0, right: 20.0),
-                              child: new RaisedButton(
-                                color: appThemeSecondary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                ),
-                                textColor: Colors.white,
-                                child: Text(_start != 0 ? "${_start} sec" : "Skip",style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                                ),
-                                onPressed: onSkipButtonPressed,
-                              )),
-                          Container(
-                              padding: EdgeInsets.only( left: 20.0, top: 10.0, right: 0.0),
+                              padding: EdgeInsets.only( left: 0.0, top: 10.0, right: 0.0),
                               child: new RaisedButton(
                                 color: appThemeSecondary,
                                 shape: RoundedRectangleBorder(

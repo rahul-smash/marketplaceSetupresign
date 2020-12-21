@@ -704,89 +704,85 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             imageUrl == ""
                 ? Container(
 //              padding: EdgeInsets.fromLTRB(0,5,0,5),
-              margin: EdgeInsets.fromLTRB(0,5,0,5),
-              width: 80.0,
-              height: 80.0,
-              child: Utils.getImgPlaceHolder(),
-            )
+                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    width: 80.0,
+                    height: 80.0,
+                    child: Utils.getImgPlaceHolder(),
+                  )
                 : Padding(
-                padding: EdgeInsets.only(left: 5, right: 20),
-                child: Container(
+                    padding: EdgeInsets.only(left: 5, right: 20),
+                    child: Container(
 //                  padding: EdgeInsets.fromLTRB(0,5,0,5),
-                  margin: EdgeInsets.fromLTRB(5,5,5,5),
+                      margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
 //                  decoration: BoxDecoration(border: Border.all(color: Colors.black38,width: 1)),
-                  width: 80,
-                  height:80,
-                  child: CachedNetworkImage(
-                      imageUrl: "${imageUrl}", fit: BoxFit.scaleDown
-                    //placeholder: (context, url) => CircularProgressIndicator(),
-                    //errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
-                  /*child: Image.network(imageUrl,width: 60.0,height: 60.0,
+                      width: 80,
+                      height: 80,
+                      child: CachedNetworkImage(
+                          imageUrl: "${imageUrl}", fit: BoxFit.scaleDown
+                          //placeholder: (context, url) => CircularProgressIndicator(),
+                          //errorWidget: (context, url, error) => Icon(Icons.error),
+                          ),
+                      /*child: Image.network(imageUrl,width: 60.0,height: 60.0,
                                           fit: BoxFit.cover),*/
-                )),
+                    )),
             Expanded(
                 flex: 4,
-                child:
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 15),
-                  child: SizedBox(
-                    width: (Utils.getDeviceWidth(context) - 150),
-                    child: Container(
-                      child: Text(product.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 15),
+                      child: SizedBox(
+                        width: (Utils.getDeviceWidth(context) - 150),
+                        child: Container(
+                          child: Text(product.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Visibility(
-                  visible: product.weight.isEmpty ? false : true,
-                  child: Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: Text(
-                        "${product.weight}",
-                        style: TextStyle(color: appThemeSecondary),
-                      )),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(top: 5, bottom: 20),
-                    child: Text(
-                        "${product.quantity} X ${AppConstant.currency}${double.parse(price).toStringAsFixed(2)}")),
-                //
-                /*Padding(
+                    Visibility(
+                      visible: product.weight.isEmpty ? false : true,
+                      child: Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Text(
+                            "${product.weight}",
+                            style: TextStyle(color: appThemeSecondary),
+                          )),
+                    ),
+                    Padding(
+                        padding: EdgeInsets.only(top: 5, bottom: 20),
+                        child: Text(
+                            "${product.quantity} X ${AppConstant.currency}${double.parse(price).toStringAsFixed(2)}")),
+                    //
+                    /*Padding(
                     padding: EdgeInsets.only(top: 5, bottom: 20),
                     child: Text("Price: " + "${AppConstant.currency}${double.parse(product.price).toStringAsFixed(2)}")
                 ),*/
-              ],
-            )),
-
-              detail != null && detail.productStatus.contains('out_of_stock')
+                  ],
+                )),
+            detail != null && detail.productStatus.contains('out_of_stock')
                 ? Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.red, width: 1),
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5)),
-                child: Padding(
-                  padding: EdgeInsets.all(3),
-                  child: Text(
-                    "Out of Stock",
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ))
-                :
-              Text(
-                "${AppConstant.currency}${databaseHelper.roundOffPrice(int.parse(product.quantity) * double.parse(price), 2).toStringAsFixed(2)}" ,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: detail != null &&
-                        detail.productStatus.contains('out_of_stock')
-                        ? Colors.red
-                        : Colors.black45)),
-
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.red, width: 1),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Padding(
+                      padding: EdgeInsets.all(3),
+                      child: Text(
+                        "Out of Stock",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ))
+                : Text(
+                    "${AppConstant.currency}${databaseHelper.roundOffPrice(int.parse(product.quantity) * double.parse(price), 2).toStringAsFixed(2)}",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: detail != null &&
+                                detail.productStatus.contains('out_of_stock')
+                            ? Colors.red
+                            : Colors.black45)),
           ],
         ),
       );
@@ -1581,6 +1577,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             textColor: Colors.white,
             color: appTheme,
             onPressed: () async {
+              if (Utils.isRedundentClick(DateTime.now())) {
+                return;
+              }
 //              StoreDataObj storeObject = await SharedPrefs.getStoreData();
               bool status =
                   Utils.checkStoreOpenTime(storeModel, widget.deliveryType);
