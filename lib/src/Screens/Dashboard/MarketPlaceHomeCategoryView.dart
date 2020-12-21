@@ -105,34 +105,6 @@ class _MarketPlaceHomeCategoryViewState
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400),
                             ),
-                            InkWell(
-                              onTap: () {
-                                print("onTap =isCateSeeAll=${isCateSeeAll}");
-                                if (isCateSeeAll) {
-                                  isCateSeeAll = false;
-                                  if (widget.categoriesModel.data.length > 8) {
-                                    categorieslist =
-                                        widget.categoriesModel.data;
-                                    categorieslist =
-                                        categorieslist.sublist(0, 8);
-                                  } else {
-                                    categorieslist =
-                                        widget.categoriesModel.data;
-                                  }
-                                } else {
-                                  isCateSeeAll = true;
-                                  categorieslist = widget.categoriesModel.data;
-                                }
-                                setState(() {});
-                              },
-                              child: Text(
-                                isCateSeeAll ? "View Less" : "View More",
-                                style: TextStyle(
-                                    color: appThemeSecondary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w300),
-                              ),
-                            ),
                           ],
                         ),
                       ),
@@ -187,6 +159,47 @@ class _MarketPlaceHomeCategoryViewState
                               );
                             }).toList()),
                       ),
+                      InkWell(
+                          onTap: () {
+                            print("onTap =isCateSeeAll=${isCateSeeAll}");
+                            if (isCateSeeAll) {
+                              isCateSeeAll = false;
+                              if (widget.categoriesModel.data.length > 8) {
+                                categorieslist = widget.categoriesModel.data;
+                                categorieslist = categorieslist.sublist(0, 8);
+                              } else {
+                                categorieslist = widget.categoriesModel.data;
+                              }
+                            } else {
+                              isCateSeeAll = true;
+                              categorieslist = widget.categoriesModel.data;
+                            }
+                            setState(() {});
+                          },
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(0, 5, 0, 10),
+                            color:grayLightColor,
+                            width: Utils.getDeviceWidth(context),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  isCateSeeAll ? "View Less" : "View More",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Icon(isCateSeeAll
+                                    ? Icons.keyboard_arrow_up
+                                    : Icons.keyboard_arrow_down)
+                              ],
+                            ),
+                          )),
                       Container(
                         margin: EdgeInsets.only(top: 10, left: 10),
                         height: 30,
@@ -454,7 +467,8 @@ class _MarketPlaceHomeCategoryViewState
               itemCount: widget.storeData.data.length,
               itemBuilder: (context, index) {
                 StoreData storeDataObj = widget.storeData.data[index];
-                return RestroCardItem(storeDataObj,widget.callback,widget.initialPosition);
+                return RestroCardItem(
+                    storeDataObj, widget.callback, widget.initialPosition);
               },
             ),
           ],

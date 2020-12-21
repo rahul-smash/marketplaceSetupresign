@@ -880,7 +880,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
-                        Icon(Icons.keyboard_arrow_down)
+//                        Icon(Icons.keyboard_arrow_down)
                       ],
                     ),
                   ),
