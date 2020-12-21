@@ -14,6 +14,7 @@ import 'package:restroapp/src/utils/Utils.dart';
 class MarketPlaceCategoryView extends StatelessWidget {
   //final CategoryModel categoryModel;
   CategoriesData categoryModel;
+
   //StoreModel store;
   BrandData brandData;
   int index;
@@ -29,55 +30,59 @@ class MarketPlaceCategoryView extends StatelessWidget {
       this.callback});
 
   Widget build(BuildContext context) {
-    return Container(
-      width: isListView ? (Utils.getDeviceWidth(context) / 4.2) - 3 : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-              height: (Utils.getDeviceWidth(context) / 5) - 3,
-              margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
-              child: categoryModel.image300200.isNotEmpty
-                  ? ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: CachedNetworkImage(
-                  imageUrl: "${categoryModel.image300200}",
-                  width: (Utils.getDeviceWidth(context) / 4),
-                  fit: BoxFit.cover,
-                  //placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) {
-                    print('image error ${url}');
-                    return Container();
-                  },
-                ),
-              )
-                  : Padding(
-                padding:
-                EdgeInsets.all(_isCategoryViewSelected() ? 4 : 0),
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0))),
-              )),
-          Padding(
+    return Wrap(
+      children: [
+        Container(
+          width: isListView ? (Utils.getDeviceWidth(context) / 4.2) - 3 : null,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                  height: (Utils.getDeviceWidth(context) / 5) - 3,
+                  margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                  child: categoryModel.image300200.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: CachedNetworkImage(
+                            imageUrl: "${categoryModel.image300200}",
+                            width: (Utils.getDeviceWidth(context) / 4),
+                            fit: BoxFit.cover,
+                            //placeholder: (context, url) => CircularProgressIndicator(),
+                            errorWidget: (context, url, error) {
+                              print('image error ${url}');
+                              return Container();
+                            },
+                          ),
+                        )
+                      : Padding(
+                          padding:
+                              EdgeInsets.all(_isCategoryViewSelected() ? 4 : 0),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10.0))),
+                        )),
+              Padding(
 //              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-            padding: EdgeInsets.only(top: 5.0),
-            child: Center(
-              child: Text(categoryModel.title,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  softWrap: true,
-                  style: new TextStyle(
-                    color: _isCategoryViewSelected()
-                        ? Colors.black
-                        : Colors.black,
-                    fontSize: 16.0,
-                  )),
-            ),
+                padding: EdgeInsets.only(top: 5.0),
+                child: Center(
+                  child: Text(categoryModel.title,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      softWrap: true,
+                      style: new TextStyle(
+                        color: _isCategoryViewSelected()
+                            ? Colors.black
+                            : Colors.black,
+                        fontSize: 16.0,
+                      )),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 

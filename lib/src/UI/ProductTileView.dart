@@ -794,7 +794,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
                         Container(
                           margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
 //              width: 20.0,
-                          height: 20.0,
                           decoration: new BoxDecoration(
                             color: webThemeCategoryOpenColor,
                             borderRadius:
