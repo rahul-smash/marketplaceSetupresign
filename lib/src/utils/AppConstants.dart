@@ -2,7 +2,10 @@ class AppConstant {
   static bool isLoggedIn = false;
 
   static String currency = "₹";//\u20B9
-  static String brandID = "2";
+  //restro
+//  static String brandID = "2";
+  //grocer
+  static String brandID = "3";
   static String appThemeColor = "appThemeColor";
 
   static String branch_id = "branch_id";
