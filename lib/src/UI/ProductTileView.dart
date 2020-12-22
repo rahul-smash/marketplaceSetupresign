@@ -794,7 +794,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
                         Container(
                           margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
 //              width: 20.0,
-                          height: 20.0,
                           decoration: new BoxDecoration(
                             color: webThemeCategoryOpenColor,
                             borderRadius:
@@ -905,7 +904,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
         // User has selected differnt store to add in cart.
         print("--storeName =>${product.storeName} and ${cartProduct.storeName}");
         String msgBody = AppConstant.getCartReplaceMsg(cartProduct.storeName,product.storeName);
-        bool result = await DialogUtils.displayDialog(context, "Replace Cart?", "${msgBody}", "No", "Yes");
+//        bool result = await DialogUtils.displayDialog(context, "Replace Cart?", "${msgBody}", "No", "Yes");
+        bool result = await DialogUtils.displayCartReplaceDialog(context, "${msgBody}");
         print("result=${result}");
         if(result){
           await databaseHelper.deleteTable(DatabaseHelper.CART_Table);

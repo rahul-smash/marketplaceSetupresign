@@ -19,7 +19,14 @@ class RestroCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: () async{
+        bool isNetworkAvailable =
+            await Utils.isNetworkAvailable();
+        if (!isNetworkAvailable) {
+          Utils.showToast(
+              "No Internet connection", false);
+          return;
+        }
         print("----onTap-${storeDataObj.id}--");
         Utils.showProgressDialog(context);
         ApiController.getStoreVersionData(storeDataObj.id).then((response) {
@@ -54,18 +61,17 @@ class RestroCardItem extends StatelessWidget {
                   children: [
                     Container(
                         height: 150,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(5),
-                              topLeft: Radius.circular(5)),
-                          child: storeDataObj.image.isNotEmpty
-                              ? CachedNetworkImage(
-                                  height: 150,
-                                  width: Utils.getDeviceWidth(context),
-                                  imageUrl: "${storeDataObj.image}",
-                                  fit: BoxFit.cover)
-                              : null,
-                        ),
+                        child: storeDataObj.image.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(5),
+                                    topLeft: Radius.circular(5)),
+                                child: CachedNetworkImage(
+                                    height: 150,
+                                    width: Utils.getDeviceWidth(context),
+                                    imageUrl: "${storeDataObj.image}",
+                                    fit: BoxFit.cover))
+                            : null,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.only(

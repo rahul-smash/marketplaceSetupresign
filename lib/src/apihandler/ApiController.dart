@@ -1080,7 +1080,9 @@ class ApiController {
           "order_id": orderID,
           "platform": Platform.isIOS ? "IOS" : "android",
         });
+
         print('--url===  $url');
+        print('--url===  ${request.fields.toString()}');
         print('--user.id=== ${user.id}');
         final response =
             await request.send().timeout(Duration(seconds: timeout));
@@ -1101,12 +1103,11 @@ class ApiController {
   }
 
   static Future<ProductRatingResponse> postProductRating(
-      String orderID, String productID, String rating,
+      String orderID, String productID, String rating,String storeID,
       {String desc = '', File imageFile}) async {
-    StoreModel store = await SharedPrefs.getStore();
-    UserModel user = await SharedPrefs.getUser();
+    UserModelMobile user = await SharedPrefs.getUserMobile();
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
         ApiConstants.reviewRating;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     if (isNetworkAvailable) {
@@ -1508,11 +1509,9 @@ class ApiController {
     }
   }
 
-  static Future<CancelOrderModel> orderCancelApi(String order_id) async {
+  static Future<CancelOrderModel> orderCancelApi(String order_id,{String order_rejection_note=""}) async {
     // 0 => 'pending' ,  1 =>'processing', 2 =>'rejected',
     // 4 =>'shipped', 5 =>'delivered', 6 => 'cancel'
-    StoreDataObj store = await SharedPrefs.getStoreData();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     UserModelMobile user = await SharedPrefs.getUserMobile();
     var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
         ApiConstants.orderCancel;
@@ -1521,6 +1520,7 @@ class ApiController {
       request.fields.addAll({
         "user_id": user.id,
         "order_id": order_id,
+        "order_rejection_note":order_rejection_note
       });
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
@@ -1883,6 +1883,50 @@ class ApiController {
     } catch (e) {
       //Utils.showToast(e.toString(), true);
       print('=mobileVerification==catch==' + e.toString());
+      return null;
+    }
+  }
+
+  static Future<StoreOffersResponse> homeOffersApiRequest(
+      ) async {
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
+        ApiConstants.homeOffers;
+    var request = new http.MultipartRequest("GET", Uri.parse(url));
+
+    try {
+      print("----url---${url}");
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      final parsed = json.decode(respStr);
+      print("----respStr---${respStr}");
+      StoreOffersResponse res = StoreOffersResponse.fromJson(parsed);
+      return res;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+  static Future<StoreOffersResponse> homeOffersDetails({String coupon_id}
+      ) async {
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
+        ApiConstants.couponDetails;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+    try {
+      print("----url---${url}");
+        request.fields.addAll({
+         'coupon_id':coupon_id
+        });
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      final parsed = json.decode(respStr);
+      print("----respStr---${respStr}");
+      StoreOffersResponse res = StoreOffersResponse.fromJson(parsed);
+      return res;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
       return null;
     }
   }

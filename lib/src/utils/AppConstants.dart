@@ -1,7 +1,7 @@
 class AppConstant {
   static bool isLoggedIn = false;
 
-  static String currency = "";//\u20B9
+  static String currency = "₹";//\u20B9
   static String brandID = "2";
   static String appThemeColor = "appThemeColor";
 
@@ -120,7 +120,8 @@ class AppConstant {
   static final String txt_share = "SHARE";
 
   static String getCartReplaceMsg(String oldStoreName1, newStoreName2){
-    String replaceCartMsg = "Your cart contains dishes from ${oldStoreName1}. Do you want to discard the selection and add dishes from ${newStoreName2}?";
+//    String replaceCartMsg = "Your cart contains dishes from ${oldStoreName1}. Do you want to discard the selection and add dishes from ${newStoreName2}?";
+    String replaceCartMsg = "We will remove items of ${oldStoreName1} from your cart";
     return replaceCartMsg;
   }
 

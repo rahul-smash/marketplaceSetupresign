@@ -15,8 +15,10 @@ import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeCategoryView.dart
 import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
+import 'package:restroapp/src/UI/OffersList.dart';
 import 'package:restroapp/src/Screens/SideMenu/SideMenu.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
+import 'package:restroapp/src/UI/OffersListDetail.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -300,77 +302,94 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     );
   }
 
-  void _onBannerTap(position) {
+  void _onBannerTap(position) async {
     print("onImageTap ${position}");
     print("linkTo=${store.banners[position].linkTo}");
 
     if (store.banners[position].linkTo.isNotEmpty) {
       if (store.banners[position].linkTo == "category") {
-        if (store.banners[position].categoryId == "0" &&
-            store.banners[position].subCategoryId == "0" &&
-            store.banners[position].productId == "0") {
+        if (store.banners[position].categoryId != null &&
+            store.banners[position].categoryId == "0") {
           print("return");
           return;
         }
 
-        if (store.banners[position].categoryId != "0" &&
-            store.banners[position].subCategoryId != "0" &&
-            store.banners[position].productId != "0") {
-          // here we have to open the product detail
-          print("open the product detail ${position}");
-        } else if (store.banners[position].categoryId != "0" &&
-            store.banners[position].subCategoryId != "0" &&
-            store.banners[position].productId == "0") {
-          //here open the banner sub category
-          print("open the subCategory ${position}");
-
-          for (int i = 0; i < categoryResponse.categories.length; i++) {
-            CategoryModel categories = categoryResponse.categories[i];
-            if (store.banners[position].categoryId == categories.id) {
-              print(
-                  "title ${categories.title} and ${categories.id} and ${store.banners[position].categoryId}");
-              if (categories.subCategory != null) {
-                for (int j = 0; j < categories.subCategory.length; j++) {
-                  SubCategory subCategory = categories.subCategory[j];
-
-                  if (subCategory.id == store.banners[position].subCategoryId) {
-                    print(
-                        "open the subCategory ${subCategory.title} and ${subCategory.id} = ${store.banners[position].subCategoryId}");
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return SubCategoryProductScreen(categories, true, j);
-                      }),
-                    );
-
-                    break;
-                  }
-                }
-              }
-            }
-            //print("Category ${categories.id} = ${categories.title} = ${categories.subCategory.length}");
-          }
-        } else if (store.banners[position].categoryId != "0" &&
-            store.banners[position].subCategoryId == "0" &&
-            store.banners[position].productId == "0") {
-          print("open the Category ${position}");
-
-          for (int i = 0; i < categoryResponse.categories.length; i++) {
-            CategoryModel categories = categoryResponse.categories[i];
-            if (store.banners[position].categoryId == categories.id) {
-              print(
-                  "title ${categories.title} and ${categories.id} and ${store.banners[position].categoryId}");
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return SubCategoryProductScreen(categories, true, 0);
-                }),
-              );
-              break;
-            }
-          }
+        print("onTap===>${store.banners[position].categoryId}");
+        bool isNetworkAvailable = await Utils.isNetworkAvailable();
+        if (!isNetworkAvailable) {
+          Utils.showToast("No Internet connection", false);
+          return;
         }
+        Map<String, dynamic> data = {
+          "lst": widget.initialPosition.latitude,
+          "lng": widget.initialPosition.latitude,
+          "search_by": "category",
+          "id": "${store.banners[position].categoryId}",
+        };
+        Utils.showProgressDialog(context);
+        ApiController.getAllStores(params: data).then((storesResponse) {
+          Utils.hideProgressDialog(context);
+          Utils.hideKeyboard(context);
+          if (storesResponse != null && storesResponse.success)
+            setState(() {
+              allStoreData = storesResponse;
+              _previousSelectedHomeScreen = _selectedHomeScreen;
+              _selectedHomeScreen = HomeScreenEnum.HOME_RESTAURANT_VIEW;
+            });
+        });
+      } else if (store.banners[position].linkTo == "pages") {
+        if (store.banners[position].pageId != null &&
+            store.banners[position].pageId == "0") {
+          print("return");
+          return;
+        }
+        print("----onTap-${store.banners[position].pageId}--");
+        bool isNetworkAvailable = await Utils.isNetworkAvailable();
+        if (!isNetworkAvailable) {
+          Utils.showToast("No Internet connection", false);
+          return;
+        }
+        Utils.showProgressDialog(context);
+        ApiController.getStoreVersionData(store.banners[position].pageId)
+            .then((response) {
+          Utils.hideProgressDialog(context);
+          Utils.hideKeyboard(context);
+          StoreDataModel storeObject = response;
+          if (storeObject != null && storeObject.success)
+            setState(() {
+              _selectedSingleStore = storeObject;
+              _previousSelectedHomeScreen = _selectedHomeScreen;
+              _selectedHomeScreen = HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+            });
+        });
+      } else if (store.banners[position].linkTo == "offers") {
+        if (store.banners[position].offerId != null &&
+            store.banners[position].offerId == "0") {
+          print("return");
+          return;
+        }
+        print("----onTap-${store.banners[position].offerId}--");
+        bool isNetworkAvailable = await Utils.isNetworkAvailable();
+        if (!isNetworkAvailable) {
+          Utils.showToast("No Internet connection", false);
+          return;
+        }
+        Utils.showProgressDialog(context);
+        ApiController.homeOffersDetails(
+                coupon_id: store.banners[position].offerId)
+            .then((response) {
+          Utils.hideProgressDialog(context);
+          Utils.hideKeyboard(context);
+          if (response != null &&
+              response.success &&
+              response.offers.isNotEmpty) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OffersListDetail(response.offers.first),
+                ));
+          }
+        });
       }
     }
   }
@@ -391,14 +410,15 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               icon: Image.asset('images/homeicon.png',
                   width: 24,
                   fit: BoxFit.scaleDown,
-                  color: _selectedHomeScreen!=HomeScreenEnum.HOME_BAND_VIEW
+                  color: _selectedHomeScreen != HomeScreenEnum.HOME_BAND_VIEW
                       ? staticHomeDescriptionColor
                       : appThemeSecondary),
               title: Text('Home',
                   style: TextStyle(
-                      color: _selectedHomeScreen!=HomeScreenEnum.HOME_BAND_VIEW
-                          ? staticHomeDescriptionColor
-                          : appThemeSecondary)),
+                      color:
+                          _selectedHomeScreen != HomeScreenEnum.HOME_BAND_VIEW
+                              ? staticHomeDescriptionColor
+                              : appThemeSecondary)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedexploreicon.png',
@@ -406,6 +426,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                   fit: BoxFit.scaleDown,
                   color: staticHomeDescriptionColor),
               title: Text('Search',
+                  style: TextStyle(color: staticHomeDescriptionColor)),
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset('images/offericon.png',
+                  width: 24,
+                  fit: BoxFit.scaleDown,
+                  color: staticHomeDescriptionColor),
+              title: Text('Offers',
                   style: TextStyle(color: staticHomeDescriptionColor)),
             ),
             BottomNavigationBarItem(
@@ -446,7 +474,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     } else {
       setState(() {
         _currentIndex = index;
-        if (_currentIndex == 3) {
+        if (_currentIndex == 4) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -460,35 +488,38 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           Utils.sendAnalyticsEvent("Clicked MyCartScreen", attributeMap);
         }
         if (_currentIndex == 1) {
-          if (AppConstant.isLoggedIn) {
+//          if (AppConstant.isLoggedIn) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SearchScreen(widget.initialPosition,<Object>({value}){
-                setState(() {
-                  if (value == null) {
-                    Utils.showToast('No Data found', false);
-                    return;
-                  }
-                  if (value is StoreDataModel) {
-                    setState(() {
-                      _selectedSingleStore = value;
-                      _previousSelectedHomeScreen = _selectedHomeScreen;
-                      _selectedHomeScreen = HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
-                    });
-                    return;
-                  }
-                });
-                return;
-              })),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      SearchScreen(widget.initialPosition, <Object>({value}) {
+                        setState(() {
+                          if (value == null) {
+                            Utils.showToast('No Data found', false);
+                            return;
+                          }
+                          if (value is StoreDataModel) {
+                            setState(() {
+                              _selectedSingleStore = value;
+                              _previousSelectedHomeScreen = _selectedHomeScreen;
+                              _selectedHomeScreen =
+                                  HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+                            });
+                            return;
+                          }
+                        });
+                        return;
+                      })),
             );
-          } else {
-            Utils.showLoginDialog(context);
-          }
+//          } else {
+//            Utils.showLoginDialog(context);
+//          }
           Map<String, dynamic> attributeMap = new Map<String, dynamic>();
           attributeMap["ScreenName"] = "SearchScreen";
           Utils.sendAnalyticsEvent("Clicked SearchScreen", attributeMap);
         }
-        if (_currentIndex == 2) {
+        if (_currentIndex == 3) {
           if (AppConstant.isLoggedIn) {
             Navigator.push(
               context,
@@ -502,6 +533,19 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             Utils.showLoginDialog(context);
           }
         }
+        if (_currentIndex == 2) {
+//          if (AppConstant.isLoggedIn) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => OffersListScreenScreen()),
+            );
+            Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+            attributeMap["ScreenName"] = "OffersListScreen";
+            Utils.sendAnalyticsEvent("Clicked OffersListScreen", attributeMap);
+//          } else {
+//            Utils.showLoginDialog(context);
+//          }
+        }
 //        if (_currentIndex == 1) {
 //          setState(() {
 //            _controller.text = '';
@@ -512,7 +556,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           //show categories
           setState(() {
             _controller.text = '';
-            _selectedHomeScreen=HomeScreenEnum.HOME_BAND_VIEW;
+            _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
           });
         }
       });
@@ -836,7 +880,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
-                        Icon(Icons.keyboard_arrow_down)
+//                        Icon(Icons.keyboard_arrow_down)
                       ],
                     ),
                   ),

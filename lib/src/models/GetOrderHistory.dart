@@ -35,6 +35,8 @@ class OrderData {
   String cartSaving;
   String couponType;
   String couponCode;
+  String orderRejectionNote;
+  String walletRefund;
   List<Null> storeTaxRateDetail;
   List<Null> calculatedTaxDetail;
   List<Null> storeFixedTaxDetail;
@@ -69,6 +71,8 @@ class OrderData {
     this.address,
     this.orderItems,
     this.deliveryAddress,
+    this.orderRejectionNote,
+    this.walletRefund,
   });
 
   OrderData.fromJson(Map<String, dynamic> json) {
@@ -92,6 +96,8 @@ class OrderData {
     couponCode = json['coupon_code'];
     rating = json['rating'];
     address = json['address'];
+    orderRejectionNote = json['order_rejection_note'];
+    walletRefund = json['wallet_refund'];
     if (json['order_items'] != null) {
       orderItems = new List<OrderItems>();
       json['order_items'].forEach((v) {
@@ -216,6 +222,7 @@ class OrderItems {
   String comment;
   String isTaxEnable;
   String status;
+  String refundStatus;
   String subcategoryId;
   String subcategoryName;
   String categoryId;
@@ -223,6 +230,18 @@ class OrderItems {
   String productBrand;
   List<Null> gst;
   List<Review> review;
+
+  String nutrient;
+
+  String description;
+
+  String imageType;
+
+  String imageUrl;
+
+  String image10080;
+
+  String image300200;
 
   OrderItems(
       {this.id,
@@ -244,12 +263,20 @@ class OrderItems {
       this.comment,
       this.isTaxEnable,
       this.status,
+      this.refundStatus,
       this.subcategoryId,
       this.subcategoryName,
       this.categoryId,
       this.productImage,
       this.productBrand,
-      this.gst});
+      this.gst,
+      this.description,
+      this.imageUrl,
+      this.nutrient,
+      this.image300200,
+      this.image10080,
+      this.imageType,
+      this.review});
 
   OrderItems.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -271,6 +298,7 @@ class OrderItems {
     comment = json['comment'];
     isTaxEnable = json['isTaxEnable'];
     status = json['status'];
+    refundStatus = json['refund_status'];
     subcategoryId = json['subcategory_id'];
     subcategoryName = json['subcategory_name'];
     categoryId = json['category_id'];
@@ -282,6 +310,13 @@ class OrderItems {
     review = json["review"] == null
         ? null
         : List<Review>.from(json["review"].map((x) => Review.fromJson(x)));
+
+    imageType = json['image_type'] == null ? null : json['image_type'];
+    imageUrl = json['image'] == null ? null : json['image'];
+    image10080 = json['image_100_80'] == null ? null : json['image_100_80'];
+    image300200 = json['image_300_200'] == null ? null : json['image_300_200'];
+    nutrient = json['nutrient'] == null ? null : json['nutrient'];
+    description = json['description'] == null ? null : json['description'];
   }
 
   Map<String, dynamic> toJson() {
@@ -305,11 +340,20 @@ class OrderItems {
     data['comment'] = this.comment;
     data['isTaxEnable'] = this.isTaxEnable;
     data['status'] = this.status;
+    data['refund_status'] = this.refundStatus;
     data['subcategory_id'] = this.subcategoryId;
     data['subcategory_name'] = this.subcategoryName;
     data['category_id'] = this.categoryId;
     data['product_image'] = this.productImage;
     data['product_brand'] = this.productBrand;
+
+    data['image_type'] = this.imageType;
+    data['image'] = this.imageUrl;
+    data['image_100_80'] = this.image10080;
+    data['image_300_200'] = this.image300200;
+    data['nutrient'] = this.nutrient;
+    data['description'] = this.description;
+
     data["review"] = review == null
         ? null
         : List<dynamic>.from(review.map((x) => x.toJson()));

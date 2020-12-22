@@ -50,6 +50,7 @@ class DeliveryAddressData {
   bool isDeleted;
   String lat;
   String lng;
+  String addressType;
   //DeliveryTimeSlot deliveryTimeSlot;
 
   DeliveryAddressData({
@@ -76,7 +77,8 @@ class DeliveryAddressData {
     this.minAmount,
     this.note,
     this.cityId,
-    this.isDeleted
+    this.isDeleted,
+    this.addressType
     //this.deliveryTimeSlot
   });
 
@@ -106,6 +108,7 @@ class DeliveryAddressData {
         note: json["note"],
         cityId: json["city_id"],
         isDeleted: json["is_deleted"],
+        addressType: json["address_type"],
         //deliveryTimeSlot: DeliveryTimeSlot.fromJson(json["delivery_time_slot"]),
       );
 
@@ -134,6 +137,7 @@ class DeliveryAddressData {
         "note": note,
         "city_id": cityId,
         "is_deleted": isDeleted,
+        "address_type": addressType,
         //"delivery_time_slot": deliveryTimeSlot.toJson(),
       };
 }

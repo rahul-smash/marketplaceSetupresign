@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:device_info/device_info.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,7 @@ import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
+import 'package:restroapp/src/models/DeviceInfo.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
@@ -472,8 +475,7 @@ class Utils {
     return isStoreOpenToday;
   }
 
-  static bool checkStoreOpenTime(
-      var storeObject, OrderType deliveryType) {
+  static bool checkStoreOpenTime(var storeObject, OrderType deliveryType) {
     // in case of deliver ignore is24x7Open
     bool status = false;
     try {
@@ -635,6 +637,53 @@ class Utils {
       }
     }
     return returnedColor;
+  }
+ static DateTime loginClickTime;
+
+  static bool isRedundentClick(DateTime currentTime){
+    if(loginClickTime==null){
+      loginClickTime = currentTime;
+      print("first click");
+      return false;
+    }
+    print('diff is ${currentTime.difference(loginClickTime).inSeconds}');
+    if(currentTime.difference(loginClickTime).inMilliseconds<1200){//set this difference time in seconds
+      return true;
+    }
+
+    loginClickTime = currentTime;
+    return false;
+  }
+
+  static void getDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    Map<String, dynamic> param = Map();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      param['platform'] = 'android';
+      param['model'] = androidInfo.model;
+      param['manufacturer'] = androidInfo.manufacturer;
+      param['isPhysicalDevice'] = androidInfo.isPhysicalDevice;
+      param['androidId'] = androidInfo.androidId;
+      param['brand'] = androidInfo.brand;
+      param['device'] = androidInfo.device;
+      param['display'] = androidInfo.display;
+      param['version_sdkInt'] = androidInfo.version.sdkInt;
+      param['version_release'] = androidInfo.version.release;
+    }
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      param['platform'] = 'ios';
+      param['name'] = iosInfo.name;
+      param['systemName'] = iosInfo.systemName;
+      param['systemVersion'] = iosInfo.systemVersion;
+      param['model'] = iosInfo.model;
+      param['isPhysicalDevice'] = iosInfo.isPhysicalDevice;
+      param['release'] = iosInfo.utsname.release;
+      param['version'] = iosInfo.utsname.version;
+      param['machine'] = iosInfo.utsname.machine;
+    }
+    DeviceInfo.getInstance(deviceInfo: param);
   }
 }
 

@@ -105,34 +105,6 @@ class _MarketPlaceHomeCategoryViewState
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400),
                             ),
-                            InkWell(
-                              onTap: () {
-                                print("onTap =isCateSeeAll=${isCateSeeAll}");
-                                if (isCateSeeAll) {
-                                  isCateSeeAll = false;
-                                  if (widget.categoriesModel.data.length > 8) {
-                                    categorieslist =
-                                        widget.categoriesModel.data;
-                                    categorieslist =
-                                        categorieslist.sublist(0, 8);
-                                  } else {
-                                    categorieslist =
-                                        widget.categoriesModel.data;
-                                  }
-                                } else {
-                                  isCateSeeAll = true;
-                                  categorieslist = widget.categoriesModel.data;
-                                }
-                                setState(() {});
-                              },
-                              child: Text(
-                                isCateSeeAll ? "View Less" : "View More",
-                                style: TextStyle(
-                                    color: appThemeSecondary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w300),
-                              ),
-                            ),
                           ],
                         ),
                       ),
@@ -187,6 +159,47 @@ class _MarketPlaceHomeCategoryViewState
                               );
                             }).toList()),
                       ),
+                      InkWell(
+                          onTap: () {
+                            print("onTap =isCateSeeAll=${isCateSeeAll}");
+                            if (isCateSeeAll) {
+                              isCateSeeAll = false;
+                              if (widget.categoriesModel.data.length > 8) {
+                                categorieslist = widget.categoriesModel.data;
+                                categorieslist = categorieslist.sublist(0, 8);
+                              } else {
+                                categorieslist = widget.categoriesModel.data;
+                              }
+                            } else {
+                              isCateSeeAll = true;
+                              categorieslist = widget.categoriesModel.data;
+                            }
+                            setState(() {});
+                          },
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(0, 5, 0, 10),
+                            color:grayLightColor,
+                            width: Utils.getDeviceWidth(context),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  isCateSeeAll ? "View Less" : "View More",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Icon(isCateSeeAll
+                                    ? Icons.keyboard_arrow_up
+                                    : Icons.keyboard_arrow_down)
+                              ],
+                            ),
+                          )),
                       Container(
                         margin: EdgeInsets.only(top: 10, left: 10),
                         height: 30,
@@ -400,41 +413,6 @@ class _MarketPlaceHomeCategoryViewState
     );
   }
 
-  void showBottomSheet(context) {
-    showModalBottomSheet(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(10),
-          ),
-        ),
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        context: context,
-        builder: (BuildContext bc) {
-          return Container(
-            color: Colors.white,
-            child: FilterRadioGroup((selectedFilter) async {
-              print("selectedFilter=${selectedFilter}");
-              bool isNetworkAvailable = await Utils.isNetworkAvailable();
-              if (!isNetworkAvailable) {
-                Utils.showToast("No Internet connection", false);
-                return;
-              }
-              Map<String, dynamic> data = {
-                "lst": widget.initialPosition.latitude,
-                "lng": widget.initialPosition.latitude,
-                "filter_by": "${selectedFilter}",
-              };
-              Utils.showProgressDialog(context);
-              ApiController.getAllStores(params: data).then((storesResponse) {
-                Utils.hideProgressDialog(context);
-                Utils.hideKeyboard(context);
-                if (storesResponse != null && storesResponse.success)
-                  widget.callback(value: storesResponse);
-              });
-            }),
-          );
-        });
-  }
 
   Widget getProductsWidget() {
     return Column(
@@ -454,7 +432,8 @@ class _MarketPlaceHomeCategoryViewState
               itemCount: widget.storeData.data.length,
               itemBuilder: (context, index) {
                 StoreData storeDataObj = widget.storeData.data[index];
-                return RestroCardItem(storeDataObj,widget.callback,widget.initialPosition);
+                return RestroCardItem(
+                    storeDataObj, widget.callback, widget.initialPosition);
               },
             ),
           ],
@@ -518,127 +497,5 @@ class _MarketPlaceHomeCategoryViewState
                 : (widget.tagsModel.data.length > 8)
                     ? 8
                     : widget.tagsModel.data.length);
-  }
-}
-
-class FilterRadioGroup extends StatefulWidget {
-  Function(String) onFilterSelectedCallback;
-
-  FilterRadioGroup(this.onFilterSelectedCallback);
-
-  @override
-  RadioGroupWidget createState() => RadioGroupWidget();
-}
-
-class RadioGroupWidget extends State<FilterRadioGroup> {
-  List<Filter> filters =
-      BrandModel.getInstance().brandVersionModel.brand.filters;
-
-  // Default Radio Button Selected Item.
-  String radioItemHolder = '';
-
-  // Group Value for Radio Button.
-  String id = "";
-
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Wrap(
-        children: <Widget>[
-          Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Select Filter', style: TextStyle(fontSize: 20)),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(Icons.clear),
-                  )
-                ],
-              )),
-          Wrap(
-            children: filters.map((data) {
-              return RadioListTile(
-                title: Text("${data.lable}"),
-                groupValue: id,
-                value: data.value,
-                onChanged: (val) {
-                  setState(() {
-                    radioItemHolder = data.lable;
-                    id = data.value;
-                  });
-                },
-              );
-            }).toList(),
-          ),
-          Container(
-            margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ButtonTheme(
-                    height: 40,
-                    minWidth: MediaQuery.of(context).size.width,
-                    child: RaisedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      color: Colors.white,
-                      elevation: 0.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text("Clear All",
-                              textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 18)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ButtonTheme(
-                    height: 40,
-                    minWidth: MediaQuery.of(context).size.width,
-                    child: RaisedButton(
-                      elevation: 0.0,
-                      onPressed: () {
-                        print(
-                            "radioItemHolder=${radioItemHolder} and id=${id}");
-                        if (id.isEmpty) {
-                          Utils.showToast("Please select filter", true);
-                        } else {
-                          widget.onFilterSelectedCallback(id);
-                          Navigator.pop(context);
-                        }
-                      },
-                      color: Colors.grey[400],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text("Apply",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18)),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

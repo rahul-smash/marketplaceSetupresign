@@ -26,6 +26,7 @@ class StoreOffersResponse {
 
 class OfferModel {
   String id;
+  String brand_id;
   String storeId;
   String name;
   String couponCode;
@@ -37,7 +38,9 @@ class OfferModel {
   String validFrom;
   String validTo;
   String offerTermCondition;
+  String offer_description;
   String image;
+  String banner;
   String discount_type;
   String discount_upto;
   String image10080;
@@ -45,22 +48,25 @@ class OfferModel {
 
   OfferModel(
       {this.id,
-        this.storeId,
-        this.name,
-        this.couponCode,
-        this.discount,
-        this.usageLimit,
-        this.minimumOrderAmount,
-        this.orderFacilities,
-        this.offerNotification,
-        this.validFrom,
-        this.validTo,
-        this.offerTermCondition,
-        this.image,
-        this.discount_type,
-        this.discount_upto,
-        this.image10080,
-        this.image300200});
+      this.storeId,
+      this.name,
+      this.couponCode,
+      this.discount,
+      this.usageLimit,
+      this.minimumOrderAmount,
+      this.orderFacilities,
+      this.offerNotification,
+      this.validFrom,
+      this.validTo,
+      this.offerTermCondition,
+      this.image,
+      this.banner,
+      this.discount_type,
+      this.discount_upto,
+      this.image10080,
+      this.image300200,
+      this.brand_id,
+      this.offer_description});
 
   OfferModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -76,10 +82,13 @@ class OfferModel {
     validTo = json['valid_to'];
     offerTermCondition = json['offer_term_condition'];
     image = json['image'];
+    banner = json['banner'];
     discount_type = json['discount_type'];
     discount_upto = json['discount_upto'];
     image10080 = json['image_100_80'];
     image300200 = json['image_300_200'];
+    brand_id = json['brand_id'];
+    offer_description = json['offer_description'];
   }
 
   Map<String, dynamic> toJson() {
@@ -97,10 +106,13 @@ class OfferModel {
     data['valid_to'] = this.validTo;
     data['offer_term_condition'] = this.offerTermCondition;
     data['image'] = this.image;
+    data['banner'] = this.banner;
     data['discount_type'] = this.discount_type;
     data['discount_upto'] = this.discount_upto;
     data['image_100_80'] = this.image10080;
     data['image_300_200'] = this.image300200;
+    data['offer_description'] = this.offer_description;
+    data['brand_id'] = this.brand_id;
     return data;
   }
 }
