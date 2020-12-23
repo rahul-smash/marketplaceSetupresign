@@ -399,12 +399,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                           itemBuilder: (context, index) {
                             CategoryModel model =
                                 categoryResponse.categories[index];
-                            return CategoryView(
-                              model,
-                              store,
-                              false,
-                              0,
-                              isListView: true,
+                            return CategoryView(model,store,false,0,isListView: true,
                               selectedSubCategoryId: selectedSubCategoryId,
                               callback: <Object>({value}) {
                                 setState(() {
