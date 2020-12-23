@@ -73,9 +73,9 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         DrawerChildConstants.DELIVERY_ADDRESS, "images/deliveryaddress.png"));
     _drawerItems.add(
         DrawerChildItem(DrawerChildConstants.MY_ORDERS, "images/my_order.png"));
-//    if (widget.brandData.loyality == "1")
-//      _drawerItems.add(DrawerChildItem(
-//          DrawerChildConstants.LOYALITY_POINTS, "images/loyality.png"));
+    if (widget.brandData.loyality == "1")
+      _drawerItems.add(DrawerChildItem(
+          DrawerChildConstants.LOYALITY_POINTS, "images/loyality.png"));
 //    _drawerItems.add(
 //        DrawerChildItem(DrawerChildConstants.MY_FAVORITES, "images/myfav.png"));
     _drawerItems.add(

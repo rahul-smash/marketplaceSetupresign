@@ -1584,14 +1584,17 @@ class ApiController {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
 
-    var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "0") +
         ApiConstants.getLoyalityPoints;
 
     print("----url--${url}");
     print("--user.id--${user.id}");
     try {
       FormData formData = new FormData.fromMap(
-          {"user_id": user.id, "platform": Platform.isIOS ? "IOS" : "Android"});
+          {"user_id": user.id,
+            "platform": Platform.isIOS ? "IOS" : "Android"
+          }
+          );
       Dio dio = new Dio();
       Response response = await dio.post(url,
           data: formData,
