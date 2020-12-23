@@ -167,6 +167,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
             // code here will be called only if scrolled to the very bottom
           }
         }
+        /*if (scrollNotification is ScrollStartNotification) {
+          print("scroll");
+          print("detail:"+scrollNotification.dragDetails.toString());
+          /// your code
+        }*/
         return false;
         /*if (scrollNotification is ScrollStartNotification) {
           _onStartScroll(scrollNotification.metrics);
@@ -297,10 +302,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       } else {
         return Column(
           children: <Widget>[
-//            Container(
-//                height: 5,
-//                width: MediaQuery.of(context).size.width,
-//                color: listingBorderColor),
             Container(
               height: (Utils.getDeviceHeight(context) / 1.3),
               child: ScrollablePositionedList.builder(
