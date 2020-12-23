@@ -210,6 +210,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               FocusScope.of(context).unfocus();
               _controller.text = "";
               isCategoryViewSelected = false;
+              if(_selectedHomeScreen == HomeScreenEnum.HOME_SEARCH_VIEW){
+                _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+              }
               setState(() {});
             }),
             bottomNavigationBar: SafeArea(
