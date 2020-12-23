@@ -101,8 +101,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
         ),
         Positioned.fill(
             child: Visibility(
-          visible: subCategoryResponse != null &&
-              subCategoryResponse.subCategories.isNotEmpty,
+          visible: subCategoryResponse != null && subCategoryResponse.subCategories.isNotEmpty,
           child: Align(
               alignment: Alignment.bottomCenter,
               child: InkWell(
@@ -159,13 +158,23 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   Widget _getCurrentBody() {
     return NotificationListener(
       onNotification: (scrollNotification) {
-        if (scrollNotification is ScrollStartNotification) {
+        if (scrollNotification is ScrollEndNotification) {
+          final before = scrollNotification.metrics.extentBefore;
+          final max = scrollNotification.metrics.maxScrollExtent;
+          if (before == max) {
+            print("--------load next page-------");
+            // load next page
+            // code here will be called only if scrolled to the very bottom
+          }
+        }
+        return false;
+        /*if (scrollNotification is ScrollStartNotification) {
           _onStartScroll(scrollNotification.metrics);
         } else if (scrollNotification is ScrollUpdateNotification) {
           _onUpdateScroll(scrollNotification.metrics);
         } else if (scrollNotification is ScrollEndNotification) {
           _onEndScroll(scrollNotification.metrics);
-        }
+        }*/
       },
       child: getProductsWidget(),
     );
@@ -175,16 +184,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
 
   _onStartScroll(ScrollMetrics metrics) {
     print("--------Scroll Start--------");
-    /*setState(() {
-      this.showBrowseMenuButton = false;
-    });*/
   }
 
   _onUpdateScroll(ScrollMetrics metrics) {
     //print("--------Scroll Update--------");
-    /*setState(() {
-      this.showBrowseMenuButton = true;
-    });*/
   }
 
   _onEndScroll(ScrollMetrics metrics) {
@@ -303,8 +306,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
               child: ScrollablePositionedList.builder(
                 itemCount: products.length,
                 itemScrollController: _scrollControllers,
-                //shrinkWrap: true,
-//                physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   if (products[index] is Product) {
                     Product product = products[index];
