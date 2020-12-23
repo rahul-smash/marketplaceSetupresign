@@ -8,9 +8,9 @@ import 'dart:math';
 
 import 'package:restroapp/src/utils/AppColor.dart';
 
-const kGoogleApiKey = "AIzaSyCJFo82HR55bnLYFb2GUA8-d-E-o8uBpos";
-
-// to get places detail (lat/lng)
+//const kGoogleApiKey = "AIzaSyCJFo82HR55bnLYFb2GUA8-d-E-o8uBpos";
+const kGoogleApiKey = "AIzaSyD-8uwiLIZNzkxEu0rNDA8cLOpsM3qRpWc";
+// to get places detail (lat/lng) AIzaSyD-8uwiLIZNzkxEu0rNDA8cLOpsM3qRpWc
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 // custom scaffold that handle search
