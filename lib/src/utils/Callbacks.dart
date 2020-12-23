@@ -1,4 +1,5 @@
 import 'package:event_bus/event_bus.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/Utils.dart';
@@ -39,6 +40,10 @@ class onCounterUpdate {
 
 class onOpenMenu {
   onOpenMenu();
+}
+class onLocationChanged {
+  LatLng latLng;
+  onLocationChanged(this.latLng);
 }
 
 class onFavRemoved {

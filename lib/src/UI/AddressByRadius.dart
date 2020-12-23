@@ -587,11 +587,14 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                                     fullscreenDialog: true,
                                   ));
                               if (result != null) {
-                                PlacesDetailsResponse detail = result;
-                                double lat =
-                                    detail.result.geometry.location.lat;
-                                double lng =
-                                    detail.result.geometry.location.lng;
+//                                PlacesDetailsResponse detail = result;
+//                                double lat =
+//                                    detail.result.geometry.location.lat;
+//                                double lng =
+//                                    detail.result.geometry.location.lng;
+                              LatLng detail=result;
+                              double lat=detail.latitude;
+                              double lng=detail.longitude;
                                 print("location = ${lat},${lng}");
 
                                 localCenter = LatLng(lat, lng);

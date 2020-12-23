@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:geocoder/geocoder.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter/material.dart';
@@ -130,9 +131,12 @@ class CustomSearchScaffoldState extends PlacesAutocompleteState {
       double lng = detail.result.geometry.location.lng;
       print("location = ${lat},${lng}");
       //var address = await Geocoder.local.findAddressesFromQuery(p.description);
-      Navigator.pop(context, detail);
+//      Navigator.pop(context, detail);
+      Navigator.pop(context, LatLng(lat,lng));
     }
   }
+
+
 
   @override
   void onResponseError(PlacesAutocompleteResponse response) {
