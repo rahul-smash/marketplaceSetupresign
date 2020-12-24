@@ -9,11 +9,11 @@ class TaxCalculationResponse {
   TaxCalculationResponse({this.success, this.taxCalculation});
 
   TaxCalculationResponse.fromJson(
-      String couponCode, Map<String, dynamic> json) {
+      String couponCode,String couponType, Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
     taxCalculation = json['data'] != null
-        ? TaxCalculationModel.fromJson(couponCode, json['data'])
+        ? TaxCalculationModel.fromJson(couponCode,couponType, json['data'])
         : null;
   }
 
@@ -35,6 +35,7 @@ class TaxCalculationModel {
   String discount;
   String shipping;
   String couponCode;
+  String couponType;
   String fixedTaxAmount;
   List<TaxDetail> taxDetail;
   List<TaxLabel> taxLabel;
@@ -49,6 +50,7 @@ class TaxCalculationModel {
       this.discount,
       this.shipping,
       this.couponCode,
+      this.couponType,
       this.fixedTaxAmount,
       this.taxDetail,
       this.taxLabel,
@@ -57,7 +59,7 @@ class TaxCalculationModel {
       this.isChanged});
 
   factory TaxCalculationModel.fromJson(
-      String couponCode, Map<String, dynamic> json) {
+      String couponCode,String couponType, Map<String, dynamic> json) {
     TaxCalculationModel model = TaxCalculationModel();
 
     model.total = json['total'];
@@ -66,6 +68,7 @@ class TaxCalculationModel {
     model.discount = json['discount'];
     model.shipping = json['shipping'];
     model.couponCode = couponCode;
+    model.couponType = couponType;
     model.fixedTaxAmount = json['fixed_tax_amount'];
     if (json['tax_detail'] != null) {
       model.taxDetail = new List<TaxDetail>();

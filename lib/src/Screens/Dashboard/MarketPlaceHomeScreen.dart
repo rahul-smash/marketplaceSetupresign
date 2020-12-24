@@ -1028,6 +1028,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                               side: BorderSide(color: appTheme)),
                           onPressed: () async {
                             widget.initialPosition = localSelectedLocation;
+                            locationAddress=localAddress;
                             eventBus.fire(
                                 onLocationChanged(widget.initialPosition));
                             Navigator.pop(context);
