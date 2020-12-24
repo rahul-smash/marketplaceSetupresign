@@ -650,7 +650,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         onSelectNotification: onSelectNotification);
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        '${appName}', '${appName}', '${appName}',
+        '${appName}', '${appName}', '${appName}',style: AndroidNotificationStyle.BigText,
         importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
