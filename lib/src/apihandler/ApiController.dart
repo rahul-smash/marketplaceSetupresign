@@ -1512,11 +1512,11 @@ class ApiController {
   }
 
   static Future<CancelOrderModel> orderCancelApi(String order_id,
-      {String order_rejection_note = ""}) async {
+      {String storeID='',String order_rejection_note = ""}) async {
     // 0 => 'pending' ,  1 =>'processing', 2 =>'rejected',
     // 4 =>'shipped', 5 =>'delivered', 6 => 'cancel'
     UserModelMobile user = await SharedPrefs.getUserMobile();
-    var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
         ApiConstants.orderCancel;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
