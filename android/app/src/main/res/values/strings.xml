@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Meat cartet</string>
+    <string name="app_name">My Grocerie</string>
 
     <!-- Replace "000000000000" with your Facebook App ID here. -->
-<!--    <string name="facebook_app_id">876859562852793</string>-->
     <string name="facebook_app_id">3522925701099597</string>
 
     <!--

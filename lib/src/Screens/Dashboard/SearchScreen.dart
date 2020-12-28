@@ -55,6 +55,11 @@ class _SearchScreenState extends BaseState<SearchScreen> {
     isSearchEmpty = true;
     _scrollController = ScrollController();
     tagskey = GlobalKey();
+    eventBus.on<onLocationChanged>().listen((event) {
+      setState(() {
+       widget.initialPosition=event.latLng;
+      });
+    });
   }
 
   @override

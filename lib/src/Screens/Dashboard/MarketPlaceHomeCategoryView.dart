@@ -64,6 +64,11 @@ class _MarketPlaceHomeCategoryViewState
       categorieslist.addAll(widget.categoriesModel.data);
     }
     addFilters();
+    eventBus.on<onLocationChanged>().listen((event) {
+      setState(() {
+        widget.initialPosition = event.latLng;
+      });
+    });
   }
 
   @override

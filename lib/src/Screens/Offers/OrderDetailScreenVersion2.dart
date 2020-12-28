@@ -1034,7 +1034,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
   _hitCancelOrderApi({String orderRejectionNote}) async {
     Utils.showProgressDialog(context);
     CancelOrderModel cancelOrder = await ApiController.orderCancelApi(
-        widget.orderHistoryData.orderId,
+        widget.orderHistoryData.orderId,storeID:widget.orderHistoryData.orderItems.first.storeId,
         order_rejection_note: orderRejectionNote);
     if (cancelOrder != null && cancelOrder.success) {
       setState(() {

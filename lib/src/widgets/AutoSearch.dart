@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:geocoder/geocoder.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +9,9 @@ import 'dart:math';
 
 import 'package:restroapp/src/utils/AppColor.dart';
 
-const kGoogleApiKey = "AIzaSyCJFo82HR55bnLYFb2GUA8-d-E-o8uBpos";
-
-// to get places detail (lat/lng)
+//const kGoogleApiKey = "AIzaSyCJFo82HR55bnLYFb2GUA8-d-E-o8uBpos";
+const kGoogleApiKey = "AIzaSyD-8uwiLIZNzkxEu0rNDA8cLOpsM3qRpWc";
+// to get places detail (lat/lng) AIzaSyD-8uwiLIZNzkxEu0rNDA8cLOpsM3qRpWc
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 // custom scaffold that handle search
@@ -130,9 +131,12 @@ class CustomSearchScaffoldState extends PlacesAutocompleteState {
       double lng = detail.result.geometry.location.lng;
       print("location = ${lat},${lng}");
       //var address = await Geocoder.local.findAddressesFromQuery(p.description);
-      Navigator.pop(context, detail);
+//      Navigator.pop(context, detail);
+      Navigator.pop(context, LatLng(lat,lng));
     }
   }
+
+
 
   @override
   void onResponseError(PlacesAutocompleteResponse response) {

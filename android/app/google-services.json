@@ -1,34 +1,41 @@
 {
   "project_info": {
-    "project_number": "7171503500",
-    "project_id": "flutter-valuesappz-2",
-    "storage_bucket": "flutter-valuesappz-2.appspot.com"
+    "project_number": "1044117320509",
+    "project_id": "flutter-valueappz-demostores",
+    "storage_bucket": "flutter-valueappz-demostores.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:7171503500:android:4222021c6d118f78ea12a9",
+        "mobilesdk_app_id": "1:1044117320509:android:4375fbb7c620ac70c4cb54",
         "android_client_info": {
-          "package_name": "com.valueappz.hartycart"
+          "package_name": "com.valueappz.marketplace_grocer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "7171503500-eh051sh6ukh1hdbu093a154gvkpa4qoc.apps.googleusercontent.com",
+          "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCO6KMg2dChPCg0Fu_25loWOgWsusBhG2s"
+          "current_key": "AIzaSyCcIMM7Rv7nE0qSlt4qWKmiOPVk7zjA91M"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "7171503500-eh051sh6ukh1hdbu093a154gvkpa4qoc.apps.googleusercontent.com",
+              "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1044117320509-jrmqf1rvrup1m8bcrrf3jpqtjuilqtg8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.valueappz.marketplacedemo"
+              }
             }
           ]
         }
@@ -36,28 +43,43 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:7171503500:android:a71c5118fba21ab5ea12a9",
+        "mobilesdk_app_id": "1:1044117320509:android:83add04ddec4fb60c4cb54",
         "android_client_info": {
-          "package_name": "com.valueappz.marketplace_grocer"
+          "package_name": "com.valueappz.marketplacedemo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "7171503500-eh051sh6ukh1hdbu093a154gvkpa4qoc.apps.googleusercontent.com",
+          "client_id": "1044117320509-aio1fiheklrstueiekhnc91ci2u5ucoi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.valueappz.marketplacedemo",
+            "certificate_hash": "e3746660b1a422503eedaec25e29fb5bb450ff42"
+          }
+        },
+        {
+          "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCO6KMg2dChPCg0Fu_25loWOgWsusBhG2s"
+          "current_key": "AIzaSyCcIMM7Rv7nE0qSlt4qWKmiOPVk7zjA91M"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "7171503500-eh051sh6ukh1hdbu093a154gvkpa4qoc.apps.googleusercontent.com",
+              "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1044117320509-jrmqf1rvrup1m8bcrrf3jpqtjuilqtg8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.valueappz.marketplacedemo"
+              }
             }
           ]
         }

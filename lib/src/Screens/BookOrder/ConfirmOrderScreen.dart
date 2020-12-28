@@ -101,112 +101,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   bool showCOD = true;
   BrandData _brandData;
 
+  String couponType='';
+
   ConfirmOrderState({this.storeModel});
-
-  void callPaytmPayApi() async {
-    String address = "NA", pin = "NA";
-    if (widget.deliveryType == OrderType.Delivery) {
-      if (widget.address.address2 != null &&
-          widget.address.address2.isNotEmpty) {
-        if (widget.address.address != null &&
-            widget.address.address.isNotEmpty) {
-          address = widget.address.address +
-              ", " +
-              widget.address.address2 +
-              " " +
-              widget.address.areaName +
-              " " +
-              widget.address.city;
-        } else {
-          address = widget.address.address2 +
-              " " +
-              widget.address.areaName +
-              " " +
-              widget.address.city;
-        }
-      } else {
-        if (widget.address.address != null &&
-            widget.address.address.isNotEmpty) {
-          address = widget.address.address +
-              " " +
-              widget.address.areaName +
-              " " +
-              widget.address.city;
-        }
-      }
-
-      if (widget.address.zipCode != null && widget.address.zipCode.isNotEmpty)
-        pin = widget.address.zipCode;
-    } else if (widget.deliveryType == OrderType.PickUp) {
-//      address = widget.areaObject.pickupAdd;
-      //TODO add pickupAdd
-      address = '';
-      pin = 'NA';
-    }
-
-    print(
-        "amount ${databaseHelper.roundOffPrice(taxModel == null ? totalPrice : double.parse(taxModel.total), 2).toStringAsFixed(2)}"
-        " address $address zipCode $pin");
-    double amount = databaseHelper.roundOffPrice(
-        taxModel == null ? totalPrice : double.parse(taxModel.total), 2);
-    Utils.showProgressDialog(context);
-
-    UserModel user = await SharedPrefs.getUser();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String deviceId = prefs.getString(AppConstant.deviceId);
-    String deviceToken = prefs.getString(AppConstant.deviceToken);
-    //new changes
-    Utils.getCartItemsListToJson(
-            isOrderVariations: isOrderVariations,
-            responseOrderDetail: responseOrderDetail)
-        .then((orderJson) {
-      if (orderJson == null) {
-        print("--orderjson == null-orderjson == null-");
-        return;
-      }
-      String storeAddress = "";
-      try {
-        storeAddress = "${storeModel.storeName}, ${storeModel.location},"
-            "${storeModel.city}, ${storeModel.state}, ${storeModel.country}, ${storeModel.zipcode}";
-      } catch (e) {
-        print(e);
-      }
-
-      String userId = user.id;
-      OrderDetailsModel detailsModel = OrderDetailsModel(
-          shippingCharges,
-          comment,
-          totalPrice.toString(),
-          widget.paymentMode,
-          taxModel,
-          widget.address,
-          widget.isComingFromPickUpScreen,
-          widget.areaId,
-          widget.deliveryType,
-          "",
-          "",
-          deviceId,
-          "Paytm",
-          userId,
-          deviceToken,
-          storeAddress,
-          selectedDeliverSlotValue,
-          totalSavingsText);
-      ApiController.createPaytmTxnToken(
-              address, pin, amount, orderJson, detailsModel.orderDetails)
-          .then((value) async {
-        Utils.hideProgressDialog(context);
-        if (value != null && value.success) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PaytmWebView(value)),
-          );
-        } else {
-          Utils.showToast("Api Error", false);
-        }
-      });
-    });
-  }
 
   @override
   void initState() {
@@ -375,6 +272,112 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         ],
       ),
     );
+  }
+
+
+  void callPaytmPayApi() async {
+    String address = "NA", pin = "NA";
+    if (widget.deliveryType == OrderType.Delivery) {
+      if (widget.address.address2 != null &&
+          widget.address.address2.isNotEmpty) {
+        if (widget.address.address != null &&
+            widget.address.address.isNotEmpty) {
+          address = widget.address.address +
+              ", " +
+              widget.address.address2 +
+              " " +
+              widget.address.areaName +
+              " " +
+              widget.address.city;
+        } else {
+          address = widget.address.address2 +
+              " " +
+              widget.address.areaName +
+              " " +
+              widget.address.city;
+        }
+      } else {
+        if (widget.address.address != null &&
+            widget.address.address.isNotEmpty) {
+          address = widget.address.address +
+              " " +
+              widget.address.areaName +
+              " " +
+              widget.address.city;
+        }
+      }
+
+      if (widget.address.zipCode != null && widget.address.zipCode.isNotEmpty)
+        pin = widget.address.zipCode;
+    } else if (widget.deliveryType == OrderType.PickUp) {
+//      address = widget.areaObject.pickupAdd;
+      //TODO add pickupAdd
+      address = '';
+      pin = 'NA';
+    }
+
+    print(
+        "amount ${databaseHelper.roundOffPrice(taxModel == null ? totalPrice : double.parse(taxModel.total), 2).toStringAsFixed(2)}"
+            " address $address zipCode $pin");
+    double amount = databaseHelper.roundOffPrice(
+        taxModel == null ? totalPrice : double.parse(taxModel.total), 2);
+    Utils.showProgressDialog(context);
+
+    UserModel user = await SharedPrefs.getUser();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+    //new changes
+    Utils.getCartItemsListToJson(
+        isOrderVariations: isOrderVariations,
+        responseOrderDetail: responseOrderDetail)
+        .then((orderJson) {
+      if (orderJson == null) {
+        print("--orderjson == null-orderjson == null-");
+        return;
+      }
+      String storeAddress = "";
+      try {
+        storeAddress = "${storeModel.storeName}, ${storeModel.location},"
+            "${storeModel.city}, ${storeModel.state}, ${storeModel.country}, ${storeModel.zipcode}";
+      } catch (e) {
+        print(e);
+      }
+
+      String userId = user.id;
+      OrderDetailsModel detailsModel = OrderDetailsModel(
+          shippingCharges,
+          comment,
+          totalPrice.toString(),
+          widget.paymentMode,
+          taxModel,
+          widget.address,
+          widget.isComingFromPickUpScreen,
+          widget.areaId,
+          widget.deliveryType,
+          "",
+          "",
+          deviceId,
+          "Paytm",
+          userId,
+          deviceToken,
+          storeAddress,
+          selectedDeliverSlotValue,
+          totalSavingsText);
+      ApiController.createPaytmTxnToken(
+          address, pin, amount, orderJson, detailsModel.orderDetails)
+          .then((value) async {
+        Utils.hideProgressDialog(context);
+        if (value != null && value.success) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PaytmWebView(value)),
+          );
+        } else {
+          Utils.showToast("Api Error", false);
+        }
+      });
+    });
   }
 
   Future<void> multiTaxCalculationApi() async {
@@ -1119,6 +1122,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                             int.parse(shippingCharges);
                         taxModel.total = taxModelTotal.toString();
                         appliedCouponCodeList.add(model.couponCode);
+                        couponType =model.couponType;;
                         print("===couponCode=== ${model.couponCode}");
                         print("taxModel.total=${taxModel.total}");
                       });
@@ -1464,7 +1468,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                             await ApiController.validateOfferApiRequest(
                                 couponCodeController.text,
                                 widget.paymentMode,
-                                json);
+                                json,couponType);
                         if (couponModel.success) {
                           print("---success----");
                           Utils.showToast("${couponModel.message}", false);
@@ -2322,7 +2326,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   }
 
   bool isloyalityPointsEnabled = false;
-
   void checkLoyalityPointsOption() {
     //1 - enable, 0 means disable
     try {
