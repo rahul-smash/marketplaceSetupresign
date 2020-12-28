@@ -101,112 +101,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   bool showCOD = true;
   BrandData _brandData;
 
+  String couponType='';
+
   ConfirmOrderState({this.storeModel});
-
-  void callPaytmPayApi() async {
-    String address = "NA", pin = "NA";
-    if (widget.deliveryType == OrderType.Delivery) {
-      if (widget.address.address2 != null &&
-          widget.address.address2.isNotEmpty) {
-        if (widget.address.address != null &&
-            widget.address.address.isNotEmpty) {
-          address = widget.address.address +
-              ", " +
-              widget.address.address2 +
-              " " +
-              widget.address.areaName +
-              " " +
-              widget.address.city;
-        } else {
-          address = widget.address.address2 +
-              " " +
-              widget.address.areaName +
-              " " +
-              widget.address.city;
-        }
-      } else {
-        if (widget.address.address != null &&
-            widget.address.address.isNotEmpty) {
-          address = widget.address.address +
-              " " +
-              widget.address.areaName +
-              " " +
-              widget.address.city;
-        }
-      }
-
-      if (widget.address.zipCode != null && widget.address.zipCode.isNotEmpty)
-        pin = widget.address.zipCode;
-    } else if (widget.deliveryType == OrderType.PickUp) {
-//      address = widget.areaObject.pickupAdd;
-      //TODO add pickupAdd
-      address = '';
-      pin = 'NA';
-    }
-
-    print(
-        "amount ${databaseHelper.roundOffPrice(taxModel == null ? totalPrice : double.parse(taxModel.total), 2).toStringAsFixed(2)}"
-        " address $address zipCode $pin");
-    double amount = databaseHelper.roundOffPrice(
-        taxModel == null ? totalPrice : double.parse(taxModel.total), 2);
-    Utils.showProgressDialog(context);
-
-    UserModel user = await SharedPrefs.getUser();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String deviceId = prefs.getString(AppConstant.deviceId);
-    String deviceToken = prefs.getString(AppConstant.deviceToken);
-    //new changes
-    Utils.getCartItemsListToJson(
-            isOrderVariations: isOrderVariations,
-            responseOrderDetail: responseOrderDetail)
-        .then((orderJson) {
-      if (orderJson == null) {
-        print("--orderjson == null-orderjson == null-");
-        return;
-      }
-      String storeAddress = "";
-      try {
-        storeAddress = "${storeModel.storeName}, ${storeModel.location},"
-            "${storeModel.city}, ${storeModel.state}, ${storeModel.country}, ${storeModel.zipcode}";
-      } catch (e) {
-        print(e);
-      }
-
-      String userId = user.id;
-      OrderDetailsModel detailsModel = OrderDetailsModel(
-          shippingCharges,
-          comment,
-          totalPrice.toString(),
-          widget.paymentMode,
-          taxModel,
-          widget.address,
-          widget.isComingFromPickUpScreen,
-          widget.areaId,
-          widget.deliveryType,
-          "",
-          "",
-          deviceId,
-          "Paytm",
-          userId,
-          deviceToken,
-          storeAddress,
-          selectedDeliverSlotValue,
-          totalSavingsText);
-      ApiController.createPaytmTxnToken(
-              address, pin, amount, orderJson, detailsModel.orderDetails)
-          .then((value) async {
-        Utils.hideProgressDialog(context);
-        if (value != null && value.success) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PaytmWebView(value)),
-          );
-        } else {
-          Utils.showToast("Api Error", false);
-        }
-      });
-    });
-  }
 
   @override
   void initState() {
@@ -375,6 +272,112 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         ],
       ),
     );
+  }
+
+
+  void callPaytmPayApi() async {
+    String address = "NA", pin = "NA";
+    if (widget.deliveryType == OrderType.Delivery) {
+      if (widget.address.address2 != null &&
+          widget.address.address2.isNotEmpty) {
+        if (widget.address.address != null &&
+            widget.address.address.isNotEmpty) {
+          address = widget.address.address +
+              ", " +
+              widget.address.address2 +
+              " " +
+              widget.address.areaName +
+              " " +
+              widget.address.city;
+        } else {
+          address = widget.address.address2 +
+              " " +
+              widget.address.areaName +
+              " " +
+              widget.address.city;
+        }
+      } else {
+        if (widget.address.address != null &&
+            widget.address.address.isNotEmpty) {
+          address = widget.address.address +
+              " " +
+              widget.address.areaName +
+              " " +
+              widget.address.city;
+        }
+      }
+
+      if (widget.address.zipCode != null && widget.address.zipCode.isNotEmpty)
+        pin = widget.address.zipCode;
+    } else if (widget.deliveryType == OrderType.PickUp) {
+//      address = widget.areaObject.pickupAdd;
+      //TODO add pickupAdd
+      address = '';
+      pin = 'NA';
+    }
+
+    print(
+        "amount ${databaseHelper.roundOffPrice(taxModel == null ? totalPrice : double.parse(taxModel.total), 2).toStringAsFixed(2)}"
+            " address $address zipCode $pin");
+    double amount = databaseHelper.roundOffPrice(
+        taxModel == null ? totalPrice : double.parse(taxModel.total), 2);
+    Utils.showProgressDialog(context);
+
+    UserModel user = await SharedPrefs.getUser();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+    //new changes
+    Utils.getCartItemsListToJson(
+        isOrderVariations: isOrderVariations,
+        responseOrderDetail: responseOrderDetail)
+        .then((orderJson) {
+      if (orderJson == null) {
+        print("--orderjson == null-orderjson == null-");
+        return;
+      }
+      String storeAddress = "";
+      try {
+        storeAddress = "${storeModel.storeName}, ${storeModel.location},"
+            "${storeModel.city}, ${storeModel.state}, ${storeModel.country}, ${storeModel.zipcode}";
+      } catch (e) {
+        print(e);
+      }
+
+      String userId = user.id;
+      OrderDetailsModel detailsModel = OrderDetailsModel(
+          shippingCharges,
+          comment,
+          totalPrice.toString(),
+          widget.paymentMode,
+          taxModel,
+          widget.address,
+          widget.isComingFromPickUpScreen,
+          widget.areaId,
+          widget.deliveryType,
+          "",
+          "",
+          deviceId,
+          "Paytm",
+          userId,
+          deviceToken,
+          storeAddress,
+          selectedDeliverSlotValue,
+          totalSavingsText);
+      ApiController.createPaytmTxnToken(
+          address, pin, amount, orderJson, detailsModel.orderDetails)
+          .then((value) async {
+        Utils.hideProgressDialog(context);
+        if (value != null && value.success) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PaytmWebView(value)),
+          );
+        } else {
+          Utils.showToast("Api Error", false);
+        }
+      });
+    });
   }
 
   Future<void> multiTaxCalculationApi() async {
@@ -704,89 +707,85 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             imageUrl == ""
                 ? Container(
 //              padding: EdgeInsets.fromLTRB(0,5,0,5),
-              margin: EdgeInsets.fromLTRB(0,5,0,5),
-              width: 80.0,
-              height: 80.0,
-              child: Utils.getImgPlaceHolder(),
-            )
+                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    width: 80.0,
+                    height: 80.0,
+                    child: Utils.getImgPlaceHolder(),
+                  )
                 : Padding(
-                padding: EdgeInsets.only(left: 5, right: 20),
-                child: Container(
+                    padding: EdgeInsets.only(left: 5, right: 20),
+                    child: Container(
 //                  padding: EdgeInsets.fromLTRB(0,5,0,5),
-                  margin: EdgeInsets.fromLTRB(5,5,5,5),
+                      margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
 //                  decoration: BoxDecoration(border: Border.all(color: Colors.black38,width: 1)),
-                  width: 80,
-                  height:80,
-                  child: CachedNetworkImage(
-                      imageUrl: "${imageUrl}", fit: BoxFit.scaleDown
-                    //placeholder: (context, url) => CircularProgressIndicator(),
-                    //errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
-                  /*child: Image.network(imageUrl,width: 60.0,height: 60.0,
+                      width: 80,
+                      height: 80,
+                      child: CachedNetworkImage(
+                          imageUrl: "${imageUrl}", fit: BoxFit.scaleDown
+                          //placeholder: (context, url) => CircularProgressIndicator(),
+                          //errorWidget: (context, url, error) => Icon(Icons.error),
+                          ),
+                      /*child: Image.network(imageUrl,width: 60.0,height: 60.0,
                                           fit: BoxFit.cover),*/
-                )),
+                    )),
             Expanded(
                 flex: 4,
-                child:
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 15),
-                  child: SizedBox(
-                    width: (Utils.getDeviceWidth(context) - 150),
-                    child: Container(
-                      child: Text(product.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 15),
+                      child: SizedBox(
+                        width: (Utils.getDeviceWidth(context) - 150),
+                        child: Container(
+                          child: Text(product.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Visibility(
-                  visible: product.weight.isEmpty ? false : true,
-                  child: Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: Text(
-                        "${product.weight}",
-                        style: TextStyle(color: appThemeSecondary),
-                      )),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(top: 5, bottom: 20),
-                    child: Text(
-                        "${product.quantity} X ${AppConstant.currency}${double.parse(price).toStringAsFixed(2)}")),
-                //
-                /*Padding(
+                    Visibility(
+                      visible: product.weight.isEmpty ? false : true,
+                      child: Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Text(
+                            "${product.weight}",
+                            style: TextStyle(color: appThemeSecondary),
+                          )),
+                    ),
+                    Padding(
+                        padding: EdgeInsets.only(top: 5, bottom: 20),
+                        child: Text(
+                            "${product.quantity} X ${AppConstant.currency}${double.parse(price).toStringAsFixed(2)}")),
+                    //
+                    /*Padding(
                     padding: EdgeInsets.only(top: 5, bottom: 20),
                     child: Text("Price: " + "${AppConstant.currency}${double.parse(product.price).toStringAsFixed(2)}")
                 ),*/
-              ],
-            )),
-
-              detail != null && detail.productStatus.contains('out_of_stock')
+                  ],
+                )),
+            detail != null && detail.productStatus.contains('out_of_stock')
                 ? Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.red, width: 1),
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5)),
-                child: Padding(
-                  padding: EdgeInsets.all(3),
-                  child: Text(
-                    "Out of Stock",
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ))
-                :
-              Text(
-                "${AppConstant.currency}${databaseHelper.roundOffPrice(int.parse(product.quantity) * double.parse(price), 2).toStringAsFixed(2)}" ,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: detail != null &&
-                        detail.productStatus.contains('out_of_stock')
-                        ? Colors.red
-                        : Colors.black45)),
-
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.red, width: 1),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Padding(
+                      padding: EdgeInsets.all(3),
+                      child: Text(
+                        "Out of Stock",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ))
+                : Text(
+                    "${AppConstant.currency}${databaseHelper.roundOffPrice(int.parse(product.quantity) * double.parse(price), 2).toStringAsFixed(2)}",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: detail != null &&
+                                detail.productStatus.contains('out_of_stock')
+                            ? Colors.red
+                            : Colors.black45)),
           ],
         ),
       );
@@ -1123,6 +1122,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                             int.parse(shippingCharges);
                         taxModel.total = taxModelTotal.toString();
                         appliedCouponCodeList.add(model.couponCode);
+                        couponType =model.couponType;;
                         print("===couponCode=== ${model.couponCode}");
                         print("taxModel.total=${taxModel.total}");
                       });
@@ -1468,7 +1468,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                             await ApiController.validateOfferApiRequest(
                                 couponCodeController.text,
                                 widget.paymentMode,
-                                json);
+                                json,couponType);
                         if (couponModel.success) {
                           print("---success----");
                           Utils.showToast("${couponModel.message}", false);
@@ -1581,6 +1581,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             textColor: Colors.white,
             color: appTheme,
             onPressed: () async {
+              if (Utils.isRedundentClick(DateTime.now())) {
+                return;
+              }
 //              StoreDataObj storeObject = await SharedPrefs.getStoreData();
               bool status =
                   Utils.checkStoreOpenTime(storeModel, widget.deliveryType);
@@ -2323,7 +2326,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   }
 
   bool isloyalityPointsEnabled = false;
-
   void checkLoyalityPointsOption() {
     //1 - enable, 0 means disable
     try {

@@ -151,31 +151,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                   visible: showCancelButton(widget.orderHistoryData.status),
                   child: InkWell(
                       onTap: () async {
-                        var results = await DialogUtils.displayDialog(
-                            context,
-                            "Cancel Order?",
-                            AppConstant.cancelOrder,
-                            "Cancel",
-                            "OK");
-                        if (results == true) {
-                          Utils.showProgressDialog(context);
-                          CancelOrderModel cancelOrder =
-                              await ApiController.orderCancelApi(
-                                  widget.orderHistoryData.orderId);
-                          if (cancelOrder != null && cancelOrder.success) {
-                            setState(() {
-                              widget.orderHistoryData.status = '6';
-                            });
-                          }
-                          try {
-                            Utils.showToast("${cancelOrder.data}", false);
-                          } catch (e) {
-                            print(e);
-                          }
-//                          Utils.hideProgressDialog(context);
-                          eventBus.fire(refreshOrderHistory());
-                          getOrderListApi(isLoading: false);
-                        }
+                        cancelOrderBottomSheet(
+                            context, widget.orderHistoryData);
                       },
                       child: Center(
                         child: Padding(
@@ -610,12 +587,40 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                             fontWeight: FontWeight.w300,
                           )),
                     ),
-                    Text(
-                        "${AppConstant.currency} ${(double.parse(cardOrderHistoryItems.orderItems[index].quantity) * double.parse(cardOrderHistoryItems.orderItems[index].price)).toStringAsFixed(2)}",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500))
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                            cardOrderHistoryItems.orderItems[index].status ==
+                                    '2'
+                                ? "Rejected"
+                                : "${AppConstant.currency} ${(double.parse(cardOrderHistoryItems.orderItems[index].quantity) * double.parse(cardOrderHistoryItems.orderItems[index].price)).toStringAsFixed(2)}",
+                            style: TextStyle(
+                                color: cardOrderHistoryItems
+                                            .orderItems[index].status ==
+                                        '2'
+                                    ? Colors.red
+                                    : Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500)),
+                        Visibility(visible: cardOrderHistoryItems.orderItems[index].refundStatus ==
+                            '2'||cardOrderHistoryItems.orderItems[index].refundStatus=='1',
+                            child:
+                        Text(
+                            cardOrderHistoryItems.orderItems[index].refundStatus ==
+                                    '1'
+                                ? "Refund Pending"
+                                : "Refunded",
+                            style: TextStyle(
+                                color: cardOrderHistoryItems.orderItems[index].refundStatus ==
+                                    '1'
+                                    ? Colors.red
+                                    : Colors.green,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500)))
+                      ],
+                    ),
                   ],
                 ),
               ],
@@ -899,6 +904,153 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
         });
   }
 
+  cancelOrderBottomSheet(context, OrderData cardOrderHistoryItems) async {
+    final commentController = TextEditingController();
+    await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext bc) {
+          return StatefulBuilder(
+            builder: (BuildContext context, setState) {
+              return SafeArea(
+                  child: Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: Container(
+                  color: Colors.white,
+                  margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  child: Wrap(children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20, 10, 20, 15),
+                          child: Text(
+                            "Cancel Confirm",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        Text(
+                          "Are you sure you want to\n cancel your order?",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400),
+                        ),
+                        Container(
+                          height: 130,
+                          margin: EdgeInsets.fromLTRB(10, 15, 10, 10),
+                          decoration: new BoxDecoration(
+                            color: grayLightColor,
+                            borderRadius:
+                                new BorderRadius.all(new Radius.circular(5.0)),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 3),
+                            child: TextField(
+                              textAlign: TextAlign.left,
+                              maxLength: 250,
+                              keyboardType: TextInputType.text,
+                              maxLines: null,
+                              textCapitalization: TextCapitalization.sentences,
+                              controller: commentController,
+                              decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(10.0),
+                                  border: InputBorder.none,
+                                  fillColor: grayLightColor,
+                                  hintText: 'Add the reason for cancellation.'),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              Container(
+                                width: 120,
+                                decoration: new BoxDecoration(
+                                  borderRadius: new BorderRadius.all(
+                                      new Radius.circular(5.0)),
+                                ),
+                                child: FlatButton(
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(fontSize: 17),
+                                  ),
+                                  color: Colors.grey,
+                                  textColor: Colors.white,
+                                  onPressed: () {
+                                    Utils.hideKeyboard(context);
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                  child: Container(
+                                decoration: new BoxDecoration(
+                                  borderRadius: new BorderRadius.all(
+                                      new Radius.circular(5.0)),
+                                ),
+                                child: FlatButton(
+                                  child: Text(
+                                    'Yes, cancel my order',
+                                    style: TextStyle(fontSize: 17),
+                                  ),
+                                  color: orangeColor,
+                                  textColor: Colors.white,
+                                  onPressed: () {
+                                    String comment = commentController.text;
+                                    Utils.hideKeyboard(context);
+                                    Navigator.pop(context);
+                                    _hitCancelOrderApi(
+                                        orderRejectionNote: comment);
+                                  },
+                                ),
+                              ))
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  ]),
+                ),
+              ));
+            },
+          );
+        });
+  }
+
+  _hitCancelOrderApi({String orderRejectionNote}) async {
+    Utils.showProgressDialog(context);
+    CancelOrderModel cancelOrder = await ApiController.orderCancelApi(
+        widget.orderHistoryData.orderId,storeID:widget.orderHistoryData.orderItems.first.storeId,
+        order_rejection_note: orderRejectionNote);
+    if (cancelOrder != null && cancelOrder.success) {
+      setState(() {
+        widget.orderHistoryData.status = '6';
+      });
+    }
+    try {
+      Utils.showToast("${cancelOrder.data}", false);
+    } catch (e) {
+      print(e);
+    }
+//                          Utils.hideProgressDialog(context);
+    eventBus.fire(refreshOrderHistory());
+    getOrderListApi(isLoading: false);
+  }
+
   bottomDeviderView() {
     return Container(
       width: MediaQuery.of(mainContext).size.width,
@@ -1033,6 +1185,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             widget.orderHistoryData.status == '5'
         ? Colors.black
         : grayLightColorSecondary;
+    Color orderReadyForPickUp = widget.orderHistoryData.status == '1' ||
+            widget.orderHistoryData.status == '4' ||
+            widget.orderHistoryData.status == '5'
+        ? Colors.black
+        : grayLightColorSecondary;
 
     Color orderShipped = widget.orderHistoryData.status == '4' ||
             widget.orderHistoryData.status == '5'
@@ -1051,7 +1208,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             widget.orderHistoryData.status == '5'
         ? 100
         : 0;
-
+    double orderReadyForPickUpProgress = widget.orderHistoryData.status == '1' ||
+            widget.orderHistoryData.status == '4' ||
+            widget.orderHistoryData.status == '5'||widget.orderHistoryData.status == '8'
+        ? 100
+        : 0;
     double orderShippedProgress = widget.orderHistoryData.status == '4' ||
             widget.orderHistoryData.status == '5'
         ? 100
@@ -1066,7 +1227,26 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             widget.orderHistoryData.status == '6'
         ? true
         : false;
+    bool isNoteVisible = (widget.orderHistoryData.status == '2' ||
+            widget.orderHistoryData.status == '6') &&
+        widget.orderHistoryData.orderRejectionNote != null &&
+        widget.orderHistoryData.orderRejectionNote.isNotEmpty;
+    String noteHeading = widget.orderHistoryData.orderRejectionNote != null &&
+            widget.orderHistoryData.orderRejectionNote.isNotEmpty
+        ? widget.orderHistoryData.status == '6'
+            ? "Cancellation Comment:-"
+            : widget.orderHistoryData.status == '2'
+                ? "Reason of Rejection:-"
+                : ""
+        : "";
+    String orderRejectionNote =
+        widget.orderHistoryData.orderRejectionNote != null &&
+                widget.orderHistoryData.orderRejectionNote.isNotEmpty
+            ? widget.orderHistoryData.orderRejectionNote
+            : "";
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Stack(
           children: <Widget>[
@@ -1139,6 +1319,50 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                       child: Text(
                     'Order Confirmed',
                     style: TextStyle(fontSize: 16, color: orderConfirmed),
+                  )),
+                  Text(
+                    orderConfirmed == Colors.black ? 'Done' : 'Pending',
+                    style: TextStyle(color: orderConfirmed, fontSize: 16),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+        Visibility(
+          visible: !isOrderCanceledOrRejected,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                height: 30,
+                margin: EdgeInsets.only(
+                  left: 4,
+                ),
+                width: 2,
+                child: LinearProgressIndicator(
+                  backgroundColor: grayLightColorSecondary,
+                  value: orderReadyForPickUpProgress,
+                  valueColor: AlwaysStoppedAnimation<Color>(appTheme),
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10 / 2),
+                        color: orderReadyForPickUp == Colors.black
+                            ? appTheme
+                            : grayLightColorSecondary),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Expanded(
+                      child: Text(
+                    'Ready for PickUp',
+                    style: TextStyle(fontSize: 16, color: orderReadyForPickUp),
                   )),
                   Text(
                     orderConfirmed == Colors.black ? 'Done' : 'Pending',
@@ -1229,7 +1453,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                   isOrderCanceledOrRejected
                       ? widget.orderHistoryData.status == '2'
                           ? 'Order Rejected'
-                          : 'Order Canceled'
+                          : 'Order Cancelled'
                       : !widget.orderHistoryData.orderFacility
                               .toLowerCase()
                               .contains('pick')
@@ -1247,6 +1471,30 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             )
           ],
         ),
+        Visibility(
+            visible: isNoteVisible,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  noteHeading,
+                  style: TextStyle(color: Colors.black, fontSize: 18),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 4),
+                  child: Text(
+                    orderRejectionNote,
+                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                  ),
+                )
+              ],
+            ))
       ],
     );
   }

@@ -195,7 +195,7 @@ class AvailableOffersState extends State<AvailableOffersDialog> {
                                                     return;
                                                   }
                                                   validateCouponApi(
-                                                      offer.couponCode, json);
+                                                      offer.couponCode, json,offer.discount_type==null?'':offer.discount_type);
                                                 });
                                               } else {
                                                 Utils.showToast(
@@ -242,17 +242,17 @@ class AvailableOffersState extends State<AvailableOffersDialog> {
         ));
   }
 
-  void validateCouponApi(String couponCode, String json) {
+  void validateCouponApi(String couponCode, String json,String counpon_type) {
     print("----couponCode-----=>${couponCode}");
     Utils.showProgressDialog(
         context);
-    ApiController.validateOfferApiRequest(couponCode, widget.paymentMode, json)
+    ApiController.validateOfferApiRequest(couponCode, widget.paymentMode, json,counpon_type)
         .then((validCouponModel) {
       if (validCouponModel != null && validCouponModel.success) {
         Utils.showToast(validCouponModel.message, true);
         print("-discountAmount-=${validCouponModel.discountAmount}-");
         ApiController.multipleTaxCalculationRequest(
-                couponCode, validCouponModel.discountAmount, "0", json)
+                couponCode, validCouponModel.discountAmount, "0", json,couponType: counpon_type)
             .then((response) async {
           Utils.hideProgressDialog(context);
           if (response.success) {

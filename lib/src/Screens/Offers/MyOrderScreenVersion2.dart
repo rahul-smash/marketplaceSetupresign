@@ -85,8 +85,8 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                OrderDetailScreenVersion2(cardOrderHistoryItems,isRatingEnable),
+            builder: (context) => OrderDetailScreenVersion2(
+                cardOrderHistoryItems, isRatingEnable),
           ),
         );
       },
@@ -292,6 +292,14 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
 
 // 0 => 'pending' ,  1 =>'processing', 2 =>'rejected',
   // 4 =>'shipped', 5 =>'delivered', 6 => 'cancel'
+
+//  ( 0 => 'due', 1 =>'processing',
+//  2 =>'rejected',
+//  6 => 'cancel',
+//  4 =>'shipped',
+//  8 =>'Ready to be Picked',
+//  7 =>'On the way',
+//  5 =>'delivered' );
   String getStatus(status) {
     if (status == "0") {
       return 'Pending';
@@ -309,6 +317,12 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
     }
     if (status == "6") {
       return 'Cancelled';
+    }
+    if (status == '8') {
+      return 'Ready to be Picked';
+    }
+    if (status == '7') {
+      return 'On the way';
     } else {
       return "Waiting";
     }
@@ -340,12 +354,20 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
     // 4 =>'shipped', 5 =>'delivered', 6 => 'cancel'
     // status 1, 4, 0     =>show cancel btn
 
+//  ( 0 => 'due', 1 =>'processing',
+//  2 =>'rejected',
+//  6 => 'cancel',
+//  4 =>'shipped',
+//  8 =>'Ready to be Picked',
+//  7 =>'On the way',
+//  5 =>'delivered' );
     switch (status) {
       case '0':
       case '1':
       case '4':
       case '5':
       case '7':
+      case '8':
         return Color(0xFFA1BF4C);
         break;
       case '2':
@@ -372,12 +394,24 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
   String _getButtonStatus(OrderData cardOrderHistoryItems) {
     // 0 => 'pending' ,  1 =>'processing', 2 =>'rejected',
     // 4 =>'shipped', 5 =>'delivered', 6 => 'cancel'
+
+    //  ( 0 => 'due', 1 =>'processing',
+//  2 =>'rejected',
+//  6 => 'cancel',
+//  4 =>'shipped',
+//  8 =>'Ready to be Picked',
+//  7 =>'On the way',
+//  5 =>'delivered' );
     String title = "View Order";
     switch (cardOrderHistoryItems.status) {
       case '0':
       case '1':
       case '4':
-        if (cardOrderHistoryItems.orderFacility.toLowerCase().contains('pick')) {
+      case '7':
+      case '8':
+        if (cardOrderHistoryItems.orderFacility
+            .toLowerCase()
+            .contains('pick')) {
           title = "View Order";
         } else
           title = "Track Order";
@@ -392,7 +426,6 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
           title = "Rate Us";
         }
         break;
-      case '7':
 
       case '2':
       case '6':

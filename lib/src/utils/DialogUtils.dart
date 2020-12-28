@@ -1564,12 +1564,12 @@ class DialogUtils {
 //                                            colors: [Colors.transparent,Colors.transparent,Colors.black12, Colors.black12],
 //
 //                                          )),
-                                      child:
-                                      Icon(
-                                        Icons.location_off_rounded,
-                                        size: 90,
-                                        color: Colors.grey,
-                                      ),
+//                                      child:
+//                                      Icon(
+//                                        Icons.location_off_rounded,
+//                                        size: 90,
+//                                        color: Colors.grey,
+//                                      ),
                                     ),
                                     SizedBox(
                                       height: 10,

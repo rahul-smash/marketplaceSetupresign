@@ -34,6 +34,16 @@ class _RestroListScreenState extends State<RestroListScreen> {
   bool isCateSeeAll = false;
 
   @override
+  void initState() {
+    super.initState();
+    eventBus.on<onLocationChanged>().listen((event) {
+      setState(() {
+        widget.initialPosition = event.latLng;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Column(
@@ -211,7 +221,8 @@ class _RestroListScreenState extends State<RestroListScreen> {
               itemCount: widget.allStoreData.data.length,
               itemBuilder: (context, index) {
                 StoreData storeDataObj = widget.allStoreData.data[index];
-                return RestroCardItem(storeDataObj, widget.callback,widget.initialPosition);
+                return RestroCardItem(
+                    storeDataObj, widget.callback, widget.initialPosition);
               },
             ),
           ],
@@ -230,41 +241,48 @@ class _RestroListScreenState extends State<RestroListScreen> {
         clipBehavior: Clip.antiAliasWithSaveLayer,
         context: context,
         builder: (BuildContext bc) {
-          return Container(
-            color: Colors.white,
-            child: FilterRadioGroup((selectedFilter) async {
-              print("selectedFilter=${selectedFilter}");
-              bool isNetworkAvailable = await Utils.isNetworkAvailable();
-              if (!isNetworkAvailable) {
-                Utils.showToast("No Internet connection", false);
-                return;
-              }
-              Map<String, dynamic> data = {
-                "lst": widget.initialPosition.latitude,
-                "lng": widget.initialPosition.latitude,
-                "filter_by": "${selectedFilter}",
-              };
-              Utils.showProgressDialog(context);
-              ApiController.getAllStores(params: data).then((storesResponse) {
-                Utils.hideProgressDialog(context);
-                Utils.hideKeyboard(context);
-                if (storesResponse != null && storesResponse.success) {
-                widget.allStoreData=storesResponse;
+          return StatefulBuilder(builder: (BuildContext context, setState_) {
+            return Container(
+              color: Colors.white,
+              child: FilterRadioGroup((selectedFilter) async {
+                print("selectedFilter=${selectedFilter}");
+                bool isNetworkAvailable = await Utils.isNetworkAvailable();
+                if (!isNetworkAvailable) {
+                  Utils.showToast("No Internet connection", false);
+                  return;
                 }
-              });
-            }),
-          );
+                Map<String, dynamic> data = {
+                  "lst": widget.initialPosition.latitude,
+                  "lng": widget.initialPosition.latitude,
+                  "filter_by": "${selectedFilter}",
+                };
+                Utils.showProgressDialog(context);
+                ApiController.getAllStores(params: data).then((storesResponse) {
+                  Utils.hideProgressDialog(context);
+                  Utils.hideKeyboard(context);
+                  if (storesResponse != null && storesResponse.success) {
+                    widget.allStoreData = storesResponse;
+                  } else {
+                    Utils.showToast('Something went wrong', false);
+                  }
+                  setState(() {});
+                  Navigator.pop(context);
+                });
+              }, setState_),
+            );
+          });
         });
   }
 }
 
 class FilterRadioGroup extends StatefulWidget {
   Function(String) onFilterSelectedCallback;
+  StateSetter setState_;
 
-  FilterRadioGroup(this.onFilterSelectedCallback);
+  FilterRadioGroup(this.onFilterSelectedCallback, this.setState_);
 
   @override
-  RadioGroupWidget createState() => RadioGroupWidget();
+  RadioGroupWidget createState() => RadioGroupWidget(this.setState_);
 }
 
 class RadioGroupWidget extends State<FilterRadioGroup> {
@@ -276,6 +294,9 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
 
   // Group Value for Radio Button.
   String id = "";
+  StateSetter setState_;
+
+  RadioGroupWidget(this.setState_);
 
   Widget build(BuildContext context) {
     return Container(
@@ -303,9 +324,13 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
                 groupValue: id,
                 value: data.value,
                 onChanged: (val) {
-                  setState(() {
+                  setState_(() {
                     radioItemHolder = data.lable;
                     id = data.value;
+//                    setState_(){
+//                      radioItemHolder = data.lable;
+//                      id = data.value;
+//                    }
                   });
                 },
               );
@@ -321,7 +346,10 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
                     minWidth: MediaQuery.of(context).size.width,
                     child: RaisedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        setState_(() {
+                          radioItemHolder = '';
+                          id = '';
+                        });
                       },
                       color: Colors.white,
                       elevation: 0.0,
@@ -353,10 +381,10 @@ class RadioGroupWidget extends State<FilterRadioGroup> {
                           Utils.showToast("Please select filter", true);
                         } else {
                           widget.onFilterSelectedCallback(id);
-                          Navigator.pop(context);
+//                          Navigator.pop(context);
                         }
                       },
-                      color: Colors.grey[400],
+                      color: id.isEmpty ? Colors.grey[400] : appThemeSecondary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),

@@ -39,12 +39,15 @@ import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:restroapp/src/widgets/AutoSearch.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'RestroLIstScreen.dart';
 import 'SearchScreen.dart';
 import 'dart:io';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:location/location.dart';
+
+//import 'package:google_maps_webservice/places.dart';
 import 'package:restroapp/src/Screens/Dashboard/StoreDashboardScreen.dart';
 import 'package:permission_handler/permission_handler.dart'
     as permission_handler;
@@ -92,7 +95,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   CategoriesModel categoriesModel;
 
-  Location location = new Location();
+  Location location = Location();
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
   LocationData _locationData;
@@ -210,6 +213,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               FocusScope.of(context).unfocus();
               _controller.text = "";
               isCategoryViewSelected = false;
+              if (_selectedHomeScreen == HomeScreenEnum.HOME_SEARCH_VIEW) {
+                _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
+              }
               setState(() {});
             }),
             bottomNavigationBar: SafeArea(
@@ -489,29 +495,29 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         }
         if (_currentIndex == 1) {
 //          if (AppConstant.isLoggedIn) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      SearchScreen(widget.initialPosition, <Object>({value}) {
-                        setState(() {
-                          if (value == null) {
-                            Utils.showToast('No Data found', false);
-                            return;
-                          }
-                          if (value is StoreDataModel) {
-                            setState(() {
-                              _selectedSingleStore = value;
-                              _previousSelectedHomeScreen = _selectedHomeScreen;
-                              _selectedHomeScreen =
-                                  HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
-                            });
-                            return;
-                          }
-                        });
-                        return;
-                      })),
-            );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SearchScreen(widget.initialPosition, <Object>({value}) {
+                      setState(() {
+                        if (value == null) {
+                          Utils.showToast('No Data found', false);
+                          return;
+                        }
+                        if (value is StoreDataModel) {
+                          setState(() {
+                            _selectedSingleStore = value;
+                            _previousSelectedHomeScreen = _selectedHomeScreen;
+                            _selectedHomeScreen =
+                                HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+                          });
+                          return;
+                        }
+                      });
+                      return;
+                    })),
+          );
 //          } else {
 //            Utils.showLoginDialog(context);
 //          }
@@ -535,13 +541,13 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         }
         if (_currentIndex == 2) {
 //          if (AppConstant.isLoggedIn) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => OffersListScreenScreen()),
-            );
-            Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-            attributeMap["ScreenName"] = "OffersListScreen";
-            Utils.sendAnalyticsEvent("Clicked OffersListScreen", attributeMap);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => OffersListScreenScreen()),
+          );
+          Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+          attributeMap["ScreenName"] = "OffersListScreen";
+          Utils.sendAnalyticsEvent("Clicked OffersListScreen", attributeMap);
 //          } else {
 //            Utils.showLoginDialog(context);
 //          }
@@ -644,7 +650,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         onSelectNotification: onSelectNotification);
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        '${appName}', '${appName}', '${appName}',
+        '${appName}', '${appName}', '${appName}',style: AndroidNotificationStyle.BigText,
         importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
@@ -796,6 +802,255 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     }
   }
 
+  void showBottomSheet(
+      context, LatLng center, LatLng selectedLocation, String address) {
+    LatLng localCenter, localSelectedLocation;
+    GoogleMapController _mapController;
+    localCenter = center;
+    localSelectedLocation = selectedLocation;
+    Set<Marker> markers = Set();
+    String localAddress = address;
+    getAddressFromLocationFromMap(double latitude, double longitude,
+        {StateSetter setState}) async {
+      try {
+        localCenter = LatLng(latitude, longitude);
+        localSelectedLocation = LatLng(latitude, longitude);
+        Coordinates coordinates = new Coordinates(latitude, longitude);
+        var addresses =
+            await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        var first = addresses.first;
+        localAddress = first.addressLine;
+        if (setState != null)
+          setState(() {
+            localAddress = first.addressLine;
+          });
+      } catch (e) {
+        print(e);
+        address = "No address found!";
+      }
+    }
+
+    markers.addAll([
+      Marker(
+          draggable: true,
+          icon: BitmapDescriptor.defaultMarker,
+          markerId: MarkerId('value'),
+          position: localCenter,
+          onDragEnd: (value) {
+            getAddressFromLocationFromMap(value.latitude, value.longitude);
+          })
+    ]);
+    getAddressFromLocationFromMap(localCenter.latitude, localCenter.longitude);
+    showModalBottomSheet(
+        enableDrag: false,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(10),
+          ),
+        ),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        context: context,
+        builder: (BuildContext bc) {
+          return StatefulBuilder(builder: (BuildContext context, setState) {
+            return Wrap(children: <Widget>[
+              Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(5, 15, 5, 5),
+                          child: Icon(
+                            Icons.cancel,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      child: Text(
+                        'Set Location',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        //padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color: searchGrayColor,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0)),
+                            border: Border.all(
+                              color: searchGrayColor,
+                            )),
+                        child: InkWell(
+                            onTap: () async {
+                              var result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return CustomSearchScaffold();
+                                    },
+                                    fullscreenDialog: true,
+                                  ));
+                              if (result != null) {
+                                LatLng detail = result;
+                                double lat = detail.latitude;
+                                double lng = detail.longitude;
+                                print("location = ${lat},${lng}");
+
+                                localCenter = LatLng(lat, lng);
+                                localSelectedLocation = LatLng(lat, lng);
+                                getAddressFromLocationFromMap(lat, lng,
+                                    setState: setState);
+                                markers.clear();
+                                markers.addAll([
+                                  Marker(
+                                      draggable: true,
+                                      icon: BitmapDescriptor.defaultMarker,
+                                      markerId: MarkerId('value'),
+                                      position: localCenter,
+                                      onDragEnd: (value) {
+                                        getAddressFromLocationFromMap(
+                                            value.latitude, value.longitude,
+                                            setState: setState);
+                                      })
+                                ]);
+                                setState(() {
+                                  _mapController.moveCamera(
+                                      CameraUpdate.newLatLng(localCenter));
+                                });
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Center(
+                                child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                          padding:
+                                              EdgeInsets.fromLTRB(3, 3, 10, 3),
+                                          child: Image.asset(
+                                              'images/searchicon.png',
+                                              width: 20,
+                                              fit: BoxFit.scaleDown,
+                                              color: appTheme)),
+                                      Expanded(
+                                        child: RichText(
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          text: TextSpan(
+                                            text: "${localAddress}",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      )
+                                    ]),
+                              ),
+                            ))),
+                    Container(
+                        height: Utils.getDeviceHeight(context) >
+                                Utils.getDeviceWidth(context)
+                            ? Utils.getDeviceWidth(context) - 50
+                            : Utils.getDeviceHeight(context) / 2 - 50,
+                        margin:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        child: GoogleMap(
+                          onMapCreated: (GoogleMapController controller) {
+                            _mapController = controller;
+                          },
+                          myLocationEnabled: true,
+                          initialCameraPosition: CameraPosition(
+                            target: localCenter,
+                            zoom: 15.0,
+                          ),
+                          mapType: MapType.normal,
+                          markers: markers,
+                          onTap: (latLng) {
+                            if (markers.length >= 1) {
+                              markers.clear();
+                            }
+                            setState(() {
+                              markers.add(Marker(
+                                  draggable: true,
+                                  icon: BitmapDescriptor.defaultMarker,
+                                  markerId: MarkerId('value'),
+                                  position: latLng,
+                                  onDragEnd: (value) {
+                                    print(value.latitude);
+                                    print(value.longitude);
+                                    getAddressFromLocationFromMap(
+                                        value.latitude, value.longitude,
+                                        setState: setState);
+                                  }));
+                              getAddressFromLocationFromMap(
+                                  latLng.latitude, latLng.longitude,
+                                  setState: setState);
+                            });
+                          },
+                          onCameraMove: (CameraPosition position) {
+                            CameraPosition newPos =
+                                CameraPosition(target: position.target);
+                            Marker marker = markers.first;
+
+                            setState(() {
+                              markers.first
+                                  .copyWith(positionParam: newPos.target);
+                            });
+                          },
+                          //onCameraMove: _onCameraMove,
+                        )),
+                    Align(
+                      alignment: Alignment.center,
+                      child: ButtonTheme(
+                        minWidth: 180.0,
+                        height: 40.0,
+                        child: RaisedButton(
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(25.0),
+                              side: BorderSide(color: appTheme)),
+                          onPressed: () async {
+                            widget.initialPosition = localSelectedLocation;
+                            locationAddress=localAddress;
+                            eventBus.fire(
+                                onLocationChanged(widget.initialPosition));
+                            Navigator.pop(context);
+                          },
+                          color: appTheme,
+                          padding: EdgeInsets.all(5.0),
+                          textColor: Colors.white,
+                          child: Text("Submit"),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    )
+                  ],
+                ),
+              )
+            ]);
+          });
+        });
+  }
+
   Widget getAppBar() {
     bool rightActionsEnable = false,
         whatIconEnable = false,
@@ -809,6 +1064,13 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               children: <Widget>[
                 InkWell(
                   onTap: () async {
+                    if (widget.initialPosition != null &&
+                        locationAddress != 'Select Location') {
+                      showBottomSheet(context, widget.initialPosition,
+                          widget.initialPosition, locationAddress);
+                      return;
+                    }
+
                     print("AppBar onTap");
                     bool isNetworkAvailable = await Utils.isNetworkAvailable();
                     if (!isNetworkAvailable) {
@@ -885,18 +1147,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                     ),
                   ),
                 ),
-                /*Visibility(
-            visible: store.homePageSubtitleStatus &&
-                store.homePageSubtitle != null,
-            child: Text(
-              store.homePageSubtitle != null
-                  ? store.homePageSubtitle
-                  : "",
-              style: TextStyle(fontSize: 13),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-            ),
-          )*/
               ],
             )
           : InkWell(

@@ -79,6 +79,7 @@ class BrandData {
       this.isRefererFnEnable,
       this.homeScreenSection,
       this.filters,
+      this.loyality,
       this.webAppThemeColors});
 
   String id;
@@ -104,6 +105,7 @@ class BrandData {
   String currencyUnicode;
   String internationalOtp;
   String onlinePayment;
+  String loyality;
   List<PaymentGatewaySettings> paymentGatewaySettings;
   List<Banner> banners;
   List<Banner> webBanners;
@@ -131,6 +133,7 @@ class BrandData {
       address: json["address"],
       city: json["city"],
       state: json["state"],
+      loyality: json["loyality"],
       country: json["country"],
       timeZone: json["time_zone"],
       zipcode: json["zipcode"],
@@ -188,6 +191,7 @@ class BrandData {
         "state": state,
         "country": country,
         "time_zone": timeZone,
+        "loyality":loyality,
         "zipcode": zipcode,
         "logo": logo,
         "currency": currency,
