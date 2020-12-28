@@ -1328,7 +1328,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         enabledBorder: InputBorder.none,
                         errorBorder: InputBorder.none,
                         disabledBorder: InputBorder.none,
-                        hintText: "Search for restaurants"),
+                        hintText: "Search"),
                   ),
                 ),
                 Visibility(
