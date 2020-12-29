@@ -321,6 +321,18 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             height: 3,
             color: Color(0xFFE1E1E1),
           ),
+          Row(
+            children: [
+              Expanded(
+                  child: Container(
+                child: Column(
+                  children: [
+                    Image.asset('images/offerdetailgraphic.png',fit: BoxFit.fitWidth)
+                  ],
+                ),
+              ))
+            ],
+          ),
           Container(
             color: Colors.white,
             padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -604,21 +616,28 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                     : Colors.black,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500)),
-                        Visibility(visible: cardOrderHistoryItems.orderItems[index].refundStatus ==
-                            '2'||cardOrderHistoryItems.orderItems[index].refundStatus=='1',
-                            child:
-                        Text(
-                            cardOrderHistoryItems.orderItems[index].refundStatus ==
-                                    '1'
-                                ? "Refund Pending"
-                                : "Refunded",
-                            style: TextStyle(
-                                color: cardOrderHistoryItems.orderItems[index].refundStatus ==
-                                    '1'
-                                    ? Colors.red
-                                    : Colors.green,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500)))
+                        Visibility(
+                            visible: cardOrderHistoryItems
+                                        .orderItems[index].refundStatus ==
+                                    '2' ||
+                                cardOrderHistoryItems
+                                        .orderItems[index].refundStatus ==
+                                    '1',
+                            child: Text(
+                                cardOrderHistoryItems
+                                            .orderItems[index].refundStatus ==
+                                        '1'
+                                    ? "Refund Pending"
+                                    : "Refunded",
+                                style: TextStyle(
+                                    color: cardOrderHistoryItems
+                                                .orderItems[index]
+                                                .refundStatus ==
+                                            '1'
+                                        ? Colors.red
+                                        : Colors.green,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500)))
                       ],
                     ),
                   ],
@@ -1034,7 +1053,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
   _hitCancelOrderApi({String orderRejectionNote}) async {
     Utils.showProgressDialog(context);
     CancelOrderModel cancelOrder = await ApiController.orderCancelApi(
-        widget.orderHistoryData.orderId,storeID:widget.orderHistoryData.orderItems.first.storeId,
+        widget.orderHistoryData.orderId,
+        storeID: widget.orderHistoryData.orderItems.first.storeId,
         order_rejection_note: orderRejectionNote);
     if (cancelOrder != null && cancelOrder.success) {
       setState(() {
@@ -1208,11 +1228,13 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             widget.orderHistoryData.status == '5'
         ? 100
         : 0;
-    double orderReadyForPickUpProgress = widget.orderHistoryData.status == '1' ||
-            widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'||widget.orderHistoryData.status == '8'
-        ? 100
-        : 0;
+    double orderReadyForPickUpProgress =
+        widget.orderHistoryData.status == '1' ||
+                widget.orderHistoryData.status == '4' ||
+                widget.orderHistoryData.status == '5' ||
+                widget.orderHistoryData.status == '8'
+            ? 100
+            : 0;
     double orderShippedProgress = widget.orderHistoryData.status == '4' ||
             widget.orderHistoryData.status == '5'
         ? 100
