@@ -75,7 +75,7 @@ class MarketPlaceCategoryView extends StatelessWidget {
                         color: _isCategoryViewSelected()
                             ? Colors.black
                             : Colors.black,
-                        fontSize: 16.0,
+                        fontSize: 14.0,
                       )),
                 ),
               ),

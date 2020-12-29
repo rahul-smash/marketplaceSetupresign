@@ -366,7 +366,7 @@ class _MarketPlaceHomeCategoryViewState
                           children: <Widget>[
                             InkWell(
                               child: Text(
-                                "Restaurants",
+                                "RESTAURANTS",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
