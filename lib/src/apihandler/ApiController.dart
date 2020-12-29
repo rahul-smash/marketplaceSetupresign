@@ -1106,7 +1106,7 @@ class ApiController {
 
   static Future<ProductRatingResponse> postProductRating(
       String orderID, String productID, String rating, String storeID,
-      {String desc = '', File imageFile}) async {
+      {String desc = '', File imageFile,String type='0'}) async {
     UserModelMobile user = await SharedPrefs.getUserMobile();
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
     var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
@@ -1127,6 +1127,7 @@ class ApiController {
           "platform": Platform.isIOS ? "IOS" : "android",
           "product_id": productID,
           "rating": rating,
+          "type": type,
           "description": desc
         });
         if (imageFile != null) {
@@ -1139,6 +1140,7 @@ class ApiController {
           request.files.add(multipartFile);
         }
         print('--url===  $url');
+        print('--url===  ${request.fields.toString()}');
         print('--user.id=== ${user.id}');
         final response =
             await request.send().timeout(Duration(seconds: timeout));
