@@ -410,6 +410,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 //          backgroundColor: bottomBarBackgroundColor,
           backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
+          elevation: 30.0,
           onTap: onTabTapped,
           items: [
             BottomNavigationBarItem(
