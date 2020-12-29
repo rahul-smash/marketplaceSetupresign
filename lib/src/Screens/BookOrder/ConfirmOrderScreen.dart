@@ -101,6 +101,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   bool showCOD = true;
   BrandData _brandData;
 
+  String couponType='';
+
   ConfirmOrderState({this.storeModel});
 
   @override
@@ -1120,6 +1122,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                             int.parse(shippingCharges);
                         taxModel.total = taxModelTotal.toString();
                         appliedCouponCodeList.add(model.couponCode);
+                        couponType =model.couponType;;
                         print("===couponCode=== ${model.couponCode}");
                         print("taxModel.total=${taxModel.total}");
                       });
@@ -1465,7 +1468,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                             await ApiController.validateOfferApiRequest(
                                 couponCodeController.text,
                                 widget.paymentMode,
-                                json);
+                                json,couponType);
                         if (couponModel.success) {
                           print("---success----");
                           Utils.showToast("${couponModel.message}", false);

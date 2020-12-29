@@ -741,7 +741,10 @@ class ApiController {
   }
 
   static Future<ValidateCouponResponse> validateOfferApiRequest(
-      String couponCode, String paymentMode, String orderJson) async {
+      String couponCode,
+      String paymentMode,
+      String orderJson,
+      String coupon_type) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -754,6 +757,7 @@ class ApiController {
     try {
       request.fields.addAll({
         "coupon_code": couponCode,
+        "coupon_type": coupon_type,
         "device_id": deviceId,
         "user_id": user.id,
         "device_token": deviceToken,
@@ -777,10 +781,8 @@ class ApiController {
   }
 
   static Future<TaxCalculationResponse> multipleTaxCalculationRequest(
-      String couponCode,
-      String discount,
-      String shipping,
-      String orderJson) async {
+      String couponCode, String discount, String shipping, String orderJson,
+      {String couponType=''}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -809,7 +811,7 @@ class ApiController {
       final parsed = json.decode(respStr);
 
       TaxCalculationResponse model =
-          TaxCalculationResponse.fromJson(couponCode, parsed);
+          TaxCalculationResponse.fromJson(couponCode, couponType, parsed);
       return model;
     } catch (e) {
       print("--multipleTax--respStr---${e.toString()}");
@@ -1103,7 +1105,7 @@ class ApiController {
   }
 
   static Future<ProductRatingResponse> postProductRating(
-      String orderID, String productID, String rating,String storeID,
+      String orderID, String productID, String rating, String storeID,
       {String desc = '', File imageFile}) async {
     UserModelMobile user = await SharedPrefs.getUserMobile();
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
@@ -1509,18 +1511,19 @@ class ApiController {
     }
   }
 
-  static Future<CancelOrderModel> orderCancelApi(String order_id,{String order_rejection_note=""}) async {
+  static Future<CancelOrderModel> orderCancelApi(String order_id,
+      {String storeID='',String order_rejection_note = ""}) async {
     // 0 => 'pending' ,  1 =>'processing', 2 =>'rejected',
     // 4 =>'shipped', 5 =>'delivered', 6 => 'cancel'
     UserModelMobile user = await SharedPrefs.getUserMobile();
-    var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
         ApiConstants.orderCancel;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
       request.fields.addAll({
         "user_id": user.id,
         "order_id": order_id,
-        "order_rejection_note":order_rejection_note
+        "order_rejection_note": order_rejection_note
       });
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
@@ -1591,10 +1594,7 @@ class ApiController {
     print("--user.id--${user.id}");
     try {
       FormData formData = new FormData.fromMap(
-          {"user_id": user.id,
-            "platform": Platform.isIOS ? "IOS" : "Android"
-          }
-          );
+          {"user_id": user.id, "platform": Platform.isIOS ? "IOS" : "Android"});
       Dio dio = new Dio();
       Response response = await dio.post(url,
           data: formData,
@@ -1890,9 +1890,7 @@ class ApiController {
     }
   }
 
-  static Future<StoreOffersResponse> homeOffersApiRequest(
-      ) async {
-
+  static Future<StoreOffersResponse> homeOffersApiRequest() async {
     var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
         ApiConstants.homeOffers;
     var request = new http.MultipartRequest("GET", Uri.parse(url));
@@ -1910,18 +1908,16 @@ class ApiController {
       return null;
     }
   }
-  static Future<StoreOffersResponse> homeOffersDetails({String coupon_id}
-      ) async {
 
+  static Future<StoreOffersResponse> homeOffersDetails(
+      {String coupon_id}) async {
     var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
         ApiConstants.couponDetails;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
       print("----url---${url}");
-        request.fields.addAll({
-         'coupon_id':coupon_id
-        });
+      request.fields.addAll({'coupon_id': coupon_id});
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
       final parsed = json.decode(respStr);
