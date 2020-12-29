@@ -66,7 +66,7 @@ class _RestroListScreenState extends State<RestroListScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          "QUICK LINKS",
+                          "Quick Links",
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
