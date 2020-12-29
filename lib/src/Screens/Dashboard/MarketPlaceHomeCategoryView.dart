@@ -315,7 +315,7 @@ class _MarketPlaceHomeCategoryViewState
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          "QUICK LINKS",
+                          "Quick Links",
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -366,7 +366,7 @@ class _MarketPlaceHomeCategoryViewState
                           children: <Widget>[
                             InkWell(
                               child: Text(
-                                "RESTAURANTS",
+                                "Restaurants",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
