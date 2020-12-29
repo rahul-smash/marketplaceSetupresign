@@ -565,7 +565,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                           width: 1.0),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(
-                                              20.0) //                 <--- border radius here
+                                              5.0) //                 <--- border radius here
                                           ),
                                       color: (f.id ==
                                               (variant == null
