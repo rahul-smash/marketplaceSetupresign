@@ -341,7 +341,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                     children: [
                       ClipRRect(
                           borderRadius: BorderRadius.circular(5.0),
-                          child: Image.asset('images/offerdetailgraphic.png',
+                          child: Image.asset('images/packaging.png',
                               fit: BoxFit.fitHeight)),
                       SizedBox(
                         height: 5,
@@ -392,7 +392,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                     children: [
                       ClipRRect(
                           borderRadius: BorderRadius.circular(5.0),
-                          child: Image.asset('images/offerdetailgraphic.png',
+                          child: Image.asset('images/hygiene.png',
                               fit: BoxFit.fitHeight)),
                       SizedBox(
                         height: 5,

@@ -173,6 +173,8 @@ flutter:
     - images/offerdetailgraphic.png
     - images/oppsorryimg.png
     - images/removeimg.png
+    - images/hygiene.png
+    - images/packaging.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
