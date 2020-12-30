@@ -231,18 +231,16 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                           left: 7, right: 20, top: 5),
                                       child: Container(
                                           padding: EdgeInsets.only(
-                                              left: 2,
-                                              top: 2,
-                                              right: 2,
-                                              bottom: 2),
-//                                          decoration:  BoxDecoration(
-//                                            borderRadius: BorderRadius.all(
-//                                                Radius.circular(5.0)),
-//                                            border: Border.all(
-//                                              color: Colors.grey,
-//                                              width: 1.0,
-//                                            ),
-//                                          ),
+                                              left: 2, top: 2,
+                                              right: 2,bottom: 2),
+                                          decoration:  BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5.0)),
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                              width: 1.0,
+                                            ),
+                                          ),
                                           width: 75.0,
                                           height: 75.0,
                                           child: ClipRRect(
@@ -550,29 +548,18 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 20.0, vertical: 3.0),
                                   margin: EdgeInsets.only(
-                                      left: 5.0,
-                                      right: 5.0,
-                                      top: 5.0,
-                                      bottom: 5.0),
+                                      left: 5.0,right: 5.0,top: 5.0, bottom: 5.0),
                                   decoration: BoxDecoration(
                                       border: Border.all(
-                                          color: (f.id ==
-                                                  (variant == null
-                                                      ? widget.product.variantId
-                                                      : variant.id))
+                                          color: (f.id == (variant == null ? widget.product.variantId : variant.id))
                                               ? Colors.transparent
                                               : staticCategoryListingButtonBorderColor,
                                           width: 1.0),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(
-                                              5.0) //                 <--- border radius here
-                                          ),
-                                      color: (f.id ==
-                                              (variant == null
-                                                  ? widget.product.variantId
-                                                  : variant.id))
+                                      borderRadius: BorderRadius.all( Radius.circular( 5.0)  ),
+                                      color: (f.id ==(variant == null ? widget.product.variantId : variant.id))
                                           ? appThemeSecondary
-                                          : categoryListingBoxBackgroundColor),
+                                          : categoryListingBoxBackgroundColor
+                                  ),
                                   child: priceContainer(f),
                                 ),
                                 onTap: () {
@@ -635,10 +622,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //            padding: EdgeInsets.only(right: 8),
             child: Text("$weight",
                 style: TextStyle(
-                    color: (v.id ==
-                            (variant == null
-                                ? widget.product.variantId
-                                : variant.id))
+                    color: (v.id == (variant == null? widget.product.variantId: variant.id))
                         ? whiteColor
                         : darkGrey))),
         /* (v.discount == "0.00" || v.discount == "0" || v.discount == "0.0")
