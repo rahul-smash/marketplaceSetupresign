@@ -66,7 +66,6 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             _generalizedDeliverySlotTime(widget.orderHistoryData);
         calculateSaving();
         _checkReviewsHygeineAndPack(widget.orderHistoryData);
-
       }
 
       if (!isLoading) {
@@ -361,7 +360,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                           InkWell(
                             onTap: () {
                               if (_ratingPackaging == 0)
-                                orderRatebottomSheet(context, '1');
+                                orderRatebottomSheet(context, '2');
                             },
                             child: RatingBar(
                               initialRating: _ratingPackaging,
@@ -414,7 +413,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                           InkWell(
                             onTap: () {
                               if (_ratingHygiene == 0)
-                                orderRatebottomSheet(context, '2');
+                                orderRatebottomSheet(context, '1');
                             },
                             child: RatingBar(
                               initialRating: _ratingHygiene,
@@ -1105,7 +1104,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                         Padding(
                           padding: EdgeInsets.only(top: 5),
                           child: Text(
-                            "${type == '1' ? 'Packaging' : 'Hygiene'}",
+                            "${type != '1' ? 'Packaging' : 'Hygiene'}",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.black,
@@ -1528,12 +1527,12 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     Color orderPlaced = Colors.black;
     Color orderConfirmed = widget.orderHistoryData.status == '1' ||
             widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'
+            widget.orderHistoryData.status == '5' || widget.orderHistoryData.status == '8'
         ? Colors.black
         : grayLightColorSecondary;
     Color orderReadyForPickUp = widget.orderHistoryData.status == '1' ||
             widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'
+            widget.orderHistoryData.status == '5'|| widget.orderHistoryData.status == '8'
         ? Colors.black
         : grayLightColorSecondary;
 
@@ -1551,7 +1550,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     double orderPlacedProgress = 100;
     double orderConfirmedProgress = widget.orderHistoryData.status == '1' ||
             widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'
+            widget.orderHistoryData.status == '5'|| widget.orderHistoryData.status == '8'
         ? 100
         : 0;
     double orderReadyForPickUpProgress =
@@ -1935,25 +1934,27 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
       }
     });
   }
+
   void _checkReviewsHygeineAndPack(OrderData orderHistoryData) {
     if (orderHistoryData.reviewsHygeineAndPack != null &&
         orderHistoryData.reviewsHygeineAndPack.isNotEmpty) {
       for (int i = 0; i < orderHistoryData.reviewsHygeineAndPack.length; i++) {
         if (orderHistoryData.reviewsHygeineAndPack[i].rating != '0' ||
             orderHistoryData.reviewsHygeineAndPack[i].rating != '') {
-          switch(orderHistoryData.reviewsHygeineAndPack[i].type){
-            case '0':break;
+          switch (orderHistoryData.reviewsHygeineAndPack[i].type) {
+            case '0':
+              break;
             case '1':
-              _ratingPackaging=double.parse( orderHistoryData.reviewsHygeineAndPack[i].rating);
+              _ratingHygiene = double.parse(
+                  orderHistoryData.reviewsHygeineAndPack[i].rating);
               break;
             case '2':
-              _ratingHygiene=double.parse( orderHistoryData.reviewsHygeineAndPack[i].rating);
+              _ratingPackaging = double.parse(
+                  orderHistoryData.reviewsHygeineAndPack[i].rating);
               break;
           }
         }
       }
     }
   }
-
 }
-

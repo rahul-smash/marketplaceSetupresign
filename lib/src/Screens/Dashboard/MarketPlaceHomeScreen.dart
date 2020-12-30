@@ -178,6 +178,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       setState(() {
         _controller.text = '';
         isCategoryViewSelected = false;
+        _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
       });
     });
 

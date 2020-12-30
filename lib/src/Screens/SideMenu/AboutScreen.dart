@@ -6,6 +6,7 @@ import 'package:maps_launcher/maps_launcher.dart';
 import 'package:restroapp/src/Screens/Dashboard/ContactScreen.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
@@ -14,7 +15,7 @@ import 'package:restroapp/src/utils/Utils.dart';
 import 'ContactUs.dart';
 
 class AboutScreen extends StatefulWidget {
-  StoreModel store;
+  BrandData store;
   AboutScreen(this.store);
 
   @override
@@ -56,10 +57,10 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
                 visible : widget.store.aboutusBanner == null ? false :true,
               ),
-              widget.store.aboutUs == null
+              widget.store.about_us == null
                   ? Container()
                   : Html(
-                data: widget.store.aboutUs,
+                data: widget.store.about_us,
                 padding: EdgeInsets.all(10.0),
               ),
             ],
@@ -77,48 +78,48 @@ class _AboutScreenState extends State<AboutScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                  child: FlatButton(
-                    child: Text('Contact Us'),
-                    color: appThemeSecondary,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      //Navigator.pop(context, false);
-                      if (AppConstant.isLoggedIn) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ContactUs()),
-                        );
-                      }else{
-                        Utils.showToast(AppConstant.pleaseLogin, true);
-                      }
-
-                    },
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  child: FlatButton(
-                    child: Text('Locate Us',style: TextStyle(
-                      decoration: TextDecoration.underline,
-                    ),),
-                    color: Colors.white,
-                    textColor: Colors.black,
-                    onPressed: () {
-                      try {
-                        if (widget.store != null) {
-                          String address = "${widget.store.storeName}, ${widget.store.location}"
-                              "${widget.store.city}, ${widget.store.state}, ${widget.store.country}";
-                          print("address= ${address}");
-                          MapsLauncher.launchQuery(address);
-                        }
-                      } catch (e) {
-                        print(e);
-                      }
-                    },
-                  ),
-                ),
+//                Container(
+//                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+//                  child: FlatButton(
+//                    child: Text('Contact Us'),
+//                    color: appThemeSecondary,
+//                    textColor: Colors.white,
+//                    onPressed: () {
+//                      //Navigator.pop(context, false);
+//                      if (AppConstant.isLoggedIn) {
+//                        Navigator.push(
+//                          context,
+//                          MaterialPageRoute(builder: (context) => ContactUs()),
+//                        );
+//                      }else{
+//                        Utils.showToast(AppConstant.pleaseLogin, true);
+//                      }
+//
+//                    },
+//                  ),
+//                ),
+//                Container(
+//                  margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+//                  child: FlatButton(
+//                    child: Text('Locate Us',style: TextStyle(
+//                      decoration: TextDecoration.underline,
+//                    ),),
+//                    color: Colors.white,
+//                    textColor: Colors.black,
+//                    onPressed: () {
+//                      try {
+//                        if (widget.store != null) {
+//                          String address = "${widget.store.storeName}, ${widget.store.location}"
+//                              "${widget.store.city}, ${widget.store.state}, ${widget.store.country}";
+//                          print("address= ${address}");
+//                          MapsLauncher.launchQuery(address);
+//                        }
+//                      } catch (e) {
+//                        print(e);
+//                      }
+//                    },
+//                  ),
+//                ),
               ],
             ),
         ),
