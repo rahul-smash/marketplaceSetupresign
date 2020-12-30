@@ -623,7 +623,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        /* Visibility(
+         Visibility(
           visible: (v.id ==
                   (variant == null ? widget.product.variantId : variant.id))
               ? true
@@ -635,7 +635,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                 width: 15,
                 height: 15,
               )),
-        ),*/
+        ),
         Padding(
             padding: EdgeInsets.only(right: 0),
 //            padding: EdgeInsets.only(right: 8),
