@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:flutter/painting.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
@@ -101,7 +102,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
         ),
         Positioned.fill(
             child: Visibility(
-          visible: subCategoryResponse != null && subCategoryResponse.subCategories.isNotEmpty,
+          visible: subCategoryResponse != null &&
+              subCategoryResponse.subCategories.isNotEmpty,
           child: Align(
               alignment: Alignment.bottomCenter,
               child: InkWell(
@@ -200,18 +202,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   }
 
   Widget addBanners() {
-    ShaderMask(
-      shaderCallback: (rect) {
-        return LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.transparent, Colors.black45],
-        ).createShader(Rect.fromLTRB(0, 100, rect.width, rect.height));
-      },
-      blendMode: BlendMode.darken,
-      child: Container(),
-    );
-
     return Stack(
       children: <Widget>[
         Center(
@@ -237,26 +227,63 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           ),
         ),
         Container(
-            margin: EdgeInsets.only(top: 80),
-            width: Utils.getDeviceWidth(context),
-            height: 70,
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.transparent, Colors.black45],
-            )),
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                store.storeName,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-            ))
+          margin: EdgeInsets.only(top: 80),
+          width: Utils.getDeviceWidth(context),
+          height: 70,
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.transparent, Colors.black45],
+          )),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                  child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  store.storeName,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+              )),
+              Visibility(
+                  visible: store.rating.isNotEmpty &&
+                      store.rating != '0.0' &&
+                      store.rating != '0',
+                  child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Row(
+                        children: [
+                          Container(
+                              margin: EdgeInsets.only(right: 5),
+                              decoration: BoxDecoration(
+                                color: appThemeSecondary,
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(3),
+                                child: Image.asset('images/staricon.png',
+                                    width: 15,
+                                    fit: BoxFit.scaleDown,
+                                    color: Colors.white),
+                              )),
+                          Text(
+                            store.rating,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ))),
+            ],
+          ),
+        )
       ],
     );
   }
@@ -337,8 +364,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                         ),
                       ),
                     );
-                  }
-                  else {
+                  } else {
                     return products[index];
                   }
                 },
@@ -399,7 +425,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                           itemBuilder: (context, index) {
                             CategoryModel model =
                                 categoryResponse.categories[index];
-                            return CategoryView(model,store,false,0,isListView: true,
+                            return CategoryView(
+                              model,
+                              store,
+                              false,
+                              0,
+                              isListView: true,
                               selectedSubCategoryId: selectedSubCategoryId,
                               callback: <Object>({value}) {
                                 setState(() {

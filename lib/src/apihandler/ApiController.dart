@@ -1816,7 +1816,7 @@ class ApiController {
   }
 
   static Future<MobileVerified> verifyEmail(String email) async {
-    var url = ApiConstants.base_Url + ApiConstants.verifyEmail;
+    var url = ApiConstants.base_Url.replaceAll("brandId", AppConstant.brandID) + ApiConstants.verifyEmail;
 
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
@@ -1849,7 +1849,7 @@ class ApiController {
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-    var url = ApiConstants.base_Url + ApiConstants.socialLogin;
+    var url = ApiConstants.base_Url.replaceAll("brandId", AppConstant.brandID)  + ApiConstants.socialLogin;
 
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 

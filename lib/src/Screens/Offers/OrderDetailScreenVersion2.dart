@@ -65,6 +65,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
         deliverySlotDate =
             _generalizedDeliverySlotTime(widget.orderHistoryData);
         calculateSaving();
+        _checkReviewsHygeineAndPack(widget.orderHistoryData);
+
       }
 
       if (!isLoading) {
@@ -325,113 +327,120 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             height: 1,
             color: Color(0xFFE1E1E1),
           ),
-          Container(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-            color: Colors.white,
-            child: Row(
-              children: [
-                Expanded(
-                    child: Container(
-                  padding: EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xFFE1E1E1), width: 1),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                          borderRadius: BorderRadius.circular(5.0),
-                          child: Image.asset('images/packaging.png',
-                              fit: BoxFit.fitHeight)),
-                      SizedBox(
-                        height: 5,
+          Visibility(
+              visible: widget.isRatingEnable &&
+                  widget.orderHistoryData.status.contains('5'),
+              child: Container(
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                color: Colors.white,
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Container(
+                      padding: EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Color(0xFFE1E1E1), width: 1),
+                        borderRadius: BorderRadius.circular(5.0),
                       ),
-                      Text(
-                        'Rate on Packaging',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          orderRatebottomSheet(context, '1');
-                        },
-                        child: RatingBar(
-                          initialRating: _ratingPackaging,
-                          minRating: 0,
-                          itemSize: 24,
-                          direction: Axis.horizontal,
-                          allowHalfRating: false,
-                          itemCount: 5,
-                          ignoreGestures: true,
-                          itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
-                          itemBuilder: (context, _) => Icon(
-                            Icons.star,
-                            color: appThemeSecondary,
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Image.asset('images/packaging.png',
+                                  fit: BoxFit.fitHeight)),
+                          SizedBox(
+                            height: 5,
                           ),
-                          onRatingUpdate: (rating) {
-                            _ratingPackaging = rating;
-                          },
-                        ),
+                          Text(
+                            'Rate on Packaging',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              if (_ratingPackaging == 0)
+                                orderRatebottomSheet(context, '1');
+                            },
+                            child: RatingBar(
+                              initialRating: _ratingPackaging,
+                              minRating: 0,
+                              itemSize: 24,
+                              direction: Axis.horizontal,
+                              allowHalfRating: false,
+                              itemCount: 5,
+                              ignoreGestures: true,
+                              itemPadding:
+                                  EdgeInsets.symmetric(horizontal: 2.0),
+                              itemBuilder: (context, _) => Icon(
+                                Icons.star,
+                                color: appThemeSecondary,
+                              ),
+                              onRatingUpdate: (rating) {
+                                _ratingPackaging = rating;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )),
-                SizedBox(
-                  width: 10,
+                    )),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                        child: Container(
+                      padding: EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Color(0xFFE1E1E1), width: 1),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Image.asset('images/hygiene.png',
+                                  fit: BoxFit.fitHeight)),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            'Rate on Hygiene',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              if (_ratingHygiene == 0)
+                                orderRatebottomSheet(context, '2');
+                            },
+                            child: RatingBar(
+                              initialRating: _ratingHygiene,
+                              minRating: 0,
+                              itemSize: 24,
+                              direction: Axis.horizontal,
+                              allowHalfRating: false,
+                              itemCount: 5,
+                              ignoreGestures: true,
+                              itemPadding:
+                                  EdgeInsets.symmetric(horizontal: 2.0),
+                              itemBuilder: (context, _) => Icon(
+                                Icons.star,
+                                color: appThemeSecondary,
+                              ),
+                              onRatingUpdate: (rating) {
+                                _ratingHygiene = rating;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                  ],
                 ),
-                Expanded(
-                    child: Container(
-                  padding: EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xFFE1E1E1), width: 1),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                          borderRadius: BorderRadius.circular(5.0),
-                          child: Image.asset('images/hygiene.png',
-                              fit: BoxFit.fitHeight)),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Rate on Hygiene',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          orderRatebottomSheet(context, '2');
-                        },
-                        child: RatingBar(
-                          initialRating: _ratingHygiene,
-                          minRating: 0,
-                          itemSize: 24,
-                          direction: Axis.horizontal,
-                          allowHalfRating: false,
-                          itemCount: 5,
-                          ignoreGestures: true,
-                          itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
-                          itemBuilder: (context, _) => Icon(
-                            Icons.star,
-                            color: appThemeSecondary,
-                          ),
-                          onRatingUpdate: (rating) {
-                            _ratingHygiene = rating;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-              ],
-            ),
-          ),
+              )),
           Container(
             color: Colors.white,
             padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -1926,4 +1935,25 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
       }
     });
   }
+  void _checkReviewsHygeineAndPack(OrderData orderHistoryData) {
+    if (orderHistoryData.reviewsHygeineAndPack != null &&
+        orderHistoryData.reviewsHygeineAndPack.isNotEmpty) {
+      for (int i = 0; i < orderHistoryData.reviewsHygeineAndPack.length; i++) {
+        if (orderHistoryData.reviewsHygeineAndPack[i].rating != '0' ||
+            orderHistoryData.reviewsHygeineAndPack[i].rating != '') {
+          switch(orderHistoryData.reviewsHygeineAndPack[i].type){
+            case '0':break;
+            case '1':
+              _ratingPackaging=double.parse( orderHistoryData.reviewsHygeineAndPack[i].rating);
+              break;
+            case '2':
+              _ratingHygiene=double.parse( orderHistoryData.reviewsHygeineAndPack[i].rating);
+              break;
+          }
+        }
+      }
+    }
+  }
+
 }
+
