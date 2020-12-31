@@ -1,5 +1,7 @@
+import 'dart:convert';
+
 class DeviceInfo {
-  final Map<String,dynamic> deviceInfo;
+   final Map<String,dynamic> deviceInfo;
 
   DeviceInfo({
     this.deviceInfo,
@@ -14,4 +16,8 @@ class DeviceInfo {
     }
     return _instance;
   }
+   String getInfo(){
+    return jsonEncode(deviceInfo);
+  }
+
 }
