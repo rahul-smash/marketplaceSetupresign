@@ -41,7 +41,7 @@ Future<void> main() async {
     SharedPrefs.storeSharedValue(
         AppConstant.deviceId, androidDeviceInfo.androidId);
   }
-
+  AppConstant.brandID = configObject.storeId;
   if (configObject.isGroceryApp == "true") {
     AppConstant.isRestroApp = false;
   } else {
@@ -122,7 +122,9 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
       home: Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("images/mk_splash_grocery.jpg"),
+                image: AssetImage(widget.configObject.isGroceryApp == 'true'
+                    ? "images/mk_splash_grocery.jpg"
+                    : "images/mk_splash.jpg"),
                 fit: BoxFit.fill)),
         child: Scaffold(
           backgroundColor: Colors.transparent,
