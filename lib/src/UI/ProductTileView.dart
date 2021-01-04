@@ -179,17 +179,19 @@ class _ProductTileItemState extends State<ProductTileItem> {
                   weight = variant.weight;
                   variantId = variant.id;
                 } else {
-                  variantId = variant==null? widget.product.variantId:variant.id;
+                  variantId =
+                      variant == null ? widget.product.variantId : variant.id;
                 }
                 _checkOutOfStock(findNext: false);
                 databaseHelper
                     .getProductQuantitiy(variantId)
                     .then((cartDataObj) {
-                  setState(() {
-                    cartData = cartDataObj;
-                    counter = int.parse(cartData.QUANTITY);
-                    showAddButton = counter == 0 ? true : false;
-                  });
+                  if (mounted)
+                    setState(() {
+                      cartData = cartDataObj;
+                      counter = int.parse(cartData.QUANTITY);
+                      showAddButton = counter == 0 ? true : false;
+                    });
                 });
 //                databaseHelper
 //                    .checkProductsExistInFavTable(
@@ -284,13 +286,15 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                             border: Border.all(
                                                 color: Colors.red, width: 1),
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.circular(5)),
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
                                         child: Padding(
                                           padding: EdgeInsets.all(2),
                                           child: Text(
                                             "Out of Stock",
                                             style: TextStyle(
-                                                color: Colors.red, fontSize: 12),
+                                                color: Colors.red,
+                                                fontSize: 12),
                                           ),
                                         )),
                                   ),
@@ -455,7 +459,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                       color:
                                                           productHeadingColor,
                                                       fontWeight:
-                                                          FontWeight.w400,fontSize: 16.0),
+                                                          FontWeight.w400,
+                                                      fontSize: 16.0),
                                                 )
                                               : Row(
                                                   children: <Widget>[
@@ -465,7 +470,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                           color:
                                                               productHeadingColor,
                                                           fontWeight:
-                                                              FontWeight.w400,fontSize: 16.0),
+                                                              FontWeight.w400,
+                                                          fontSize: 16.0),
                                                     ),
                                                     Text(" "),
                                                     Text(
@@ -477,8 +483,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                             color:
                                                                 staticHomeDescriptionColor,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w400,fontSize: 14.0)),
+                                                                FontWeight.w400,
+                                                            fontSize: 14.0)),
                                                   ],
                                                 ),
                                         ],
@@ -604,7 +610,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        /* Visibility(
+         Visibility(
           visible: (v.id ==
                   (variant == null ? widget.product.variantId : variant.id))
               ? true
@@ -616,7 +622,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                 width: 15,
                 height: 15,
               )),
-        ),*/
+        ),
         Padding(
             padding: EdgeInsets.only(right: 0),
 //            padding: EdgeInsets.only(right: 8),
@@ -688,8 +694,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
               ? InkWell(
                   onTap: () async {
                     print("---1-----add onTap------------");
-                    bool checkIfDifferentStore = await checkIfDifferentStoreInCart(widget.product);
-                    if(checkIfDifferentStore){
+                    bool checkIfDifferentStore =
+                        await checkIfDifferentStoreInCart(widget.product);
+                    if (checkIfDifferentStore) {
                       return;
                     }
                     if (_checkStockQuantity(counter)) {
@@ -698,11 +705,10 @@ class _ProductTileItemState extends State<ProductTileItem> {
                       showAddButton = false;
                       insertInCartTable(widget.product, counter);
                       widget.callback();
-                      eventBus.fire(
-                          onCounterUpdate(
-                              counter, widget.product.id, variantID));
+                      eventBus.fire(onCounterUpdate(
+                          counter, widget.product.id, variantID));
                     }
-                    },
+                  },
                   child: Container(
                     padding: EdgeInsets.only(left: 15, right: 15),
                     child: Center(
@@ -734,8 +740,10 @@ class _ProductTileItemState extends State<ProductTileItem> {
                           width: 25.0, // you can adjust the width as you need
                           child: GestureDetector(
                               onTap: () async {
-                                bool checkIfDifferentStore = await checkIfDifferentStoreInCart(widget.product);
-                                if(checkIfDifferentStore){
+                                bool checkIfDifferentStore =
+                                    await checkIfDifferentStoreInCart(
+                                        widget.product);
+                                if (checkIfDifferentStore) {
                                   return;
                                 }
                                 print("--2------remove onTap------------");
@@ -800,8 +808,10 @@ class _ProductTileItemState extends State<ProductTileItem> {
                           child: GestureDetector(
                             onTap: () async {
                               print("--3------add onTap------------");
-                              bool checkIfDifferentStore = await checkIfDifferentStoreInCart(widget.product);
-                              if(checkIfDifferentStore){
+                              bool checkIfDifferentStore =
+                                  await checkIfDifferentStoreInCart(
+                                      widget.product);
+                              if (checkIfDifferentStore) {
                                 return;
                               }
                               if (_checkStockQuantity(counter)) {
@@ -815,7 +825,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                 }
                                 eventBus.fire(onCounterUpdate(
                                     counter, widget.product.id, variantID));
-                              }},
+                              }
+                            },
                             child: Container(
                                 width: 35,
                                 height: 25,
@@ -874,27 +885,30 @@ class _ProductTileItemState extends State<ProductTileItem> {
 
   Future<bool> checkIfDifferentStoreInCart(Product product) async {
     bool showInfoToEmptyCart = false;
-    List<Product> cartItemList  = await databaseHelper.getCartItemList();
+    List<Product> cartItemList = await databaseHelper.getCartItemList();
     print("count=${cartItemList.length}");
-    if(cartItemList.isEmpty){
+    if (cartItemList.isEmpty) {
       showInfoToEmptyCart = false;
-    }else{
+    } else {
       print("--storeId =>${product.storeId}");
       Product cartProduct = cartItemList[0];
-      if(cartProduct.storeId == product.storeId){
+      if (cartProduct.storeId == product.storeId) {
         // same store and do nothing 389981
         showInfoToEmptyCart = false;
-      }else{
+      } else {
         // User has selected differnt store to add in cart.
-        print("--storeName =>${product.storeName} and ${cartProduct.storeName}");
-        String msgBody = AppConstant.getCartReplaceMsg(cartProduct.storeName,product.storeName);
+        print(
+            "--storeName =>${product.storeName} and ${cartProduct.storeName}");
+        String msgBody = AppConstant.getCartReplaceMsg(
+            cartProduct.storeName, product.storeName);
 //        bool result = await DialogUtils.displayDialog(context, "Replace Cart?", "${msgBody}", "No", "Yes");
-        bool result = await DialogUtils.displayCartReplaceDialog(context, "${msgBody}");
+        bool result =
+            await DialogUtils.displayCartReplaceDialog(context, "${msgBody}");
         print("result=${result}");
-        if(result){
+        if (result) {
           await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
           showInfoToEmptyCart = false;
-        }else{
+        } else {
           showInfoToEmptyCart = true;
         }
       }
@@ -931,7 +945,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
       DatabaseHelper.description: product.description,
       DatabaseHelper.imageType: product.imageType,
       DatabaseHelper.imageUrl: product.imageUrl,
-
       DatabaseHelper.StoreId: product.storeId,
       DatabaseHelper.CategoryId: product.categoryIds,
       DatabaseHelper.Brand: product.brand,
@@ -941,7 +954,6 @@ class _ProductTileItemState extends State<ProductTileItem> {
       DatabaseHelper.Deleted: product.deleted.toString(),
       DatabaseHelper.tags: product.tags,
       DatabaseHelper.storeName: product.storeName,
-
       DatabaseHelper.image_100_80:
           product.image == null ? product.image10080 : product.image,
       DatabaseHelper.image_300_200: product.image300200,
@@ -1089,7 +1101,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //3)continue_selling -> no out of stock
 
     Variant selectedVariant =
-    variant != null ? variant : findVariant(widget.product.variantId);
+        variant != null ? variant : findVariant(widget.product.variantId);
     if (selectedVariant != null &&
         selectedVariant.stockType != null &&
         selectedVariant.stockType.isNotEmpty) {
@@ -1145,7 +1157,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //3)continue_selling -> no out of stock
 
     Variant selectedVariant =
-    variant != null ? variant : findVariant(widget.product.variantId);
+        variant != null ? variant : findVariant(widget.product.variantId);
     if (selectedVariant != null &&
         selectedVariant.stockType != null &&
         selectedVariant.stockType.isNotEmpty) {
@@ -1173,7 +1185,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
             if (stock <= 0) {
               isProductAvailable = false;
               Utils.showToast("Out of Stock", true);
-            } else if (counter>=(stock-minStockAlert)) {
+            } else if (counter >= (stock - minStockAlert)) {
               isProductAvailable = false;
               Utils.showToast(
                   "Only ${counter} Items Available in Stocks", true);

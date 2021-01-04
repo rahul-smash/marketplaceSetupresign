@@ -19,12 +19,10 @@ class RestroCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () async{
-        bool isNetworkAvailable =
-            await Utils.isNetworkAvailable();
+      onTap: () async {
+        bool isNetworkAvailable = await Utils.isNetworkAvailable();
         if (!isNetworkAvailable) {
-          Utils.showToast(
-              "No Internet connection", false);
+          Utils.showToast("No Internet connection", false);
           return;
         }
         print("----onTap-${storeDataObj.id}--");
@@ -93,34 +91,7 @@ class RestroCardItem extends StatelessWidget {
                               '${storeDataObj.storeName}',
                               style: TextStyle(fontSize: 18),
                             ),
-//                            Row(
-//                                        children: [
-//                                          Container(
-//                                              margin: EdgeInsets.only(right: 5),
-//                                              decoration: BoxDecoration(
-//                                                color: appThemeSecondary,
-//                                                borderRadius:
-//                                                BorderRadius.circular(5.0),
-//                                              ),
-//                                              child: Padding(
-//                                                padding: EdgeInsets.all(3),
-//                                                child: Image.asset(
-//                                                    'images/staricon.png',
-//                                                    width: 15,
-//                                                    fit: BoxFit.scaleDown,
-//                                                    color: Colors.white),
-//                                              )),
-//                                          Text(
-//                                            '4.0/',
-//                                            style: TextStyle(fontSize: 16),
-//                                          ),
-//                                          Text(
-//                                            '5',
-//                                            style: TextStyle(
-//                                                fontSize: 16, color: Colors.grey),
-//                                          )
-//                                        ],
-//                                      ),
+
                             Row(
                               children: [
                                 Text(
@@ -144,6 +115,38 @@ class RestroCardItem extends StatelessWidget {
                               style:
                                   TextStyle(fontSize: 14, color: Colors.grey),
                             ),
+                            Visibility(
+                                visible: storeDataObj.rating.isNotEmpty &&
+                                    storeDataObj.rating != '0.0' &&
+                                    storeDataObj.rating != '0',
+                                child: Row(
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.only(right: 5),
+                                        decoration: BoxDecoration(
+                                          color: appThemeSecondary,
+                                          borderRadius:
+                                          BorderRadius.circular(5.0),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(3),
+                                          child: Image.asset(
+                                              'images/staricon.png',
+                                              width: 15,
+                                              fit: BoxFit.scaleDown,
+                                              color: Colors.white),
+                                        )),
+                                    Text(
+                                      storeDataObj.rating,
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+//                                    Text(
+//                                      '5',
+//                                      style: TextStyle(
+//                                          fontSize: 16, color: Colors.grey),
+//                                    )
+                                  ],
+                                )),
                             /*Text(
                                         '${AppConstant.currency}350 for two',
                                         style: TextStyle(

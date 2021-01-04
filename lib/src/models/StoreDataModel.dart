@@ -81,6 +81,7 @@ class StoreDataObj {
     this.productTitleHomePage,
     this.mapDisplay,
     this.reviewRatingDisplay,
+    this.rating,
     this.isEmailMandatoryPlaceorder,
     this.displayStoreLogoName,
     this.cod,
@@ -160,6 +161,7 @@ class StoreDataObj {
   String productTitleHomePage;
   String mapDisplay;
   String reviewRatingDisplay;
+  String rating;
   String isEmailMandatoryPlaceorder;
   String displayStoreLogoName;
   String cod;
@@ -239,6 +241,7 @@ class StoreDataObj {
     String productTitleHomePage,
     String mapDisplay,
     String reviewRatingDisplay,
+    String rating,
     String isEmailMandatoryPlaceorder,
     String displayStoreLogoName,
     String cod,
@@ -318,6 +321,7 @@ class StoreDataObj {
         productTitleHomePage: productTitleHomePage ?? this.productTitleHomePage,
         mapDisplay: mapDisplay ?? this.mapDisplay,
         reviewRatingDisplay: reviewRatingDisplay ?? this.reviewRatingDisplay,
+        rating: rating ?? this.rating,
         isEmailMandatoryPlaceorder: isEmailMandatoryPlaceorder ?? this.isEmailMandatoryPlaceorder,
         displayStoreLogoName: displayStoreLogoName ?? this.displayStoreLogoName,
         cod: cod ?? this.cod,
@@ -402,6 +406,7 @@ class StoreDataObj {
     productTitleHomePage: json["product_title_home_page"] == null ? null : json["product_title_home_page"].toString(),
     mapDisplay: json["map_display"] == null ? null : json["map_display"].toString(),
     reviewRatingDisplay: json["review_rating_display"] == null ? null : json["review_rating_display"].toString(),
+    rating: json["rating"] == null ? null : json["rating"].toString(),
     isEmailMandatoryPlaceorder: json["is_email_mandatory_placeorder"] == null ? null : json["is_email_mandatory_placeorder"].toString(),
     displayStoreLogoName: json["display_store_logo_name"] == null ? null : json["display_store_logo_name"].toString(),
     cod: json["cod"] == null ? null : json["cod"].toString(),
@@ -482,6 +487,7 @@ class StoreDataObj {
     "product_title_home_page": productTitleHomePage == null ? null : productTitleHomePage,
     "map_display": mapDisplay == null ? null : mapDisplay,
     "review_rating_display": reviewRatingDisplay == null ? null : reviewRatingDisplay,
+    "rating": rating == null ? null : rating,
     "is_email_mandatory_placeorder": isEmailMandatoryPlaceorder == null ? null : isEmailMandatoryPlaceorder,
     "display_store_logo_name": displayStoreLogoName == null ? null : displayStoreLogoName,
     "cod": cod == null ? null : cod,

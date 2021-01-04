@@ -266,10 +266,10 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         break;
       case DrawerChildConstants.ABOUT_US:
         Navigator.pop(context);
-        /*Navigator.push(
+        Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AboutScreen(widget.store)),
-        );*/
+          MaterialPageRoute(builder: (context) => AboutScreen(widget.brandData)),
+        );
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
         attributeMap["ScreenName"] = "AboutScreen";
         Utils.sendAnalyticsEvent("Clicked AboutScreen", attributeMap);

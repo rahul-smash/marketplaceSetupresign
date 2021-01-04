@@ -2261,6 +2261,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
                 eventBus.fire(updateCartCount());
                 eventBus.fire(onCartRemoved());
+                eventBus.fire(openHome());
                 Navigator.of(context).popUntil((route) => route.isFirst);
               }
             } else {
@@ -2271,6 +2272,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 eventBus.fire(onCartRemoved());
                 eventBus.fire(updateCartCount());
+                eventBus.fire(openHome());
               }
             }
           });

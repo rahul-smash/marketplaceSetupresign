@@ -15,7 +15,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Grocer MarketPlace"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher_grocrey">
         <!-- Add the following entry, with your API key -->
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCwKXvgsBElyhqwj03ro9e-Lnu3fmRmpJI"/>

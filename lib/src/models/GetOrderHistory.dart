@@ -44,6 +44,8 @@ class OrderData {
   List<OrderItems> orderItems;
   List<DeliveryAddress> deliveryAddress;
   String rating;
+  List<ReviewsHygeineAndPack> reviewsHygeineAndPack;
+
 
   OrderData({
     this.orderId,
@@ -98,6 +100,7 @@ class OrderData {
     address = json['address'];
     orderRejectionNote = json['order_rejection_note'];
     walletRefund = json['wallet_refund'];
+    reviewsHygeineAndPack= json["reviewsHygeineAndPack"] == null ? null : List<ReviewsHygeineAndPack>.from(json["reviewsHygeineAndPack"].map((x) => ReviewsHygeineAndPack.fromJson(x)));
     if (json['order_items'] != null) {
       orderItems = new List<OrderItems>();
       json['order_items'].forEach((v) {
@@ -455,3 +458,102 @@ class Review {
         "modified": modified == null ? null : modified.toIso8601String(),
       };
 }
+class ReviewsHygeineAndPack {
+  ReviewsHygeineAndPack({
+    this.id,
+    this.storeId,
+    this.userId,
+    this.title,
+    this.description,
+    this.productId,
+    this.rating,
+    this.image,
+    this.orderId,
+    this.platform,
+    this.type,
+    this.created,
+    this.modified,
+  });
+
+  String id;
+  String storeId;
+  String userId;
+  String title;
+  String description;
+  String productId;
+  String rating;
+  String image;
+  String orderId;
+  String platform;
+  String type;
+  DateTime created;
+  DateTime modified;
+
+  ReviewsHygeineAndPack copyWith({
+    String id,
+    String storeId,
+    String userId,
+    String title,
+    String description,
+    String productId,
+    String rating,
+    String image,
+    String orderId,
+    String platform,
+    String type,
+    DateTime created,
+    DateTime modified,
+  }) =>
+      ReviewsHygeineAndPack(
+        id: id ?? this.id,
+        storeId: storeId ?? this.storeId,
+        userId: userId ?? this.userId,
+        title: title ?? this.title,
+        description: description ?? this.description,
+        productId: productId ?? this.productId,
+        rating: rating ?? this.rating,
+        image: image ?? this.image,
+        orderId: orderId ?? this.orderId,
+        platform: platform ?? this.platform,
+        type: type ?? this.type,
+        created: created ?? this.created,
+        modified: modified ?? this.modified,
+      );
+
+  factory ReviewsHygeineAndPack.fromRawJson(String str) => ReviewsHygeineAndPack.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory ReviewsHygeineAndPack.fromJson(Map<String, dynamic> json) => ReviewsHygeineAndPack(
+    id: json["id"] == null ? null : json["id"],
+    storeId: json["store_id"] == null ? null : json["store_id"],
+    userId: json["user_id"] == null ? null : json["user_id"],
+    title: json["title"] == null ? null : json["title"],
+    description: json["description"] == null ? null : json["description"],
+    productId: json["product_id"] == null ? null : json["product_id"],
+    rating: json["rating"] == null ? null : json["rating"],
+    image: json["image"] == null ? null : json["image"],
+    orderId: json["order_id"] == null ? null : json["order_id"],
+    platform: json["platform"] == null ? null : json["platform"],
+    type: json["type"] == null ? null : json["type"],
+    created: json["created"] == null ? null : DateTime.parse(json["created"]),
+    modified: json["modified"] == null ? null : DateTime.parse(json["modified"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "store_id": storeId == null ? null : storeId,
+    "user_id": userId == null ? null : userId,
+    "title": title == null ? null : title,
+    "description": description == null ? null : description,
+    "product_id": productId == null ? null : productId,
+    "rating": rating == null ? null : rating,
+    "image": image == null ? null : image,
+    "order_id": orderId == null ? null : orderId,
+    "platform": platform == null ? null : platform,
+    "type": type == null ? null : type,
+    "created": created == null ? null : created.toIso8601String(),
+    "modified": modified == null ? null : modified.toIso8601String(),
+  };
+}
+

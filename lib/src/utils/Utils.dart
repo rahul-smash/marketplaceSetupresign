@@ -26,6 +26,7 @@ import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'DialogUtils.dart';
 
@@ -656,10 +657,23 @@ class Utils {
   }
 
   static void getDeviceInfo() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    DeviceInfoPlugin deviceInfo = await DeviceInfoPlugin();
+    PackageInfo packageInfo = await Utils.getAppVersionDetails();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
     Map<String, dynamic> param = Map();
+    param['app_version'] = packageInfo.version;
+    param['device_id'] = deviceId;
+    param['device_token'] = deviceToken;
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      param['device_brand'] = androidInfo.brand;
+      param['device_model'] = androidInfo.model;
+      param['device_os'] = androidInfo.version.sdkInt;
+      param['device_os_version'] = androidInfo.version.sdkInt;
+
+
       param['platform'] = 'android';
       param['model'] = androidInfo.model;
       param['manufacturer'] = androidInfo.manufacturer;
@@ -673,6 +687,11 @@ class Utils {
     }
     if (Platform.isIOS) {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      param['device_brand'] = iosInfo.model;
+      param['device_model'] = iosInfo.model;
+      param['device_os'] = iosInfo.systemName;
+      param['device_os_version'] = iosInfo.systemVersion;
+
       param['platform'] = 'ios';
       param['name'] = iosInfo.name;
       param['systemName'] = iosInfo.systemName;

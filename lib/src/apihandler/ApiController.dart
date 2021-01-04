@@ -18,6 +18,7 @@ import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/CreatePaytmTxnTokenResponse.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/DeliveryTimeSlotModel.dart';
+import 'package:restroapp/src/models/DeviceInfo.dart';
 import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
 import 'package:restroapp/src/models/LoyalityPointsModel.dart';
@@ -337,13 +338,14 @@ class ApiController {
     var url = ApiConstants.base_Url.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.login;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
-
+    var deviceInfoJson = DeviceInfo.getInstance().getInfo();
     try {
       request.fields.addAll({
         "email": username,
         "password": password,
         "device_id": deviceId,
         "device_token": deviceToken,
+        "device_info": deviceInfoJson,
         "platform": Platform.isIOS ? "IOS" : "Android"
       });
 
@@ -782,7 +784,7 @@ class ApiController {
 
   static Future<TaxCalculationResponse> multipleTaxCalculationRequest(
       String couponCode, String discount, String shipping, String orderJson,
-      {String couponType=''}) async {
+      {String couponType = ''}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1106,7 +1108,7 @@ class ApiController {
 
   static Future<ProductRatingResponse> postProductRating(
       String orderID, String productID, String rating, String storeID,
-      {String desc = '', File imageFile}) async {
+      {String desc = '', File imageFile, String type = '0'}) async {
     UserModelMobile user = await SharedPrefs.getUserMobile();
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
     var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
@@ -1127,6 +1129,7 @@ class ApiController {
           "platform": Platform.isIOS ? "IOS" : "android",
           "product_id": productID,
           "rating": rating,
+          "type": type,
           "description": desc
         });
         if (imageFile != null) {
@@ -1139,6 +1142,7 @@ class ApiController {
           request.files.add(multipartFile);
         }
         print('--url===  $url');
+        print('--url===  ${request.fields.toString()}');
         print('--user.id=== ${user.id}');
         final response =
             await request.send().timeout(Duration(seconds: timeout));
@@ -1167,12 +1171,13 @@ class ApiController {
     var url = ApiConstants.base_Url.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.mobileVerification;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
-
+    var deviceInfoJson = await DeviceInfo.getInstance().getInfo();
     try {
       request.fields.addAll({
         "phone": loginData.phone,
         "device_id": deviceId,
         "device_token": deviceToken,
+        "device_info": deviceInfoJson,
         "platform": Platform.isIOS ? "IOS" : "Android"
       });
       //print('@@mobileVerification' + url + request.fields.toString());
@@ -1512,7 +1517,7 @@ class ApiController {
   }
 
   static Future<CancelOrderModel> orderCancelApi(String order_id,
-      {String storeID='',String order_rejection_note = ""}) async {
+      {String storeID = '', String order_rejection_note = ""}) async {
     // 0 => 'pending' ,  1 =>'processing', 2 =>'rejected',
     // 4 =>'shipped', 5 =>'delivered', 6 => 'cancel'
     UserModelMobile user = await SharedPrefs.getUserMobile();
@@ -1814,7 +1819,8 @@ class ApiController {
   }
 
   static Future<MobileVerified> verifyEmail(String email) async {
-    var url = ApiConstants.base_Url + ApiConstants.verifyEmail;
+    var url = ApiConstants.base_Url.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.verifyEmail;
 
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
@@ -1846,8 +1852,9 @@ class ApiController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-
-    var url = ApiConstants.base_Url + ApiConstants.socialLogin;
+    var deviceInfoJson = await DeviceInfo.getInstance().getInfo();
+    var url = ApiConstants.base_Url.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.socialLogin;
 
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
@@ -1868,7 +1875,8 @@ class ApiController {
         "user_refer_code": user_refer_code,
         "device_id": deviceId,
         "device_token": deviceToken,
-        "platform": Platform.isIOS ? "IOS" : "Android"
+        "platform": Platform.isIOS ? "IOS" : "Android",
+        "device_info": deviceInfoJson
       });
       print('@@url=${url}');
       print('@@fields=${request.fields.toString()}');

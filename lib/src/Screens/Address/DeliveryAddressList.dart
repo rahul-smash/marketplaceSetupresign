@@ -246,8 +246,8 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 Align(
                     alignment: Alignment.topRight,
                     child: Visibility(
-                      child: Container(
-                        width: 70,
+                      child: Wrap(children: [  Container(
+//                        width: 70,
                         padding: EdgeInsets.only(
                             left: 15, right: 15, top: 5, bottom: 5),
                         decoration: BoxDecoration(
@@ -255,17 +255,15 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                           border: Border.all(color: grayLightColorSecondary),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
+                        child: Text(
                             area.addressType != null &&
-                                    area.addressType.isNotEmpty
+                                area.addressType.isNotEmpty
                                 ? area.addressType
                                 : '',
                             style: TextStyle(fontSize: 13, color: Colors.black),
                           ),
-                        ),
-                      ),
+                      ),],),
+
                       visible: area.addressType != null &&
                           area.addressType.isNotEmpty,
                     )),
