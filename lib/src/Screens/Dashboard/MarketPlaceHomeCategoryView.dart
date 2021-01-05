@@ -322,7 +322,7 @@ class _MarketPlaceHomeCategoryViewState
                               fontWeight: FontWeight.w400),
                         ),
                         Visibility(
-                          visible: true,
+                          visible:widget.tagsModel!=null&& widget.tagsModel.data.length>8,
                           child: InkWell(
                             onTap: () {
                               print("onTap =isSeeAll=${isSeeAll}");
