@@ -232,7 +232,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                                       widget.cartList[index].taxDetail ==
                                           null) {
                                     return Divider(
-                                        color: Colors.grey, height: 1);
+                                        color: Colors.black12, height: 2);
                                   } else {
                                     return Divider(
                                         color: Colors.white, height: 1);
@@ -718,13 +718,24 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //                  padding: EdgeInsets.fromLTRB(0,5,0,5),
                       margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
 //                  decoration: BoxDecoration(border: Border.all(color: Colors.black38,width: 1)),
+                      decoration:  BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(5.0)),
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: .5,
+                        ),
+                      ),
                       width: 80,
                       height: 80,
-                      child: CachedNetworkImage(
-                          imageUrl: "${imageUrl}", fit: BoxFit.scaleDown
+                      child:ClipRRect(
+                          borderRadius:
+                          BorderRadius.circular(5.0),
+                          child: CachedNetworkImage(
+                          imageUrl: "${imageUrl}", fit: BoxFit.cover
                           //placeholder: (context, url) => CircularProgressIndicator(),
                           //errorWidget: (context, url, error) => Icon(Icons.error),
-                          ),
+                          )),
                       /*child: Image.network(imageUrl,width: 60.0,height: 60.0,
                                           fit: BoxFit.cover),*/
                     )),
@@ -795,10 +806,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   Widget addItemPrice() {
     return Container(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            height: 1,
-            color: Colors.black45,
-            width: MediaQuery.of(context).size.width),
+//        Container(
+//            height: .5,
+//            color: Colors.black12,
+//            width: MediaQuery.of(context).size.width),
         Visibility(
           visible: widget.address == null ? false : true,
           child: Padding(

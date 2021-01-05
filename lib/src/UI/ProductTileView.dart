@@ -250,7 +250,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                                 BorderRadius.circular(5.0),
                                             child: CachedNetworkImage(
                                                 imageUrl: "${imageUrl}",
-                                                fit: BoxFit.fill),
+                                                fit: BoxFit.cover),
                                           ))),
                               Visibility(
                                 visible: (discount == "0.00" ||

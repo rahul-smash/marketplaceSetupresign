@@ -404,7 +404,80 @@ class DialogUtils {
                   );
                 },
               ),
-            ),
+            )/*
+            Container(
+              width: double.maxFinite,
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: subCategoryList.length,
+                separatorBuilder: (BuildContext context, int index) {
+                  return Divider(
+                    color: Colors.transparent,
+                  );
+                },
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      SubCategoryModel categoryModel = subCategoryList[index];
+                      if (categoryModel != null ){
+                          Navigator.pop(context, categoryModel);
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: appTheme.withOpacity(0.4),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Container(
+                            child: subCategoryList[index].image.isNotEmpty
+                                ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                "${subCategoryList[index].image}",
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.scaleDown,
+                                //placeholder: (context, url) => CircularProgressIndicator(),
+                                errorWidget: (context, url, error) {
+                                  print('image error ${url}');
+                                  return Container();
+                                },
+                              ),
+                            )
+                                : Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                    BorderRadius.circular(10.0))),
+                          ),
+                          Expanded(
+                              child: Padding(
+                                  padding: EdgeInsets.only(left: 10),
+                                  child: Text(
+                                      "${subCategoryList[index].title}",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14))))
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )*/,
             actions: <Widget>[
               new FlatButton(
                 child: new Text("Cancel"),
