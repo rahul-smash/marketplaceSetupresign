@@ -1132,15 +1132,15 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                     }
                   },
                   child: Visibility(
-                    visible: true,
+                    visible: _selectedHomeScreen==HomeScreenEnum.HOME_BAND_VIEW,
                     child: Row(
                       children: [
                         SizedBox(
-                          width: (Utils.getDeviceWidth(context) / 2.6),
+                          width: (Utils.getDeviceWidth(context) / 2.2),
                           child: Text(
                             "${locationAddress}",
                             maxLines: 2,
-                            textAlign: TextAlign.center,
+                            textAlign: TextAlign.left,
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
