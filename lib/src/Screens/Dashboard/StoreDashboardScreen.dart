@@ -59,15 +59,15 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     listenEvent();
     try {
       AppConstant.placeholderUrl = store.banner300200;
-      if (store.banners.isEmpty) {
+      if (store.banner300200.isNotEmpty) {
         imgList = [NetworkImage(store.banner300200)];
       } else {
         for (var i = 0; i < store.banners.length; i++) {
           String imageUrl = store.banners[i].image;
-          imgList.add(
-            NetworkImage(
-                imageUrl.isEmpty ? AppConstant.placeholderImageUrl : imageUrl),
-          );
+//          imgList.add(
+//            NetworkImage(
+//                imageUrl.isEmpty ? AppConstant.placeholderImageUrl : imageUrl),
+//          );
         }
       }
     } catch (e) {
@@ -204,6 +204,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   Widget addBanners() {
     return Stack(
       children: <Widget>[
+        imgList.isNotEmpty?
         Center(
           child: SizedBox(
             height: 150.0,
@@ -225,6 +226,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
               onImageTap: (position) {},
             ),
           ),
+        ):Container(
+          height: 150.0,
+          width: Utils.getDeviceWidth(context),
         ),
         Container(
           margin: EdgeInsets.only(top: 80),
@@ -305,15 +309,15 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   ItemScrollController _scrollControllers = ItemScrollController();
 
   Widget getProductsWidget() {
-    if (categoryResponse == null) {
-      return Container();
-    }
-    if ((categoryResponse.categories != null &&
-        categoryResponse.categories.length == 0)) {
-      return Utils.getEmptyView2("No Categories available");
-    }
+//    if (categoryResponse == null) {
+//      return Container();
+//    }
+//    if ((categoryResponse.categories != null &&
+//        categoryResponse.categories.length == 0)) {
+//      return Utils.getEmptyView2("No Categories available");
+//    }
 
-    if (subCategoryResponse == null) {
+    if (products.length == 0) {
       return Container(
         height: 200,
         child: Center(
@@ -390,6 +394,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
 
       if (selectedSubCategoryId != null && selectedSubCategoryId.isNotEmpty) {
         subCategoryId = selectedSubCategoryId;
+      } else {
+        selectedSubCategoryId = subCategoryId;
       }
 
       products.add(addBanners());
@@ -398,7 +404,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           ? Wrap(
               children: [
                 Container(
-//                  height: 190,
                   color: Colors.transparent,
                   margin: EdgeInsets.only(left: 2.5),
                   child: Column(
@@ -446,31 +451,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                       )
                     ],
                   ),
-
-//            ListView.builder(
-//              itemCount: categoryResponse.categories.length,
-//              scrollDirection: Axis.horizontal,
-//              itemBuilder: (context, index) {
-//                CategoryModel model =
-//                categoryResponse.categories[index];
-//                return CategoryView(
-//                  model,
-//                  store,
-//                  false,
-//                  0,
-//                  isListView: true,
-//                  selectedSubCategoryId: selectedSubCategoryId,
-//                  callback: <Object>({value}) {
-//                    setState(() {
-//                      selectedCategory = (value as CategoryModel);
-//                      selectedSubCategoryId = selectedCategory.id;
-//                      getHomeCategoryProductApi();
-//                    });
-//                    return;
-//                  },
-//                );
-//              },
-//            ),
                 )
               ],
             )
@@ -490,11 +470,20 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           width: MediaQuery.of(context).size.width,
           color: listingBorderColor));
 
+      products.add(Container(
+        height: 200,
+        child: Center(
+          child: CircularProgressIndicator(
+              backgroundColor: Colors.black26,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.black26)),
+        ),
+      ));
       ApiController.getSubCategoryProducts(subCategoryId, store: store)
           .then((response) {
         if (response != null && response.success) {
           subCategoryResponse = response;
           selectedSubCategoryId = subCategoryId;
+          products.removeLast();
           for (int i = 0; i < response.subCategories.length; i++) {
             if (response.subCategories[i].products.isNotEmpty) {
               products.add(response.subCategories[i]);
@@ -512,6 +501,17 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
         }
       });
       eventBus.fire(OnProductTileDbRefresh());
+    } else {
+      products.add(addBanners());
+      if (categoryResponse == null) {
+        products.add(Container());
+      }
+      if ((categoryResponse.categories != null &&
+          categoryResponse.categories.length == 0)) {
+        products.add(Container(margin: EdgeInsets.only(top: 30),
+          child: Utils.getEmptyView2("No Categories available"),)
+            );
+      }
     }
   }
 
