@@ -393,10 +393,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       }
 
       products.add(addBanners());
-      products.add(
-          categoryResponse != null && categoryResponse.categories.isNotEmpty
-              ? Container(
-                  height: 190,
+      products.add(categoryResponse != null &&
+              categoryResponse.categories.isNotEmpty
+          ? Wrap(
+              children: [
+                Container(
+//                  height: 190,
                   color: Colors.transparent,
                   margin: EdgeInsets.only(left: 2.5),
                   child: Column(
@@ -418,13 +420,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                           ],
                         ),
                       ),
-                      Flexible(
-                        child: ListView.builder(
-                          itemCount: categoryResponse.categories.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            CategoryModel model =
-                                categoryResponse.categories[index];
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: categoryResponse.categories.map((model) {
                             return CategoryView(
                               model,
                               store,
@@ -441,22 +441,50 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                 return;
                               },
                             );
-                          },
+                          }).toList(),
                         ),
                       )
                     ],
-                  ))
-              : categoryResponse != null && categoryResponse.categories.isEmpty
-                  ? Utils.getEmptyView2('')
-                  : Container(
-                      height: 200,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                            backgroundColor: Colors.black26,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.black26)),
-                      ),
-                    ));
+                  ),
+
+//            ListView.builder(
+//              itemCount: categoryResponse.categories.length,
+//              scrollDirection: Axis.horizontal,
+//              itemBuilder: (context, index) {
+//                CategoryModel model =
+//                categoryResponse.categories[index];
+//                return CategoryView(
+//                  model,
+//                  store,
+//                  false,
+//                  0,
+//                  isListView: true,
+//                  selectedSubCategoryId: selectedSubCategoryId,
+//                  callback: <Object>({value}) {
+//                    setState(() {
+//                      selectedCategory = (value as CategoryModel);
+//                      selectedSubCategoryId = selectedCategory.id;
+//                      getHomeCategoryProductApi();
+//                    });
+//                    return;
+//                  },
+//                );
+//              },
+//            ),
+                )
+              ],
+            )
+          : categoryResponse != null && categoryResponse.categories.isEmpty
+              ? Utils.getEmptyView2('')
+              : Container(
+                  height: 200,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                        backgroundColor: Colors.black26,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.black26)),
+                  ),
+                ));
       products.add(Container(
           height: 5,
           width: MediaQuery.of(context).size.width,

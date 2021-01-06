@@ -209,7 +209,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
             }
           },
           child: Padding(
-              padding: EdgeInsets.only(top: 0, bottom: 15),
+              padding: EdgeInsets.only(top: 0, bottom: variantsVisibility?15:15),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -554,7 +554,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 20.0, vertical: 3.0),
                                   margin: EdgeInsets.only(
-                                      left: 5.0,right: 5.0,top: 5.0, bottom: 5.0),
+                                      left: 5.0,right: 5.0,top: 0.0, bottom: 5.0),
                                   decoration: BoxDecoration(
                                       border: Border.all(
                                           color: (f.id == (variant == null ? widget.product.variantId : variant.id))
