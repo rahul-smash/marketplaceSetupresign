@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/StoreOffersResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
@@ -133,26 +134,33 @@ class _OffersListDetailState extends State<OffersListDetail> {
                                     style: TextStyle(
                                         fontSize: 14, color: Colors.grey),
                                   )),
-                              FDottedLine(
-                                corner: FDottedLineCorner(
-                                    leftTopCorner: 5,
-                                    leftBottomCorner: 5,
-                                    rightBottomCorner: 5,
-                                    rightTopCorner: 5),
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
-                                  child: Text(
-                                    widget.offerModel.couponCode,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
+                              GestureDetector(
+                                child: FDottedLine(
+                                  corner: FDottedLineCorner(
+                                      leftTopCorner: 5,
+                                      leftBottomCorner: 5,
+                                      rightBottomCorner: 5,
+                                      rightTopCorner: 5),
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
+                                    child: Text(
+                                      widget.offerModel.couponCode,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
+                                  color: yellowColor,
+                                  strokeWidth: 2.0,
+                                  dottedLength: 2.0,
+                                  space: 2.0,
                                 ),
-                                color: yellowColor,
-                                strokeWidth: 2.0,
-                                dottedLength: 2.0,
-                                space: 2.0,
+                                onTap: () {
+                                  Clipboard.setData(new ClipboardData(
+                                      text: widget.offerModel.couponCode));
+                                  Utils.showToast("Coupon code ${widget.offerModel.couponCode} copied to clipboard", false);
+                                },
                               ),
                               Container(
                                 margin: EdgeInsets.only(right: 5),

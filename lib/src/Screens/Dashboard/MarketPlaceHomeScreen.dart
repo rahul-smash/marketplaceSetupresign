@@ -112,6 +112,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   TagsModel tagsModel;
 
   StoresModel storeData;
+  DateTime currentBackPressTime;
 
   _MarketPlaceHomeScreenState(this.store);
 
@@ -242,6 +243,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                 break;
               case HomeScreenEnum.HOME_BAND_VIEW:
               default:
+              DateTime now = DateTime.now();
+              if (currentBackPressTime == null ||
+                  now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+                currentBackPressTime = now;
+                Utils.showToast( 'Please click BACK again to exit',false);
+                return Future.value(false);
+              }
+              return Future.value(true);
                 return new Future(() => true);
             }
           },
@@ -508,6 +517,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                           return;
                         }
                         if (value is StoreDataModel) {
+                          Navigator.pop(context);
                           setState(() {
                             _selectedSingleStore = value;
                             _previousSelectedHomeScreen = _selectedHomeScreen;

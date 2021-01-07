@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:restroapp/src/UI/OffersListDetail.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/StoreOffersResponse.dart';
@@ -194,7 +195,8 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => OffersListDetail(offersResponse.offers[index])),
+              builder: (context) =>
+                  OffersListDetail(offersResponse.offers[index])),
         );
       },
       child: Stack(
@@ -242,7 +244,8 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
                               topLeft: Radius.circular(5)),
                           image: offersResponse.offers[index].image.isEmpty
                               ? DecorationImage(
-                                  image: AssetImage('images/offerdetailgraphic.png'),
+                                  image: AssetImage(
+                                      'images/offerdetailgraphic.png'),
                                   fit: BoxFit.cover,
                                 )
                               : null,
@@ -274,7 +277,8 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
                             Expanded(
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.baseline,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
                                     height: 40,
@@ -293,27 +297,35 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
                                       SizedBox(
                                         height: 3,
                                       ),
-                                      FDottedLine(
-                                        corner: FDottedLineCorner(
-                                            leftTopCorner: 5,
-                                            leftBottomCorner: 5,
-                                            rightBottomCorner: 5,
-                                            rightTopCorner: 5),
-                                        child: Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(10, 2, 10, 2),
-                                          child: Text(
-                                            offersResponse
-                                                .offers[index].couponCode,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey),
+                                      GestureDetector(
+                                        child: FDottedLine(
+                                          corner: FDottedLineCorner(
+                                              leftTopCorner: 5,
+                                              leftBottomCorner: 5,
+                                              rightBottomCorner: 5,
+                                              rightTopCorner: 5),
+                                          child: Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                10, 2, 10, 2),
+                                            child: Text(
+                                              offersResponse
+                                                  .offers[index].couponCode,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.grey),
+                                            ),
                                           ),
+                                          color: yellowColor,
+                                          strokeWidth: 1.0,
+                                          dottedLength: 2.0,
+                                          space: 2.0,
                                         ),
-                                        color: yellowColor,
-                                        strokeWidth: 1.0,
-                                        dottedLength: 2.0,
-                                        space: 2.0,
+                                        onTap: () {
+                                          Clipboard.setData(new ClipboardData(
+                                              text: offersResponse.offers[index].couponCode));
+                                          Utils.showToast(
+                                              "Coupon code ${offersResponse.offers[index].couponCode} copied to clipboard!", false);
+                                        },
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(right: 5),
@@ -380,4 +392,3 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
     );
   }
 }
-

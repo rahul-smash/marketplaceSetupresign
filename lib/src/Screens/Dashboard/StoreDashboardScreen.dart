@@ -55,20 +55,13 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   void initState() {
     super.initState();
     isStoreClosed = false;
+    Utils.hideProgressDialog(context);
     getCategoryApi();
     listenEvent();
     try {
       AppConstant.placeholderUrl = store.banner300200;
       if (store.banner300200.isNotEmpty) {
         imgList = [NetworkImage(store.banner300200)];
-      } else {
-        for (var i = 0; i < store.banners.length; i++) {
-          String imageUrl = store.banners[i].image;
-//          imgList.add(
-//            NetworkImage(
-//                imageUrl.isEmpty ? AppConstant.placeholderImageUrl : imageUrl),
-//          );
-        }
       }
     } catch (e) {
       print(e);
@@ -204,32 +197,33 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   Widget addBanners() {
     return Stack(
       children: <Widget>[
-        imgList.isNotEmpty?
-        Center(
-          child: SizedBox(
-            height: 150.0,
-            width: Utils.getDeviceWidth(context),
-            child: Carousel(
-              boxFit: BoxFit.cover,
-              autoplay: true,
-              animationCurve: Curves.ease,
-              autoplayDuration: Duration(milliseconds: 5000),
-              animationDuration: Duration(milliseconds: 3000),
-              dotSize: 6.0,
-              dotIncreasedColor: dotIncreasedColor,
-              dotBgColor: Colors.transparent,
-              dotPosition: DotPosition.bottomCenter,
-              dotVerticalPadding: 10.0,
-              showIndicator: imgList.length == 1 ? false : true,
-              indicatorBgPadding: 7.0,
-              images: imgList,
-              onImageTap: (position) {},
-            ),
-          ),
-        ):Container(
-          height: 150.0,
-          width: Utils.getDeviceWidth(context),
-        ),
+        imgList.isNotEmpty
+            ? Center(
+                child: SizedBox(
+                  height: 150.0,
+                  width: Utils.getDeviceWidth(context),
+                  child: Carousel(
+                    boxFit: BoxFit.cover,
+                    autoplay: true,
+                    animationCurve: Curves.ease,
+                    autoplayDuration: Duration(milliseconds: 5000),
+                    animationDuration: Duration(milliseconds: 3000),
+                    dotSize: 6.0,
+                    dotIncreasedColor: dotIncreasedColor,
+                    dotBgColor: Colors.transparent,
+                    dotPosition: DotPosition.bottomCenter,
+                    dotVerticalPadding: 10.0,
+                    showIndicator: imgList.length == 1 ? false : true,
+                    indicatorBgPadding: 7.0,
+                    images: imgList,
+                    onImageTap: (position) {},
+                  ),
+                ),
+              )
+            : Container(
+                height: 150.0,
+                width: Utils.getDeviceWidth(context),
+              ),
         Container(
           margin: EdgeInsets.only(top: 80),
           width: Utils.getDeviceWidth(context),
@@ -508,9 +502,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       }
       if ((categoryResponse.categories != null &&
           categoryResponse.categories.length == 0)) {
-        products.add(Container(margin: EdgeInsets.only(top: 30),
-          child: Utils.getEmptyView2("No Categories available"),)
-            );
+        products.add(Container(
+          margin: EdgeInsets.only(top: 30),
+          child: Utils.getEmptyView2("No Categories available"),
+        ));
       }
     }
   }

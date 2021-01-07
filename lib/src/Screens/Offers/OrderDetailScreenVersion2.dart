@@ -341,7 +341,12 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                         border: Border.all(color: Color(0xFFE1E1E1), width: 1),
                         borderRadius: BorderRadius.circular(5.0),
                       ),
-                      child: Column(
+                      child:  InkWell(
+                        onTap: () {
+                          if (_ratingPackaging == 0)
+                            orderRatebottomSheet(context, '2');
+                        },child:
+                      Column(
                         children: [
                           ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
@@ -357,12 +362,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400),
                           ),
-                          InkWell(
-                            onTap: () {
-                              if (_ratingPackaging == 0)
-                                orderRatebottomSheet(context, '2');
-                            },
-                            child: RatingBar(
+                            RatingBar(
                               initialRating: _ratingPackaging,
                               minRating: 0,
                               itemSize: 24,
@@ -379,10 +379,10 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                               onRatingUpdate: (rating) {
                                 _ratingPackaging = rating;
                               },
-                            ),
+
                           ),
                         ],
-                      ),
+                      )),
                     )),
                     SizedBox(
                       width: 10,
@@ -394,7 +394,12 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                         border: Border.all(color: Color(0xFFE1E1E1), width: 1),
                         borderRadius: BorderRadius.circular(5.0),
                       ),
-                      child: Column(
+                      child:  InkWell(
+                        onTap: () {
+                          if (_ratingHygiene == 0)
+                            orderRatebottomSheet(context, '1');
+                        },child:
+                      Column(
                         children: [
                           ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
@@ -410,12 +415,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400),
                           ),
-                          InkWell(
-                            onTap: () {
-                              if (_ratingHygiene == 0)
-                                orderRatebottomSheet(context, '1');
-                            },
-                            child: RatingBar(
+                          RatingBar(
                               initialRating: _ratingHygiene,
                               minRating: 0,
                               itemSize: 24,
@@ -433,9 +433,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                 _ratingHygiene = rating;
                               },
                             ),
-                          ),
                         ],
-                      ),
+                      )),
                     )),
                   ],
                 ),
@@ -1530,7 +1529,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             widget.orderHistoryData.status == '5' || widget.orderHistoryData.status == '8'
         ? Colors.black
         : grayLightColorSecondary;
-    Color orderReadyForPickUp = widget.orderHistoryData.status == '1' ||
+    Color orderReadyForPickUp =
             widget.orderHistoryData.status == '4' ||
             widget.orderHistoryData.status == '5'|| widget.orderHistoryData.status == '8'
         ? Colors.black
@@ -1554,7 +1553,6 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
         ? 100
         : 0;
     double orderReadyForPickUpProgress =
-        widget.orderHistoryData.status == '1' ||
                 widget.orderHistoryData.status == '4' ||
                 widget.orderHistoryData.status == '5' ||
                 widget.orderHistoryData.status == '8'

@@ -73,8 +73,6 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
     _drawerItems.add(DrawerChildItem(
         DrawerChildConstants.MY_PROFILE, "images/myprofile.png"));
     _drawerItems.add(DrawerChildItem(
-        DrawerChildConstants.Categories, "images/unselectedcategoryicon.png"));
-    _drawerItems.add(DrawerChildItem(
         DrawerChildConstants.DELIVERY_ADDRESS, "images/deliveryaddress.png"));
     _drawerItems
         .add(DrawerChildItem(DrawerChildConstants.Cart, "images/carticon.png"));

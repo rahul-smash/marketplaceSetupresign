@@ -302,18 +302,23 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       Coordinates coordinates = new Coordinates(latitude, longitude);
       var addresses =
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
-      var first = addresses.first;
-      //print("--addresses-${addresses} and ${first}");
-      print(
-          "----------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
+      if(addresses.isNotEmpty){
+        var first = addresses.first;
+        //print("--addresses-${addresses} and ${first}");
+        print(
+            "----------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
 
-      this.zipCode = "${first.postalCode}";
+        this.zipCode = "${first.postalCode}";
 
-      setState(() {
-        address = first.addressLine;
-        cityController.text = first.locality;
-        stateController.text = first.adminArea;
-      });
+        setState(() {
+          address = first.addressLine;
+          cityController.text = first.locality;
+          stateController.text = first.adminArea;
+        });
+      }else{
+        address = "No address found!";
+      }
+
     } catch (e) {
       print(e);
       address = "No address found!";

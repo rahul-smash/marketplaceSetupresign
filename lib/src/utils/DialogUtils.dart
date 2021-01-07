@@ -1554,7 +1554,7 @@ class DialogUtils {
                                   padding: EdgeInsets.fromLTRB(5, 0, 10, 0),
                                   child: Container(
                                     child: FlatButton(
-                                      child: Text('Procced'),
+                                      child: Text('Proceed'),
                                       color: appThemeSecondary,
                                       textColor: Colors.white,
                                       onPressed: () {
