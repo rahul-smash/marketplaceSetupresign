@@ -211,6 +211,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             key: _key,
             appBar: getAppBar(),
             body: _newBody(),
+            drawerEnableOpenDragGesture: false,
             drawer: NavDrawerMenu(store, user == null ? "" : user.fullName, () {
               FocusScope.of(context).unfocus();
               _controller.text = "";
@@ -243,14 +244,15 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                 break;
               case HomeScreenEnum.HOME_BAND_VIEW:
               default:
-              DateTime now = DateTime.now();
-              if (currentBackPressTime == null ||
-                  now.difference(currentBackPressTime) > Duration(seconds: 2)) {
-                currentBackPressTime = now;
-                Utils.showToast( 'Please click BACK again to exit',false);
-                return Future.value(false);
-              }
-              return Future.value(true);
+                DateTime now = DateTime.now();
+                if (currentBackPressTime == null ||
+                    now.difference(currentBackPressTime) >
+                        Duration(seconds: 2)) {
+                  currentBackPressTime = now;
+                  Utils.showToast('Please click BACK again to exit', false);
+                  return Future.value(false);
+                }
+                return Future.value(true);
                 return new Future(() => true);
             }
           },
@@ -662,8 +664,11 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         onSelectNotification: onSelectNotification);
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        '${appName}', '${appName}', '${appName}',style: AndroidNotificationStyle.BigText,
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+        '${appName}', '${appName}', '${appName}',
+        style: AndroidNotificationStyle.BigText,
+        importance: Importance.Max,
+        priority: Priority.High,
+        ticker: 'ticker');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
@@ -1040,7 +1045,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                               side: BorderSide(color: appTheme)),
                           onPressed: () async {
                             widget.initialPosition = localSelectedLocation;
-                            locationAddress=localAddress;
+                            locationAddress = localAddress;
                             eventBus.fire(
                                 onLocationChanged(widget.initialPosition));
                             Navigator.pop(context);
@@ -1142,7 +1147,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                     }
                   },
                   child: Visibility(
-                    visible: _selectedHomeScreen==HomeScreenEnum.HOME_BAND_VIEW,
+                    visible:
+                        _selectedHomeScreen == HomeScreenEnum.HOME_BAND_VIEW,
                     child: Row(
                       children: [
                         SizedBox(
