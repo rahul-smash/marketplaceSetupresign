@@ -66,6 +66,8 @@ dependencies:
   flutter_facebook_login: ^3.0.0
   google_sign_in: ^4.5.6
   scrollable_positioned_list: ^0.1.8
+  app_settings: ^4.0.4
+  apple_sign_in: ^0.1.0
 
 dev_dependencies:
   flutter_test:

@@ -19,9 +19,11 @@ class ProfileScreen extends StatefulWidget {
   String fullName = "";
   FacebookModel fbModel;
   GoogleSignInAccount googleResult;
+  bool isAppleLogin=false;
+  String appleMail="";
 
   ProfileScreen(this.isComingFromOtpScreen, this.id, String fullName,
-      this.fbModel,this.googleResult);
+      this.fbModel,this.googleResult,{this.isAppleLogin,this.appleMail});
 
   @override
   _ProfileState createState() => new _ProfileState();
@@ -102,6 +104,13 @@ class _ProfileState extends State<ProfileScreen> {
         isPhonereadOnly = false;
         isLoginViaSocial = true;
       }
+      if(widget.isAppleLogin){
+        print("----------widget.isAppleLogin != null---------");
+        firstNameController.text = widget.fullName;
+        emailController.text = widget.appleMail;
+        isPhonereadOnly = false;
+        isLoginViaSocial = true;
+      }
 
       if (isLoginViaSocial) {
         if(widget.fbModel != null){
@@ -110,6 +119,10 @@ class _ProfileState extends State<ProfileScreen> {
           }
         }else if(widget.googleResult != null){
           if(widget.googleResult.email.isEmpty){
+            isEmailEditable = false;
+          }
+        }else if(widget.isAppleLogin){
+          if(widget.appleMail.isEmpty){
             isEmailEditable = false;
           }
         }
@@ -346,7 +359,7 @@ class _ProfileState extends State<ProfileScreen> {
           emailController.text.trim(),
           phoneController.text.trim(),
           referCodeController.text.trim(),
-          gstCodeController.text.trim()
+          gstCodeController.text.trim(),appleLogin: widget.isAppleLogin?'apple':''
         );
 
         UserModel user = UserModel();
