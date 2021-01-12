@@ -56,14 +56,15 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
           double.parse(widget.addressData.lng));
       selectedLocation = LatLng(double.parse(widget.addressData.lat),
           double.parse(widget.addressData.lng));
-      address = widget.addressData.address;
+      address = widget.addressData.address2;
       cityController.text = widget.addressData.city.trim();
       stateController.text = widget.addressData.state.trim();
       firstNameController.text = widget.addressData.firstName.trim();
       lastNameController.text = widget.addressData.lastName.trim();
       mobileController.text = widget.addressData.mobile.trim();
       emailController.text = widget.addressData.email.trim();
-      _selectedTag=widget.addressData.addressType.trim();
+      addressController.text = widget.addressData.address.trim();
+      _selectedTag = widget.addressData.addressType.trim();
       //_mapController.moveCamera(CameraUpdate.newLatLng(center));
     } else {
       //new address adding
@@ -222,7 +223,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                                   padding: EdgeInsets.only(left: 5, right: 5),
                                   height: 30,
                                   decoration: BoxDecoration(
-                                    color: _selectedTag.toLowerCase() == tag.toLowerCase()
+                                    color: _selectedTag.toLowerCase() ==
+                                            tag.toLowerCase()
                                         ? webThemeCategoryOpenColor
                                         : grey2,
                                     borderRadius: BorderRadius.circular(4),
@@ -233,7 +235,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                                       tag,
                                       style: TextStyle(
                                           fontSize: 16,
-                                          color: _selectedTag.toLowerCase() == tag.toLowerCase()
+                                          color: _selectedTag.toLowerCase() ==
+                                                  tag.toLowerCase()
                                               ? appTheme
                                               : Colors.black),
                                     ),
@@ -302,7 +305,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       Coordinates coordinates = new Coordinates(latitude, longitude);
       var addresses =
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
-      if(addresses.isNotEmpty){
+      if (addresses.isNotEmpty) {
         var first = addresses.first;
         //print("--addresses-${addresses} and ${first}");
         print(
@@ -315,10 +318,9 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
           cityController.text = first.locality;
           stateController.text = first.adminArea;
         });
-      }else{
+      } else {
         address = "No address found!";
       }
-
     } catch (e) {
       print(e);
       address = "No address found!";
@@ -349,6 +351,12 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
         return;
       }
     }
+    if (addressController.text.trim().isNotEmpty) {
+      if (!Utils.validateEmail(emailController.text.trim())) {
+        Utils.showToast("Please enter address", true);
+        return;
+      }
+    }
 
     Utils.showProgressDialog(context);
     ApiController.saveDeliveryAddressApiRequest(
@@ -357,14 +365,15 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
             "${lastNameController.text.trim()}",
             "${mobileController.text.trim()}",
             "${emailController.text.trim()}",
-            "${address}",
+            "${addressController.text.trim()}",
             "${cityController.text.trim()}",
             "${stateController.text.trim()}",
             "${zipCode}",
             "${selectedLocation.latitude}",
             "${selectedLocation.longitude}",
             _selectedTag,
-            "${widget.addressData == null ? '' : widget.addressData.id}")
+            "${widget.addressData == null ? '' : widget.addressData.id}",
+            address2: "${address}")
         .then((response) {
       Utils.hideProgressDialog(context);
       if (response != null && response.success) {
@@ -499,7 +508,6 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
     getAddressFromLocationFromMap(double latitude, double longitude,
         {StateSetter setState}) async {
       try {
-
         localCenter = LatLng(latitude, longitude);
         localSelectedLocation = LatLng(latitude, longitude);
         Coordinates coordinates = new Coordinates(latitude, longitude);
@@ -597,9 +605,9 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
 //                                    detail.result.geometry.location.lat;
 //                                double lng =
 //                                    detail.result.geometry.location.lng;
-                              LatLng detail=result;
-                              double lat=detail.latitude;
-                              double lng=detail.longitude;
+                                LatLng detail = result;
+                                double lat = detail.latitude;
+                                double lng = detail.longitude;
                                 print("location = ${lat},${lng}");
 
                                 localCenter = LatLng(lat, lng);
@@ -680,7 +688,6 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                               markers.clear();
                             }
                             setState(() {
-
                               markers.add(Marker(
                                   draggable: true,
                                   icon: BitmapDescriptor.defaultMarker,
@@ -720,8 +727,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                               borderRadius: new BorderRadius.circular(25.0),
                               side: BorderSide(color: appTheme)),
                           onPressed: () async {
-                            this.center=localCenter;
-                            this.selectedLocation=localSelectedLocation;
+                            this.center = localCenter;
+                            this.selectedLocation = localSelectedLocation;
                             getAddressFromLocation(
                                 localCenter.latitude, localCenter.longitude);
                             Navigator.pop(context);
