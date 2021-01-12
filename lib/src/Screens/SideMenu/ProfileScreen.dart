@@ -370,7 +370,7 @@ class _ProfileState extends State<ProfileScreen> {
         SharedPrefs.saveUser(user);
 
         Utils.hideProgressDialog(context);
-        Navigator.pop(context);
+        Navigator.of(context).popUntil((route) => route.isFirst);
 
       }else{
         ApiController.updateProfileRequest(
@@ -392,14 +392,14 @@ class _ProfileState extends State<ProfileScreen> {
               Utils.showToast(response.message, true);
               SharedPrefs.saveUserMobile(user);
               SharedPrefs.setUserLoggedIn(true);
-              Navigator.pop(context);
+              Navigator.of(context).popUntil((route) => route.isFirst);
             } else {
               user.fullName = firstNameController.text.trim();
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();
               Utils.showToast(response.message, true);
               SharedPrefs.saveUserMobile(user);
-              Navigator.pop(context);
+              Navigator.of(context).popUntil((route) => route.isFirst);
             }
           } else {
             Utils.showToast(response.message, true);
