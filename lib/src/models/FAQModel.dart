@@ -11,7 +11,9 @@ class FaqModel {
   });
 
   bool success;
-  Data data;
+
+//  Data data;
+  List<Datum> data;
 
   FaqModel copyWith({
     bool success,
@@ -29,7 +31,10 @@ class FaqModel {
 
   factory FaqModel.fromJson(Map<String, dynamic> json) => FaqModel(
         success: json["success"] == null ? null : json["success"],
-        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+        data: json["data"] == null
+            ? null
+            : List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+//        data: json["data"] == null ? null : Data.fromJson(json["data"]),
       );
 
 //  Map<String, dynamic> toJson() => {
@@ -53,7 +58,7 @@ class Data {
     List<String> keysList = List();
     json.keys;
     keysList.add("All");
-    List<FAQCategory> allFaq=List();
+    List<FAQCategory> allFaq = List();
     for (String jsonKey in json.keys) {
       keysList.add(jsonKey);
 
@@ -64,7 +69,7 @@ class Data {
       allFaq.addAll(json[jsonKey] == null
           ? null
           : List<FAQCategory>.from(
-          json[jsonKey].map((x) => FAQCategory.fromJson(x))));
+              json[jsonKey].map((x) => FAQCategory.fromJson(x))));
 
       faqCategoriesList.putIfAbsent(jsonKey, () => delivery);
     }
@@ -72,7 +77,58 @@ class Data {
 
     return Data(keysList, faqCategoriesList);
   }
+}
 
+class Datum {
+  Datum({
+    this.id,
+    this.question,
+    this.answer,
+    this.category,
+    this.modified,
+  });
+
+  String id;
+  String question;
+  String answer;
+  String category;
+  DateTime modified;
+
+  Datum copyWith({
+    String id,
+    String question,
+    String answer,
+    String category,
+    DateTime modified,
+  }) =>
+      Datum(
+        id: id ?? this.id,
+        question: question ?? this.question,
+        answer: answer ?? this.answer,
+        category: category ?? this.category,
+        modified: modified ?? this.modified,
+      );
+
+  factory Datum.fromRawJson(String str) => Datum.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+        id: json["id"] == null ? null : json["id"],
+        question: json["question"] == null ? null : json["question"],
+        answer: json["answer"] == null ? null : json["answer"],
+        category: json["category"] == null ? null : json["category"],
+        modified:
+            json["modified"] == null ? null : DateTime.parse(json["modified"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id == null ? null : id,
+        "question": question == null ? null : question,
+        "answer": answer == null ? null : answer,
+        "category": category == null ? null : category,
+        "modified": modified == null ? null : modified.toIso8601String(),
+      };
 }
 
 class FAQCategory {

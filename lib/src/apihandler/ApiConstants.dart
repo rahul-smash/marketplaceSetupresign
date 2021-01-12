@@ -54,7 +54,7 @@ class ApiConstants{
 
   static String createPaytmTxnToken = 'createPaytmTxnToken';
 
-  static String faqs = 'faqs';
+  static String faqs = '/faqs';
   static String allNotifications = 'allNotifications';
 
 

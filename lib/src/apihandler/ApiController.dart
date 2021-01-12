@@ -1686,21 +1686,21 @@ class ApiController {
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
     try {
       if (isNetworkAvailable) {
-        StoreModel store = await SharedPrefs.getStore();
+//        StoreModel store = await SharedPrefs.getStore();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String deviceId = prefs.getString(AppConstant.deviceId);
         String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-        var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+        var url = ApiConstants.baseUrl3.replaceAll("storeId", 'static_pages') +
             ApiConstants.faqs;
-        var request = new http.MultipartRequest("POST", Uri.parse(url));
-
-        request.fields.addAll({
-          "method": "POST",
-          "device_id": deviceId,
-          "device_token": deviceToken,
-          "platform": Platform.isIOS ? "IOS" : "Android"
-        });
+        var request = new http.MultipartRequest("GET", Uri.parse(url));
+//
+//        request.fields.addAll({
+//          "method": "POST",
+//          "device_id": deviceId,
+//          "device_token": deviceToken,
+//          "platform": Platform.isIOS ? "IOS" : "Android"
+//        });
         print("${url}");
         final response =
             await request.send().timeout(Duration(seconds: timeout));
