@@ -33,7 +33,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 
 import 'AdditionalInformation.dart';
-import 'AdditionalInformations.dart';
 import 'LoyalityPoints.dart';
 import 'ProfileScreen.dart';
 
