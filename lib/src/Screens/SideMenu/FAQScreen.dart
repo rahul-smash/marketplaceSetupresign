@@ -4,11 +4,12 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class FAQScreen extends StatefulWidget {
-  StoreModel store;
+  BrandData store;
   FaqModel faqData;
   List<FAQCategory> faqCategoryList = List();
   String faqSelectedCategory;

@@ -28,7 +28,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   String aboutUs, aboutUsBanner="";
 
-  @override
+//  @override
   void initState() {
     super.initState();
     try {
@@ -78,26 +78,26 @@ class _AboutScreenState extends State<AboutScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-//                Container(
-//                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-//                  child: FlatButton(
-//                    child: Text('Contact Us'),
-//                    color: appThemeSecondary,
-//                    textColor: Colors.white,
-//                    onPressed: () {
-//                      //Navigator.pop(context, false);
-//                      if (AppConstant.isLoggedIn) {
-//                        Navigator.push(
-//                          context,
-//                          MaterialPageRoute(builder: (context) => ContactUs()),
-//                        );
-//                      }else{
-//                        Utils.showToast(AppConstant.pleaseLogin, true);
-//                      }
-//
-//                    },
-//                  ),
-//                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                  child: FlatButton(
+                    child: Text('Contact Us'),
+                    color: appThemeSecondary,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      //Navigator.pop(context, false);
+                      if (AppConstant.isLoggedIn) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ContactUs()),
+                        );
+                      }else{
+                        Utils.showToast(AppConstant.pleaseLogin, true);
+                      }
+
+                    },
+                  ),
+                ),
 //                Container(
 //                  margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
 //                  child: FlatButton(

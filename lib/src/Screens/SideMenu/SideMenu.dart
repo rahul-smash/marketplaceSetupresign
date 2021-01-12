@@ -32,6 +32,8 @@ import 'package:restroapp/src/utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 
+import 'AdditionalInformation.dart';
+import 'AdditionalInformations.dart';
 import 'LoyalityPoints.dart';
 import 'ProfileScreen.dart';
 
@@ -90,6 +92,8 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
             ? DrawerChildConstants.ReferEarn
             : DrawerChildConstants.SHARE,
         "images/refer.png"));
+    _drawerItems.add(DrawerChildItem(
+        DrawerChildConstants.ADDITION_INFORMATION, "images/about.png"));
 //    _drawerItems
 //        .add(DrawerChildItem(DrawerChildConstants.FAQ, "images/about.png"));
     _drawerItems
@@ -307,6 +311,18 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
         attributeMap["ScreenName"] = "AboutScreen";
         Utils.sendAnalyticsEvent("Clicked AboutScreen", attributeMap);
+        break;
+
+      case DrawerChildConstants.ADDITION_INFORMATION:
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AdditionalInformation(widget.brandData)),
+        );
+        Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+        attributeMap["ScreenName"] = "AdditionalInformation";
+        Utils.sendAnalyticsEvent("Clicked AdditionalInformation", attributeMap);
         break;
       case DrawerChildConstants.ReferEarn:
       case DrawerChildConstants.SHARE:
