@@ -45,6 +45,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
 
   ScrollController _scrollController;
   GlobalKey tagskey;
+
   StoresModel allStoreData;
 
   @override
@@ -229,7 +230,8 @@ class _SearchScreenState extends BaseState<SearchScreen> {
           "lst": widget.initialPosition.latitude,
           "lng": widget.initialPosition.latitude,
           "search_by": "Keyword",
-          "keyward": "${controller.text}",
+//          "keyward": "${controller.text}",
+          "keyward": "all",
         };
         ApiController.getAllStores(params: data).then((storesResponse) {
           Utils.hideProgressDialog(context);
@@ -256,10 +258,17 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                   ? Utils.getEmptyView2("No Result Found")
                   : ListView.builder(
                       shrinkWrap: true,
-                      itemCount: allStoreData.data.length,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: allStoreData.data.length+allStoreData.dishes.length,
                       itemBuilder: (context, index) {
-                        StoreData storeDataObj = allStoreData.data[index];
-                        return RestroCardItem(storeDataObj, widget.callback,widget.initialPosition);
+                        if(index<allStoreData.data.length){
+                          StoreData storeDataObj = allStoreData.data[index];
+                          return RestroCardItem(storeDataObj, widget.callback,widget.initialPosition);
+                        }else{
+                          Dish dish=allStoreData.dishes[index];
+                          return DishTileItem(dish, callback, classType)
+                        }
+                       
                       },
                     ),
         ],
