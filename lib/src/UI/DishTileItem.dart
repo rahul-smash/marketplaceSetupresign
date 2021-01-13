@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:restroapp/src/apihandler/ApiController.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
@@ -13,13 +16,12 @@ import 'package:html/parser.dart';
 
 class DishTileItem extends StatefulWidget {
   Dish dish;
-  VoidCallback callback;
-  ClassType classType;
-  CustomCallback favCallback;
+  CustomCallback callback;
   List<String> tagsList = List();
+  LatLng initialPosition;
 
-  DishTileItem(this.dish, this.callback, this.classType,
-      {this.favCallback});
+
+  DishTileItem(this.dish, this.callback, this.initialPosition,);
 
   @override
   _DishTileItemState createState() => _DishTileItemState();
@@ -52,7 +54,18 @@ class _DishTileItemState extends State<DishTileItem> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         InkWell(
           onTap: () async {
-
+            bool isNetworkAvailable = await Utils.isNetworkAvailable();
+            if (!isNetworkAvailable) {
+              Utils.showToast("No Internet connection", false);
+              return;
+            }
+            Utils.showProgressDialog(context);
+            ApiController.getStoreVersionData(widget.dish.storeId).then((response) {
+              Utils.hideProgressDialog(context);
+              Utils.hideKeyboard(context);
+              StoreDataModel storeObject = response;
+              widget.callback(value: storeObject);
+            });
           },
           child: Padding(
               padding: EdgeInsets.only(top: 0, bottom: 15),
@@ -98,29 +111,6 @@ class _DishTileItemState extends State<DishTileItem> {
                                                 imageUrl: "${imageUrl}",
                                                 fit: BoxFit.cover),
                                           ))),
-                                  Visibility(
-                                    visible: (discount == "0.00" ||
-                                        discount == "0" ||
-                                        discount == "0.0")
-                                        ? false
-                                        : true,
-                                    child: Container(
-                                      child: Text(
-                                        "${discount.contains(".00") ? discount.replaceAll(".00", "") : discount}% OFF",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 10.0),
-                                      ),
-                                      margin: EdgeInsets.only(left: 0),
-                                      padding: EdgeInsets.all(5),
-                                      decoration: new BoxDecoration(
-                                        shape: BoxShape.rectangle,
-                                        color: yellow,
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(15.0),
-                                            bottomRight: Radius.circular(15.0)),
-                                      ),
-                                    ),
-                                  ),
                                 ],
                               ),
                             ),

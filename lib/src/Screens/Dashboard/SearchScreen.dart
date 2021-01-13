@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/UI/CartBottomView.dart';
+import 'package:restroapp/src/UI/DishTileItem.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
 import 'package:restroapp/src/UI/RestroCardItem.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
@@ -259,14 +260,15 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: allStoreData.data.length+allStoreData.dishes.length,
+                      itemCount: allStoreData.dishes.length+allStoreData.data.length,
                       itemBuilder: (context, index) {
-                        if(index<allStoreData.data.length){
-                          StoreData storeDataObj = allStoreData.data[index];
-                          return RestroCardItem(storeDataObj, widget.callback,widget.initialPosition);
-                        }else{
+                        if(index<allStoreData.dishes.length){
                           Dish dish=allStoreData.dishes[index];
-                          return DishTileItem(dish, callback, classType)
+                          return DishTileItem(dish, widget.callback, widget.initialPosition);
+                        }else{
+                          StoreData storeDataObj = allStoreData.data[index-allStoreData.dishes.length];
+                          return RestroCardItem(storeDataObj, widget.callback,widget.initialPosition);
+
                         }
                        
                       },
