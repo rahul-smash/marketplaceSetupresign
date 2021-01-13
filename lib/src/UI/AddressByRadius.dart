@@ -351,7 +351,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
         return;
       }
     }
-    if (addressController.text.trim().isNotEmpty) {
+    if (addressController.text.trim().isEmpty) {
       if (!Utils.validateEmail(emailController.text.trim())) {
         Utils.showToast("Please enter address", true);
         return;
