@@ -6,6 +6,7 @@ import 'package:restroapp/src/UI/CartBottomView.dart';
 import 'package:restroapp/src/UI/DishTileItem.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
 import 'package:restroapp/src/UI/RestroCardItem.dart';
+import 'package:restroapp/src/UI/RestroSearchItemCard.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/SearchTagsModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
@@ -48,6 +49,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
   GlobalKey tagskey;
 
   StoresModel allStoreData;
+  List<dynamic> itemList = List();
 
   @override
   void initState() {
@@ -59,7 +61,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
     tagskey = GlobalKey();
     eventBus.on<onLocationChanged>().listen((event) {
       setState(() {
-       widget.initialPosition=event.latLng;
+        widget.initialPosition = event.latLng;
       });
     });
   }
@@ -239,6 +241,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
           Utils.hideKeyboard(context);
           if (storesResponse != null) {
             allStoreData = storesResponse;
+            _generalizedList();
             setState(() {});
           }
         });
@@ -260,21 +263,64 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: allStoreData.dishes.length+allStoreData.data.length,
+                      itemCount: itemList.length,
                       itemBuilder: (context, index) {
-                        if(index<allStoreData.dishes.length){
-                          Dish dish=allStoreData.dishes[index];
-                          return DishTileItem(dish, widget.callback, widget.initialPosition);
-                        }else{
-                          StoreData storeDataObj = allStoreData.data[index-allStoreData.dishes.length];
-                          return RestroCardItem(storeDataObj, widget.callback,widget.initialPosition);
-
+                        if (itemList[index] is StoreData) {
+                          StoreData storeDataObj = itemList[index];
+                          return RestroSearchItemCard(storeDataObj,
+                              widget.callback, widget.initialPosition);
+                        } else if (itemList[index] is Dish) {
+                          Dish dish = itemList[index];
+                          return DishTileItem(
+                              dish, widget.callback, widget.initialPosition);
+                        } else {
+                          return itemList[index];
                         }
-                       
                       },
                     ),
         ],
       ),
     );
+  }
+
+  _generalizedList() {
+    if (allStoreData != null) {
+      if (allStoreData.data.isNotEmpty) {
+        itemList.add(Padding(
+          padding: EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "Categories",
+                style: TextStyle(
+                    color: staticHomeDescriptionColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ));
+        itemList.addAll(allStoreData.data);
+      }
+      if (allStoreData.dishes.isNotEmpty) {
+        itemList.add(Padding(
+          padding: EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "Dish",
+                style: TextStyle(
+                    color: staticHomeDescriptionColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ));
+        itemList.addAll(allStoreData.dishes);
+      }
+    }
   }
 }

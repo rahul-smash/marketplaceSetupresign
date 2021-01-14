@@ -77,7 +77,7 @@ class RestroCardItem extends StatelessWidget {
                               topLeft: Radius.circular(5)),
                           image: storeDataObj.image.isEmpty
                               ? DecorationImage(
-                                  image: AssetImage('images/img1.png'),
+                                  image: AssetImage('images/img_placeholder.jpg'),
                                   fit: BoxFit.cover,
                                 )
                               : null,

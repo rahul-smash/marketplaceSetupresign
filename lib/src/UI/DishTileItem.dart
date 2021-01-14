@@ -81,13 +81,7 @@ class _DishTileItemState extends State<DishTileItem> {
                               padding: EdgeInsets.only(top: 0),
                               child: Stack(
                                 children: <Widget>[
-                                  imageUrl == ""
-                                      ? Container(
-                                    width: 75.0,
-                                    height: 75.0,
-                                    child: Utils.getImgPlaceHolder(),
-                                  )
-                                      : Padding(
+                                  Padding(
                                       padding: EdgeInsets.only(
                                           left: 7, right: 20, top: 5),
                                       child: Container(
@@ -107,9 +101,13 @@ class _DishTileItemState extends State<DishTileItem> {
                                           child: ClipRRect(
                                             borderRadius:
                                             BorderRadius.circular(5.0),
-                                            child: CachedNetworkImage(
+                                            child: imageUrl.isNotEmpty?
+                                            CachedNetworkImage(
                                                 imageUrl: "${imageUrl}",
-                                                fit: BoxFit.cover),
+                                                fit: BoxFit.cover):Image.asset(
+                                            'images/img_placeholder.jpg',
+                                            fit: BoxFit.cover,
+                                          ),
                                           ))),
                                 ],
                               ),
@@ -225,7 +223,7 @@ class _DishTileItemState extends State<DishTileItem> {
                   ])),
         ),
         Container(
-            height: 5,
+            height: 1,
             width: MediaQuery.of(context).size.width,
             color: listingBorderColor)
       ]),
