@@ -339,7 +339,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           return;
         }
         Map<String, dynamic> data = {
-          "lst": widget.initialPosition.latitude,
+          "lat": widget.initialPosition.latitude,
           "lng": widget.initialPosition.latitude,
           "search_by": "category",
           "id": "${store.banners[position].categoryId}",
@@ -1307,16 +1307,16 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                 Flexible(
                   child: TextField(
                     textInputAction: TextInputAction.search,
-                    onSubmitted: (value) {
+                    onSubmitted: (value) async {
                       if (value.trim().isEmpty) {
                         Utils.showToast(
                             "Please enter some valid keyword", false);
                       } else {
                         Map<String, dynamic> data = {
-                          "lst": widget.initialPosition.latitude,
+                          "lat": widget.initialPosition.latitude,
                           "lng": widget.initialPosition.latitude,
                           "search_by": "Keyword",
-                          "keyward": "${value}",
+                          "keyword": "${value.trim()}",
                         };
                         Utils.showProgressDialog(context);
                         ApiController.getAllStores(params: data)
@@ -1324,11 +1324,18 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                           Utils.hideProgressDialog(context);
                           Utils.hideKeyboard(context);
                           if (storesResponse != null) {
+                            if (!storesResponse.success &&
+                                storesResponse.dishes != null &&
+                                storesResponse.dishes.isEmpty) {
+                              Utils.showToast("No results Found", false);
+                              return;
+                            }
                             allStoreData = storesResponse;
                             setState(() {
                               _selectedHomeScreen =
                                   HomeScreenEnum.HOME_SEARCH_VIEW;
                             });
+                            eventBus.fire(onHomeSearch(allStoreData));
                           }
                         });
                         //callSearchAPI();
@@ -1430,9 +1437,36 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     );
   }
 
+  Widget _getSearchList() {
+    return HomeSearchView(
+      allStoreData,
+      initialPosition: widget.initialPosition,
+      tagsModel: tagsModel,
+      selectedScreen: _selectedHomeScreen,
+      callback: <Object>({value}) {
+        setState(() {
+          if (value == null) {
+            Utils.showToast('No Data found', false);
+            return;
+          }
+          if (value is StoreDataModel) {
+            setState(() {
+              _selectedSingleStore = value;
+              _previousSelectedHomeScreen = _selectedHomeScreen;
+              _selectedHomeScreen = HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+            });
+            return;
+          }
+        });
+        return;
+      },
+    );
+    ;
+  }
+
   Widget _getMiddleView() {
     return (_selectedHomeScreen == HomeScreenEnum.HOME_SEARCH_VIEW)
-        ? Expanded(child: _getRestaurantList())
+        ? Expanded(child: _getSearchList())
         : Expanded(
             child: SingleChildScrollView(
             controller: controller,

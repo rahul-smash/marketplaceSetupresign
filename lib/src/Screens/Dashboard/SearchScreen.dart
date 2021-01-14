@@ -232,10 +232,10 @@ class _SearchScreenState extends BaseState<SearchScreen> {
         Utils.showProgressDialog(context);
 
         Map<String, dynamic> data = {
-          "lst": widget.initialPosition.latitude,
+          "lat": widget.initialPosition.latitude,
           "lng": widget.initialPosition.latitude,
           "search_by": "Keyword",
-          "keyward": "${controller.text}",
+          "keyword": "${controller.text}",
 //          "keyward": "all",
         };
         ApiController.getAllStores(params: data).then((storesResponse) {

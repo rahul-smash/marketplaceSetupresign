@@ -21,7 +21,7 @@ class StoresModel {
 
   factory StoresModel.fromJson(Map<String, dynamic> json) => StoresModel(
     success: json["success"],
-    data: List<StoreData>.from(json["data"].map((x) => StoreData.fromJson(x))),
+    data: json["data"] == null ? null :List<StoreData>.from(json["data"].map((x) => StoreData.fromJson(x))),
     dishes: json["dishes"] == null ? null : List<Dish>.from(json["dishes"].map((x) => Dish.fromJson(x))),
   );
 
@@ -110,6 +110,7 @@ class StoreData {
 class Dish {
   Dish({
     this.title,
+    this.id,
     this.image,
     this.storeId,
     this.subCategory,
@@ -121,6 +122,7 @@ class Dish {
   });
 
   String title;
+  String id;
   String image;
   String storeId;
   String subCategory;
@@ -132,6 +134,7 @@ class Dish {
 
   Dish copyWith({
     String title,
+    String id,
     String image,
     String storeId,
     String subCategory,
@@ -143,6 +146,7 @@ class Dish {
   }) =>
       Dish(
         title: title ?? this.title,
+        id: id ?? this.id,
         image: image ?? this.image,
         storeId: storeId ?? this.storeId,
         subCategory: subCategory ?? this.subCategory,
@@ -159,6 +163,7 @@ class Dish {
 
   factory Dish.fromJson(Map<String, dynamic> json) => Dish(
     title: json["title"] == null ? null : json["title"],
+    id: json["id"] == null ? null : json["id"],
     image: json["image"] == null ? null : json["image"],
     storeId: json["store_id"] == null ? null : json["store_id"],
     subCategory: json["sub_category"] == null ? null : json["sub_category"],
@@ -171,6 +176,7 @@ class Dish {
 
   Map<String, dynamic> toJson() => {
     "title": title == null ? null : title,
+    "id": id == null ? null : id,
     "image": image == null ? null : image,
     "store_id": storeId == null ? null : storeId,
     "sub_category": subCategory == null ? null : subCategory,

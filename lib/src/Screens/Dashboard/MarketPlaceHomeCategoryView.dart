@@ -136,7 +136,7 @@ class _MarketPlaceHomeCategoryViewState
                                       return;
                                     }
                                     Map<String, dynamic> data = {
-                                      "lst": widget.initialPosition.latitude,
+                                      "lat": widget.initialPosition.latitude,
                                       "lng": widget.initialPosition.latitude,
                                       "search_by": "category",
                                       "id": "${model.id}",
@@ -226,7 +226,7 @@ class _MarketPlaceHomeCategoryViewState
                                       return;
                                     }
                                     Map<String, dynamic> data = {
-                                      "lst": widget.initialPosition.latitude,
+                                      "lat": widget.initialPosition.latitude,
                                       "lng": widget.initialPosition.latitude,
                                       "filter_by": tagsList[index].value,
                                     };
@@ -393,7 +393,7 @@ class _MarketPlaceHomeCategoryViewState
                                     return;
                                   }
                                   Map<String, dynamic> data = {
-                                    "lst": widget.initialPosition.latitude,
+                                    "lat": widget.initialPosition.latitude,
                                     "lng": widget.initialPosition.latitude,
                                   };
                                   Utils.showProgressDialog(context);
@@ -469,7 +469,7 @@ class _MarketPlaceHomeCategoryViewState
                 return;
               }
               Map<String, dynamic> data = {
-                "lst": widget.initialPosition.latitude,
+                "lat": widget.initialPosition.latitude,
                 "lng": widget.initialPosition.latitude,
                 "search_by": "tag",
                 "id": "${tagObject.id}",

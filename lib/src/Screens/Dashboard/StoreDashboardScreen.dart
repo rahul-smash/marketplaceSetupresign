@@ -223,6 +223,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
             : Container(
                 height: 150.0,
                 width: Utils.getDeviceWidth(context),
+                child: Image.asset(
+                  'images/img_placeholder.jpg',
+                  fit: BoxFit.cover,
+                ),
               ),
         Container(
           margin: EdgeInsets.only(top: 80),
@@ -510,22 +514,30 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           }
           setState(() {});
         }
-        if (isInit && store.dish != null) {
-          for (int i = 0; i < products.length; i++) {
-            if (products[i] is SubCategoryModel) {
-              SubCategoryModel subCategory = products[i];
-              if (subCategory.id == store.dish.subCategoryId) {
-                _id = subCategory.id;
-                break;
-              }
-            }
-          }
-          Future.delayed(Duration(microseconds: 1200), () {
-            _scrollControllers.scrollTo(
-                index: int.parse(subCathashMap[_id]),
-                duration: Duration(milliseconds: 400));
-          });
-        }
+//        if (isInit && store.dish != null) {
+//          for (int i = 0; i < products.length; i++) {
+////            if (products[i] is SubCategoryModel) {
+////              SubCategoryModel subCategory = products[i];
+////              if (subCategory.id == store.dish.subCategoryId) {
+////                _id = subCategory.id;
+////                break;
+////              }
+////            }
+//            if (products[i] is Product) {
+//              Product product = products[i];
+//
+//
+//              if (product.id.contains(store.dish.id)) {
+//                _id = i as String;
+//                break;
+//              }
+//            }
+//          }
+////          Future.delayed(Duration(microseconds: 1200), () {
+////            _scrollControllers.scrollTo(
+////                index: int.parse(_id), duration: Duration(milliseconds: 400));
+////          });
+//        }
       });
       eventBus.fire(OnProductTileDbRefresh());
     } else {
