@@ -51,6 +51,8 @@ class _SearchScreenState extends BaseState<SearchScreen> {
   StoresModel allStoreData;
   List<dynamic> itemList = List();
 
+  bool visibleAllRestro = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -241,6 +243,8 @@ class _SearchScreenState extends BaseState<SearchScreen> {
           Utils.hideKeyboard(context);
           if (storesResponse != null) {
             allStoreData = storesResponse;
+            itemList.clear();
+            visibleAllRestro = false;
             _generalizedList();
             setState(() {});
           }
@@ -287,34 +291,58 @@ class _SearchScreenState extends BaseState<SearchScreen> {
     if (allStoreData != null) {
       if (allStoreData.data.isNotEmpty) {
         itemList.add(Padding(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                "Categories",
+                "Restaurants",
                 style: TextStyle(
-                    color: staticHomeDescriptionColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
+                  fontSize: 18.0,
+                  color: productHeadingColor,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
+              Visibility(child:  InkWell(
+                child: Text(
+                  "View all restaurant",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    decoration: TextDecoration.underline,
+                    color: appThemeSecondary,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                onTap: () {
+                  visibleAllRestro = !visibleAllRestro;
+                  itemList.clear();
+                  _generalizedList();
+                },
+              ), visible: allStoreData.data.length>2,),
+
             ],
           ),
         ));
-        itemList.addAll(allStoreData.data);
+        itemList.addAll(
+            allStoreData.data.length<2?
+            allStoreData.data :
+            visibleAllRestro
+            ? allStoreData.data
+            : allStoreData.data.sublist(0, 2));
       }
       if (allStoreData.dishes.isNotEmpty) {
         itemList.add(Padding(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                "Dish",
+                "Dishes",
                 style: TextStyle(
-                    color: staticHomeDescriptionColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
+                  fontSize: 18.0,
+                  color: productHeadingColor,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ],
           ),
