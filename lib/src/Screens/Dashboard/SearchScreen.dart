@@ -235,8 +235,8 @@ class _SearchScreenState extends BaseState<SearchScreen> {
           "lst": widget.initialPosition.latitude,
           "lng": widget.initialPosition.latitude,
           "search_by": "Keyword",
-//          "keyward": "${controller.text}",
-          "keyward": "all",
+          "keyward": "${controller.text}",
+//          "keyward": "all",
         };
         ApiController.getAllStores(params: data).then((storesResponse) {
           Utils.hideProgressDialog(context);
@@ -300,35 +300,41 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                 style: TextStyle(
                   fontSize: 18.0,
                   color: productHeadingColor,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
-              Visibility(child:  InkWell(
-                child: Text(
-                  "View all restaurant",
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    decoration: TextDecoration.underline,
-                    color: appThemeSecondary,
-                    fontWeight: FontWeight.w400,
+              Visibility(
+                child: InkWell(
+                  child: Text(
+                    visibleAllRestro
+                        ? "Hide all restaurant"
+                        : "View all restaurant",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      decoration: TextDecoration.underline,
+                      color: appThemeSecondary,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
-                ),
-                onTap: () {
-                  visibleAllRestro = !visibleAllRestro;
-                  itemList.clear();
-                  _generalizedList();
-                },
-              ), visible: allStoreData.data.length>2,),
+                  onTap: () {
+                    visibleAllRestro = !visibleAllRestro;
+                    itemList.clear();
+                    _generalizedList();
+                    setState(() {
 
+                    });
+                  },
+                ),
+                visible: allStoreData.data.length > 2,
+              ),
             ],
           ),
         ));
-        itemList.addAll(
-            allStoreData.data.length<2?
-            allStoreData.data :
-            visibleAllRestro
-            ? allStoreData.data
-            : allStoreData.data.sublist(0, 2));
+        itemList.addAll(allStoreData.data.length > 2
+            ? visibleAllRestro
+                ? allStoreData.data
+                : allStoreData.data.sublist(0, 2)
+            : allStoreData.data);
       }
       if (allStoreData.dishes.isNotEmpty) {
         itemList.add(Padding(
