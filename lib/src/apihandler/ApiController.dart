@@ -21,6 +21,7 @@ import 'package:restroapp/src/models/DeliveryTimeSlotModel.dart';
 import 'package:restroapp/src/models/DeviceInfo.dart';
 import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
+import 'package:restroapp/src/models/HtmlModelResponse.dart';
 import 'package:restroapp/src/models/LoyalityPointsModel.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/NotificationResponseModel.dart';
@@ -1007,18 +1008,16 @@ class ApiController {
   }
 
   static Future<ResponseModel> setStoreQuery(String queryString) async {
-    StoreModel store = await SharedPrefs.getStore();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", 'static_pages/') +
         ApiConstants.setStoreQuery;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
       request.fields.addAll({
-        "store_id": store.id,
         "device_id": deviceId,
         "device_token": deviceToken,
         "platform": Platform.isIOS ? "IOS" : "Android",
@@ -1589,7 +1588,7 @@ class ApiController {
   }
 
   static Future<LoyalityPointsModel> getLoyalityPointsApiRequest() async {
-    StoreDataObj store = await SharedPrefs.getStoreData();
+//    StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
 
     var url = ApiConstants.baseUrl3.replaceAll("storeId", "0") +
@@ -1687,21 +1686,21 @@ class ApiController {
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
     try {
       if (isNetworkAvailable) {
-        StoreModel store = await SharedPrefs.getStore();
+//        StoreModel store = await SharedPrefs.getStore();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String deviceId = prefs.getString(AppConstant.deviceId);
         String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-        var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+        var url = ApiConstants.baseUrl3.replaceAll("storeId", 'static_pages') +
             ApiConstants.faqs;
-        var request = new http.MultipartRequest("POST", Uri.parse(url));
-
-        request.fields.addAll({
-          "method": "POST",
-          "device_id": deviceId,
-          "device_token": deviceToken,
-          "platform": Platform.isIOS ? "IOS" : "Android"
-        });
+        var request = new http.MultipartRequest("GET", Uri.parse(url));
+//
+//        request.fields.addAll({
+//          "method": "POST",
+//          "device_id": deviceId,
+//          "device_token": deviceToken,
+//          "platform": Platform.isIOS ? "IOS" : "Android"
+//        });
         print("${url}");
         final response =
             await request.send().timeout(Duration(seconds: timeout));
@@ -1940,5 +1939,55 @@ class ApiController {
       Utils.showToast(e.toString(), true);
       return null;
     }
+  }
+
+
+  static Future<HtmlModelResponse> getHtmlForOptions(
+      String appScreen) async {
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    try {
+      if (isNetworkAvailable) {
+        StoreModel store = await SharedPrefs.getStore();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String deviceId = prefs.getString(AppConstant.deviceId);
+        String deviceToken = prefs.getString(AppConstant.deviceToken);
+        var url='';
+        switch (appScreen) {
+          case AdditionItemsConstants.TERMS_CONDITIONS:
+            url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+                ApiConstants.termCondition;
+            break;
+          case AdditionItemsConstants.PRIVACY_POLICY:
+            url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+                ApiConstants.privacyPolicy;
+            break;
+          case AdditionItemsConstants.REFUND_POLICY:
+            url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+                ApiConstants.refundPolicy;
+            break;
+        }
+        var request = new http.MultipartRequest("POST", Uri.parse(url));
+        request.fields.addAll({
+          "method": "GET",
+          "device_id": deviceId,
+          "device_token": deviceToken,
+          "platform": Platform.isIOS ? "IOS" : "Android"
+        });
+        print("${url}");
+        final response =
+        await request.send().timeout(Duration(seconds: timeout));
+        final respStr = await response.stream.bytesToString();
+        print("${respStr}");
+        final parsed = json.decode(respStr);
+        HtmlModelResponse model =
+        HtmlModelResponse.fromJson(parsed);
+        return model;
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 }

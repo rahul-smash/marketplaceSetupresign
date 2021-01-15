@@ -54,7 +54,7 @@ class ApiConstants{
 
   static String createPaytmTxnToken = 'createPaytmTxnToken';
 
-  static String faqs = 'faqs';
+  static String faqs = '/faqs';
   static String allNotifications = 'allNotifications';
 
 
@@ -66,6 +66,9 @@ class ApiConstants{
   static final String delivrey = "Delievery";
   static final String pickup = "PickUP";
   static final String dine = "dine";
+  static String termCondition = 'getHtmlPages/term_condition';
+  static String privacyPolicy = 'getHtmlPages/privacy_policy';
+  static String refundPolicy = 'getHtmlPages/refund_policy';
 
 
   static String otp = 'verifyOtp';
