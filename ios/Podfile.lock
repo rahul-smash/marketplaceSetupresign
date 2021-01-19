@@ -1,9 +1,13 @@
 PODS:
+  - "app_settings (3.0.0+1)":
+    - Flutter
   - AppAuth (1.4.0):
     - AppAuth/Core (= 1.4.0)
     - AppAuth/ExternalUserAgent (= 1.4.0)
   - AppAuth/Core (1.4.0)
   - AppAuth/ExternalUserAgent (1.4.0)
+  - apple_sign_in (0.0.1):
+    - Flutter
   - compressimage (0.0.1):
     - Flutter
   - connectivity (0.0.1):
@@ -191,6 +195,8 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_settings (from `.symlinks/plugins/app_settings/ios`)
+  - apple_sign_in (from `.symlinks/plugins/apple_sign_in/ios`)
   - compressimage (from `.symlinks/plugins/compressimage/ios`)
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
@@ -249,6 +255,10 @@ SPEC REPOS:
     - Reachability
 
 EXTERNAL SOURCES:
+  app_settings:
+    :path: ".symlinks/plugins/app_settings/ios"
+  apple_sign_in:
+    :path: ".symlinks/plugins/apple_sign_in/ios"
   compressimage:
     :path: ".symlinks/plugins/compressimage/ios"
   connectivity:
@@ -307,7 +317,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
+  app_settings: d103828c9f5d515c4df9ee754dabd443f7cedcf3
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
+  apple_sign_in: 7716c7ddfa195aeab7dec0dc374ef4ff45d1adb4
   compressimage: 4f597b00f6e66bdc43d0aec5f0b9e415f3b03bbd
   connectivity: 6e94255659cc86dcbef1d452ad3e0491bb1b3e75
   Crashlytics: 9220f5bc89e7a618df411b4f639389dbfb0e03d2
