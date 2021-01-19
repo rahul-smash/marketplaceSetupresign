@@ -359,7 +359,8 @@ class _MarketPlaceHomeCategoryViewState
                         children: _getQuickLinksItem()),
                 widget.storeData == null
                     ? Utils.showIndicator()
-                    : Padding(
+                    :   widget.storeData !=null&&widget.storeData.data!=null&&widget.storeData.data.isNotEmpty?
+                Padding(
                         padding: EdgeInsets.fromLTRB(10, 15, 10, 5),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -410,7 +411,7 @@ class _MarketPlaceHomeCategoryViewState
                             ),
                           ],
                         ),
-                      ),
+                      ):Container(),
                 widget.storeData == null ? Container() : getProductsWidget()
               ],
             )),
@@ -426,6 +427,7 @@ class _MarketPlaceHomeCategoryViewState
           height: 0,
           width: MediaQuery.of(context).size.width,
         ),
+        widget.storeData.data!=null&&widget.storeData.data.isNotEmpty?
         ListView(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -442,7 +444,7 @@ class _MarketPlaceHomeCategoryViewState
               },
             ),
           ],
-        ),
+        ):Container(),
         Container(
           height: 20,
           width: MediaQuery.of(context).size.width,

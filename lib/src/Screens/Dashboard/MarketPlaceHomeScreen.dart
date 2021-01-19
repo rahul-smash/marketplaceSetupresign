@@ -1049,6 +1049,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                             eventBus.fire(
                                 onLocationChanged(widget.initialPosition));
                             Navigator.pop(context);
+                            //ReloadApi
+                            _getStoreApi();
                           },
                           color: appTheme,
                           padding: EdgeInsets.all(5.0),
