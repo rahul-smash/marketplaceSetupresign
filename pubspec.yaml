@@ -178,6 +178,7 @@ flutter:
     - images/removeimg.png
     - images/hygiene.png
     - images/packaging.png
+    - images/img_placeholder.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

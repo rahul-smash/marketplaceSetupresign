@@ -23,6 +23,10 @@ class updateCartCount {
 class onCartRemoved {
   onCartRemoved();
 }
+class onHomeSearch {
+  StoresModel allStoreData;
+  onHomeSearch(this.allStoreData);
+}
 class openHome {
   openHome();
 }

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/UI/CartBottomView.dart';
+import 'package:restroapp/src/UI/DishTileItem.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
 import 'package:restroapp/src/UI/RestroCardItem.dart';
+import 'package:restroapp/src/UI/RestroSearchItemCard.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/SearchTagsModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
@@ -45,7 +47,11 @@ class _SearchScreenState extends BaseState<SearchScreen> {
 
   ScrollController _scrollController;
   GlobalKey tagskey;
+
   StoresModel allStoreData;
+  List<dynamic> itemList = List();
+
+  bool visibleAllRestro = false;
 
   @override
   void initState() {
@@ -57,7 +63,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
     tagskey = GlobalKey();
     eventBus.on<onLocationChanged>().listen((event) {
       setState(() {
-       widget.initialPosition=event.latLng;
+        widget.initialPosition = event.latLng;
       });
     });
   }
@@ -226,16 +232,20 @@ class _SearchScreenState extends BaseState<SearchScreen> {
         Utils.showProgressDialog(context);
 
         Map<String, dynamic> data = {
-          "lst": widget.initialPosition.latitude,
+          "lat": widget.initialPosition.latitude,
           "lng": widget.initialPosition.latitude,
           "search_by": "Keyword",
-          "keyward": "${controller.text}",
+          "keyword": "${controller.text}",
+//          "keyward": "all",
         };
         ApiController.getAllStores(params: data).then((storesResponse) {
           Utils.hideProgressDialog(context);
           Utils.hideKeyboard(context);
           if (storesResponse != null) {
             allStoreData = storesResponse;
+            itemList.clear();
+            visibleAllRestro = false;
+            _generalizedList();
             setState(() {});
           }
         });
@@ -256,14 +266,95 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                   ? Utils.getEmptyView2("No Result Found")
                   : ListView.builder(
                       shrinkWrap: true,
-                      itemCount: allStoreData.data.length,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: itemList.length,
                       itemBuilder: (context, index) {
-                        StoreData storeDataObj = allStoreData.data[index];
-                        return RestroCardItem(storeDataObj, widget.callback,widget.initialPosition);
+                        if (itemList[index] is StoreData) {
+                          StoreData storeDataObj = itemList[index];
+                          return RestroSearchItemCard(storeDataObj,
+                              widget.callback, widget.initialPosition);
+                        } else if (itemList[index] is Dish) {
+                          Dish dish = itemList[index];
+                          return DishTileItem(
+                              dish, widget.callback, widget.initialPosition);
+                        } else {
+                          return itemList[index];
+                        }
                       },
                     ),
         ],
       ),
     );
+  }
+
+  _generalizedList() {
+    if (allStoreData != null) {
+      if (allStoreData.data.isNotEmpty) {
+        itemList.add(Padding(
+          padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "Restaurants",
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: productHeadingColor,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Visibility(
+                child: InkWell(
+                  child: Text(
+                    visibleAllRestro
+                        ? "Hide all restaurant"
+                        : "View all restaurant",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      decoration: TextDecoration.underline,
+                      color: appThemeSecondary,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  onTap: () {
+                    visibleAllRestro = !visibleAllRestro;
+                    itemList.clear();
+                    _generalizedList();
+                    setState(() {
+
+                    });
+                  },
+                ),
+                visible: allStoreData.data.length > 2,
+              ),
+            ],
+          ),
+        ));
+        itemList.addAll(allStoreData.data.length > 2
+            ? visibleAllRestro
+                ? allStoreData.data
+                : allStoreData.data.sublist(0, 2)
+            : allStoreData.data);
+      }
+      if (allStoreData.dishes.isNotEmpty) {
+        itemList.add(Padding(
+          padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "Dishes",
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: productHeadingColor,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ));
+        itemList.addAll(allStoreData.dishes);
+      }
+    }
   }
 }

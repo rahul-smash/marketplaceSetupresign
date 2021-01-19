@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:restroapp/src/models/StoresModel.dart';
+
 class StoreDataModel {
   StoreDataModel({
     this.success,
@@ -197,6 +199,8 @@ class StoreDataObj {
   String banner10080;
   String banner300200;
   String repeatOrder;
+  //optional
+  Dish dish;
 
   StoreDataObj copyWith({
     String id,

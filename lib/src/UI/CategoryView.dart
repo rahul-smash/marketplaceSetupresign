@@ -50,10 +50,10 @@ class CategoryView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0)),
                 height: (Utils.getDeviceWidth(context) / 5) - 3,
                 margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
-                child: categoryModel.image300200.isNotEmpty
-                    ? ClipRRect(
+                child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
-                  child: CachedNetworkImage(
+                  child:  categoryModel.image300200.isNotEmpty?
+                  CachedNetworkImage(
                     imageUrl: "${categoryModel.image300200}",
                     width: (Utils.getDeviceWidth(context) / 4),
                     fit: BoxFit.cover,
@@ -62,16 +62,12 @@ class CategoryView extends StatelessWidget {
                       print('image error ${url}');
                       return Container();
                     },
+                  ): Image.asset(
+                    'images/img_placeholder.jpg',
+                    fit: BoxFit.cover,
                   ),
                 )
-                    : Padding(
-                  padding:
-                  EdgeInsets.all(_isCategoryViewSelected() ? 4 : 0),
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.0))),
-                )),
+                    ),
             Padding(
 //              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
               padding: EdgeInsets.only(top: 10.0),

@@ -223,6 +223,10 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
             : Container(
                 height: 150.0,
                 width: Utils.getDeviceWidth(context),
+                child: Image.asset(
+                  'images/img_placeholder.jpg',
+                  fit: BoxFit.cover,
+                ),
               ),
         Container(
           margin: EdgeInsets.only(top: 80),
@@ -295,7 +299,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
         if (categoryResponse == null) {
           return;
         }
-        getHomeCategoryProductApi();
+        getHomeCategoryProductApi(isInit: true);
       });
     });
   }
@@ -376,7 +380,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
 
   HashMap subCathashMap = new HashMap<String, String>();
 
-  void getHomeCategoryProductApi() {
+  void getHomeCategoryProductApi({bool isInit = false}) async {
     subCategoryResponse = null;
     products.clear();
     if (categoryResponse != null &&
@@ -391,7 +395,22 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       } else {
         selectedSubCategoryId = subCategoryId;
       }
-
+      //check dish from search
+      if (isInit && store.dish != null) {
+        for (int i = 0; i < categoryResponse.categories.length; i++) {
+          if (categoryResponse.categories[i].id == store.dish.categoryId) {
+            selectedCategory = categoryResponse.categories[i];
+            break;
+          }
+        }
+//        selectedCategory = categoryResponse.categories.length > 2
+//            ? categoryResponse.categories[2]
+//            : categoryResponse.categories.first;
+        if (selectedCategory != null) {
+          subCategoryId = selectedCategory.id;
+          selectedSubCategoryId = subCategoryId;
+        }
+      }
       products.add(addBanners());
       products.add(categoryResponse != null &&
               categoryResponse.categories.isNotEmpty
@@ -402,6 +421,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                   margin: EdgeInsets.only(left: 2.5),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Padding(
@@ -472,6 +492,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
               valueColor: AlwaysStoppedAnimation<Color>(Colors.black26)),
         ),
       ));
+
       ApiController.getSubCategoryProducts(subCategoryId, store: store)
           .then((response) {
         if (response != null && response.success) {
@@ -493,6 +514,30 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           }
           setState(() {});
         }
+//        if (isInit && store.dish != null) {
+//          for (int i = 0; i < products.length; i++) {
+////            if (products[i] is SubCategoryModel) {
+////              SubCategoryModel subCategory = products[i];
+////              if (subCategory.id == store.dish.subCategoryId) {
+////                _id = subCategory.id;
+////                break;
+////              }
+////            }
+//            if (products[i] is Product) {
+//              Product product = products[i];
+//
+//
+//              if (product.id.contains(store.dish.id)) {
+//                _id = i as String;
+//                break;
+//              }
+//            }
+//          }
+////          Future.delayed(Duration(microseconds: 1200), () {
+////            _scrollControllers.scrollTo(
+////                index: int.parse(_id), duration: Duration(milliseconds: 400));
+////          });
+//        }
       });
       eventBus.fire(OnProductTileDbRefresh());
     } else {
@@ -509,6 +554,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       }
     }
   }
+
+  String _id = "0";
 
   @override
   void dispose() {
