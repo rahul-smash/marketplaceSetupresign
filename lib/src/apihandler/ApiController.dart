@@ -1947,22 +1947,21 @@ class ApiController {
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
     try {
       if (isNetworkAvailable) {
-        StoreModel store = await SharedPrefs.getStore();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String deviceId = prefs.getString(AppConstant.deviceId);
         String deviceToken = prefs.getString(AppConstant.deviceToken);
         var url='';
         switch (appScreen) {
           case AdditionItemsConstants.TERMS_CONDITIONS:
-            url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+            url = ApiConstants.baseUrl3.replaceAll("storeId", "static_pages/") +
                 ApiConstants.termCondition;
             break;
           case AdditionItemsConstants.PRIVACY_POLICY:
-            url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+            url = ApiConstants.baseUrl3.replaceAll("storeId", "static_pages/") +
                 ApiConstants.privacyPolicy;
             break;
           case AdditionItemsConstants.REFUND_POLICY:
-            url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+            url = ApiConstants.baseUrl3.replaceAll("storeId", "static_pages/") +
                 ApiConstants.refundPolicy;
             break;
         }
