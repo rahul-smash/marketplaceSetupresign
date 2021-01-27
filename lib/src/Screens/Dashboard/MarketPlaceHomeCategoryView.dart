@@ -137,8 +137,12 @@ class _MarketPlaceHomeCategoryViewState
                                       return;
                                     }
                                     Map<String, dynamic> data = {
-                                      "lat":widget.initialPosition==null?'0.0': widget.initialPosition.latitude,
-                                      "lng":widget.initialPosition==null?'0.0':  widget.initialPosition.latitude,
+                                      "lat": widget.initialPosition == null
+                                          ? '0.0'
+                                          : widget.initialPosition.latitude,
+                                      "lng": widget.initialPosition == null
+                                          ? '0.0'
+                                          : widget.initialPosition.latitude,
                                       "search_by": "category",
                                       "id": "${model.id}",
                                     };
@@ -148,10 +152,11 @@ class _MarketPlaceHomeCategoryViewState
                                       Utils.hideProgressDialog(context);
                                       Utils.hideKeyboard(context);
                                       if (storesResponse != null &&
-                                          storesResponse.success){
-                                        widget.callback(value: storesResponse);}
-                                      else{
-//                                        DialogUtils.displayCartReplaceDialog(context, "${storesResponse.message}");
+                                          storesResponse.success) {
+                                        widget.callback(value: storesResponse);
+                                      } else {
+                                        DialogUtils.displayErrorDialog(context,
+                                            "${storesResponse.message}");
                                       }
                                     });
                                   },
@@ -187,7 +192,7 @@ class _MarketPlaceHomeCategoryViewState
                           },
                           child: Container(
                             margin: EdgeInsets.fromLTRB(0, 5, 0, 10),
-                            color:grayLightColor,
+                            color: grayLightColor,
                             width: Utils.getDeviceWidth(context),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -230,8 +235,12 @@ class _MarketPlaceHomeCategoryViewState
                                       return;
                                     }
                                     Map<String, dynamic> data = {
-                                      "lat": widget.initialPosition==null?'0.0':widget.initialPosition.latitude,
-                                      "lng": widget.initialPosition==null?'0.0':widget.initialPosition.latitude,
+                                      "lat": widget.initialPosition == null
+                                          ? '0.0'
+                                          : widget.initialPosition.latitude,
+                                      "lng": widget.initialPosition == null
+                                          ? '0.0'
+                                          : widget.initialPosition.latitude,
                                       "filter_by": tagsList[index].value,
                                     };
                                     Utils.showProgressDialog(context);
@@ -242,8 +251,9 @@ class _MarketPlaceHomeCategoryViewState
                                       if (storesResponse != null &&
                                           storesResponse.success) {
                                         widget.callback(value: storesResponse);
-                                      } else{
-//                                        DialogUtils.displayCartReplaceDialog(context, "${storesResponse.message}");
+                                      } else {
+                                        DialogUtils.displayErrorDialog(context,
+                                            "${storesResponse.message}");
                                       }
                                     });
                                     setState(() {
@@ -329,7 +339,8 @@ class _MarketPlaceHomeCategoryViewState
                               fontWeight: FontWeight.w400),
                         ),
                         Visibility(
-                          visible:widget.tagsModel!=null&& widget.tagsModel.data.length>8,
+                          visible: widget.tagsModel != null &&
+                              widget.tagsModel.data.length > 8,
                           child: InkWell(
                             onTap: () {
                               print("onTap =isSeeAll=${isSeeAll}");
@@ -366,66 +377,80 @@ class _MarketPlaceHomeCategoryViewState
                         children: _getQuickLinksItem()),
                 widget.storeData == null
                     ? Utils.showIndicator()
-                    :   widget.storeData !=null&&widget.storeData.data!=null&&widget.storeData.data.isNotEmpty?
-                Padding(
-                        padding: EdgeInsets.fromLTRB(10, 15, 10, 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            InkWell(
-                              child: Text(
-                                "Restaurants",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            ),
-                            Visibility(
-                              visible: true,
-                              child: InkWell(
-                                child: Text(
-                                  "View All",
-                                  style: TextStyle(
-                                      color: appThemeSecondary,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300),
+                    : widget.storeData != null &&
+                            widget.storeData.data != null &&
+                            widget.storeData.data.isNotEmpty
+                        ? Padding(
+                            padding: EdgeInsets.fromLTRB(10, 15, 10, 5),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                InkWell(
+                                  child: Text(
+                                    "Restaurants",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400),
+                                  ),
                                 ),
-                                onTap: () async {
-                                  print("onTap");
-                                  bool isNetworkAvailable =
-                                      await Utils.isNetworkAvailable();
-                                  if (!isNetworkAvailable) {
-                                    Utils.showToast(
-                                        "No Internet connection", false);
-                                    return;
-                                  }
-                                  Map<String, dynamic> data = {
-                                    "lat":widget.initialPosition==null?'0.0': widget.initialPosition.latitude,
-                                    "lng":widget.initialPosition==null?'0.0': widget.initialPosition.latitude,
-                                  };
-                                  Utils.showProgressDialog(context);
-                                  ApiController.getAllStores(params: data)
-                                      .then((storesResponse) {
-                                    Utils.hideProgressDialog(context);
-                                    Utils.hideKeyboard(context);
-                                    setState(() {
-                                      widget.callback(value: storesResponse);
-                                    });
-                                  });
-                                },
-                              ),
+                                Visibility(
+                                  visible: true,
+                                  child: InkWell(
+                                    child: Text(
+                                      "View All",
+                                      style: TextStyle(
+                                          color: appThemeSecondary,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    onTap: () async {
+                                      print("onTap");
+                                      bool isNetworkAvailable =
+                                          await Utils.isNetworkAvailable();
+                                      if (!isNetworkAvailable) {
+                                        Utils.showToast(
+                                            "No Internet connection", false);
+                                        return;
+                                      }
+                                      Map<String, dynamic> data = {
+                                        "lat": widget.initialPosition == null
+                                            ? '0.0'
+                                            : widget.initialPosition.latitude,
+                                        "lng": widget.initialPosition == null
+                                            ? '0.0'
+                                            : widget.initialPosition.latitude,
+                                      };
+                                      Utils.showProgressDialog(context);
+                                      ApiController.getAllStores(params: data)
+                                          .then((storesResponse) {
+                                        Utils.hideProgressDialog(context);
+                                        Utils.hideKeyboard(context);
+                                        if (storesResponse != null &&
+                                            storesResponse.success)
+                                          setState(() {
+                                            widget.callback(
+                                                value: storesResponse);
+                                          });
+                                        else {
+                                          DialogUtils.displayErrorDialog(
+                                              context,
+                                              "${storesResponse.message}");
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ):Container(),
+                          )
+                        : Container(),
                 widget.storeData == null ? Container() : getProductsWidget()
               ],
             )),
       ],
     );
   }
-
 
   Widget getProductsWidget() {
     return Column(
@@ -434,24 +459,25 @@ class _MarketPlaceHomeCategoryViewState
           height: 0,
           width: MediaQuery.of(context).size.width,
         ),
-        widget.storeData.data!=null&&widget.storeData.data.isNotEmpty?
-        ListView(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
-              itemCount: widget.storeData.data.length,
-              itemBuilder: (context, index) {
-                StoreData storeDataObj = widget.storeData.data[index];
-                return RestroCardItem(
-                    storeDataObj, widget.callback, widget.initialPosition);
-              },
-            ),
-          ],
-        ):Container(),
+        widget.storeData.data != null && widget.storeData.data.isNotEmpty
+            ? ListView(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemCount: widget.storeData.data.length,
+                    itemBuilder: (context, index) {
+                      StoreData storeDataObj = widget.storeData.data[index];
+                      return RestroCardItem(storeDataObj, widget.callback,
+                          widget.initialPosition);
+                    },
+                  ),
+                ],
+              )
+            : Container(),
         Container(
           height: 20,
           width: MediaQuery.of(context).size.width,
@@ -478,8 +504,12 @@ class _MarketPlaceHomeCategoryViewState
                 return;
               }
               Map<String, dynamic> data = {
-                "lat": widget.initialPosition==null?'0.0':widget.initialPosition.latitude,
-                "lng": widget.initialPosition==null?'0.0':widget.initialPosition.latitude,
+                "lat": widget.initialPosition == null
+                    ? '0.0'
+                    : widget.initialPosition.latitude,
+                "lng": widget.initialPosition == null
+                    ? '0.0'
+                    : widget.initialPosition.latitude,
                 "search_by": "tag",
                 "id": "${tagObject.id}",
               };
@@ -489,6 +519,10 @@ class _MarketPlaceHomeCategoryViewState
                 Utils.hideKeyboard(context);
                 if (storesResponse != null && storesResponse.success)
                   widget.callback(value: storesResponse);
+                else {
+                  DialogUtils.displayErrorDialog(
+                      context, "${storesResponse.message}");
+                }
               });
             },
             child: Container(

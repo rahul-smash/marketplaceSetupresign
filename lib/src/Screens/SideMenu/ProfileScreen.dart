@@ -23,7 +23,7 @@ class ProfileScreen extends StatefulWidget {
   String appleMail="";
 
   ProfileScreen(this.isComingFromOtpScreen, this.id, String fullName,
-      this.fbModel,this.googleResult,{this.isAppleLogin,this.appleMail});
+      this.fbModel,this.googleResult,{this.isAppleLogin=false,this.appleMail});
 
   @override
   _ProfileState createState() => new _ProfileState();
@@ -244,6 +244,7 @@ class _ProfileState extends State<ProfileScreen> {
                             child: TextField(
                               readOnly: isPhonereadOnly,
                               controller: phoneController,
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: 'Phone number',
                               ),

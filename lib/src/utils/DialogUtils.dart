@@ -1574,6 +1574,100 @@ class DialogUtils {
         });
   }
 
+ static Future<bool> displayErrorDialog(
+      BuildContext context, String message) async {
+    return await showDialog<bool>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return WillPopScope(
+            onWillPop: () {
+              return Future(() => false);
+            },
+            child: Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                //title: Text(title,textAlign: TextAlign.center,),
+                child: Container(
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Wrap(
+                      children: <Widget>[
+
+                        Container(
+                          margin: EdgeInsets.fromLTRB(10.0, 00.0, 10.0, 10.0),
+                          padding: EdgeInsets.all(10.0),
+                          child: new Row(
+                            children: [
+                              new Expanded(
+                                child: new Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          10.0, 0.0, 10.0, 10.0),
+                                      height: 150.0,
+                                      width: 150.0,
+                                      decoration: new BoxDecoration(
+                                        image: DecorationImage(
+                                          image: new AssetImage(
+                                            'images/removeimg.png',
+                                          ),
+                                          fit: BoxFit.scaleDown,
+                                        ),
+                                        shape: BoxShape.rectangle,
+                                      ),
+                                    ),
+                                    // Code to create the view for address.
+                                  ],
+                                ),
+                              ),
+                              // Icon to indicate the phone number.
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(30, 15, 30, 10),
+                          child: Center(
+                            child: Text(
+                              "${message}",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20, top: 20),
+                          child: Row(
+                            children: [
+
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                  child: Container(
+                                    child: FlatButton(
+                                      child: Text('Proceed'),
+                                      color: appThemeSecondary,
+                                      textColor: Colors.white,
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ))),
+          );
+        });
+  }
+
   static Future<bool> displayLocationNotAvailbleDialog(
       BuildContext context, String message,
       {Function button1, String buttonText1 = ''}) async {
