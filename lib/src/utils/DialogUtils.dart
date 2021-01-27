@@ -404,7 +404,7 @@ class DialogUtils {
                   );
                 },
               ),
-            )/*
+            ) /*
             Container(
               width: double.maxFinite,
               child: ListView.separated(
@@ -477,7 +477,8 @@ class DialogUtils {
                   );
                 },
               ),
-            )*/,
+            )*/
+            ,
             actions: <Widget>[
               new FlatButton(
                 child: new Text("Cancel"),
@@ -1574,7 +1575,8 @@ class DialogUtils {
   }
 
   static Future<bool> displayLocationNotAvailbleDialog(
-      BuildContext context, String message) async {
+      BuildContext context, String message,
+      {Function button1, String buttonText1 = ''}) async {
     return await showDialog<bool>(
         context: context,
         barrierDismissible: true,
@@ -1699,13 +1701,16 @@ class DialogUtils {
                                     borderRadius:
                                         new BorderRadius.circular(5.0),
                                     side: BorderSide(color: appTheme)),
-                                onPressed: () async {
-                                  Navigator.pop(context, true);
-                                },
+                                onPressed: button1 ??
+                                    () async {
+                                      Navigator.pop(context, true);
+                                    },
                                 color: appTheme,
                                 padding: EdgeInsets.all(5.0),
                                 textColor: Colors.white,
-                                child: Text("Change Location"),
+                                child: Text(buttonText1.isNotEmpty
+                                    ? buttonText1
+                                    : "Change Location"),
                               ),
                             ),
                           ),

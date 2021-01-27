@@ -14,6 +14,7 @@ import 'package:restroapp/src/models/TagsModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class MarketPlaceHomeCategoryView extends StatefulWidget {
@@ -136,8 +137,8 @@ class _MarketPlaceHomeCategoryViewState
                                       return;
                                     }
                                     Map<String, dynamic> data = {
-                                      "lat": widget.initialPosition.latitude,
-                                      "lng": widget.initialPosition.latitude,
+                                      "lat":widget.initialPosition==null?'0.0': widget.initialPosition.latitude,
+                                      "lng":widget.initialPosition==null?'0.0':  widget.initialPosition.latitude,
                                       "search_by": "category",
                                       "id": "${model.id}",
                                     };
@@ -147,8 +148,11 @@ class _MarketPlaceHomeCategoryViewState
                                       Utils.hideProgressDialog(context);
                                       Utils.hideKeyboard(context);
                                       if (storesResponse != null &&
-                                          storesResponse.success)
-                                        widget.callback(value: storesResponse);
+                                          storesResponse.success){
+                                        widget.callback(value: storesResponse);}
+                                      else{
+//                                        DialogUtils.displayCartReplaceDialog(context, "${storesResponse.message}");
+                                      }
                                     });
                                   },
                                   child: MarketPlaceCategoryView(
@@ -226,8 +230,8 @@ class _MarketPlaceHomeCategoryViewState
                                       return;
                                     }
                                     Map<String, dynamic> data = {
-                                      "lat": widget.initialPosition.latitude,
-                                      "lng": widget.initialPosition.latitude,
+                                      "lat": widget.initialPosition==null?'0.0':widget.initialPosition.latitude,
+                                      "lng": widget.initialPosition==null?'0.0':widget.initialPosition.latitude,
                                       "filter_by": tagsList[index].value,
                                     };
                                     Utils.showProgressDialog(context);
@@ -236,8 +240,11 @@ class _MarketPlaceHomeCategoryViewState
                                       Utils.hideProgressDialog(context);
                                       Utils.hideKeyboard(context);
                                       if (storesResponse != null &&
-                                          storesResponse.success)
+                                          storesResponse.success) {
                                         widget.callback(value: storesResponse);
+                                      } else{
+//                                        DialogUtils.displayCartReplaceDialog(context, "${storesResponse.message}");
+                                      }
                                     });
                                     setState(() {
                                       selectedFilterIndex = index;
@@ -394,8 +401,8 @@ class _MarketPlaceHomeCategoryViewState
                                     return;
                                   }
                                   Map<String, dynamic> data = {
-                                    "lat": widget.initialPosition.latitude,
-                                    "lng": widget.initialPosition.latitude,
+                                    "lat":widget.initialPosition==null?'0.0': widget.initialPosition.latitude,
+                                    "lng":widget.initialPosition==null?'0.0': widget.initialPosition.latitude,
                                   };
                                   Utils.showProgressDialog(context);
                                   ApiController.getAllStores(params: data)
@@ -471,8 +478,8 @@ class _MarketPlaceHomeCategoryViewState
                 return;
               }
               Map<String, dynamic> data = {
-                "lat": widget.initialPosition.latitude,
-                "lng": widget.initialPosition.latitude,
+                "lat": widget.initialPosition==null?'0.0':widget.initialPosition.latitude,
+                "lng": widget.initialPosition==null?'0.0':widget.initialPosition.latitude,
                 "search_by": "tag",
                 "id": "${tagObject.id}",
               };

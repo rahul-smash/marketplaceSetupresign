@@ -77,7 +77,8 @@ class RestroCardItem extends StatelessWidget {
                               topLeft: Radius.circular(5)),
                           image: storeDataObj.image.isEmpty
                               ? DecorationImage(
-                                  image: AssetImage('images/img_placeholder.jpg'),
+                                  image:
+                                      AssetImage('images/img_placeholder.jpg'),
                                   fit: BoxFit.cover,
                                 )
                               : null,
@@ -85,22 +86,23 @@ class RestroCardItem extends StatelessWidget {
                     Padding(
                         padding: EdgeInsets.only(left: 16, right: 16, top: 10),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            Expanded(
+                                child: Text(
                               '${storeDataObj.storeName}',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 18),
-                            ),
-
-                            Row(
-                              children: [
-                                Text(
+                            )),
+                            Text(
 //                                  '${storeDataObj.distance} kms',
-                                  '${_getDistance(storeDataObj)} kms',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.grey),
-                                )
-                              ],
+                              '${_getDistance(storeDataObj)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.grey),
                             ),
                           ],
                         )),
@@ -126,7 +128,7 @@ class RestroCardItem extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           color: appThemeSecondary,
                                           borderRadius:
-                                          BorderRadius.circular(5.0),
+                                              BorderRadius.circular(5.0),
                                         ),
                                         child: Padding(
                                           padding: EdgeInsets.all(3),
@@ -193,11 +195,15 @@ class RestroCardItem extends StatelessWidget {
   }
 
   _getDistance(StoreData storeDataObj) {
-    double distanceInKm = Utils.calculateDistance(
-        initialPosition.latitude,
-        initialPosition.longitude,
-        double.parse(storeDataObj.lat),
-        double.parse(storeDataObj.lng));
-    return distanceInKm.toStringAsFixed(1);
+    if(initialPosition!=null) {
+      double distanceInKm = Utils.calculateDistance(
+          initialPosition.latitude,
+          initialPosition.longitude,
+          double.parse(storeDataObj.lat),
+          double.parse(storeDataObj.lng));
+      return distanceInKm.toStringAsFixed(1)+ ' kms';
+    }else{
+      return '';
+    }
   }
 }

@@ -30,8 +30,8 @@ class _AdditionalInformationState extends State<AdditionalInformation> {
         AdditionItemsConstants.PRIVACY_POLICY, "images/about_image.png"));
     _drawerItems.add(AdditionChildItem(
         AdditionItemsConstants.REFUND_POLICY, "images/about_image.png"));
-//    _drawerItems.add(AdditionChildItem(
-//        AdditionItemsConstants.ABOUT_US, "images/about_image.png"));
+    _drawerItems.add(AdditionChildItem(
+        AdditionItemsConstants.ABOUT_US, "images/about_image.png"));
     _drawerItems.add(AdditionChildItem(
         AdditionItemsConstants.FAQ, "images/about_image.png"));
   }

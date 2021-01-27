@@ -236,7 +236,6 @@ class _SearchScreenState extends BaseState<SearchScreen> {
           "lng": widget.initialPosition.latitude,
           "search_by": "Keyword",
           "keyword": "${controller.text}",
-//          "keyward": "all",
         };
         ApiController.getAllStores(params: data).then((storesResponse) {
           Utils.hideProgressDialog(context);
@@ -289,7 +288,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
 
   _generalizedList() {
     if (allStoreData != null) {
-      if (allStoreData.data.isNotEmpty) {
+      if (allStoreData.data != null&&allStoreData.data.isNotEmpty) {
         itemList.add(Padding(
           padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
           child: Row(
@@ -336,7 +335,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                 : allStoreData.data.sublist(0, 2)
             : allStoreData.data);
       }
-      if (allStoreData.dishes.isNotEmpty) {
+      if (allStoreData.dishes != null&&allStoreData.dishes.isNotEmpty) {
         itemList.add(Padding(
           padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
           child: Row(

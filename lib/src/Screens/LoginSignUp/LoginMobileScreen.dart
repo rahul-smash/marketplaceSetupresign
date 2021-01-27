@@ -19,17 +19,15 @@ import 'package:restroapp/src/utils/Utils.dart';
 import 'dart:io';
 
 class LoginMobileScreen extends StatefulWidget {
-
   String menu;
+
   LoginMobileScreen(this.menu);
 
   @override
   _LoginMobileScreen createState() => _LoginMobileScreen(menu);
-
 }
 
 class _LoginMobileScreen extends State<LoginMobileScreen> {
-
   String menu;
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   LoginMobile loginMobile = new LoginMobile();
@@ -44,9 +42,13 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
   @override
   void initState() {
     super.initState();
-    store =  BrandModel.getInstance().brandVersionModel.brand;
+    store = BrandModel.getInstance().brandVersionModel.brand;
     _googleSignIn = GoogleSignIn(
-    scopes: ['email','https://www.googleapis.com/auth/contacts.readonly',],);
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
       setState(() {
         _currentUser = account;
@@ -55,7 +57,6 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
         print("id=${_currentUser.id}");
       });
     });
-
   }
 
   @override
@@ -65,9 +66,11 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         centerTitle: true,
-        title: new Text('Login',style: new TextStyle(
-          color: Colors.white,
-        ),
+        title: new Text(
+          'Login',
+          style: new TextStyle(
+            color: Colors.white,
+          ),
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
@@ -86,9 +89,15 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                 alignment: Alignment.topCenter,
                 child: Container(
                   width: Utils.getDeviceWidth(context),
-                  child: AppConstant.isRestroApp ?
-                  Image.asset("images/login_restro_bg.jpg",fit: BoxFit.fitWidth,)
-                      :Image.asset("images/login_img.jpg",fit: BoxFit.fitWidth,),
+                  child: AppConstant.isRestroApp
+                      ? Image.asset(
+                          "images/login_restro_bg.jpg",
+                          fit: BoxFit.fitWidth,
+                        )
+                      : Image.asset(
+                          "images/login_img.jpg",
+                          fit: BoxFit.fitWidth,
+                        ),
                 ),
               ),
               Align(
@@ -105,7 +114,8 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                           Container(
                               padding: EdgeInsets.only(top: 40.0),
                               child: Text(
-                                AppConstant.txt_mobile,textAlign: TextAlign.center,
+                                AppConstant.txt_mobile,
+                                textAlign: TextAlign.center,
                                 style: new TextStyle(
                                   fontSize: 16.0,
                                   color: Colors.black,
@@ -120,7 +130,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                             maxLength: 10,
                             keyboardType: TextInputType.phone,
                             validator: (val) =>
-                            val.isEmpty ? AppConstant.enterPhone : null,
+                                val.isEmpty ? AppConstant.enterPhone : null,
                             inputFormatters: [
                               WhitelistingTextInputFormatter.digitsOnly,
                             ],
@@ -129,38 +139,46 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                             },
                           ),
                           Container(
-                              padding:EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0),
+                              padding: EdgeInsets.only(
+                                  left: 0.0, top: 0.0, right: 0.0),
                               child: new RaisedButton(
                                 color: appThemeSecondary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5.0),
                                 ),
                                 textColor: Colors.white,
-                                child: Text('Submit',style: TextStyle(
-                                  color: Colors.white,
-                                ),
+                                child: Text(
+                                  'Submit',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 onPressed: _submitForm,
-                              )
-                          ),
-
+                              )),
                           Visibility(
-                            visible: store == null ? false : store.social_login == "0" ? false : true,
+                            visible:Platform.isIOS?false: store == null
+                                ? false
+                                : store.social_login == "0"
+                                    ? false
+                                    : true,
 //                            visible: false,
                             child: Container(
                               margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                               width: Utils.getDeviceWidth(context),
                               child: Center(
-                                child: Text("OR CONNECT WITH",
-                                  style: TextStyle(color: gray9),),
+                                child: Text(
+                                  "OR CONNECT WITH",
+                                  style: TextStyle(color: gray9),
+                                ),
                               ),
                             ),
                           ),
-
-
-
                           Visibility(
-                            visible: store == null ? false : store.social_login == "0" ? false : true,
+                            visible: Platform.isIOS?false: store == null
+                                ? false
+                                : store.social_login == "0"
+                                    ? false
+                                    : true,
 //                            visible: false,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -168,64 +186,79 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                                 InkWell(
                                   onTap: () async {
                                     print("------fblogin------");
-                                    bool isNetworkAvailable =await Utils.isNetworkAvailable();
-                                    if(!isNetworkAvailable){
-                                      Utils.showToast(AppConstant.noInternet, true);
+                                    bool isNetworkAvailable =
+                                        await Utils.isNetworkAvailable();
+                                    if (!isNetworkAvailable) {
+                                      Utils.showToast(
+                                          AppConstant.noInternet, true);
                                       return;
                                     }
 
-                                    bool isFbLoggedIn = await facebookSignIn.isLoggedIn;
+                                    bool isFbLoggedIn =
+                                        await facebookSignIn.isLoggedIn;
                                     print("isFbLoggedIn=${isFbLoggedIn}");
-                                    if(isFbLoggedIn){
+                                    if (isFbLoggedIn) {
                                       await facebookSignIn.logOut();
                                     }
 
                                     fblogin();
                                   },
                                   child: Container(
-                                      height: 35,
-                                      width: Utils.getDeviceWidth(context)/2.6,
+                                      width:
+                                          Utils.getDeviceWidth(context) / 2.6,
                                       margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                                      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                                       decoration: BoxDecoration(
                                           color: fbblue,
-                                          border: Border.all(color: fbblue,),
-                                          borderRadius: BorderRadius.all(Radius.circular(5))
-                                      ),
+                                          border: Border.all(
+                                            color: fbblue,
+                                          ),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5))),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Container(
-                                            margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                            child: Image.asset("images/f_logo_white.png",height: 25.0),
+                                            margin: EdgeInsets.fromLTRB(
+                                                10, 0, 10, 0),
+                                            child: Image.asset(
+                                                "images/f_logo_white.png",
+                                                height: 25.0),
                                           ),
-                                          Container(
-                                            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                            child: Text("Facebook",
-                                              style: TextStyle(color: Colors.white,fontSize: 18),),
-                                          )
+                                          Expanded(
+                                              child: Container(
+                                            margin:
+                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            child: Text(
+                                              "Facebook",
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18),
+                                            ),
+                                          ))
                                         ],
-                                      )
-                                  ),
+                                      )),
                                 ),
                                 Container(
-                                  height: 35,
-                                  width: Utils.getDeviceWidth(context)/2.6,
+//                                  height: 35,
+                                  width: Utils.getDeviceWidth(context) / 2.6,
                                   margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
                                   child: _googleSignInButton(),
                                 ),
                               ],
                             ),
-
                           ),
                           Visibility(
-                              visible: Platform.isIOS ? true : false,
+                              visible: Platform.isIOS ? false : false,
                               child: Container(
                                 height: 50,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                     color: Colors.black,
-                                    borderRadius: BorderRadius.circular(5)
-                                ),
+                                    borderRadius: BorderRadius.circular(5)),
                                 margin: EdgeInsets.only(bottom: 60),
                                 padding: EdgeInsets.all(10),
                                 child: Center(
@@ -234,50 +267,50 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                                   ),
                                 ),
                               ))
-
                         ],
                       )),
                 ),
               ),
-
             ],
           ),
         ),
       ),
-
     );
   }
 
-  Widget _googleSignInButton(){
+  Widget _googleSignInButton() {
     return OutlineButton(
       splashColor: Colors.grey,
-      onPressed: () async{
+      onPressed: () async {
         bool isNetworkAvailable = await Utils.isNetworkAvailable();
-        if(!isNetworkAvailable){
+        if (!isNetworkAvailable) {
           Utils.showToast(AppConstant.noInternet, true);
-        }else{
+        } else {
           bool isGoogleSignedIn = await _googleSignIn.isSignedIn();
           print("isGoogleSignedIn=${isGoogleSignedIn}");
-          if(isGoogleSignedIn){
+          if (isGoogleSignedIn) {
             await _googleSignIn.signOut();
           }
 
           try {
             GoogleSignInAccount result = await _googleSignIn.signIn();
-            if(result != null){
+            if (result != null) {
               print("result.id=${result.id}");
 
               Utils.showProgressDialog(context);
-              MobileVerified verifyEmailModel = await ApiController.verifyEmail(result.email);
+              MobileVerified verifyEmailModel =
+                  await ApiController.verifyEmail(result.email);
               Utils.hideProgressDialog(context);
 
-              if(verifyEmailModel.userExists == 0){
+              if (verifyEmailModel.userExists == 0) {
                 Navigator.pop(context);
-                Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen(true,"",
-                      "${result.displayName}",null,result)),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ProfileScreen(
+                          true, "", "${result.displayName}", null, result)),
                 );
-              }else if(verifyEmailModel.userExists == 1){
+              } else if (verifyEmailModel.userExists == 1) {
                 SharedPrefs.setUserLoggedIn(true);
                 SharedPrefs.saveUserMobile(verifyEmailModel.user);
                 UserModel user = UserModel();
@@ -288,11 +321,9 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                 SharedPrefs.saveUser(user);
                 Navigator.pop(context);
               }
-
-            }else{
+            } else {
 //              Utils.showToast("Something went wrong while login!", false);
             }
-
           } catch (error) {
             print("catch.googleSignIn=${error}");
           }
@@ -308,16 +339,19 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image(image: AssetImage("images/google_logo.png"), height: 25.0),
-            Padding(
+            Expanded(
+                child: Padding(
               padding: EdgeInsets.only(left: 10),
               child: Text(
                 'Google',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.grey,
                 ),
               ),
-            )
+            ))
           ],
         ),
       ),
@@ -325,26 +359,29 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
   }
 
   Future<Null> fblogin() async {
-    final FacebookLoginResult result =
-    await facebookSignIn.logIn(['email']);
+    final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
 
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         FacebookAccessToken accessToken = result.accessToken;
         Utils.showProgressDialog(context);
-        FacebookModel fbModel =  await ApiController.getFbUserData(accessToken.token);
-        if(fbModel != null){
+        FacebookModel fbModel =
+            await ApiController.getFbUserData(accessToken.token);
+        if (fbModel != null) {
           print("email=${fbModel.email} AND id=${fbModel.id}");
 
-          MobileVerified verifyEmailModel = await ApiController.verifyEmail(fbModel.email);
+          MobileVerified verifyEmailModel =
+              await ApiController.verifyEmail(fbModel.email);
           Utils.hideProgressDialog(context);
-          if(verifyEmailModel.userExists == 0){
+          if (verifyEmailModel.userExists == 0) {
             Navigator.pop(context);
-            Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ProfileScreen(true,"",
-                "${fbModel.name}",fbModel,null)),
-          );
-          }else if(verifyEmailModel.userExists == 1){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfileScreen(
+                      true, "", "${fbModel.name}", fbModel, null)),
+            );
+          } else if (verifyEmailModel.userExists == 1) {
             SharedPrefs.setUserLoggedIn(true);
             SharedPrefs.saveUserMobile(verifyEmailModel.user);
 
@@ -357,8 +394,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
 
             Navigator.pop(context);
           }
-
-        }else{
+        } else {
 //          Utils.showToast("Something went wrong while login!", false);
           Utils.hideProgressDialog(context);
         }
@@ -374,7 +410,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
   }
 
   appleLogIn() async {
-    if(await AppleSignIn.isAvailable()) {
+    if (await AppleSignIn.isAvailable()) {
       final AuthorizationResult result = await AppleSignIn.performRequests([
         AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
       ]);
@@ -386,21 +422,38 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
           print(result.credential.email);
           print(result.credential.fullName.givenName);
           print(result.credential.fullName.familyName);
-          String email =  result.credential.email ?? "";
-          String name = "${result.credential.fullName.givenName} ${result.credential.fullName.familyName}";
+          String email = result.credential.email ?? "";
+          String name =
+              "${result.credential.fullName.givenName} ${result.credential.fullName.familyName}";
 
-          if (email == ""){
+          if (email == "") {
+            email = await SharedPrefs.getappleId();
+          } else {
+            SharedPrefs.setAppleId(email);
+          }
+
+          if (email == "") {
             Utils.showToast("Email id require for sign in", false);
-          }else{
-            MobileVerified verifyEmailModel = await ApiController.verifyEmail(email);
+          } else {
+            MobileVerified verifyEmailModel =
+                await ApiController.verifyEmail(email);
             Utils.hideProgressDialog(context);
-            if(verifyEmailModel.userExists == 0){
+            if (verifyEmailModel.userExists == 0) {
               Navigator.pop(context);
-              Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ProfileScreen(true,"",
-                    "${name}",null,null,appleMail: email,isAppleLogin: true,)),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProfileScreen(
+                          true,
+                          "",
+                          "${name}",
+                          null,
+                          null,
+                          appleMail: email,
+                          isAppleLogin: true,
+                        )),
               );
-            }else if(verifyEmailModel.userExists == 1){
+            } else if (verifyEmailModel.userExists == 1) {
               SharedPrefs.setUserLoggedIn(true);
               SharedPrefs.saveUserMobile(verifyEmailModel.user);
 
@@ -413,9 +466,8 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
 
               Navigator.pop(context);
             }
-
           }
-          break;//All the required credentials
+          break; //All the required credentials
         case AuthorizationStatus.error:
           Utils.showToast(result.error.localizedDescription, false);
           break;
@@ -423,14 +475,13 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
           print('User cancelled');
           break;
       }
-    }else{
+    } else {
       Utils.showToast('Apple SignIn is not available for your device', false);
     }
   }
 
-
   void _submitForm() {
-    print('@@MENUGET'+menu);
+    print('@@MENUGET' + menu);
 
     final FormState form = _formKey.currentState;
     if (form.validate()) {
@@ -438,25 +489,27 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
       Utils.isNetworkAvailable().then((isNetworkAvailable) async {
         if (isNetworkAvailable) {
           Utils.showProgressDialog(context);
-          ApiController.mobileVerification(loginMobile) .then((response) {
-
+          ApiController.mobileVerification(loginMobile).then((response) {
             Utils.hideProgressDialog(context);
             if (response != null && response.success) {
-              print("=====otpVerify===${response.user.otpVerify}--and--${response.userExists}-----");
-              if(response.userExists == 1){
-                print('@@userExists=${response.userExists} and otpSkip = ${response.user.otpVerify}');
+              print(
+                  "=====otpVerify===${response.user.otpVerify}--and--${response.userExists}-----");
+              if (response.userExists == 1) {
+                print(
+                    '@@userExists=${response.userExists} and otpSkip = ${response.user.otpVerify}');
                 if (response.success) {
                   SharedPrefs.setUserLoggedIn(true);
                   SharedPrefs.saveUserMobile(response.user);
                 }
                 Navigator.pop(context);
-
-              }else{
+              } else {
                 //print('@@NOTP__Screen');
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => OtpScreen(menu,response,loginMobile)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          OtpScreen(menu, response, loginMobile)),
                   //    MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               }
@@ -466,7 +519,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
           Utils.showToast(AppConstant.noInternet, true);
         }
       });
-    }else{
+    } else {
       Utils.showToast("Please enter Mobile number", true);
     }
   }
@@ -475,6 +528,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
 void _showMessage(String s) {
   print("_showMessage=${s}");
 }
+
 class LoginMobile {
   String phone;
 }

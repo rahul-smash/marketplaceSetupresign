@@ -69,6 +69,19 @@ class SharedPrefs {
     return sharedUser.getBool('isLoggedIn') ?? false;
   }
 
+
+  static void setAppleId(String email) async {
+    SharedPreferences sharedUser = await SharedPreferences.getInstance();
+    sharedUser.setString('appleId', email);
+
+  }
+
+  static Future<String> getappleId() async {
+    SharedPreferences sharedUser = await SharedPreferences.getInstance();
+    return sharedUser.getBool('appleId') ?? "";
+  }
+
+
   static Future storeSharedValue(String key, String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(key, value);

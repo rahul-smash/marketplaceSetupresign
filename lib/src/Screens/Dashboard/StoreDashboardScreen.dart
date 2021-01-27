@@ -229,9 +229,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                 ),
               ),
         Container(
-          margin: EdgeInsets.only(top: 80),
+          margin: EdgeInsets.only(top: 70),
           width: Utils.getDeviceWidth(context),
-          height: 70,
+          height: 80,
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -239,53 +239,66 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
             end: Alignment.bottomCenter,
             colors: [Colors.transparent, Colors.black45],
           )),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                  child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                  store.storeName,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-              )),
-              Visibility(
-                  visible: store.rating.isNotEmpty &&
-                      store.rating != '0.0' &&
-                      store.rating != '0',
-                  child: Align(
+        ),
+        Container(
+          height: 150.0,
+          width: Utils.getDeviceWidth(context),
+          padding: EdgeInsets.all(16),
+          child: Align(
+          alignment: Alignment.bottomLeft,
+          child: Container(
+            width: Utils.getDeviceWidth(context),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                    child: Align(
                       alignment: Alignment.bottomLeft,
-                      child: Row(
-                        children: [
-                          Container(
-                              margin: EdgeInsets.only(right: 5),
-                              decoration: BoxDecoration(
-                                color: appThemeSecondary,
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Image.asset('images/staricon.png',
-                                    width: 15,
-                                    fit: BoxFit.scaleDown,
-                                    color: Colors.white),
-                              )),
-                          Text(
-                            store.rating,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ))),
-            ],
-          ),
+                      child: Text(
+                        store.storeName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )),
+                Visibility(
+                    visible: store.rating.isNotEmpty &&
+                        store.rating != '0.0' &&
+                        store.rating != '0',
+                    child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Row(
+                          children: [
+                            Container(
+                                margin: EdgeInsets.only(right: 5),
+                                decoration: BoxDecoration(
+                                  color: appThemeSecondary,
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(3),
+                                  child: Image.asset('images/staricon.png',
+                                      width: 15,
+                                      fit: BoxFit.scaleDown,
+                                      color: Colors.white),
+                                )),
+                            Text(
+                              store.rating,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ))),
+              ],
+            ),),
+        ),
         )
+
       ],
     );
   }

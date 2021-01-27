@@ -233,9 +233,13 @@ class ApiController {
   }
 
   static String getQueryParams(LatLng initialPosition) {
-    String location =
-        "?lat=${initialPosition.latitude}&lng=${initialPosition.longitude}";
-    return location;
+    if(initialPosition!=null){
+      String location =
+          "?lat=${initialPosition.latitude}&lng=${initialPosition.longitude}";
+      return location;
+    }else
+      return '';
+
   }
 
   static Future<StoresModel> storesApiRequest(LatLng initialPosition) async {

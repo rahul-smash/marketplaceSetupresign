@@ -99,6 +99,8 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
   PermissionStatus _permissionGranted;
   LocationData _locationData;
   LatLng initialPosition;
+  Timer _timer;
+  int _start = 10;
   bool userDisabledGps = false;
 
   @override
@@ -131,7 +133,10 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
           body: initialPosition == null
               ? userDisabledGps
                   ? Container(child: LocationAlertDialog())
-                  : Container()
+                  : _start < 1
+                      ? showHomeScreen(widget.storeData, widget.configObject,
+                          widget.packageInfo, initialPosition)
+                      : Container()
               : showHomeScreen(widget.storeData, widget.configObject,
                   widget.packageInfo, initialPosition),
         ),
@@ -164,18 +169,52 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
         return;
       }
     }
-    if (Platform.isAndroid) {
-      await location.changeSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 0,
-        interval: 1000,
-      );
-    }
-    _locationData = await location.getLocation();
-    initialPosition = LatLng(_locationData.latitude, _locationData.longitude);
-    setState(() {
-      print("----initialPosition----=$initialPosition");
+//    if (Platform.isAndroid) {
+    await location.changeSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 0,
+      interval: 1000,
+    );
+//    }
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      // Use current location
+      if (initialPosition == null) {
+        initialPosition =
+            LatLng(currentLocation.latitude, currentLocation.longitude);
+        setState(() {
+          print("----initialPosition----=$initialPosition");
+        });
+        if (_timer != null && _timer.isActive) {
+          _timer.cancel();
+        }
+      }
     });
+    startTimer();
+//    _locationData = await location.getLocation();
+//    initialPosition = LatLng(_locationData.latitude, _locationData.longitude);
+//    setState(() {
+//      print("----initialPosition----=$initialPosition");
+//    });
+  }
+
+  void startTimer() {
+    //print('--startTimer===  $_start');
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        //print('--periodic===  $_start');
+        setState(
+          () {
+            if (_start < 1) {
+              timer.cancel();
+            } else {
+              _start = _start - 1;
+            }
+          },
+        );
+      },
+    );
   }
 }
 
@@ -196,8 +235,13 @@ Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject,
     double currentVesrion = double.parse(version.substring(0, index1).trim());
     double apiVesrion = 1.0;
     try {
-      apiVesrion = double.parse(
-          forceDownload[0].androidAppVerison.substring(0, index1).trim());
+      if (Platform.isIOS) {
+        apiVesrion = double.parse(
+            forceDownload[0].iosAppVersion.substring(0, index1).trim());
+      } else {
+        apiVesrion = double.parse(
+            forceDownload[0].androidAppVerison.substring(0, index1).trim());
+      }
     } catch (e) {
       //print("-apiVesrion--catch--${e}----");
     }

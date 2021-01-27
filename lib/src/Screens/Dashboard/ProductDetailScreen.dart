@@ -472,9 +472,10 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
           margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
           child: showAddButton == true
               ? InkWell(
-                  onTap: () async{
-                    bool checkIfDifferentStore = await checkIfDifferentStoreInCart(widget.product);
-                    if(checkIfDifferentStore){
+                  onTap: () async {
+                    bool checkIfDifferentStore =
+                        await checkIfDifferentStoreInCart(widget.product);
+                    if (checkIfDifferentStore) {
                       return;
                     }
                     //print("add onTap");
@@ -785,13 +786,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                   ))
             ],
           )
-        : imageUrl == ""
-            ? Container(
-                child: Center(
-                  child: Utils.getImgPlaceHolder(),
-                ),
-              )
-            : Padding(
+        :Padding(
                 padding: EdgeInsets.all(0),
                 child: Container(
                   /*child: AspectRatio(
@@ -801,14 +796,21 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                   ),
                 ),*/
                   child: Center(
-                    child: CachedNetworkImage(
-                      imageUrl: "${imageUrl}",
-                      height: 280,
-                      fit: BoxFit.scaleDown,
-                      placeholder: (context, url) =>
-                          CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                    ),
+                    child: imageUrl.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: "${imageUrl}",
+                            height: 280,
+                            fit: BoxFit.scaleDown,
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
+                          )
+                        : Image.asset(
+                            'images/img_placeholder.jpg',
+                            height: 280,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ));
   }
@@ -947,27 +949,30 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
 
   Future<bool> checkIfDifferentStoreInCart(Product product) async {
     bool showInfoToEmptyCart = false;
-    List<Product> cartItemList  = await databaseHelper.getCartItemList();
+    List<Product> cartItemList = await databaseHelper.getCartItemList();
     print("count=${cartItemList.length}");
-    if(cartItemList.isEmpty){
+    if (cartItemList.isEmpty) {
       showInfoToEmptyCart = false;
-    }else{
+    } else {
       print("--storeId =>${product.storeId}");
       Product cartProduct = cartItemList[0];
-      if(cartProduct.storeId == product.storeId){
+      if (cartProduct.storeId == product.storeId) {
         // same store and do nothing 389981
         showInfoToEmptyCart = false;
-      }else{
+      } else {
         // User has selected differnt store to add in cart.
-        print("--storeName =>${product.storeName} and ${cartProduct.storeName}");
-        String msgBody = AppConstant.getCartReplaceMsg(cartProduct.storeName,product.storeName);
+        print(
+            "--storeName =>${product.storeName} and ${cartProduct.storeName}");
+        String msgBody = AppConstant.getCartReplaceMsg(
+            cartProduct.storeName, product.storeName);
 //        bool result = await DialogUtils.displayDialog(context, "Replace Cart?", "${msgBody}", "No", "Yes");
-        bool result = await DialogUtils.displayCartReplaceDialog(context, "${msgBody}");
+        bool result =
+            await DialogUtils.displayCartReplaceDialog(context, "${msgBody}");
         print("result=${result}");
-        if(result){
+        if (result) {
           await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
           showInfoToEmptyCart = false;
-        }else{
+        } else {
           showInfoToEmptyCart = true;
         }
       }

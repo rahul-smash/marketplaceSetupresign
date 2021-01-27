@@ -24,6 +24,7 @@ class DragMarkerMap extends StatefulWidget {
   _DragMarkerMapState createState() => _DragMarkerMapState();
 }
 
+
 class _DragMarkerMapState extends State<DragMarkerMap> {
   LatLng center, selectedLocation;
   final cityController = new TextEditingController();
@@ -352,10 +353,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       }
     }
     if (addressController.text.trim().isEmpty) {
-      if (!Utils.validateEmail(emailController.text.trim())) {
         Utils.showToast("Please enter address", true);
         return;
-      }
     }
 
     Utils.showProgressDialog(context);

@@ -12,21 +12,25 @@ class StoresModel {
   StoresModel({
     this.success,
     this.data,
-    this.dishes
+    this.dishes,
+    this.message
   });
 
   bool success;
   List<StoreData> data;
   List<Dish> dishes;
+  String message;
 
   factory StoresModel.fromJson(Map<String, dynamic> json) => StoresModel(
     success: json["success"],
+    message: json["message"],
     data: json["data"] == null ? null :List<StoreData>.from(json["data"].map((x) => StoreData.fromJson(x))),
     dishes: json["dishes"] == null ? null : List<Dish>.from(json["dishes"].map((x) => Dish.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "success": success,
+    "message": message,
     "data": List<dynamic>.from(data.map((x) => x.toJson())),
     "dishes": dishes == null ? null : List<dynamic>.from(dishes.map((x) => x.toJson())),
   };

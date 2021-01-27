@@ -3,9 +3,9 @@ class AppConstant {
 
   static String currency = "₹";//\u20B9
   //restro
-  static String brandID = "2";
+//  static String brandID = "2";
   //grocer
-//  static String brandID = "3";
+  static String brandID = "3";
   static String appThemeColor = "appThemeColor";
 
   static String branch_id = "branch_id";
