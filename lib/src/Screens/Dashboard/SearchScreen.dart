@@ -168,11 +168,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
               ),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                controller: _scrollController,
-                child: _getView(),
-              ),
+              child: _getView()
             )
           ],
         ),
@@ -255,40 +251,32 @@ class _SearchScreenState extends BaseState<SearchScreen> {
   }
 
   Widget _getView() {
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          allStoreData == null
-              ? Container()
-              : (allStoreData != null && allStoreData.data.isEmpty)
-                  ? Utils.getEmptyView2("No Result Found")
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: itemList.length,
-                      itemBuilder: (context, index) {
-                        if (itemList[index] is StoreData) {
-                          StoreData storeDataObj = itemList[index];
-                          return RestroSearchItemCard(storeDataObj,
-                              widget.callback, widget.initialPosition);
-                        } else if (itemList[index] is Dish) {
-                          Dish dish = itemList[index];
-                          return DishTileItem(
-                              dish, widget.callback, widget.initialPosition);
-                        } else {
-                          return itemList[index];
-                        }
-                      },
-                    ),
-        ],
-      ),
-    );
+    return allStoreData == null
+        ? Container()
+        : (allStoreData != null && itemList.isEmpty)
+            ? Utils.getEmptyView2("No Result Found")
+            : ListView.builder(
+                shrinkWrap: true,
+                itemCount: itemList.length,
+                itemBuilder: (context, index) {
+                  if (itemList[index] is StoreData) {
+                    StoreData storeDataObj = itemList[index];
+                    return RestroSearchItemCard(
+                        storeDataObj, widget.callback, widget.initialPosition);
+                  } else if (itemList[index] is Dish) {
+                    Dish dish = itemList[index];
+                    return DishTileItem(
+                        dish, widget.callback, widget.initialPosition);
+                  } else {
+                    return itemList[index];
+                  }
+                },
+              );
   }
 
   _generalizedList() {
     if (allStoreData != null) {
-      if (allStoreData.data != null&&allStoreData.data.isNotEmpty) {
+      if (allStoreData.data != null && allStoreData.data.isNotEmpty) {
         itemList.add(Padding(
           padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
           child: Row(
@@ -319,9 +307,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                     visibleAllRestro = !visibleAllRestro;
                     itemList.clear();
                     _generalizedList();
-                    setState(() {
-
-                    });
+                    setState(() {});
                   },
                 ),
                 visible: allStoreData.data.length > 2,
@@ -335,7 +321,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                 : allStoreData.data.sublist(0, 2)
             : allStoreData.data);
       }
-      if (allStoreData.dishes != null&&allStoreData.dishes.isNotEmpty) {
+      if (allStoreData.dishes != null && allStoreData.dishes.isNotEmpty) {
         itemList.add(Padding(
           padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
           child: Row(

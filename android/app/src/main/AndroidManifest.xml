@@ -14,10 +14,8 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-            android:label="Grocer MarketPlace"
-            android:icon="@mipmap/ic_launcher_grocrey">
-<!--        android:label="Restro App"-->
-<!--        android:icon="@mipmap/ic_launcher">-->
+        android:label="Restro App"
+        android:icon="@mipmap/ic_launcher">
 <!--        android:label="Grocer MarketPlace"-->
 <!--        android:icon="@mipmap/ic_launcher_grocrey">-->
         <!-- Add the following entry, with your API key -->
