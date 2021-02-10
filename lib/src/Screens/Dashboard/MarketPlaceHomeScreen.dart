@@ -362,7 +362,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         }
         Map<String, dynamic> data = {
           "lat": widget.initialPosition.latitude,
-          "lng": widget.initialPosition.latitude,
+          "lng": widget.initialPosition.longitude,
           "search_by": "category",
           "id": "${store.banners[position].categoryId}",
         };
@@ -1286,7 +1286,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                       } else {
                         Map<String, dynamic> data = {
                           "lat": widget.initialPosition.latitude,
-                          "lng": widget.initialPosition.latitude,
+                          "lng": widget.initialPosition.longitude,
                           "search_by": "Keyword",
                           "keyword": "${value.trim()}",
                         };
@@ -1478,10 +1478,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               ),
               isLoading
                   ? Center(child: CircularProgressIndicator())
-                  : categoriesModel == null
+                  : /*categoriesModel == null
                   ? Center(child: Text(""))
                   : !isCategoryViewSelected
-                  ? MarketPlaceHomeCategoryView(
+                  ? */MarketPlaceHomeCategoryView(
                 categoriesModel,
                 widget.initialPosition,
                 /*categoryResponse,*/
@@ -1520,7 +1520,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                   return;
                 },
               )
-                  : Container()
+                  /*: Container()*/
             ],
           ),
         ));
