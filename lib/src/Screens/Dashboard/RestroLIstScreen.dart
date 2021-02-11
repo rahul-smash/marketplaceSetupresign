@@ -172,7 +172,7 @@ class _RestroListScreenState extends State<RestroListScreen> {
               }
               Map<String, dynamic> data = {
                 "lat": widget.initialPosition.latitude,
-                "lng": widget.initialPosition.latitude,
+                "lng": widget.initialPosition.longitude,
                 "search_by": "tag",
                 "id": "${tagObject.id}",
               };
@@ -253,7 +253,7 @@ class _RestroListScreenState extends State<RestroListScreen> {
                 }
                 Map<String, dynamic> data = {
                   "lat": widget.initialPosition.latitude,
-                  "lng": widget.initialPosition.latitude,
+                  "lng": widget.initialPosition.longitude,
                   "filter_by": "${selectedFilter}",
                 };
                 Utils.showProgressDialog(context);

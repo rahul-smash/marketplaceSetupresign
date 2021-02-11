@@ -1526,17 +1526,26 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     Color orderPlaced = Colors.black;
     Color orderConfirmed = widget.orderHistoryData.status == '1' ||
             widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5' || widget.orderHistoryData.status == '8'
+            widget.orderHistoryData.status == '5' ||
+            widget.orderHistoryData.status == '8' ||
+            widget.orderHistoryData.status == '7'
         ? Colors.black
         : grayLightColorSecondary;
-    Color orderReadyForPickUp =
-            widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'|| widget.orderHistoryData.status == '8'
+    Color orderReadyForPickUp = widget.orderHistoryData.status == '4' ||
+            widget.orderHistoryData.status == '5' ||
+            widget.orderHistoryData.status == '8' ||
+            widget.orderHistoryData.status == '7'
         ? Colors.black
         : grayLightColorSecondary;
 
+//    Color orderOnTheWay = widget.orderHistoryData.status == '4' ||
+//            widget.orderHistoryData.status == '5' ||
+//            widget.orderHistoryData.status == '7'
+//        ? Colors.black
+//        : grayLightColorSecondary;
+
     Color orderShipped = widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'
+            widget.orderHistoryData.status == '5'||  widget.orderHistoryData.status == '7'
         ? Colors.black
         : grayLightColorSecondary;
     Color orderDelivered = widget.orderHistoryData.status == '2' ||
@@ -1549,17 +1558,25 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     double orderPlacedProgress = 100;
     double orderConfirmedProgress = widget.orderHistoryData.status == '1' ||
             widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'|| widget.orderHistoryData.status == '8'
+            widget.orderHistoryData.status == '5' ||
+            widget.orderHistoryData.status == '8' ||
+            widget.orderHistoryData.status == '7'
         ? 100
         : 0;
     double orderReadyForPickUpProgress =
-                widget.orderHistoryData.status == '4' ||
+        widget.orderHistoryData.status == '4' ||
                 widget.orderHistoryData.status == '5' ||
-                widget.orderHistoryData.status == '8'
+                widget.orderHistoryData.status == '8' ||
+                widget.orderHistoryData.status == '7'
             ? 100
             : 0;
+//    double orderOnTheWayProgress = widget.orderHistoryData.status == '4' ||
+//            widget.orderHistoryData.status == '5' ||
+//            widget.orderHistoryData.status == '7'
+//        ? 100
+//        : 0;
     double orderShippedProgress = widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'
+            widget.orderHistoryData.status == '5'||  widget.orderHistoryData.status == '7'
         ? 100
         : 0;
     double orderDeliveredProgress = widget.orderHistoryData.status == '2' ||
@@ -1710,14 +1727,60 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                     style: TextStyle(fontSize: 16, color: orderReadyForPickUp),
                   )),
                   Text(
-                    orderConfirmed == Colors.black ? 'Done' : 'Pending',
-                    style: TextStyle(color: orderConfirmed, fontSize: 16),
+                    orderReadyForPickUp == Colors.black ? 'Done' : 'Pending',
+                    style: TextStyle(color: orderReadyForPickUp, fontSize: 16),
                   )
                 ],
               )
             ],
           ),
         ),
+//        Visibility(
+//          visible: !isOrderCanceledOrRejected && !widget.orderHistoryData.orderFacility
+//        .toLowerCase()
+//        .contains('pick'),
+//          child: Stack(
+//            children: <Widget>[
+//              Container(
+//                height: 30,
+//                margin: EdgeInsets.only(
+//                  left: 4,
+//                ),
+//                width: 2,
+//                child: LinearProgressIndicator(
+//                  backgroundColor: grayLightColorSecondary,
+//                  value: orderOnTheWayProgress,
+//                  valueColor: AlwaysStoppedAnimation<Color>(appTheme),
+//                ),
+//              ),
+//              Row(
+//                children: <Widget>[
+//                  Container(
+//                    width: 10,
+//                    height: 10,
+//                    decoration: BoxDecoration(
+//                        borderRadius: BorderRadius.circular(10 / 2),
+//                        color: orderOnTheWay == Colors.black
+//                            ? appTheme
+//                            : grayLightColorSecondary),
+//                  ),
+//                  SizedBox(
+//                    width: 5,
+//                  ),
+//                  Expanded(
+//                      child: Text(
+//                    'On the way',
+//                    style: TextStyle(fontSize: 16, color: orderReadyForPickUp),
+//                  )),
+//                  Text(
+//                    orderOnTheWay == Colors.black ? 'Done' : 'Pending',
+//                    style: TextStyle(color: orderOnTheWay, fontSize: 16),
+//                  )
+//                ],
+//              )
+//            ],
+//          ),
+//        ),
         Visibility(
           visible: !isOrderCanceledOrRejected &&
               !widget.orderHistoryData.orderFacility

@@ -206,6 +206,7 @@ class ApiController {
     params.putIfAbsent("device_token", () => "${deviceToken}");
     params.putIfAbsent("platform", () => Platform.isIOS ? "IOS" : "Android");
     print("----url--${url}");
+
     try {
       FormData formData = new FormData.fromMap(params
           /*{
@@ -214,6 +215,7 @@ class ApiController {
         "platform": Platform.isIOS ? "IOS" : "Android"
       }*/
           );
+      print(formData.fields.toString());
       Dio dio = new Dio();
       Response response = await dio.post(url,
           data: formData,
@@ -1074,7 +1076,7 @@ class ApiController {
   }
 
   static Future<GetOrderHistory> getOrderDetail(String orderID) async {
-    StoreDataObj store = await SharedPrefs.getStoreData();
+//    StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
     var url = ApiConstants.baseUrl3.replaceAll("storeId", '0') +
