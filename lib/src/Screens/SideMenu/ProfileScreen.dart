@@ -13,17 +13,17 @@ import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class ProfileScreen extends StatefulWidget {
-
   bool isComingFromOtpScreen;
   String id;
   String fullName = "";
   FacebookModel fbModel;
   GoogleSignInAccount googleResult;
-  bool isAppleLogin=false;
-  String appleMail="";
+  bool isAppleLogin = false;
+  String appleMail = "";
 
   ProfileScreen(this.isComingFromOtpScreen, this.id, String fullName,
-      this.fbModel,this.googleResult,{this.isAppleLogin=false,this.appleMail});
+      this.fbModel, this.googleResult,
+      {this.isAppleLogin = false, this.appleMail});
 
   @override
   _ProfileState createState() => new _ProfileState();
@@ -32,7 +32,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileState extends State<ProfileScreen> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   UserModelMobile user;
-  bool showGstNumber=false;
+  bool showGstNumber = false;
   final firstNameController = new TextEditingController();
   final lastNameController = new TextEditingController();
   final emailController = new TextEditingController();
@@ -63,7 +63,7 @@ class _ProfileState extends State<ProfileScreen> {
     }
     storeModel = await BrandModel.getInstance().brandVersionModel.brand;
     setState(() {
-      if(user != null){
+      if (user != null) {
         firstNameController.text = user.fullName;
         emailController.text = user.email;
         phoneController.text = user.phone;
@@ -77,10 +77,11 @@ class _ProfileState extends State<ProfileScreen> {
       if (!widget.isComingFromOtpScreen) {
         showReferralCodeView = false;
       }
-      if(storeModel.allowCustomerForGst!=null&& storeModel.allowCustomerForGst.toLowerCase()=='yes'){
-        showGstNumber=true;
-      }else{
-        showGstNumber=false;
+      if (storeModel.allowCustomerForGst != null &&
+          storeModel.allowCustomerForGst.toLowerCase() == 'yes') {
+        showGstNumber = true;
+      } else {
+        showGstNumber = false;
       }
       if (storeModel.internationalOtp == "0") {
         isEmailEditable = false;
@@ -90,21 +91,21 @@ class _ProfileState extends State<ProfileScreen> {
         showReferralCodeView = false;
       }
 
-      if(widget.fbModel != null){
+      if (widget.fbModel != null) {
         print("----------widget.fbModel != null---------");
         firstNameController.text = widget.fbModel.name;
         emailController.text = widget.fbModel.email;
         isPhonereadOnly = false;
         isLoginViaSocial = true;
       }
-      if(widget.googleResult != null){
+      if (widget.googleResult != null) {
         print("----------widget.googleResult != null---------");
         firstNameController.text = widget.googleResult.displayName;
         emailController.text = widget.googleResult.email;
         isPhonereadOnly = false;
         isLoginViaSocial = true;
       }
-      if(widget.isAppleLogin){
+      if (widget.isAppleLogin) {
         print("----------widget.isAppleLogin != null---------");
         firstNameController.text = widget.fullName;
         emailController.text = widget.appleMail;
@@ -113,28 +114,28 @@ class _ProfileState extends State<ProfileScreen> {
       }
 
       if (isLoginViaSocial) {
-        if(widget.fbModel != null){
-          if(widget.fbModel.email.isEmpty){
+        if (widget.fbModel != null) {
+          if (widget.fbModel.email.isEmpty) {
             isEmailEditable = false;
           }
-        }else if(widget.googleResult != null){
-          if(widget.googleResult.email.isEmpty){
+        } else if (widget.googleResult != null) {
+          if (widget.googleResult.email.isEmpty) {
             isEmailEditable = false;
           }
-        }else if(widget.isAppleLogin){
-          if(widget.appleMail.isEmpty){
+        } else if (widget.isAppleLogin) {
+          if (widget.appleMail.isEmpty) {
             isEmailEditable = false;
           }
         }
       }
 
       if (storeModel.internationalOtp == "1" && isLoginViaSocial) {
-        if(widget.fbModel != null){
-          if(widget.fbModel.email.isNotEmpty){
+        if (widget.fbModel != null) {
+          if (widget.fbModel.email.isNotEmpty) {
             isEmailEditable = true;
           }
-        }else if(widget.googleResult != null){
-          if(widget.googleResult.email.isNotEmpty){
+        } else if (widget.googleResult != null) {
+          if (widget.googleResult.email.isNotEmpty) {
             isEmailEditable = true;
           }
         }
@@ -145,18 +146,41 @@ class _ProfileState extends State<ProfileScreen> {
     });
   }
 
+  Future<DateTime> selectDate(
+    BuildContext context, {
+    bool isStartIndex,
+    bool isEndIndex,
+  }) async {
+    DateTime selectedDate = DateTime.now();
+    if (isStartIndex != null) {
+      selectedDate = selectedDate.add(Duration(days: 1));
+    }
+    if (isEndIndex != null) {
+      selectedDate = selectedDate.add(Duration(days: 1));
+    }
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: selectedDate,
+        lastDate: DateTime(DateTime.now().year + 10));
+    print(picked);
+    if (picked != null)
+      //dayName = DateFormat('DD-MM-yyyy').format(selectedDate);
+      return picked;
+  }
+
   @override
   Widget build(BuildContext context) {
     //print("showReferralCodeView=${showReferralCodeView} and ${storeModel.isRefererFnEnable}");
     return WillPopScope(
         onWillPop: () async {
-          if(storeModel != null){
+          if (storeModel != null) {
             if (phoneController.text.trim().isEmpty) {
               Utils.showToast("Please enter your valid mobile number", false);
               return false;
             }
           }
-          return await nameValidation() && isValidEmail(emailController.text) ;
+          return await nameValidation() && isValidEmail(emailController.text);
         },
         child: new Scaffold(
           backgroundColor: Colors.white,
@@ -194,7 +218,20 @@ class _ProfileState extends State<ProfileScreen> {
                             child: TextField(
                               controller: firstNameController,
                               decoration: InputDecoration(
-                                labelText: 'Full name *',
+                                labelText: 'First name *',
+                              ),
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xFF495056),
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: TextField(
+                              controller: lastNameController,
+                              decoration: InputDecoration(
+                                labelText: 'last name *',
                               ),
                               style: TextStyle(
                                   fontSize: 18,
@@ -255,7 +292,8 @@ class _ProfileState extends State<ProfileScreen> {
                             ),
                           ),
                           Visibility(
-                            visible: widget.isComingFromOtpScreen&&showGstNumber,
+                            visible:
+                                widget.isComingFromOtpScreen && showGstNumber,
                             child: Padding(
                               padding: const EdgeInsets.only(top: 15.0),
                               child: TextField(
@@ -344,24 +382,26 @@ class _ProfileState extends State<ProfileScreen> {
     } else {
       form.save();
 
-      if(storeModel != null){
+      if (storeModel != null) {
 //        if(storeModel.internationalOtp == "0"){
-          if (phoneController.text.trim().isEmpty) {
-            Utils.showToast("Please enter your valid mobile number", false);
-            return;
-          }
+        if (phoneController.text.trim().isEmpty) {
+          Utils.showToast("Please enter your valid mobile number", false);
+          return;
+        }
 //        }
       }
 
-      if(isLoginViaSocial){
+      if (isLoginViaSocial) {
         Utils.showProgressDialog(context);
-        MobileVerified userResponse = await ApiController.socialSignUp(widget.fbModel,widget.googleResult,
-          firstNameController.text.trim(),
-          emailController.text.trim(),
-          phoneController.text.trim(),
-          referCodeController.text.trim(),
-          gstCodeController.text.trim(),appleLogin: widget.isAppleLogin?'apple':''
-        );
+        MobileVerified userResponse = await ApiController.socialSignUp(
+            widget.fbModel,
+            widget.googleResult,
+            firstNameController.text.trim(),
+            emailController.text.trim(),
+            phoneController.text.trim(),
+            referCodeController.text.trim(),
+            gstCodeController.text.trim(),
+            appleLogin: widget.isAppleLogin ? 'apple' : '');
 
         UserModel user = UserModel();
         user.fullName = firstNameController.text.trim();
@@ -372,15 +412,15 @@ class _ProfileState extends State<ProfileScreen> {
 
         Utils.hideProgressDialog(context);
         Navigator.of(context).popUntil((route) => route.isFirst);
-
-      }else{
+      } else {
         ApiController.updateProfileRequest(
-            firstNameController.text.trim(),
-            emailController.text.trim(),
-            phoneController.text.trim(),
-            widget.isComingFromOtpScreen,
-            widget.id,
-            referCodeController.text.trim(),gstCodeController.text.trim())
+                firstNameController.text.trim(),
+                emailController.text.trim(),
+                phoneController.text.trim(),
+                widget.isComingFromOtpScreen,
+                widget.id,
+                referCodeController.text.trim(),
+                gstCodeController.text.trim())
             .then((response) {
           Utils.hideProgressDialog(context);
           if (response.success) {
@@ -407,7 +447,6 @@ class _ProfileState extends State<ProfileScreen> {
           }
         });
       }
-
     }
   }
 }
