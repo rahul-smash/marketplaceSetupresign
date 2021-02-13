@@ -49,13 +49,20 @@ class _ProfileState extends State<ProfileScreen> {
   bool showReferralCodeView = false;
 
   var controllerStartDate = TextEditingController();
-  var controllerGender = TextEditingController(text: 'Male');
+//  var controllerGender = TextEditingController();
+  String gender='Male';
 
   DateTime selectedStartDate;
+
+  List<String> _categories=List();
 
   @override
   initState() {
     super.initState();
+    _categories.add('Male');
+    _categories.add('Female');
+    _categories.add('Other');
+    gender='Male';
     getProfileData();
   }
 
@@ -73,7 +80,7 @@ class _ProfileState extends State<ProfileScreen> {
         firstNameController.text = user.fullName;
         lastNameController.text = user.lastName;
         controllerStartDate.text = user.dob;
-        controllerGender.text = user.gender;
+        gender = user.gender.trim().isNotEmpty?user.gender:'Male';
         emailController.text = user.email;
         phoneController.text = user.phone;
       }
@@ -286,7 +293,7 @@ class _ProfileState extends State<ProfileScreen> {
                                   padding: const EdgeInsets.only(top: 10.0),
                                   child: DropdownButtonFormField(
                                     dropdownColor: Colors.white,
-                                    items: <String>['Male', 'Female', 'Other']
+                                    items:_categories
                                         .map((String category) {
                                       return new DropdownMenuItem(
                                           value: category,
@@ -296,12 +303,15 @@ class _ProfileState extends State<ProfileScreen> {
                                             ],
                                           ));
                                     }).toList(),
+                                    onTap: (){
+
+                                    },
                                     onChanged: (newValue) {
                                       // do other stuff with _category
                                       setState(() =>
-                                          controllerGender.text = newValue);
+                                          gender = newValue);
                                     },
-                                    value: controllerGender.text,
+                                    value: gender,
                                     decoration: InputDecoration(
 //                                      contentPadding:
 //                                          EdgeInsets.fromLTRB(10, 20, 10, 20),
@@ -442,7 +452,7 @@ class _ProfileState extends State<ProfileScreen> {
     } else if (lastNameController.text.trim().isEmpty) {
       Utils.showToast("Please enter your last name", false);
       return false;
-    } else if (controllerGender.text.trim().isEmpty) {
+    } else if (gender.trim().isEmpty) {
       Utils.showToast("Please select your gender", false);
       return false;
     } else if (controllerStartDate.text.trim().isEmpty) {
@@ -492,7 +502,7 @@ class _ProfileState extends State<ProfileScreen> {
         user.fullName = firstNameController.text.trim();
         user.lastName = lastNameController.text.trim();
         user.dob = controllerStartDate.text.trim();
-        user.gender = controllerGender.text.trim();
+        user.gender = gender.trim();
         user.email = emailController.text.trim();
         user.phone = phoneController.text.trim();
         user.id = userResponse.user.id;
@@ -509,7 +519,7 @@ class _ProfileState extends State<ProfileScreen> {
                 widget.id,
                 referCodeController.text.trim(),
                 gstCodeController.text.trim(),
-                lastName: lastNameController.text.trim(),dob:controllerStartDate.text.trim(),gender:controllerGender.text.trim())
+                lastName: lastNameController.text.trim(),dob:controllerStartDate.text.trim(),gender:gender.trim())
             .then((response) {
           Utils.hideProgressDialog(context);
           if (response.success) {
@@ -518,7 +528,7 @@ class _ProfileState extends State<ProfileScreen> {
               user.fullName = firstNameController.text.trim();
               user.lastName = lastNameController.text.trim();
               user.dob = controllerStartDate.text.trim();
-              user.gender = controllerGender.text.trim();
+              user.gender = gender.trim();
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();
               user.id = widget.id;
@@ -530,7 +540,7 @@ class _ProfileState extends State<ProfileScreen> {
               user.fullName = firstNameController.text.trim();
               user.lastName = lastNameController.text.trim();
               user.dob = controllerStartDate.text.trim();
-              user.gender = controllerGender.text.trim();
+              user.gender = gender.trim();
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();
               Utils.showToast(response.message, true);

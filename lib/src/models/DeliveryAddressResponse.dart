@@ -51,6 +51,7 @@ class DeliveryAddressData {
   String lat;
   String lng;
   String addressType;
+  String set_default_address;
   //DeliveryTimeSlot deliveryTimeSlot;
 
   DeliveryAddressData({
@@ -78,7 +79,8 @@ class DeliveryAddressData {
     this.note,
     this.cityId,
     this.isDeleted,
-    this.addressType
+    this.addressType,
+    this.set_default_address
     //this.deliveryTimeSlot
   });
 
@@ -109,6 +111,7 @@ class DeliveryAddressData {
         cityId: json["city_id"],
         isDeleted: json["is_deleted"],
         addressType: json["address_type"],
+        set_default_address: json["set_default_address"],
         //deliveryTimeSlot: DeliveryTimeSlot.fromJson(json["delivery_time_slot"]),
       );
 
@@ -138,6 +141,7 @@ class DeliveryAddressData {
         "city_id": cityId,
         "is_deleted": isDeleted,
         "address_type": addressType,
+        "set_default_address": set_default_address,
         //"delivery_time_slot": deliveryTimeSlot.toJson(),
       };
 }
