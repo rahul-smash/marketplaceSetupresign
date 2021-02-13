@@ -24,7 +24,6 @@ class DragMarkerMap extends StatefulWidget {
   _DragMarkerMapState createState() => _DragMarkerMapState();
 }
 
-
 class _DragMarkerMapState extends State<DragMarkerMap> {
   LatLng center, selectedLocation;
   final cityController = new TextEditingController();
@@ -42,6 +41,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
   UserModelMobile user;
 
   String _selectedTag;
+
+  var _isDefaultAddress = false;
 
   @override
   void initState() {
@@ -249,6 +250,25 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
                       SizedBox(
                         height: 30,
                       ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: Text(
+                              'Use as Default',
+                              style: TextStyle(color: Colors.black),
+                            )),
+                            Switch(
+                                value: _isDefaultAddress,
+                                onChanged: (isEnable) {
+                                  setState(() {
+                                    _isDefaultAddress = isEnable;
+                                  });
+                                })
+                          ],
+                        ),
+                      ),
                       Align(
                         alignment: Alignment.center,
                         child: ButtonTheme(
@@ -353,8 +373,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       }
     }
     if (addressController.text.trim().isEmpty) {
-        Utils.showToast("Please enter address", true);
-        return;
+      Utils.showToast("Please enter address", true);
+      return;
     }
 
     Utils.showProgressDialog(context);
@@ -372,7 +392,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
             "${selectedLocation.longitude}",
             _selectedTag,
             "${widget.addressData == null ? '' : widget.addressData.id}",
-            address2: "${address}")
+            address2: "${address}",
+            setDefaultAddress: _isDefaultAddress ? '1' : '0')
         .then((response) {
       Utils.hideProgressDialog(context);
       if (response != null && response.success) {
@@ -492,6 +513,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
     user = await SharedPrefs.getUserMobile();
     setState(() {
       firstNameController.text = user.fullName.trim();
+      lastNameController.text = user.lastName.trim();
       mobileController.text = user.phone.trim();
       emailController.text = user.email.trim();
     });

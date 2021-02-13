@@ -43,6 +43,9 @@ class UserModel {
   String lat;
   String lng;
   String fullName;
+  String lastName;
+  String gender;
+  String dob;
   String fbId;
   String email;
   String decodedPassword;
@@ -66,6 +69,9 @@ class UserModel {
     this.lat,
     this.lng,
     this.fullName,
+    this.lastName,
+    this.dob,
+    this.gender,
     this.fbId,
     this.email,
     this.decodedPassword,
@@ -90,6 +96,9 @@ class UserModel {
         lat: json["lat"],
         lng: json["lng"],
         fullName: json["full_name"],
+        lastName: json["last_name"],
+        dob: json["dob"],
+        gender: json["gender"],
         fbId: json["fb_id"],
         email: json["email"],
         decodedPassword: json["decoded_password"],

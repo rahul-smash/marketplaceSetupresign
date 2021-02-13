@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intl/intl.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/BrandModel.dart';
@@ -47,6 +48,11 @@ class _ProfileState extends State<ProfileScreen> {
   bool isPhonereadOnly = true;
   bool showReferralCodeView = false;
 
+  var controllerStartDate = TextEditingController();
+  var controllerGender = TextEditingController(text: 'Male');
+
+  DateTime selectedStartDate;
+
   @override
   initState() {
     super.initState();
@@ -65,6 +71,9 @@ class _ProfileState extends State<ProfileScreen> {
     setState(() {
       if (user != null) {
         firstNameController.text = user.fullName;
+        lastNameController.text = user.lastName;
+        controllerStartDate.text = user.dob;
+        controllerGender.text = user.gender;
         emailController.text = user.email;
         phoneController.text = user.phone;
       }
@@ -152,17 +161,12 @@ class _ProfileState extends State<ProfileScreen> {
     bool isEndIndex,
   }) async {
     DateTime selectedDate = DateTime.now();
-    if (isStartIndex != null) {
-      selectedDate = selectedDate.add(Duration(days: 1));
-    }
-    if (isEndIndex != null) {
-      selectedDate = selectedDate.add(Duration(days: 1));
-    }
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: selectedDate,
-        lastDate: DateTime(DateTime.now().year + 10));
+        currentDate: DateTime.now(),
+        firstDate: DateTime(1970, 1),
+        lastDate: DateTime(2101, 1));
     print(picked);
     if (picked != null)
       //dayName = DateFormat('DD-MM-yyyy').format(selectedDate);
@@ -238,6 +242,77 @@ class _ProfileState extends State<ProfileScreen> {
                                   color: Color(0xFF495056),
                                   fontWeight: FontWeight.w500),
                             ),
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: TextField(
+                                    controller: controllerStartDate,
+                                    onTap: () async {
+                                      selectedStartDate = await selectDate(
+                                          context,
+                                          isStartIndex: true);
+                                      if (selectedStartDate != null) {
+                                        String date = DateFormat('dd-MM-yyyy')
+                                            .format(selectedStartDate);
+                                        setState(() {
+                                          controllerStartDate.text = date;
+                                        });
+                                      }
+                                    },
+                                    readOnly: true,
+                                    decoration: InputDecoration(
+                                      labelText: 'Date of birth *',
+                                      suffixIcon: IconButton(
+                                          icon: Icon(
+                                            Icons.calendar_today,
+                                          ),
+                                          onPressed: () {}),
+                                    ),
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: Color(0xFF495056),
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: DropdownButtonFormField(
+                                    dropdownColor: Colors.white,
+                                    items: <String>['Male', 'Female', 'Other']
+                                        .map((String category) {
+                                      return new DropdownMenuItem(
+                                          value: category,
+                                          child: Row(
+                                            children: <Widget>[
+                                              Text(category),
+                                            ],
+                                          ));
+                                    }).toList(),
+                                    onChanged: (newValue) {
+                                      // do other stuff with _category
+                                      setState(() =>
+                                          controllerGender.text = newValue);
+                                    },
+                                    value: controllerGender.text,
+                                    decoration: InputDecoration(
+//                                      contentPadding:
+//                                          EdgeInsets.fromLTRB(10, 20, 10, 20),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      labelText: 'Gender',
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           /*Padding(
                         padding: const EdgeInsets.only(top: 30),
@@ -362,7 +437,16 @@ class _ProfileState extends State<ProfileScreen> {
 
   bool nameValidation() {
     if (firstNameController.text.trim().isEmpty) {
-      Utils.showToast("Please enter your name", false);
+      Utils.showToast("Please enter your first name", false);
+      return false;
+    } else if (lastNameController.text.trim().isEmpty) {
+      Utils.showToast("Please enter your last name", false);
+      return false;
+    } else if (controllerGender.text.trim().isEmpty) {
+      Utils.showToast("Please select your gender", false);
+      return false;
+    } else if (controllerStartDate.text.trim().isEmpty) {
+      Utils.showToast("Please select your Date of birth", false);
       return false;
     } else {
       return true;
@@ -401,10 +485,14 @@ class _ProfileState extends State<ProfileScreen> {
             phoneController.text.trim(),
             referCodeController.text.trim(),
             gstCodeController.text.trim(),
-            appleLogin: widget.isAppleLogin ? 'apple' : '');
+            appleLogin: widget.isAppleLogin ? 'apple' : '',
+            lastName: lastNameController.text.trim());
 
         UserModel user = UserModel();
         user.fullName = firstNameController.text.trim();
+        user.lastName = lastNameController.text.trim();
+        user.dob = controllerStartDate.text.trim();
+        user.gender = controllerGender.text.trim();
         user.email = emailController.text.trim();
         user.phone = phoneController.text.trim();
         user.id = userResponse.user.id;
@@ -420,13 +508,17 @@ class _ProfileState extends State<ProfileScreen> {
                 widget.isComingFromOtpScreen,
                 widget.id,
                 referCodeController.text.trim(),
-                gstCodeController.text.trim())
+                gstCodeController.text.trim(),
+                lastName: lastNameController.text.trim(),dob:controllerStartDate.text.trim(),gender:controllerGender.text.trim())
             .then((response) {
           Utils.hideProgressDialog(context);
           if (response.success) {
             if (widget.isComingFromOtpScreen) {
               UserModelMobile user = UserModelMobile();
               user.fullName = firstNameController.text.trim();
+              user.lastName = lastNameController.text.trim();
+              user.dob = controllerStartDate.text.trim();
+              user.gender = controllerGender.text.trim();
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();
               user.id = widget.id;
@@ -436,6 +528,9 @@ class _ProfileState extends State<ProfileScreen> {
               Navigator.of(context).popUntil((route) => route.isFirst);
             } else {
               user.fullName = firstNameController.text.trim();
+              user.lastName = lastNameController.text.trim();
+              user.dob = controllerStartDate.text.trim();
+              user.gender = controllerGender.text.trim();
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();
               Utils.showToast(response.message, true);

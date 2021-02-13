@@ -633,7 +633,7 @@ class ApiController {
       String lng,
       String address_type,
       String address_id,
-      {String address2 = ''}) async {
+      {String address2 = '',String setDefaultAddress}) async {
     UserModel user = await SharedPrefs.getUser();
 
     var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
@@ -660,6 +660,7 @@ class ApiController {
         "lat": "${lat}",
         "lng": "${lng}",
         "address_type": address_type,
+        "set_default_address": setDefaultAddress,
       });
 
       if (method == "EDIT") {
@@ -970,7 +971,7 @@ class ApiController {
       bool isComingFromOtpScreen,
       String id,
       String user_refer_code,
-      String gstNumber) async {
+      String gstNumber,{String lastName='',String dob='',String gender='',}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //StoreModel store = await SharedPrefs.getStore();
     String userId;
@@ -996,6 +997,9 @@ class ApiController {
         "device_id": deviceId,
         "device_token": deviceToken,
         "gst_number": gstNumber,
+        "last_name": lastName,
+        "dob": dob,
+        "gender": gender,
         "platform": Platform.isIOS ? "IOS" : "Android"
       });
       print("--fields--${request.fields.toString()}--");
@@ -1853,7 +1857,7 @@ class ApiController {
       String emailId,
       String phoneNumber,
       String user_refer_code,
-      String gstNumber,{String appleLogin=''}) async {
+      String gstNumber,{String appleLogin='',String lastName=''}) async {
 
     StoreModel store = await SharedPrefs.getStore();
     SharedPreferences prefs = await SharedPreferences.getInstance();

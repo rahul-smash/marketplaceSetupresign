@@ -14,6 +14,9 @@ class MobileVerified {
 class UserModelMobile {
   String id;
   String fullName="";
+  String lastName="";
+  String dob="";
+  String gender="";
   String fbId;
   String email;
   String decodedPassword;
@@ -38,6 +41,9 @@ class UserModelMobile {
   UserModelMobile(
       {this.id,
         this.fullName,
+        this.lastName,
+        this.dob,
+        this.gender,
         this.fbId,
         this.email,
         this.decodedPassword,
@@ -62,6 +68,9 @@ class UserModelMobile {
   UserModelMobile.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     fullName = json['full_name'];
+    lastName = json['last_name'];
+    dob = json['dob'];
+    gender = json['gender'];
     fbId = json['fb_id'];
     email = json['email'];
     decodedPassword = json['decoded_password'];
@@ -87,6 +96,9 @@ class UserModelMobile {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['full_name'] = this.fullName;
+    data['last_name'] = this.lastName;
+    data['gender'] = this.gender;
+    data['dob'] = this.dob;
     data['fb_id'] = this.fbId;
     data['email'] = this.email;
     data['decoded_password'] = this.decodedPassword;
