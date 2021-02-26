@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'package:flutter/painting.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +21,9 @@ import 'package:restroapp/src/utils/Utils.dart';
 
 class StoreDashboardScreen extends StatefulWidget {
   final StoreDataModel store;
+  final BrandData brandData;
 
-  StoreDashboardScreen(this.store);
+  StoreDashboardScreen(this.store, this.brandData);
 
   @override
   State<StatefulWidget> createState() {
@@ -245,60 +247,61 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           width: Utils.getDeviceWidth(context),
           padding: EdgeInsets.all(16),
           child: Align(
-          alignment: Alignment.bottomLeft,
-          child: Container(
-            width: Utils.getDeviceWidth(context),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Text(
-                        store.storeName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    )),
-                Visibility(
-                    visible: store.rating.isNotEmpty &&
-                        store.rating != '0.0' &&
-                        store.rating != '0',
-                    child: Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Row(
-                          children: [
-                            Container(
-                                margin: EdgeInsets.only(right: 5),
-                                decoration: BoxDecoration(
-                                  color: appThemeSecondary,
-                                  borderRadius: BorderRadius.circular(5.0),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(3),
-                                  child: Image.asset('images/staricon.png',
-                                      width: 15,
-                                      fit: BoxFit.scaleDown,
-                                      color: Colors.white),
-                                )),
-                            Text(
-                              store.rating,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ))),
-              ],
-            ),),
-        ),
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              width: Utils.getDeviceWidth(context),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                      store.storeName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  )),
+                  Visibility(
+                      visible: widget.brandData.display_store_rating == '1' &&
+                          store.rating.isNotEmpty &&
+                          store.rating != '0.0' &&
+                          store.rating != '0',
+                      child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Row(
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(right: 5),
+                                  decoration: BoxDecoration(
+                                    color: appThemeSecondary,
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(3),
+                                    child: Image.asset('images/staricon.png',
+                                        width: 15,
+                                        fit: BoxFit.scaleDown,
+                                        color: Colors.white),
+                                  )),
+                              Text(
+                                store.rating,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ))),
+                ],
+              ),
+            ),
+          ),
         )
-
       ],
     );
   }

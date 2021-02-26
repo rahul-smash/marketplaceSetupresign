@@ -1246,7 +1246,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     if (_selectedHomeScreen == HomeScreenEnum.HOME_SELECTED_STORE_VIEW)
       return Padding(
         padding: EdgeInsets.only(top: 0),
-        child: StoreDashboardScreen(_selectedSingleStore),
+        child: StoreDashboardScreen(_selectedSingleStore,widget.brandData),
       );
     else
       return Container();
@@ -1366,7 +1366,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         return _getRestaurantList();
         break;
       case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
-        return StoreDashboardScreen(_selectedSingleStore);
+        return StoreDashboardScreen(_selectedSingleStore,widget.brandData);
         break;
       case HomeScreenEnum.HOME_SEARCH_VIEW:
       case HomeScreenEnum.HOME_BAND_VIEW:
@@ -1386,6 +1386,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   Widget _getRestaurantList() {
     return RestroListScreen(
       allStoreData,
+      widget.brandData,
       initialPosition: widget.initialPosition,
       tagsModel: tagsModel,
       selectedScreen: _selectedHomeScreen,

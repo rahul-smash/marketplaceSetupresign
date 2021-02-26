@@ -18,8 +18,10 @@ class RestroListScreen extends StatefulWidget {
   HomeScreenEnum selectedScreen;
   LatLng initialPosition;
   TagsModel tagsModel;
+  BrandData brandData;
 
   RestroListScreen(this.allStoreData,
+      this.brandData,
       {this.callback,
       this.initialPosition,
       this.tagsModel,
@@ -222,7 +224,7 @@ class _RestroListScreenState extends State<RestroListScreen> {
               itemBuilder: (context, index) {
                 StoreData storeDataObj = widget.allStoreData.data[index];
                 return RestroCardItem(
-                    storeDataObj, widget.callback, widget.initialPosition);
+                    storeDataObj, widget.callback, widget.initialPosition,widget.brandData);
               },
             ),
           ],

@@ -518,7 +518,7 @@ class _MarketPlaceHomeCategoryViewState
                     itemBuilder: (context, index) {
                       StoreData storeDataObj = widget.storeData.data[index];
                       return RestroCardItem(storeDataObj, widget.callback,
-                          widget.initialPosition);
+                          widget.initialPosition,widget.brandData);
                     },
                   ),
                 ],

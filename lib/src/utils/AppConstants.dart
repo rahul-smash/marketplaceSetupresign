@@ -1,3 +1,5 @@
+import 'package:restroapp/src/models/DynamicResponse.dart';
+
 class AppConstant {
   static bool isLoggedIn = false;
 
@@ -121,6 +123,8 @@ class AppConstant {
 
 
   static final String txt_share = "SHARE";
+
+  static DynamicResponse dynamicResponse;
 
   static String getCartReplaceMsg(String oldStoreName1, newStoreName2){
 //    String replaceCartMsg = "Your cart contains dishes from ${oldStoreName1}. Do you want to discard the selection and add dishes from ${newStoreName2}?";

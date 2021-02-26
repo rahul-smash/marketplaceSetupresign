@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:restroapp/src/UI/OffersListDetail.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
+import 'package:restroapp/src/models/DynamicResponse.dart';
 import 'package:restroapp/src/models/StoreOffersResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
@@ -19,10 +20,21 @@ class OffersListScreenScreen extends StatefulWidget {
 class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
   bool isLoading = true;
   StoreOffersResponse offersResponse;
+  DynamicResponse dynamicResponse;
 
   @override
   void initState() {
     super.initState();
+    dynamicResponse=AppConstant.dynamicResponse;
+    if(dynamicResponse!=null)
+      ApiController.getDynamicText().then((value) {
+        if (value != null && value.success) {
+          dynamicResponse = value;
+          AppConstant.dynamicResponse = value;
+        }
+        setState(() {});
+      });
+
     ApiController.homeOffersApiRequest().then((value) {
       isLoading = false;
       if (value != null && value.success) {
@@ -66,7 +78,9 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
                       Padding(
                         padding: EdgeInsets.only(left: 26, right: 16),
                         child: Text(
-                          "Offers for you",
+                          dynamicResponse != null
+                              ? dynamicResponse.data.offerPage.heading1
+                              : "",
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 18,
@@ -81,10 +95,16 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                  "Explore top deals and offers\nexclusively for you!",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 14)),
+                              Expanded(
+                                child: Text(
+                                    dynamicResponse != null
+                                        ? dynamicResponse
+                                            .data.offerPage.heading2
+                                        : "",
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 14)),
+                              ),
+                              Expanded(child: Container())
                             ],
                           )),
                     ],
@@ -322,9 +342,11 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
                                         ),
                                         onTap: () {
                                           Clipboard.setData(new ClipboardData(
-                                              text: offersResponse.offers[index].couponCode));
+                                              text: offersResponse
+                                                  .offers[index].couponCode));
                                           Utils.showToast(
-                                              "Coupon code ${offersResponse.offers[index].couponCode} copied to clipboard!", false);
+                                              "Coupon code ${offersResponse.offers[index].couponCode} copied to clipboard!",
+                                              false);
                                         },
                                       ),
                                       Container(

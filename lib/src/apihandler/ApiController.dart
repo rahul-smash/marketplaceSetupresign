@@ -19,6 +19,7 @@ import 'package:restroapp/src/models/CreatePaytmTxnTokenResponse.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/DeliveryTimeSlotModel.dart';
 import 'package:restroapp/src/models/DeviceInfo.dart';
+import 'package:restroapp/src/models/DynamicResponse.dart';
 import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
 import 'package:restroapp/src/models/HtmlModelResponse.dart';
@@ -235,13 +236,12 @@ class ApiController {
   }
 
   static String getQueryParams(LatLng initialPosition) {
-    if(initialPosition!=null){
+    if (initialPosition != null) {
       String location =
           "?lat=${initialPosition.latitude}&lng=${initialPosition.longitude}";
       return location;
-    }else
+    } else
       return '';
-
   }
 
   static Future<StoresModel> storesApiRequest(LatLng initialPosition) async {
@@ -633,7 +633,8 @@ class ApiController {
       String lng,
       String address_type,
       String address_id,
-      {String address2 = '',String setDefaultAddress}) async {
+      {String address2 = '',
+      String setDefaultAddress}) async {
     UserModel user = await SharedPrefs.getUser();
 
     var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
@@ -965,13 +966,17 @@ class ApiController {
   }
 
   static Future<UserResponse> updateProfileRequest(
-      String fullName,
-      String emailId,
-      String phoneNumber,
-      bool isComingFromOtpScreen,
-      String id,
-      String user_refer_code,
-      String gstNumber,{String lastName='',String dob='',String gender='',}) async {
+    String fullName,
+    String emailId,
+    String phoneNumber,
+    bool isComingFromOtpScreen,
+    String id,
+    String user_refer_code,
+    String gstNumber, {
+    String lastName = '',
+    String dob = '',
+    String gender = '',
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //StoreModel store = await SharedPrefs.getStore();
     String userId;
@@ -1850,15 +1855,16 @@ class ApiController {
     }
   }
 
-
-  static Future<MobileVerified> socialSignUp(FacebookModel fbModel,
+  static Future<MobileVerified> socialSignUp(
+      FacebookModel fbModel,
       GoogleSignInAccount googleResult,
       String fullName,
       String emailId,
       String phoneNumber,
       String user_refer_code,
-      String gstNumber,{String appleLogin='',String lastName=''}) async {
-
+      String gstNumber,
+      {String appleLogin = '',
+      String lastName = ''}) async {
     StoreModel store = await SharedPrefs.getStore();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
@@ -1874,8 +1880,8 @@ class ApiController {
       socialPlatform = "facebook";
     } else if (googleResult != null) {
       socialPlatform = "google";
-    }else if(appleLogin.isNotEmpty){
-      socialPlatform=appleLogin;
+    } else if (appleLogin.isNotEmpty) {
+      socialPlatform = appleLogin;
     }
 
     try {
@@ -1951,16 +1957,14 @@ class ApiController {
     }
   }
 
-
-  static Future<HtmlModelResponse> getHtmlForOptions(
-      String appScreen) async {
+  static Future<HtmlModelResponse> getHtmlForOptions(String appScreen) async {
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
     try {
       if (isNetworkAvailable) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String deviceId = prefs.getString(AppConstant.deviceId);
         String deviceToken = prefs.getString(AppConstant.deviceToken);
-        var url='';
+        var url = '';
         switch (appScreen) {
           case AdditionItemsConstants.TERMS_CONDITIONS:
             url = ApiConstants.baseUrl3.replaceAll("storeId", "static_pages/") +
@@ -1984,12 +1988,45 @@ class ApiController {
         });
         print("${url}");
         final response =
-        await request.send().timeout(Duration(seconds: timeout));
+            await request.send().timeout(Duration(seconds: timeout));
         final respStr = await response.stream.bytesToString();
         print("${respStr}");
         final parsed = json.decode(respStr);
-        HtmlModelResponse model =
-        HtmlModelResponse.fromJson(parsed);
+        HtmlModelResponse model = HtmlModelResponse.fromJson(parsed);
+        return model;
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<DynamicResponse> getDynamicText() async {
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    try {
+      if (isNetworkAvailable) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String deviceId = prefs.getString(AppConstant.deviceId);
+        String deviceToken = prefs.getString(AppConstant.deviceToken);
+        var url = ApiConstants.baseUrl3.replaceAll(
+                "storeId", "marketplace/homescreen/webPagesSectionContents") ;
+
+        var request = new http.MultipartRequest("POST", Uri.parse(url));
+        request.fields.addAll({
+          "method": "GET",
+          "device_id": deviceId,
+          "device_token": deviceToken,
+          "platform": Platform.isIOS ? "IOS" : "Android"
+        });
+        print("${url}");
+        final response =
+            await request.send().timeout(Duration(seconds: timeout));
+        final respStr = await response.stream.bytesToString();
+        print("${respStr}");
+        final parsed = json.decode(respStr);
+        DynamicResponse model = DynamicResponse.fromJson(parsed);
         return model;
       } else {
         Utils.showToast(AppConstant.noInternet, true);

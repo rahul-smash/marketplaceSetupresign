@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/Utils.dart';
@@ -13,8 +14,10 @@ class RestroCardItem extends StatelessWidget {
 
   CustomCallback callback;
   LatLng initialPosition;
+  BrandData brandData;
 
-  RestroCardItem(this.storeDataObj, this.callback, this.initialPosition);
+  RestroCardItem(
+      this.storeDataObj, this.callback, this.initialPosition, this.brandData);
 
   @override
   Widget build(BuildContext context) {
@@ -92,35 +95,19 @@ class RestroCardItem extends StatelessWidget {
                             Expanded(
                                 child: Text(
                               '${storeDataObj.storeName}',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 18),
                             )),
-                            Text(
-//                                  '${storeDataObj.distance} kms',
-                              '${_getDistance(storeDataObj)}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.grey),
-                            ),
-                          ],
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            left: 16, right: 16, top: 5, bottom: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '${storeDataObj.state}',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.grey),
+                            SizedBox(
+                              width: 16,
                             ),
                             Visibility(
-                                visible: storeDataObj.rating.isNotEmpty &&
-                                    storeDataObj.rating != '0.0' &&
-                                    storeDataObj.rating != '0',
+                                visible:
+                                    brandData.display_store_rating == '1' &&
+                                        storeDataObj.rating.isNotEmpty &&
+                                        storeDataObj.rating != '0.0' &&
+                                        storeDataObj.rating != '0',
                                 child: Row(
                                   children: [
                                     Container(
@@ -149,11 +136,33 @@ class RestroCardItem extends StatelessWidget {
 //                                    )
                                   ],
                                 )),
-                            /*Text(
-                                        '${AppConstant.currency}350 for two',
+                          ],
+                        )),
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 16, right: 16, top: 5, bottom: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                                child: brandData.display_store_location == '1'
+                                    ? Text(
+                                        '${storeDataObj.city}',
                                         style: TextStyle(
                                             fontSize: 14, color: Colors.grey),
-                                      ),*/
+                                      )
+                                    : Container()),
+                            Visibility(
+                              visible: brandData.display_store_location == '1',
+                              child: Text(
+//                                  '${storeDataObj.distance} kms',
+                                '${_getDistance(storeDataObj)}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style:
+                                    TextStyle(fontSize: 16, color: Colors.grey),
+                              ),
+                            ),
                           ],
                         )),
                   ],
@@ -171,7 +180,8 @@ class RestroCardItem extends StatelessWidget {
                       ),
                     ),*/
           Visibility(
-              visible: storeDataObj.preparationTime.isNotEmpty,
+              visible: brandData.display_prepration_time == '1' &&
+                  storeDataObj.preparationTime.isNotEmpty,
               child: Align(
                   alignment: Alignment.topRight,
                   child: Container(
@@ -195,14 +205,14 @@ class RestroCardItem extends StatelessWidget {
   }
 
   _getDistance(StoreData storeDataObj) {
-    if(initialPosition!=null) {
+    if (initialPosition != null) {
       double distanceInKm = Utils.calculateDistance(
           initialPosition.latitude,
           initialPosition.longitude,
           double.parse(storeDataObj.lat),
           double.parse(storeDataObj.lng));
-      return distanceInKm.toStringAsFixed(1)+ ' kms';
-    }else{
+      return distanceInKm.toStringAsFixed(1) + ' kms';
+    } else {
       return '';
     }
   }
