@@ -50,6 +50,7 @@ class BrandData {
     this.currency,
     this.showCurrency,
     this.otpSkip,
+    this.cod,
     this.social_login,
     this.deliveryFacility,
     this.favIcon,
@@ -98,6 +99,7 @@ class BrandData {
   String timeZone;
   String zipcode;
   String logo;
+  String cod;
   String currency;
   String showCurrency;
   String favIcon;
@@ -165,6 +167,7 @@ class BrandData {
           internationalOtp: json["international_otp"],
           onlinePayment: json["online_payment"],
           reviewRatingDisplay: json["review_rating_display"],
+          cod: json["cod"],
           paymentGatewaySettings: json["payment_gateway_settings"] == null
               ? null
               : List<PaymentGatewaySettings>.from(
@@ -238,6 +241,7 @@ class BrandData {
         "iphone_share_link": iphoneShareLink,
         "currency_unicode": currencyUnicode,
         "international_otp": internationalOtp,
+        "cod": cod,
         "online_payment": onlinePayment,
         "payment_gateway_settings":
         paymentGatewaySettings.map((v) => v.toJson()).toList(),

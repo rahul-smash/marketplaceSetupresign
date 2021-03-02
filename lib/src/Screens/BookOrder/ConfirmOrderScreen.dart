@@ -48,6 +48,7 @@ class ConfirmOrderScreen extends StatefulWidget {
   String areaId;
   OrderType deliveryType;
   Area areaObject;
+
   StoreDataObj storeModel;
   List<Product> cartList = new List();
   PaymentType _character = PaymentType.COD;
@@ -159,17 +160,17 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     multiTaxCalculationApi();
 
     if (widget.storeModel != null) {
-      if (widget.storeModel.cod == "1") {
+      if (_brandData.cod == "1") {
         showCOD = true;
         widget.paymentMode = "2";
       } else if (widget.storeModel.cod == "0") {
         showCOD = false;
       }
-      if (_brandData.onlinePayment == "0" && widget.storeModel.cod == "0") {
+      if (_brandData.onlinePayment == "0" && _brandData.cod == "0") {
         showCOD = true;
         widget.paymentMode = "2";
       }
-      if (widget.storeModel.cod == "0" && _brandData.onlinePayment == "1") {
+      if (_brandData.cod == "0" && _brandData.onlinePayment == "1") {
         widget._character = PaymentType.ONLINE;
         widget.paymentMode = "3";
       }
