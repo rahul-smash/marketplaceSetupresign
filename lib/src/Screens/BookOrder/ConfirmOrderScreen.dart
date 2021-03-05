@@ -120,40 +120,40 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     constraints();
     try {
       checkLoyalityPointsOption();
-//      if (widget.deliveryType == OrderType.Delivery) {
-//        if (storeModel.deliverySlot == "1") {
-//          ApiController.deliveryTimeSlotApi().then((response) {
-//            setState(() {
-//              if (!response.success) {
-//                isDeliveryResponseFalse = true;
-//                return;
-//              }
-//              deliverySlotModel = response;
-//              print(
-//                  "deliverySlotModel.data.is24X7Open =${deliverySlotModel.data.is24X7Open}");
-//              isInstantDelivery = deliverySlotModel.data.is24X7Open == "1";
-//              for (int i = 0;
-//                  i < deliverySlotModel.data.dateTimeCollection.length;
-//                  i++) {
-//                timeslotList =
-//                    deliverySlotModel.data.dateTimeCollection[i].timeslot;
-//                for (int j = 0; j < timeslotList.length; j++) {
-//                  Timeslot timeslot = timeslotList[j];
-//                  if (timeslot.isEnable) {
-//                    selectedTimeSlot = j;
-//                    isSlotSelected = true;
-//                    break;
-//                  }
-//                }
-//                if (isSlotSelected) {
-//                  selctedTag = i;
-//                  break;
-//                }
-//              }
-//            });
-//          });
-//        }
-//      }
+      if (widget.deliveryType == OrderType.Delivery) {
+        if (storeModel.deliverySlot == "1") {
+          ApiController.deliveryTimeSlotApi().then((response) {
+            setState(() {
+              if (!response.success) {
+                isDeliveryResponseFalse = true;
+                return;
+              }
+              deliverySlotModel = response;
+              print(
+                  "deliverySlotModel.data.is24X7Open =${deliverySlotModel.data.is24X7Open}");
+              isInstantDelivery = deliverySlotModel.data.is24X7Open == "1";
+              for (int i = 0;
+                  i < deliverySlotModel.data.dateTimeCollection.length;
+                  i++) {
+                timeslotList =
+                    deliverySlotModel.data.dateTimeCollection[i].timeslot;
+                for (int j = 0; j < timeslotList.length; j++) {
+                  Timeslot timeslot = timeslotList[j];
+                  if (timeslot.isEnable) {
+                    selectedTimeSlot = j;
+                    isSlotSelected = true;
+                    break;
+                  }
+                }
+                if (isSlotSelected) {
+                  selctedTag = i;
+                  break;
+                }
+              }
+            });
+          });
+        }
+      }
     } catch (e) {
       print(e);
     }

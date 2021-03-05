@@ -155,6 +155,13 @@ class _ProfileState extends State<ProfileScreen> {
             isEmailEditable = true;
           }
         }
+      }else{
+        if(phoneController.text==null){
+          isPhonereadOnly=false;
+        }
+        else if(phoneController.text!=null&&phoneController.text.isEmpty){
+          isPhonereadOnly=false;
+        }
       }
 
       print(

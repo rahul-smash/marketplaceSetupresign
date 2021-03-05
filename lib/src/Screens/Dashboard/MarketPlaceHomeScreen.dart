@@ -553,7 +553,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         }
                       });
                       return;
-                    })),
+                    }
+                    ,widget.brandData)),
           );
 //          } else {
 //            Utils.showLoginDialog(context);
@@ -1413,6 +1414,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   Widget _getSearchList() {
     return HomeSearchView(
       allStoreData,
+      widget.brandData,
       initialPosition: widget.initialPosition,
       tagsModel: tagsModel,
       selectedScreen: _selectedHomeScreen,

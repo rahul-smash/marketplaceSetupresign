@@ -30,9 +30,11 @@ class DishTileItem extends StatefulWidget {
 }
 
 class _DishTileItemState extends State<DishTileItem> {
+  bool _isProductOutOfStock = false;
   @override
   initState() {
     super.initState();
+//    _checkOutOfStock(findNext: true);
   }
 
   @override

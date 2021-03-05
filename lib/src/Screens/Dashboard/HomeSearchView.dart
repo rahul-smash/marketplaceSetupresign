@@ -8,6 +8,7 @@ import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/TagsModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/Utils.dart';
@@ -18,8 +19,10 @@ class HomeSearchView extends StatefulWidget {
   HomeScreenEnum selectedScreen;
   LatLng initialPosition;
   TagsModel tagsModel;
+  BrandData brandData;
 
   HomeSearchView(this.allStoreData,
+  this.brandData,
       {this.callback,
       this.initialPosition,
       this.tagsModel,
@@ -59,7 +62,7 @@ class _HomeSearchViewState extends State<HomeSearchView> {
                     if (itemList[index] is StoreData) {
                       StoreData storeDataObj = itemList[index];
                       return RestroSearchItemCard(storeDataObj, widget.callback,
-                          widget.initialPosition);
+                          widget.initialPosition,widget.brandData);
                     } else if (itemList[index] is Dish) {
                       Dish dish = itemList[index];
                       return DishTileItem(

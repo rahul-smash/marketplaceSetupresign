@@ -12,6 +12,7 @@ import 'package:restroapp/src/models/SearchTagsModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/BaseState.dart';
@@ -22,10 +23,12 @@ import 'package:flutter_tags/flutter_tags.dart';
 class SearchScreen extends StatefulWidget {
   LatLng initialPosition;
   CustomCallback callback;
+  BrandData brandData;
 
   SearchScreen(
     this.initialPosition,
     this.callback,
+      this.brandData
   );
 
   @override
@@ -262,7 +265,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                   if (itemList[index] is StoreData) {
                     StoreData storeDataObj = itemList[index];
                     return RestroSearchItemCard(
-                        storeDataObj, widget.callback, widget.initialPosition);
+                        storeDataObj, widget.callback, widget.initialPosition,widget.brandData);
                   } else if (itemList[index] is Dish) {
                     Dish dish = itemList[index];
                     return DishTileItem(

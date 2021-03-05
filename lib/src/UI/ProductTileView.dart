@@ -275,26 +275,30 @@ class _ProductTileItemState extends State<ProductTileItem> {
                               ),
                               Visibility(
                                 visible: _isProductOutOfStock,
-                                child: Container(
-                                  height: 80.0,
-                                  color: Colors.white54,
-                                  child: Center(
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.red, width: 1),
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: Padding(
-                                          padding: EdgeInsets.all(2),
-                                          child: Text(
-                                            "Out of Stock",
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12),
-                                          ),
-                                        )),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 7, right: 20, top: 5),
+                                  child: Container(
+                                    height: 80.0,
+                                    color: Colors.white54,
+                                    child: Center(
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.red, width: 1),
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(5)),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(2),
+                                            child: Text(
+                                              "Out of Stock",
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12),
+                                            ),
+                                          )),
+                                    ),
                                   ),
                                 ),
                               )

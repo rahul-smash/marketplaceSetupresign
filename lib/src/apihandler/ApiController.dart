@@ -1855,17 +1855,15 @@ class ApiController {
     }
   }
 
-  static Future<MobileVerified> socialSignUp(
-      FacebookModel fbModel,
+
+  static Future<MobileVerified> socialSignUp(FacebookModel fbModel,
       GoogleSignInAccount googleResult,
       String fullName,
       String emailId,
       String phoneNumber,
       String user_refer_code,
-      String gstNumber,
-      {String appleLogin = '',
-      String lastName = ''}) async {
-    StoreModel store = await SharedPrefs.getStore();
+      String gstNumber,{String appleLogin='',String lastName=''}) async {
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
@@ -1880,8 +1878,8 @@ class ApiController {
       socialPlatform = "facebook";
     } else if (googleResult != null) {
       socialPlatform = "google";
-    } else if (appleLogin.isNotEmpty) {
-      socialPlatform = appleLogin;
+    }else if(appleLogin.isNotEmpty){
+      socialPlatform=appleLogin;
     }
 
     try {

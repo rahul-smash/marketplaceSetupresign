@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/Utils.dart';
@@ -13,8 +14,9 @@ class RestroSearchItemCard extends StatelessWidget {
 
   CustomCallback callback;
   LatLng initialPosition;
+  BrandData brandData;
 
-  RestroSearchItemCard(this.storeDataObj, this.callback, this.initialPosition);
+  RestroSearchItemCard(this.storeDataObj, this.callback, this.initialPosition,this.brandData);
 
   @override
   Widget build(BuildContext context) {
@@ -108,29 +110,32 @@ class RestroSearchItemCard extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    Container(
-                                        child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                right: 10, top: 5, bottom: 5),
-                                            child: Text(
-                                              "${storeDataObj.location}, ${storeDataObj.city}, ${storeDataObj.state}",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color:
-                                                      staticHomeDescriptionColor,
-                                                  fontWeight: FontWeight.w400),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
+                                    Visibility(
+                                      visible: brandData.display_store_location=='1',
+                                      child: Container(
+                                          child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: 10, top: 5, bottom: 5),
+                                              child: Text(
+                                                "${storeDataObj.location}, ${storeDataObj.city}, ${storeDataObj.state}",
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color:
+                                                        staticHomeDescriptionColor,
+                                                    fontWeight: FontWeight.w400),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    )),
+                                        ],
+                                      )),
+                                    ),
                                     Container(
                                       height: 2,
                                       width: 40,
