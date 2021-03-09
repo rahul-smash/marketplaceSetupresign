@@ -130,7 +130,7 @@ class BrandData {
   String poweredByLink;
   bool blDeviceIdUnique;
   bool isRefererFnEnable;
-  List<dynamic> homeScreenSection;
+  List<HomeScreenSection> homeScreenSection;
   List<Filter> filters;
   WebAppThemeColors webAppThemeColors;
   String paymentGateway;
@@ -205,9 +205,9 @@ class BrandData {
           display_store_location: json["display_store_location"] == null
               ? null
               : json["display_store_location"].toString(),
-
-          homeScreenSection:
-          List<dynamic>.from(json["home_screen_section"].map((x) => x)),
+          homeScreenSection: json["home_screen_section"] == null ? null : List<
+              HomeScreenSection>.from(json["home_screen_section"].map((x) =>
+              HomeScreenSection.fromJson(x))),
           filters:
           List<Filter>.from(json["filters"].map((x) => Filter.fromJson(x))),
           webAppThemeColors: json["web_app_theme_colors"] == null
@@ -262,8 +262,8 @@ class BrandData {
         "web_app_theme_colors": webAppThemeColors,
         "allow_customer_for_gst": allowCustomerForGst,
         "payment_gateway": paymentGateway,
-        "home_screen_section":
-        List<dynamic>.from(homeScreenSection.map((x) => x)),
+        "home_screen_section": homeScreenSection == null ? null : List<
+            dynamic>.from(homeScreenSection.map((x) => x.toJson())),
         "filters": List<dynamic>.from(filters.map((x) => x.toJson())),
         "display_distance": display_distance == null ? null : display_distance,
         "display_store_rating": display_store_rating == null
@@ -627,3 +627,46 @@ class WebAppThemeColors {
             : categoryListingBoxBackgroundColor,
       };
 }
+
+class HomeScreenSection {
+  HomeScreenSection({
+    this.section,
+    this.display,
+    this.position,
+  });
+
+  String section;
+  bool display;
+  String position;
+
+  HomeScreenSection copyWith({
+    String section,
+    bool display,
+    String position,
+  }) =>
+      HomeScreenSection(
+        section: section ?? this.section,
+        display: display ?? this.display,
+        position: position ?? this.position,
+      );
+
+  factory HomeScreenSection.fromRawJson(String str) =>
+      HomeScreenSection.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory HomeScreenSection.fromJson(Map<String, dynamic> json) =>
+      HomeScreenSection(
+        section: json["section"] == null ? null : json["section"],
+        display: json["display"] == null ? null : json["display"],
+        position: json["position"] == null ? null : json["position"],
+      );
+
+  Map<String, dynamic> toJson() =>
+      {
+        "section": section == null ? null : section,
+        "display": display == null ? null : display,
+        "position": position == null ? null : position,
+      };
+}
+

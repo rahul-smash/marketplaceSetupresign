@@ -50,7 +50,7 @@ import 'package:location/location.dart';
 //import 'package:google_maps_webservice/places.dart';
 import 'package:restroapp/src/Screens/Dashboard/StoreDashboardScreen.dart';
 import 'package:permission_handler/permission_handler.dart'
-as permission_handler;
+    as permission_handler;
 
 class MarketPlaceHomeScreen extends StatefulWidget {
   //final StoreModel store;
@@ -77,7 +77,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   UserModel user;
   static FirebaseAnalytics analytics = FirebaseAnalytics();
   static FirebaseAnalyticsObserver observer =
-  FirebaseAnalyticsObserver(analytics: analytics);
+      FirebaseAnalyticsObserver(analytics: analytics);
   bool isStoreClosed;
   final DatabaseHelper databaseHelper = new DatabaseHelper();
   int cartBadgeCount;
@@ -115,6 +115,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   DateTime currentBackPressTime;
 
   _MarketPlaceHomeScreenState(this.store);
+  Map<String, HomeScreenSection> homeViewOrderMap = Map();
 
   @override
   void initState() {
@@ -131,6 +132,11 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     getCategoryApi();
     _getTagApi();
     _getStoreApi();
+
+    for (HomeScreenSection item in store.homeScreenSection) {
+      homeViewOrderMap.putIfAbsent(item.section, () => item);
+    }
+
     try {
       print("-----store.banners-----${store.banners.length}------");
       if (store.banners.isEmpty) {
@@ -171,7 +177,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.initialPosition == null) {
-        DialogUtils.displayLocationNotAvailbleDialog(context, "Location not available",buttonText1: 'Dismiss',button1: ()async{
+        DialogUtils.displayLocationNotAvailbleDialog(
+            context, "Location not available", buttonText1: 'Dismiss',
+            button1: () async {
           getCurrentLocation();
           Navigator.pop(context);
         });
@@ -186,7 +194,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           setState(() {
             print("----initialPosition----=${widget.initialPosition}");
           });
-
         }
       });
     });
@@ -284,11 +291,51 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     if (imgList.length == 0) {
       return Container();
     } else
-      return Center(
-        child: SizedBox(
-          height: 200.0,
-          width: Utils.getDeviceWidth(context),
-          child: _CarouselView(),
+      return Visibility(
+        visible:
+        (homeViewOrderMap.length==0)||
+            (homeViewOrderMap[HomeScreenViewHelper.SLIDER]
+                !=null&&homeViewOrderMap[HomeScreenViewHelper.SLIDER].display),
+        child: Column(
+          children: [
+            Center(
+              child: SizedBox(
+                height: 200.0,
+                width: Utils.getDeviceWidth(context),
+                child: _CarouselView(),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: imgList.map((url) {
+                  int index = imgList.indexOf(url);
+                  return _current == index
+                      ? Container(
+                    width: 7.0,
+                    height: 7.0,
+                    margin: EdgeInsets.symmetric(
+                        vertical: 0.0, horizontal: 2.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: dotIncreasedColor,
+                    ),
+                  )
+                      : Container(
+                    width: 6.0,
+                    height: 6.0,
+                    margin: EdgeInsets.symmetric(
+                        vertical: 0.0, horizontal: 2.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromRGBO(0, 0, 0, 0.4),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
         ),
       );
   }
@@ -314,10 +361,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         autoPlayCurve: Curves.ease,
         scrollDirection: Axis.horizontal,
       ),
-      itemBuilder: (BuildContext context, int itemIndex) =>
-          Container(
-            child: _makeBanner(context, itemIndex),
-          ),
+      itemBuilder: (BuildContext context, int itemIndex) => Container(
+        child: _makeBanner(context, itemIndex),
+      ),
     );
   }
 
@@ -326,7 +372,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       onTap: () => _onBannerTap(_index),
       child: Container(
           margin:
-          EdgeInsets.only(top: 0.0, bottom: 15.0, left: 7.5, right: 7.5),
+              EdgeInsets.only(top: 0.0, bottom: 15.0, left: 7.5, right: 7.5),
           width: Utils.getDeviceWidth(context) -
               (Utils.getDeviceWidth(context) / 4),
           decoration: BoxDecoration(
@@ -416,7 +462,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         }
         Utils.showProgressDialog(context);
         ApiController.homeOffersDetails(
-            coupon_id: store.banners[position].offerId)
+                coupon_id: store.banners[position].offerId)
             .then((response) {
           Utils.hideProgressDialog(context);
           Utils.hideKeyboard(context);
@@ -457,9 +503,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               title: Text('Home',
                   style: TextStyle(
                       color:
-                      _selectedHomeScreen != HomeScreenEnum.HOME_BAND_VIEW
-                          ? staticHomeDescriptionColor
-                          : appThemeSecondary)),
+                          _selectedHomeScreen != HomeScreenEnum.HOME_BAND_VIEW
+                              ? staticHomeDescriptionColor
+                              : appThemeSecondary)),
             ),
             BottomNavigationBarItem(
               icon: Image.asset('images/unselectedexploreicon.png',
@@ -519,8 +565,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    MyCartScreen(() {
+                builder: (context) => MyCartScreen(() {
                       getCartCount();
                     })),
           );
@@ -553,8 +598,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         }
                       });
                       return;
-                    }
-                    ,widget.brandData)),
+                    }, widget.brandData)),
           );
 //          } else {
 //            Utils.showLoginDialog(context);
@@ -671,15 +715,15 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     });
   }
 
-  Future showNotification(String title, String body,
-      Map<String, dynamic> message) async {
+  Future showNotification(
+      String title, String body, Map<String, dynamic> message) async {
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    new FlutterLocalNotificationsPlugin();
+        new FlutterLocalNotificationsPlugin();
 
     String appName = await SharedPrefs.getStoreSharedValue(AppConstant.appName);
 
     var initializationSettingsAndroid =
-    AndroidInitializationSettings('ic_notification');
+        AndroidInitializationSettings('ic_notification');
     var initializationSettingsIOS = IOSInitializationSettings(
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
     var initializationSettings = InitializationSettings(
@@ -704,8 +748,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     debugPrint('onSelectNotification : ');
   }
 
-  Future<void> onDidReceiveLocalNotification(int id, String title, String body,
-      String payload) async {
+  Future<void> onDidReceiveLocalNotification(
+      int id, String title, String body, String payload) async {
     debugPrint('onDidReceiveLocalNotification : ');
   }
 
@@ -829,12 +873,11 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       Coordinates coordinates = new Coordinates(
           widget.initialPosition.latitude, widget.initialPosition.longitude);
       var addresses =
-      await Geocoder.local.findAddressesFromCoordinates(coordinates);
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
       var first = addresses.first;
       //print("--addresses-${addresses} and ${first}");
       print(
-          "---getAddressFromLocation-------${first.featureName} and ${first
-              .addressLine}-postalCode-${first.postalCode}------");
+          "---getAddressFromLocation-------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
       setState(() {
         locationAddress = first.addressLine;
       });
@@ -844,8 +887,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     }
   }
 
-  void showBottomSheet(context, LatLng center, LatLng selectedLocation,
-      String address) {
+  void showBottomSheet(
+      context, LatLng center, LatLng selectedLocation, String address) {
     LatLng localCenter, localSelectedLocation;
     GoogleMapController _mapController;
     localCenter = center;
@@ -859,7 +902,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         localSelectedLocation = LatLng(latitude, longitude);
         Coordinates coordinates = new Coordinates(latitude, longitude);
         var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+            await Geocoder.local.findAddressesFromCoordinates(coordinates);
         var first = addresses.first;
         localAddress = first.addressLine;
         if (setState != null)
@@ -932,7 +975,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         decoration: BoxDecoration(
                             color: searchGrayColor,
                             borderRadius:
-                            BorderRadius.all(Radius.circular(5.0)),
+                                BorderRadius.all(Radius.circular(5.0)),
                             border: Border.all(
                               color: searchGrayColor,
                             )),
@@ -980,13 +1023,13 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                               child: Center(
                                 child: Row(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Padding(
                                           padding:
-                                          EdgeInsets.fromLTRB(3, 3, 10, 3),
+                                              EdgeInsets.fromLTRB(3, 3, 10, 3),
                                           child: Image.asset(
                                               'images/searchicon.png',
                                               width: 20,
@@ -1009,11 +1052,11 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                             ))),
                     Container(
                         height: Utils.getDeviceHeight(context) >
-                            Utils.getDeviceWidth(context)
+                                Utils.getDeviceWidth(context)
                             ? Utils.getDeviceWidth(context) - 50
                             : Utils.getDeviceHeight(context) / 2 - 50,
                         margin:
-                        EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                            EdgeInsets.only(left: 20, right: 20, bottom: 20),
                         child: GoogleMap(
                           onMapCreated: (GoogleMapController controller) {
                             _mapController = controller;
@@ -1049,7 +1092,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                           },
                           onCameraMove: (CameraPosition position) {
                             CameraPosition newPos =
-                            CameraPosition(target: position.target);
+                                CameraPosition(target: position.target);
                             Marker marker = markers.first;
 
                             setState(() {
@@ -1104,56 +1147,56 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       titleSpacing: 0,
       title: widget.configObject.isMultiStore == false
           ? Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          InkWell(
-            onTap: () async {
-              if (widget.initialPosition != null &&
-                  locationAddress != 'Select Location') {
-                showBottomSheet(context, widget.initialPosition,
-                    widget.initialPosition, locationAddress);
-                return;
-              }
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  onTap: () async {
+                    if (widget.initialPosition != null &&
+                        locationAddress != 'Select Location') {
+                      showBottomSheet(context, widget.initialPosition,
+                          widget.initialPosition, locationAddress);
+                      return;
+                    }
 
-              await getCurrentLocation();
-            },
-            child: Visibility(
-              visible:
-              _selectedHomeScreen == HomeScreenEnum.HOME_BAND_VIEW,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: (Utils.getDeviceWidth(context) / 2.2),
-                    child: Text(
-                      "${locationAddress}",
-                      maxLines: 2,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(fontSize: 14),
+                    await getCurrentLocation();
+                  },
+                  child: Visibility(
+                    visible:
+                        _selectedHomeScreen == HomeScreenEnum.HOME_BAND_VIEW,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: (Utils.getDeviceWidth(context) / 2.2),
+                          child: Text(
+                            "${locationAddress}",
+                            maxLines: 2,
+                            textAlign: TextAlign.left,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Icon(Icons.keyboard_arrow_down)
+                      ],
                     ),
                   ),
+                ),
+              ],
+            )
+          : InkWell(
+              onTap: () async {
+                BranchData selectedStore =
+                    await DialogUtils.displayBranchDialog(context,
+                        "Select Branch", storeBranchesModel, branchData);
+                if (selectedStore != null &&
+                    store.id.compareTo(selectedStore.id) != 0)
+                  logout(context, selectedStore);
+              },
+              child: Row(
+                children: <Widget>[
+                  Text(branchData == null ? "" : branchData.storeName),
                   Icon(Icons.keyboard_arrow_down)
                 ],
               ),
             ),
-          ),
-        ],
-      )
-          : InkWell(
-        onTap: () async {
-          BranchData selectedStore =
-          await DialogUtils.displayBranchDialog(context,
-              "Select Branch", storeBranchesModel, branchData);
-          if (selectedStore != null &&
-              store.id.compareTo(selectedStore.id) != 0)
-            logout(context, selectedStore);
-        },
-        child: Row(
-          children: <Widget>[
-            Text(branchData == null ? "" : branchData.storeName),
-            Icon(Icons.keyboard_arrow_down)
-          ],
-        ),
-      ),
       centerTitle: widget.configObject.isMultiStore == true ? false : false,
       leading: _getAppBarLeftIcon(),
       actions: <Widget>[
@@ -1226,11 +1269,11 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         Container(
           decoration: isCategoryViewSelected
               ? BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("images/backgroundimg.png"),
-              fit: BoxFit.cover,
-            ),
-          )
+                  image: DecorationImage(
+                    image: AssetImage("images/backgroundimg.png"),
+                    fit: BoxFit.cover,
+                  ),
+                )
               : null,
           color: !isCategoryViewSelected ? Colors.white : null,
         ),
@@ -1247,99 +1290,102 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     if (_selectedHomeScreen == HomeScreenEnum.HOME_SELECTED_STORE_VIEW)
       return Padding(
         padding: EdgeInsets.only(top: 0),
-        child: StoreDashboardScreen(_selectedSingleStore,widget.brandData),
+        child: StoreDashboardScreen(_selectedSingleStore, widget.brandData),
       );
     else
       return Container();
   }
 
   Widget _addSearchView() {
-    return Container(
-      height: 40,
-      margin: EdgeInsets.fromLTRB(10, 10, 10, 20),
-      //padding: EdgeInsets.all(5.0),
-      decoration: BoxDecoration(
-          color: searchGrayColor,
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          border: Border.all(
+    return Visibility(
+      visible: (homeViewOrderMap.length==0)||
+          (homeViewOrderMap[HomeScreenViewHelper.SEARCH]
+              !=null&&homeViewOrderMap[HomeScreenViewHelper.SEARCH].display),
+      child: Container(
+        height: 40,
+        margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+        //padding: EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
             color: searchGrayColor,
-          )),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: Center(
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                    padding: EdgeInsets.fromLTRB(3, 3, 6, 3),
-                    child: Image.asset('images/searchicon.png',
-                        width: 20, fit: BoxFit.scaleDown, color: appTheme)),
-                Flexible(
-                  child: TextField(
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: (value) async {
-                      if (value
-                          .trim()
-                          .isEmpty) {
-                        Utils.showToast(
-                            "Please enter some valid keyword", false);
-                      } else {
-                        Map<String, dynamic> data = {
-                          "lat": widget.initialPosition.latitude,
-                          "lng": widget.initialPosition.longitude,
-                          "search_by": "Keyword",
-                          "keyword": "${value.trim()}",
-                        };
-                        Utils.showProgressDialog(context);
-                        ApiController.getAllStores(params: data)
-                            .then((storesResponse) {
-                          Utils.hideProgressDialog(context);
-                          Utils.hideKeyboard(context);
-                          if (storesResponse != null) {
-                            if (!storesResponse.success &&
-                                storesResponse.dishes != null &&
-                                storesResponse.dishes.isEmpty) {
-                              Utils.showToast("No results Found", false);
-                              return;
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            border: Border.all(
+              color: searchGrayColor,
+            )),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+          child: Center(
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(3, 3, 6, 3),
+                      child: Image.asset('images/searchicon.png',
+                          width: 20, fit: BoxFit.scaleDown, color: appTheme)),
+                  Flexible(
+                    child: TextField(
+                      textInputAction: TextInputAction.search,
+                      onSubmitted: (value) async {
+                        if (value.trim().isEmpty) {
+                          Utils.showToast(
+                              "Please enter some valid keyword", false);
+                        } else {
+                          Map<String, dynamic> data = {
+                            "lat": widget.initialPosition.latitude,
+                            "lng": widget.initialPosition.longitude,
+                            "search_by": "Keyword",
+                            "keyword": "${value.trim()}",
+                          };
+                          Utils.showProgressDialog(context);
+                          ApiController.getAllStores(params: data)
+                              .then((storesResponse) {
+                            Utils.hideProgressDialog(context);
+                            Utils.hideKeyboard(context);
+                            if (storesResponse != null) {
+                              if (!storesResponse.success &&
+                                  storesResponse.dishes != null &&
+                                  storesResponse.dishes.isEmpty) {
+                                Utils.showToast("No results Found", false);
+                                return;
+                              }
+                              allStoreData = storesResponse;
+                              setState(() {
+                                _selectedHomeScreen =
+                                    HomeScreenEnum.HOME_SEARCH_VIEW;
+                              });
+                              eventBus.fire(onHomeSearch(allStoreData));
                             }
-                            allStoreData = storesResponse;
-                            setState(() {
-                              _selectedHomeScreen =
-                                  HomeScreenEnum.HOME_SEARCH_VIEW;
-                            });
-                            eventBus.fire(onHomeSearch(allStoreData));
-                          }
-                        });
-                        //callSearchAPI();
-                      }
-                    },
-                    onChanged: (text) {
-                      print("onChanged ${text}");
-                    },
-                    controller: _controller,
-                    cursorColor: Colors.black,
-                    keyboardType: TextInputType.text,
-                    decoration: new InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        hintText: "Search"),
+                          });
+                          //callSearchAPI();
+                        }
+                      },
+                      onChanged: (text) {
+                        print("onChanged ${text}");
+                      },
+                      controller: _controller,
+                      cursorColor: Colors.black,
+                      keyboardType: TextInputType.text,
+                      decoration: new InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          hintText: "Search"),
+                    ),
                   ),
-                ),
-                Visibility(
-                    visible: _controller.text.isNotEmpty,
-                    child: IconButton(
-                        icon: Icon(
-                          Icons.clear,
-                          color: appTheme,
-                        ),
-                        onPressed: () {
-                          _clearSearchResult();
-                        }))
-              ]),
+                  Visibility(
+                      visible: _controller.text.isNotEmpty,
+                      child: IconButton(
+                          icon: Icon(
+                            Icons.clear,
+                            color: appTheme,
+                          ),
+                          onPressed: () {
+                            _clearSearchResult();
+                          }))
+                ]),
+          ),
         ),
       ),
     );
@@ -1367,17 +1413,15 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         return _getRestaurantList();
         break;
       case HomeScreenEnum.HOME_SELECTED_STORE_VIEW:
-        return StoreDashboardScreen(_selectedSingleStore,widget.brandData);
+        return StoreDashboardScreen(_selectedSingleStore, widget.brandData);
         break;
       case HomeScreenEnum.HOME_SEARCH_VIEW:
       case HomeScreenEnum.HOME_BAND_VIEW:
       default:
         return Column(
           children: [
-            Visibility(
-              visible: true,
-              child: _addSearchView(),
-            ),
+            SizedBox(height: 10,),
+            _addSearchView(),
             _getMiddleView()
           ],
         );
@@ -1408,6 +1452,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         });
         return;
       },
+      homeViewOrderMap: homeViewOrderMap,
     );
   }
 
@@ -1443,90 +1488,57 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     return (_selectedHomeScreen == HomeScreenEnum.HOME_SEARCH_VIEW)
         ? Expanded(child: _getSearchList())
         : Expanded(
-        child: SingleChildScrollView(
-          controller: controller,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              addBanners(),
-              Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: imgList.map((url) {
-                    int index = imgList.indexOf(url);
-                    return _current == index
-                        ? Container(
-                      width: 7.0,
-                      height: 7.0,
-                      margin: EdgeInsets.symmetric(
-                          vertical: 0.0, horizontal: 2.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: dotIncreasedColor,
-                      ),
-                    )
-                        : Container(
-                      width: 6.0,
-                      height: 6.0,
-                      margin: EdgeInsets.symmetric(
-                          vertical: 0.0, horizontal: 2.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromRGBO(0, 0, 0, 0.4),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : /*categoriesModel == null
-                  ? Center(child: Text(""))
-                  : !isCategoryViewSelected
-                  ? */MarketPlaceHomeCategoryView(
-                categoriesModel,
-                widget.initialPosition,
-                /*categoryResponse,*/
-                store,
-                subCategory,
-                storeData: storeData,
-                tagsModel: tagsModel,
-                callback: <Object>({value}) {
-                  setState(() {
-                    if (value == null) {
-                      Utils.showToast('No Data found', false);
-                      return;
-                    }
-                    if (value is StoreDataModel) {
-                      setState(() {
-                        _selectedSingleStore = value;
-                        _previousSelectedHomeScreen =
-                            _selectedHomeScreen;
-                        _selectedHomeScreen = HomeScreenEnum
-                            .HOME_SELECTED_STORE_VIEW;
-                      });
-                      return;
-                    }
+            child: SingleChildScrollView(
+            controller: controller,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                addBanners(),
+                isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : MarketPlaceHomeCategoryView(
+                        categoriesModel,
+                        widget.initialPosition,
+                        /*categoryResponse,*/
+                        store,
+                        subCategory,
+                        storeData: storeData,
+                        tagsModel: tagsModel,
+                        callback: <Object>({value}) {
+                          setState(() {
+                            if (value == null) {
+                              Utils.showToast('No Data found', false);
+                              return;
+                            }
+                            if (value is StoreDataModel) {
+                              setState(() {
+                                _selectedSingleStore = value;
+                                _previousSelectedHomeScreen =
+                                    _selectedHomeScreen;
+                                _selectedHomeScreen =
+                                    HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+                              });
+                              return;
+                            }
 
-                    if (value is StoresModel) {
-                      setState(() {
-                        allStoreData = value;
-                        _previousSelectedHomeScreen =
-                            _selectedHomeScreen;
-                        _selectedHomeScreen =
-                            HomeScreenEnum.HOME_RESTAURANT_VIEW;
-                      });
-                      return;
-                    }
-                  });
-                  return;
-                },
-              )
-                  /*: Container()*/
-            ],
-          ),
-        ));
+                            if (value is StoresModel) {
+                              setState(() {
+                                allStoreData = value;
+                                _previousSelectedHomeScreen =
+                                    _selectedHomeScreen;
+                                _selectedHomeScreen =
+                                    HomeScreenEnum.HOME_RESTAURANT_VIEW;
+                              });
+                              return;
+                            }
+                          });
+                          return;
+                        },homeViewOrderMap:homeViewOrderMap
+                      )
+
+              ],
+            ),
+          ));
   }
 
   _getAppBarLeftIcon() {
@@ -1617,19 +1629,16 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       );
     }
     _locationData = await location.getLocation();
-    _initialPosition =
-        LatLng(_locationData.latitude, _locationData.longitude);
+    _initialPosition = LatLng(_locationData.latitude, _locationData.longitude);
     if (_initialPosition != null) {
       Coordinates coordinates = new Coordinates(
-          _initialPosition.latitude,
-          _initialPosition.longitude);
-      var addresses = await Geocoder.local
-          .findAddressesFromCoordinates(coordinates);
+          _initialPosition.latitude, _initialPosition.longitude);
+      var addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
       var first = addresses.first;
       //print("--addresses-${addresses} and ${first}");
       print(
-          "----------${first.featureName} and ${first
-              .addressLine}-postalCode-${first.postalCode}------");
+          "----------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
       setState(() {
         locationAddress = first.addressLine;
         //ReloadApi
@@ -1637,4 +1646,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       });
     }
   }
+}
+
+class HomeScreenViewHelper {
+  static const SEARCH = "search";
+  static const SLIDER = "slider";
+  static const CATEGORIES = "categories";
+  static const FILTER = "filter";
+  static const TAGS = "tags";
+  static const STORES = "stores";
+  List<HomeScreenSection> homeViewList;
 }

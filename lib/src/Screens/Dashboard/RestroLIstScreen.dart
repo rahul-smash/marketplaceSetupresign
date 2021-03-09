@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeScreen.dart';
 import 'package:restroapp/src/UI/RestroCardItem.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/BrandModel.dart';
@@ -19,13 +20,13 @@ class RestroListScreen extends StatefulWidget {
   LatLng initialPosition;
   TagsModel tagsModel;
   BrandData brandData;
-
+  Map<String, HomeScreenSection> homeViewOrderMap;
   RestroListScreen(this.allStoreData,
       this.brandData,
       {this.callback,
       this.initialPosition,
       this.tagsModel,
-      this.selectedScreen});
+      this.selectedScreen,this.homeViewOrderMap});
 
   @override
   _RestroListScreenState createState() => _RestroListScreenState();
@@ -59,57 +60,64 @@ class _RestroListScreenState extends State<RestroListScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                SizedBox(height: 20,),
                 //Quick Links
                 Visibility(
-                  visible: true,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          "Quick Links",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        Visibility(
-                          visible: true,
-                          child: InkWell(
-                            onTap: () {
-                              print("onTap =isSeeAll=${isSeeAll}");
-                              setState(() {
-                                if (isSeeAll) {
-                                  isSeeAll = false;
-                                } else {
-                                  isSeeAll = true;
-                                }
-                              });
-                            },
-                            child: Text(
-                              isSeeAll ? "View Less" : "View More",
+            visible: (widget.homeViewOrderMap.length==0)||
+                (widget.homeViewOrderMap[HomeScreenViewHelper.TAGS]
+                    !=null&&widget.homeViewOrderMap[HomeScreenViewHelper.TAGS].display),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              "Quick Links",
                               style: TextStyle(
-                                  color: appThemeSecondary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w300),
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400),
                             ),
-                          ),
-                        )
-                      ],
-                    ),
+                            Visibility(
+                              visible: true,
+                              child: InkWell(
+                                onTap: () {
+                                  print("onTap =isSeeAll=${isSeeAll}");
+                                  setState(() {
+                                    if (isSeeAll) {
+                                      isSeeAll = false;
+                                    } else {
+                                      isSeeAll = true;
+                                    }
+                                  });
+                                },
+                                child: Text(
+                                  isSeeAll ? "View Less" : "View More",
+                                  style: TextStyle(
+                                      color: appThemeSecondary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      widget.tagsModel == null
+                          ? Utils.showIndicator()
+                          : GridView.count(
+                          crossAxisCount: 4,
+                          childAspectRatio: 1.4,
+                          physics: NeverScrollableScrollPhysics(),
+                          mainAxisSpacing: 1.0,
+                          crossAxisSpacing: 0.0,
+                          shrinkWrap: true,
+                          children: _getQuickLinksItem()),
+                    ],
                   ),
                 ),
-                widget.tagsModel == null
-                    ? Utils.showIndicator()
-                    : GridView.count(
-                        crossAxisCount: 4,
-                        childAspectRatio: 1.4,
-                        physics: NeverScrollableScrollPhysics(),
-                        mainAxisSpacing: 1.0,
-                        crossAxisSpacing: 0.0,
-                        shrinkWrap: true,
-                        children: _getQuickLinksItem()),
                 Padding(
                   padding: EdgeInsets.fromLTRB(10, 15, 10, 5),
                   child: Row(
@@ -124,31 +132,36 @@ class _RestroListScreenState extends State<RestroListScreen> {
                               fontWeight: FontWeight.w400),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          showBottomSheet(context);
-                        },
-                        child: Container(
-                          height: 30,
-                          margin: EdgeInsets.only(left: 4, right: 4),
-                          padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
-                          decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: grayLightColor, width: 1),
-                              borderRadius: BorderRadius.circular(2)),
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                "images/filtericon.png",
-                                height: 20,
-                                width: 20,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Sort',
-                                  style: TextStyle(color: Colors.grey)),
-                            ],
+                      Visibility(
+                          visible: (widget.homeViewOrderMap.length==0)||
+                          (widget.homeViewOrderMap[HomeScreenViewHelper.FILTER]
+                              !=null&&widget.homeViewOrderMap[HomeScreenViewHelper.FILTER].display),
+                        child: InkWell(
+                          onTap: () {
+                            showBottomSheet(context);
+                          },
+                          child: Container(
+                            height: 30,
+                            margin: EdgeInsets.only(left: 4, right: 4),
+                            padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: grayLightColor, width: 1),
+                                borderRadius: BorderRadius.circular(2)),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  "images/filtericon.png",
+                                  height: 20,
+                                  width: 20,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text('Sort',
+                                    style: TextStyle(color: Colors.grey)),
+                              ],
+                            ),
                           ),
                         ),
                       ),
