@@ -1,10 +1,12 @@
 import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/OtpScreen.dart';
+import 'package:restroapp/src/Screens/SideMenu/HtmlDisplayScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/ProfileScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -36,6 +38,8 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
   FacebookLogin facebookSignIn = new FacebookLogin();
   GoogleSignIn _googleSignIn;
   GoogleSignInAccount _currentUser;
+
+  bool agree = false;
 
   _LoginMobileScreen(this.menu);
 
@@ -161,7 +165,6 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                                 : store.social_login == "0"
                                     ? false
                                     : true,
-//                            visible: false,
                             child: Container(
                               margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                               width: Utils.getDeviceWidth(context),
@@ -179,12 +182,15 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                                 : store.social_login == "0"
                                     ? false
                                     : true,
-//                            visible: false,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 InkWell(
                                   onTap: () async {
+                                    if(!agree){
+                                      selectTermsAndConditionMessage();
+                                      return;
+                                    }
                                     print("------fblogin------");
                                     bool isNetworkAvailable =
                                         await Utils.isNetworkAvailable();
@@ -266,7 +272,47 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                                     onPressed: appleLogIn,
                                   ),
                                 ),
-                              ))
+                              )),
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Checkbox(
+                                activeColor: appTheme,
+                                value: agree,
+                                onChanged: (value) {
+                                  setState(() {
+                                    agree = value;
+                                  });
+                                },
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'I agree to the ',
+                                  style:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: 'Terms and Conditions',
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      HtmlDisplayScreen(AdditionItemsConstants.TERMS_CONDITIONS)),
+                                            );
+                                          },
+                                        style: TextStyle(
+                                            color: appTheme,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15)),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+
                         ],
                       )),
                 ),
@@ -282,6 +328,11 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
     return OutlineButton(
       splashColor: Colors.grey,
       onPressed: () async {
+        if(!agree){
+          selectTermsAndConditionMessage();
+          return;
+        }
+
         bool isNetworkAvailable = await Utils.isNetworkAvailable();
         if (!isNetworkAvailable) {
           Utils.showToast(AppConstant.noInternet, true);
@@ -484,6 +535,10 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
     print('@@MENUGET' + menu);
 
     final FormState form = _formKey.currentState;
+    if(!agree){
+      selectTermsAndConditionMessage();
+      return;
+    }
     if (form.validate()) {
       form.save(); //This invokes each onSaved event
       Utils.isNetworkAvailable().then((isNetworkAvailable) async {
@@ -522,6 +577,10 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
     } else {
       Utils.showToast("Please enter Mobile number", true);
     }
+  }
+
+  void selectTermsAndConditionMessage() {
+    Utils.showToast('Please select Terms and Conditions!', true);
   }
 }
 
