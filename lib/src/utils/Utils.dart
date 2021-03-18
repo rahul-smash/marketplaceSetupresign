@@ -21,6 +21,7 @@ import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/DeviceInfo.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
@@ -405,7 +406,7 @@ class Utils {
     return formatted;
   }
 
-  static bool getDayOfWeek(StoreModel store) {
+  static bool getDayOfWeek(String arrOpenhoursFrom,String arrOpenhoursTo) {
     bool isStoreOpen;
     DateFormat dateFormat = DateFormat("hh:mma");
     DateFormat apiDateFormat = new DateFormat("yyyy-MM-dd hh:mm a");
@@ -423,9 +424,9 @@ class Utils {
     print("----------------------------------------------");*/
 
     String openhours_From =
-        store.openhoursFrom.replaceAll("am", " AM").replaceAll("pm", " PM");
+        arrOpenhoursFrom.replaceAll("am", " AM").replaceAll("pm", " PM");
     String openhours_To =
-        store.openhoursTo.replaceAll("am", " AM").replaceAll("pm", " PM");
+        arrOpenhoursTo.replaceAll("am", " AM").replaceAll("pm", " PM");
     // print("--${getCurrentDate()}--openhoursFrom----${openhours_From} and ${openhours_To}");
 
     String openhoursFrom =
@@ -457,13 +458,13 @@ class Utils {
     return isStoreOpen;
   }
 
-  static bool checkStoreOpenDays(StoreModel store) {
+  static bool checkStoreOpenDays(String storeOpenDays) {
     bool isStoreOpenToday;
     var date = DateTime.now();
     //print(DateFormat('EEE').format(date)); // prints Tuesday
     String dayName = DateFormat('EEE').format(date).toLowerCase();
 
-    List<String> storeOpenDaysList = store.storeOpenDays.split(",");
+    List<String> storeOpenDaysList = storeOpenDays.split(",");
     //print("${dayName} and ${storeOpenDaysList}");
 
     if (storeOpenDaysList.contains(dayName)) {
@@ -476,7 +477,8 @@ class Utils {
     return isStoreOpenToday;
   }
 
-  static bool checkStoreOpenTime(var storeObject, OrderType deliveryType) {
+  static bool checkStoreOpenTime(StoreDataObj storeObject,
+      {OrderType deliveryType = OrderType.Delivery}) {
     // in case of deliver ignore is24x7Open
     bool status = false;
     try {
@@ -486,20 +488,20 @@ class Utils {
         if (storeObject.deliverySlot == "1") {
           status = true;
         } else if (storeObject.deliverySlot == "0" &&
-            storeObject.is24x7Open == "0") {
-          bool isStoreOpenToday = Utils.checkStoreOpenDays(storeObject);
+            storeObject.is24X7Open == "0") {
+          bool isStoreOpenToday = Utils.checkStoreOpenDays(storeObject.storeOpenDays);
           if (isStoreOpenToday) {
-            bool isStoreOpen = Utils.getDayOfWeek(storeObject);
+            bool isStoreOpen = Utils.getDayOfWeek(storeObject.openhoursFrom,storeObject.openhoursTo);
             status = isStoreOpen;
           } else {
             status = false;
           }
-        } else if (storeObject.is24x7Open == "1") {
+        } else if (storeObject.is24X7Open == "1") {
           status = true;
         }
       } else {
         if (deliveryType == OrderType.PickUp) {
-          if (storeObject.is24x7Open == "1") {
+          if (storeObject.is24X7Open == "1") {
             // 1 = means store open 24x7
             // 0 = not open for 24x7
             status = true;
@@ -507,9 +509,9 @@ class Utils {
               storeObject.openhoursFrom.isEmpty) {
             status = true;
           } else {
-            bool isStoreOpenToday = Utils.checkStoreOpenDays(storeObject);
+            bool isStoreOpenToday = Utils.checkStoreOpenDays(storeObject.storeOpenDays);
             if (isStoreOpenToday) {
-              bool isStoreOpen = Utils.getDayOfWeek(storeObject);
+              bool isStoreOpen = Utils.getDayOfWeek(storeObject.openhoursFrom,storeObject.openhoursTo);
               status = isStoreOpen;
             } else {
               status = false;
@@ -523,6 +525,56 @@ class Utils {
       return true;
     }
   }
+
+  static bool checkStoreOpenTiming(StoreData storeObject) {
+    // in case of deliver ignore is24x7Open
+    bool status = false;
+    try {
+      if (storeObject.timimg.is24X7Open == "1") {
+        // 1 = means store open 24x7
+        // 0 = not open for 24x7
+        status = true;
+      } else if (storeObject.timimg.openhoursFrom.isEmpty ||
+          storeObject.timimg.openhoursFrom.isEmpty) {
+        status = true;
+      } else {
+        bool isStoreOpenToday = Utils.checkStoreOpenDays(storeObject.timimg.storeOpenDays);
+        if (isStoreOpenToday) {
+          bool isStoreOpen = Utils.getDayOfWeek(storeObject.timimg.openhoursFrom,storeObject.timimg.openhoursTo);
+          status = isStoreOpen;
+        } else {
+          status = false;
+        }
+      }
+
+      return status;
+    } catch (e) {
+      print(e);
+      return true;
+    }
+  }
+
+//  static bool checkStoreOpenTime(StoreDataObj storeObject,OrderType deliveryType) {
+//    // in case of deliver ignore is24x7Open
+//    bool status = false;
+//    try {
+//      if (storeObject.is24X7Open == "0") {
+//          bool isStoreOpenToday = Utils.checkStoreOpenDays(storeObject);
+//          if (isStoreOpenToday) {
+//            bool isStoreOpen = Utils.getDayOfWeek(storeObject);
+//            status = isStoreOpen;
+//          } else {
+//            status = false;
+//          }
+//        } else if (storeObject.is24X7Open == "1") {
+//          status = true;
+//        }
+//      return status;
+//    } catch (e) {
+//      print(e);
+//      return true;
+//    }
+//  }
 
   static Widget getIndicatorView() {
     return Center(
@@ -639,16 +691,18 @@ class Utils {
     }
     return returnedColor;
   }
- static DateTime loginClickTime;
 
-  static bool isRedundentClick(DateTime currentTime){
-    if(loginClickTime==null){
+  static DateTime loginClickTime;
+
+  static bool isRedundentClick(DateTime currentTime) {
+    if (loginClickTime == null) {
       loginClickTime = currentTime;
       print("first click");
       return false;
     }
     print('diff is ${currentTime.difference(loginClickTime).inSeconds}');
-    if(currentTime.difference(loginClickTime).inMilliseconds<1200){//set this difference time in seconds
+    if (currentTime.difference(loginClickTime).inMilliseconds < 1200) {
+      //set this difference time in seconds
       return true;
     }
 
@@ -672,7 +726,6 @@ class Utils {
       param['device_model'] = androidInfo.model;
       param['device_os'] = androidInfo.version.sdkInt;
       param['device_os_version'] = androidInfo.version.sdkInt;
-
 
       param['platform'] = 'android';
       param['model'] = androidInfo.model;

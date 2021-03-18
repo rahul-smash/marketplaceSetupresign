@@ -13,6 +13,7 @@ import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -182,10 +183,9 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                   } else if (pickupfacility == "1") {
                     StoreDataObj storeObject = await SharedPrefs.getStoreData();
                     bool status = Utils.checkStoreOpenTime(
-                        storeObject, OrderType.Delivery);
+                        storeObject,deliveryType: OrderType.Delivery);
                     if (!status) {
-                      Utils.showToast(
-                          "${storeObject.closehoursMessage}", false);
+                      DialogUtils.displayCommonDialog(context,storeObject.storeName,storeObject.closehoursMessage,);
                       return;
                     }
                     Utils.showProgressDialog(context);
@@ -221,10 +221,9 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                     //issue reported :=When both delivery address and pickup address are off then user is not able to place order
                     StoreDataObj storeObject = await SharedPrefs.getStoreData();
                     bool status = Utils.checkStoreOpenTime(
-                        storeObject, OrderType.Delivery);
+                        storeObject,deliveryType: OrderType.Delivery);
                     if (!status) {
-                      Utils.showToast(
-                          "${storeObject.closehoursMessage}", false);
+                      DialogUtils.displayCommonDialog(context,storeObject.storeName,storeObject.closehoursMessage,);
                       return;
                     }
                     Navigator.push(

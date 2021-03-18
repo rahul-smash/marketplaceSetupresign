@@ -7,6 +7,7 @@ import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class OrderSelectionScreen extends StatefulWidget {
@@ -87,10 +88,11 @@ class _OrderSelectionScreen extends State<OrderSelectionScreen> {
                             print('@@CartBottomView----'+"DeliveryScreen");
 
                             StoreDataObj storeObject = await SharedPrefs.getStoreData();
-                            bool status = Utils.checkStoreOpenTime(storeObject,OrderType.Delivery);
+                            bool status = Utils.checkStoreOpenTime(storeObject,deliveryType:OrderType.Delivery);
                             if(!status){
-                              Utils.showToast("${storeObject.closehoursMessage}", false);
+//                              Utils.showToast("${storeObject.closehoursMessage}", false);
                               Navigator.pop(context);
+                              DialogUtils.displayCommonDialog(context,storeObject.storeName,storeObject.closehoursMessage,);
                               return;
                             }
                             Navigator.pop(context);
@@ -141,10 +143,11 @@ class _OrderSelectionScreen extends State<OrderSelectionScreen> {
                             print('@@CartBottomView----'+"PickUPActivy");
 
                             StoreDataObj storeObject = await SharedPrefs.getStoreData();
-                            bool status = Utils.checkStoreOpenTime(storeObject,OrderType.Delivery);
+                            bool status = Utils.checkStoreOpenTime(storeObject,deliveryType:OrderType.Delivery);
                             if(!status){
-                              Utils.showToast("${storeObject.closehoursMessage}", false);
+//                              Utils.showToast("${storeObject.closehoursMessage}", false);
                               Navigator.pop(context);
+                              DialogUtils.displayCommonDialog(context,storeObject.storeName,storeObject.closehoursMessage,);
                               return;
                             }
 

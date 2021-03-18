@@ -1598,11 +1598,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               }
 //              StoreDataObj storeObject = await SharedPrefs.getStoreData();
               bool status =
-                  Utils.checkStoreOpenTime(storeModel, widget.deliveryType);
+                  Utils.checkStoreOpenTime(storeModel,deliveryType: widget.deliveryType);
               print("----checkStoreOpenTime----${status}--");
 
               if (!status) {
-                Utils.showToast("${storeModel.closehoursMessage}", false);
+                DialogUtils.displayCommonDialog(context,storeModel.storeName,storeModel.closehoursMessage,);
                 return;
               }
 //              if (widget.deliveryType == OrderType.Delivery &&
@@ -2343,12 +2343,17 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   void checkLoyalityPointsOption() {
     //1 - enable, 0 means disable
     try {
-      print("====-loyality===== ${storeModel.loyality}--");
+      print("====-loyality===== ${_brandData.loyality}--");
+      if (_brandData.loyality != null && _brandData.loyality == "1") {
+        this.isloyalityPointsEnabled = true;
+      } else {
+        this.isloyalityPointsEnabled = false;
+      }/* print("====-loyality===== ${storeModel.loyality}--");
       if (storeModel.loyality != null && storeModel.loyality == "1") {
         this.isloyalityPointsEnabled = true;
       } else {
         this.isloyalityPointsEnabled = false;
-      }
+      }*/
     } catch (e) {
       print(e);
     }

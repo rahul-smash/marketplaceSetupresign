@@ -7,6 +7,7 @@ import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class RestroSearchItemCard extends StatelessWidget {
@@ -22,6 +23,10 @@ class RestroSearchItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
+        if(!Utils.checkStoreOpenTiming(storeDataObj)){
+          DialogUtils.displayCommonDialog(context,storeDataObj.storeName,storeDataObj.timimg.closehoursMessage,);
+          return;
+        }
         bool isNetworkAvailable = await Utils.isNetworkAvailable();
         if (!isNetworkAvailable) {
           Utils.showToast("No Internet connection", false);
@@ -84,6 +89,35 @@ class RestroSearchItemCard extends StatelessWidget {
                                                 fit: BoxFit.cover,
                                               ),
                                       ))),
+                              Visibility(
+                                visible: !Utils.checkStoreOpenTiming(storeDataObj),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 7, right: 20, top: 5),
+                                  child: Container(
+                                    height: 80.0,
+                                    color: Colors.white54,
+                                    child: Center(
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.red, width: 1),
+                                              color: Colors.white,
+                                              borderRadius:
+                                              BorderRadius.circular(5)),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(2),
+                                            child: Text(
+                                              "Store Closed",
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12),
+                                            ),
+                                          )),
+                                    ),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ),

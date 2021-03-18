@@ -8,28 +8,34 @@ import 'package:restroapp/src/models/StoreOffersResponse.dart';
 import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class RedeemPointsScreen extends StatefulWidget {
-
   final DeliveryAddressData address;
   final String paymentMode; // 2 = COD, 3 = Online Payment
   final Function(TaxCalculationModel) callback;
   bool isComingFromPickUpScreen;
   String areaId;
   List<String> reddemPointsCodeList;
-  bool isOrderVariations=false;
+  bool isOrderVariations = false;
   List<OrderDetail> responseOrderDetail;
 
-  RedeemPointsScreen(this.address,this.paymentMode, this.isComingFromPickUpScreen,
-      this.areaId,this.callback,this.reddemPointsCodeList,this.isOrderVariations,this.responseOrderDetail);
+  RedeemPointsScreen(
+      this.address,
+      this.paymentMode,
+      this.isComingFromPickUpScreen,
+      this.areaId,
+      this.callback,
+      this.reddemPointsCodeList,
+      this.isOrderVariations,
+      this.responseOrderDetail);
 
   @override
   RedeemPointsScreenState createState() => RedeemPointsScreenState();
 }
 
 class RedeemPointsScreenState extends State<RedeemPointsScreen> {
-
   DatabaseHelper databaseHelper = new DatabaseHelper();
   String area_id_value;
   List<LoyalityData> loyalityList = List();
@@ -40,18 +46,22 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
   void initState() {
     super.initState();
     callLoyalityPointsApi();
-    area_id_value = widget.isComingFromPickUpScreen ? widget.areaId : widget.address.areaId;
+    area_id_value =
+        widget.isComingFromPickUpScreen ? widget.areaId : widget.address.areaId;
   }
 
   void callLoyalityPointsApi() {
     isLoading = true;
-    ApiController.getLoyalityPointsApiRequest().then((response){
+    ApiController.getLoyalityPointsApiRequest().then((response) {
       this.loyalityPointsModel = response;
       setState(() {
         isLoading = false;
-        if(loyalityPointsModel.success){
+        if (loyalityPointsModel.success) {
           loyalityList = loyalityPointsModel.data;
-        }else{
+          //Show dialog
+          if(loyalityPointsModel.loyalityPoints!='0.00'&&loyalityPointsModel.redeemLimit!='100')
+          DialogUtils.displayCommonDialog(context, 'Points', 'You can use ${loyalityPointsModel.redeemLimit}% from your points.');
+        } else {
           Utils.showToast("No data found!", false);
         }
       });
@@ -61,29 +71,38 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xffdbdbdb),
-        appBar: AppBar(
-            title: Text("Redeem Points"),
-            centerTitle: true,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios),
-              onPressed: () => Navigator.pop(context, false),
-            )),
-        //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0),),
-        //elevation: 0.0,
-        body: Container(
-          child: Column(
-            children: <Widget>[
-              Image.asset('images/process_img.png',fit:BoxFit.fitWidth,),
-              Divider(color:Color(0xffdbdbdb),height: 1,),
-                  isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : loyalityList == null
-                  ? SingleChildScrollView(child:Center(child: Text('No Data found!')))
-                  : loyalityList.isEmpty ? Utils.getEmptyView2("No Data found!") :showListView(),
-            ],
-          ),
+      backgroundColor: Color(0xffdbdbdb),
+      appBar: AppBar(
+          title: Text("Redeem Points"),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () => Navigator.pop(context, false),
+          )),
+      //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0),),
+      //elevation: 0.0,
+      body: Container(
+        child: Column(
+          children: <Widget>[
+            Image.asset(
+              'images/process_img.png',
+              fit: BoxFit.fitWidth,
+            ),
+            Divider(
+              color: Color(0xffdbdbdb),
+              height: 1,
+            ),
+            isLoading
+                ? Center(child: CircularProgressIndicator())
+                : loyalityList == null
+                    ? SingleChildScrollView(
+                        child: Center(child: Text('No Data found!')))
+                    : loyalityList.isEmpty
+                        ? Utils.getEmptyView2("No Data found!")
+                        : showListView(),
+          ],
         ),
+      ),
     );
   }
 
@@ -96,12 +115,19 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
             Color redeemButtonColor;
             try {
               print("${loyalityPointsModel.loyalityPoints}");
-              double userLoyalityPoints = double.parse(loyalityPointsModel.loyalityPoints);
-              int userLoyalityPointsValue = userLoyalityPoints.round();
+              double userLoyalityPoints =
+                  double.parse(loyalityPointsModel.loyalityPoints);
+              double userLoyalityPointsValue =
+                  userLoyalityPoints.roundToDouble();
+              //Calculation of loyalty points
+              double redeemLimitPercentage =
+                  double.parse(loyalityPointsModel.redeemLimit);
+              userLoyalityPointsValue =
+                  (userLoyalityPoints * redeemLimitPercentage) / 100;
               int pointsValue = int.parse(loyalityData.points);
-              if(userLoyalityPointsValue >= pointsValue){
+              if (userLoyalityPointsValue >= pointsValue) {
                 redeemButtonColor = appTheme;
-              }else{
+              } else {
                 redeemButtonColor = Color(0xffdbdbdb);
               }
             } catch (e) {
@@ -109,9 +135,9 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
             }
 
             String redeemText;
-            if(widget.reddemPointsCodeList.contains(loyalityData.couponCode)){
+            if (widget.reddemPointsCodeList.contains(loyalityData.couponCode)) {
               redeemText = "Redeemed";
-            }else{
+            } else {
               redeemText = "Redeem";
             }
 
@@ -135,21 +161,33 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
                                 children: <Widget>[
                                   Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text("${AppConstant.currency}${loyalityData.amount} OFF for ${loyalityData.points} Points",
+                                    child: Text(
+                                      "${AppConstant.currency}${loyalityData.amount} OFF for ${loyalityData.points} Points",
                                       textAlign: TextAlign.left,
-                                      style: TextStyle(fontWeight: FontWeight.w500),),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                    ),
                                   ),
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: <Widget>[
-                                        Text("Redeem for ${loyalityData.points} Points",
-                                          textAlign: TextAlign.end,style: TextStyle(color: appTheme),),
+                                        Text(
+                                          "Redeem for ${loyalityData.points} Points",
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(color: appTheme),
+                                        ),
                                         Padding(
-                                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                          child: Text("${loyalityData.couponCode}",style: TextStyle(color: appTheme),),
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                          child: Text(
+                                            "${loyalityData.couponCode}",
+                                            style: TextStyle(color: appTheme),
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -159,9 +197,9 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
                             ),
                             trailing: Container(
                               child: Padding(
-                                padding:EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                 child: RaisedButton(
-                                  padding:EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   textColor: Colors.white,
                                   color: redeemButtonColor,
                                   shape: RoundedRectangleBorder(
@@ -169,20 +207,30 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
                                     //side: BorderSide(color: Colors.red)
                                   ),
                                   onPressed: () async {
-                                    bool isNetworkAvailable = await Utils.isNetworkAvailable();
-                                    if(!isNetworkAvailable){
-                                      Utils.showToast(AppConstant.noInternet, false);
+                                    bool isNetworkAvailable =
+                                        await Utils.isNetworkAvailable();
+                                    if (!isNetworkAvailable) {
+                                      Utils.showToast(
+                                          AppConstant.noInternet, false);
                                       return;
                                     }
-                                    if(redeemButtonColor == appTheme){
-                                      print("-1--redeemButtonColor=${redeemButtonColor}");
+                                    if (redeemButtonColor == appTheme) {
+                                      print(
+                                          "-1--redeemButtonColor=${redeemButtonColor}");
 
-                                      if(widget.reddemPointsCodeList.contains(loyalityData.couponCode)){
+                                      if (widget.reddemPointsCodeList
+                                          .contains(loyalityData.couponCode)) {
                                         //Utils.showToast("Already Applied this Coupon", false);
-                                      }else{
-
-                                        if(widget.reddemPointsCodeList.isEmpty){
-                                          databaseHelper.getCartItemsListToJson(isOrderVariations:widget.isOrderVariations,responseOrderDetail: widget.responseOrderDetail).then((json) {
+                                      } else {
+                                        if (widget
+                                            .reddemPointsCodeList.isEmpty) {
+                                          databaseHelper
+                                              .getCartItemsListToJson(
+                                                  isOrderVariations:
+                                                      widget.isOrderVariations,
+                                                  responseOrderDetail: widget
+                                                      .responseOrderDetail)
+                                              .then((json) {
                                             if (json.length == 2) {
                                               Utils.showToast(
                                                   "All Items are out of stock.",
@@ -190,15 +238,20 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
                                               Utils.hideProgressDialog(context);
                                               return;
                                             }
-                                            validateCouponApi(loyalityData, json,);
+                                            validateCouponApi(
+                                              loyalityData,
+                                              json,
+                                            );
                                           });
-                                        }else{
-                                          Utils.showToast("Please remove the applied coupon first!", false);
+                                        } else {
+                                          Utils.showToast(
+                                              "Please remove the applied coupon first!",
+                                              false);
                                         }
-
                                       }
-                                    }else{
-                                      print("-2--redeemButtonColor=${redeemButtonColor}");
+                                    } else {
+                                      print(
+                                          "-2--redeemButtonColor=${redeemButtonColor}");
                                     }
                                   },
                                   child: new Text("${redeemText}"),
@@ -210,30 +263,30 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
                       ],
                     ),
                   ),
-                  Divider(color:Color(0xffdbdbdb),height: 1,),
+                  Divider(
+                    color: Color(0xffdbdbdb),
+                    height: 1,
+                  ),
                 ],
               ),
             );
-          }
-      ),
+          }),
     );
   }
 
   void validateCouponApi(LoyalityData loyalityData, String json) {
     print("----couponCode-----=>${loyalityData.amount}");
     Utils.showProgressDialog(context);
-    ApiController.multipleTaxCalculationRequest(loyalityData.couponCode,
-        loyalityData.amount, "0", json).then((response) async {
-
+    ApiController.multipleTaxCalculationRequest(
+            loyalityData.couponCode, loyalityData.amount, "0", json)
+        .then((response) async {
       Utils.hideProgressDialog(context);
       if (response.success) {
         widget.callback(response.taxCalculation);
-      }else{
+      } else {
         Utils.showToast(response.message, true);
       }
       Navigator.pop(context, true);
-
     });
-
   }
 }

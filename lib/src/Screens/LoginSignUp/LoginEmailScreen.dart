@@ -80,7 +80,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteColor,
-      resizeToAvoidBottomPadding: true,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         centerTitle: true,
         title: new Text('Login',style: new TextStyle(

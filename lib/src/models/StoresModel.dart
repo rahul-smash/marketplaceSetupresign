@@ -53,6 +53,7 @@ class StoreData {
     this.image300200,
     this.preparationTime,
     this.distance,
+    this.timimg,
     this.rating,
   });
 
@@ -72,6 +73,7 @@ class StoreData {
   String preparationTime;
   String distance;
   String rating;
+  Timimg timimg;
 
   factory StoreData.fromJson(Map<String, dynamic> json) => StoreData(
     id: json["id"],
@@ -90,6 +92,7 @@ class StoreData {
     preparationTime: json["preparation_time"],
     distance: json["distance"],
     rating: json["rating"],
+    timimg: json["timimg"] == null ? null : Timimg.fromJson(json["timimg"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -111,6 +114,58 @@ class StoreData {
     "rating": rating,
   };
 }
+
+class Timimg {
+  Timimg({
+    this.is24X7Open,
+    this.openhoursFrom,
+    this.openhoursTo,
+    this.closehoursMessage,
+    this.storeOpenDays,
+  });
+
+  String is24X7Open;
+  String openhoursFrom;
+  String openhoursTo;
+  String closehoursMessage;
+  String storeOpenDays;
+
+  Timimg copyWith({
+    String is24X7Open,
+    String openhoursFrom,
+    String openhoursTo,
+    String closehoursMessage,
+    String storeOpenDays,
+  }) =>
+      Timimg(
+        is24X7Open: is24X7Open ?? this.is24X7Open,
+        openhoursFrom: openhoursFrom ?? this.openhoursFrom,
+        openhoursTo: openhoursTo ?? this.openhoursTo,
+        closehoursMessage: closehoursMessage ?? this.closehoursMessage,
+        storeOpenDays: storeOpenDays ?? this.storeOpenDays,
+      );
+
+  factory Timimg.fromRawJson(String str) => Timimg.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory Timimg.fromJson(Map<String, dynamic> json) => Timimg(
+    is24X7Open: json["is24x7_open"] == null ? null : json["is24x7_open"],
+    openhoursFrom: json["openhours_from"] == null ? null : json["openhours_from"],
+    openhoursTo: json["openhours_to"] == null ? null : json["openhours_to"],
+    closehoursMessage: json["closehours_message"] == null ? null : json["closehours_message"],
+    storeOpenDays: json["store_open_days"] == null ? null : json["store_open_days"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "is24x7_open": is24X7Open == null ? null : is24X7Open,
+    "openhours_from": openhoursFrom == null ? null : openhoursFrom,
+    "openhours_to": openhoursTo == null ? null : openhoursTo,
+    "closehours_message": closehoursMessage == null ? null : closehoursMessage,
+    "store_open_days": storeOpenDays == null ? null : storeOpenDays,
+  };
+}
+
 class Dish {
   Dish({
     this.title,

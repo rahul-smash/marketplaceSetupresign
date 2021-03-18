@@ -7,6 +7,7 @@ import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class RestroCardItem extends StatelessWidget {
@@ -23,6 +24,10 @@ class RestroCardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
+        if(!Utils.checkStoreOpenTiming(storeDataObj)){
+          DialogUtils.displayCommonDialog(context,storeDataObj.storeName,storeDataObj.timimg.closehoursMessage,);
+          return;
+        }
         bool isNetworkAvailable = await Utils.isNetworkAvailable();
         if (!isNetworkAvailable) {
           Utils.showToast("No Internet connection", false);
@@ -199,6 +204,27 @@ class RestroCardItem extends StatelessWidget {
                     ),
                     width: 70,
                   ))),
+          Visibility(
+            visible: !Utils.checkStoreOpenTiming(storeDataObj),
+            child: Container(
+              height: 170.0,
+              color: Colors.white54,
+              child: Center(
+                child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.red, width: 2),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Text(
+                        "Store Closed",
+                        style: TextStyle(color: Colors.red, fontSize: 18),
+                      ),
+                    )),
+              ),
+            ),
+          )
         ],
       ),
     );
