@@ -158,7 +158,7 @@ class RestroCardItem extends StatelessWidget {
                                       )
                                     : Container()),
                             Visibility(
-                              visible: brandData.display_store_location == '1',
+                              visible: brandData.display_distance == '1',
                               child: Text(
 //                                  '${storeDataObj.distance} kms',
                                 '${_getDistance(storeDataObj)}',
