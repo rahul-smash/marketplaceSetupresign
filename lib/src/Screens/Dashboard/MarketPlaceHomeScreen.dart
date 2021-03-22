@@ -826,7 +826,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     });
   }
 
-  void _getStoreApi() {
+  void _getStoreApi() async {
     //----------------------------------------------
     ApiController.storesApiRequest(widget.initialPosition)
         .then((storesResponse) {

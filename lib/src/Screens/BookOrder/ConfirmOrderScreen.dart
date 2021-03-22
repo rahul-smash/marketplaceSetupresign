@@ -1058,7 +1058,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                               print("taxModel.total=${taxModel.total}");
                             });
                           }, appliedReddemPointsCodeList, isOrderVariations,
-                              responseOrderDetail),
+                              responseOrderDetail,taxModel:taxModel),
                           fullscreenDialog: true,
                         ));
                   }
@@ -1139,7 +1139,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                         print("taxModel.total=${taxModel.total}");
                       });
                     }, appliedCouponCodeList, isOrderVariations,
-                        responseOrderDetail),
+                        responseOrderDetail,taxModel: taxModel,),
                   );
                 }
               },

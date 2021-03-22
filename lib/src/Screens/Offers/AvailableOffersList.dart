@@ -18,6 +18,7 @@ class AvailableOffersDialog extends StatefulWidget {
   List<String> appliedCouponCodeList;
   bool isOrderVariations = false;
   List<OrderDetail> responseOrderDetail = List();
+  TaxCalculationModel taxModel;
 
   AvailableOffersDialog(
       this.address,
@@ -27,7 +28,8 @@ class AvailableOffersDialog extends StatefulWidget {
       this.callback,
       this.appliedCouponCodeList,
       this.isOrderVariations,
-      this.responseOrderDetail);
+      this.responseOrderDetail,
+      {this.taxModel});
 
   @override
   AvailableOffersState createState() => AvailableOffersState();

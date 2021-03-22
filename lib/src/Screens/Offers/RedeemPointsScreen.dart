@@ -20,6 +20,7 @@ class RedeemPointsScreen extends StatefulWidget {
   List<String> reddemPointsCodeList;
   bool isOrderVariations = false;
   List<OrderDetail> responseOrderDetail;
+  TaxCalculationModel taxModel;
 
   RedeemPointsScreen(
       this.address,
@@ -29,7 +30,8 @@ class RedeemPointsScreen extends StatefulWidget {
       this.callback,
       this.reddemPointsCodeList,
       this.isOrderVariations,
-      this.responseOrderDetail);
+      this.responseOrderDetail,
+      {this.taxModel});
 
   @override
   RedeemPointsScreenState createState() => RedeemPointsScreenState();
@@ -59,8 +61,10 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
         if (loyalityPointsModel.success) {
           loyalityList = loyalityPointsModel.data;
           //Show dialog
-          if(loyalityPointsModel.loyalityPoints!='0.00'&&loyalityPointsModel.redeemLimit!='100')
-          DialogUtils.displayCommonDialog(context, 'Points', 'You can use ${loyalityPointsModel.redeemLimit}% from your points.');
+          if (loyalityPointsModel.loyalityPoints != '0.00' &&
+              loyalityPointsModel.redeemLimit != '100')
+            DialogUtils.displayCommonDialog(context, 'Points',
+                'You can use ${loyalityPointsModel.redeemLimit}% from your points.');
         } else {
           Utils.showToast("No data found!", false);
         }
@@ -207,6 +211,17 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
                                     //side: BorderSide(color: Colors.red)
                                   ),
                                   onPressed: () async {
+                                    if (widget.taxModel != null) {
+                                      double totalAmount =
+                                          double.parse(widget.taxModel.total);
+                                      double pointAmount =
+                                          double.parse(loyalityData.amount);
+                                      if (pointAmount > totalAmount) {
+                                        Utils.showToast('Your total amount be should be greater than ${loyalityData.amount}.', false);
+                                        return;
+                                      }
+                                    }
+
                                     bool isNetworkAvailable =
                                         await Utils.isNetworkAvailable();
                                     if (!isNetworkAvailable) {

@@ -62,7 +62,7 @@ class _ProfileState extends State<ProfileScreen> {
     _categories.add('Male');
     _categories.add('Female');
     _categories.add('Other');
-    gender='Male';
+    gender = 'Male';
     getProfileData();
   }
 
@@ -80,7 +80,7 @@ class _ProfileState extends State<ProfileScreen> {
         firstNameController.text = user.fullName;
         lastNameController.text = user.lastName;
         controllerStartDate.text = user.dob;
-        gender = user.gender.trim().isNotEmpty?user.gender:'Male';
+        gender =user.gender!=null? user.gender.trim().isNotEmpty ? user.gender : 'Male':'Male';
         emailController.text = user.email;
         phoneController.text = user.phone;
       }
@@ -155,13 +155,12 @@ class _ProfileState extends State<ProfileScreen> {
             isEmailEditable = true;
           }
         }
-      }else{
-        if(phoneController.text==null){
-          isPhonereadOnly=false;
-        }
-        else if(phoneController.text!=null&&phoneController.text.isEmpty){
-          isPhonereadOnly=false;
-        }
+      }
+
+      if (phoneController.text == null) {
+        isPhonereadOnly = false;
+      } else if (phoneController.text != null && phoneController.text.isEmpty) {
+        isPhonereadOnly = false;
       }
 
       print(
@@ -300,8 +299,7 @@ class _ProfileState extends State<ProfileScreen> {
                                   padding: const EdgeInsets.only(top: 10.0),
                                   child: DropdownButtonFormField(
                                     dropdownColor: Colors.white,
-                                    items:_categories
-                                        .map((String category) {
+                                    items: _categories.map((String category) {
                                       return new DropdownMenuItem(
                                           value: category,
                                           child: Row(
@@ -310,13 +308,10 @@ class _ProfileState extends State<ProfileScreen> {
                                             ],
                                           ));
                                     }).toList(),
-                                    onTap: (){
-
-                                    },
+                                    onTap: () {},
                                     onChanged: (newValue) {
                                       // do other stuff with _category
-                                      setState(() =>
-                                          gender = newValue);
+                                      setState(() => gender = newValue);
                                     },
                                     value: gender,
                                     decoration: InputDecoration(
@@ -508,7 +503,7 @@ class _ProfileState extends State<ProfileScreen> {
         UserModel user = UserModel();
         user.fullName = firstNameController.text.trim();
         user.lastName = lastNameController.text.trim();
-        user.dob = controllerStartDate.text.trim();
+        user.dob =controllerStartDate.text!=null? controllerStartDate.text.trim():'';
         user.gender = gender.trim();
         user.email = emailController.text.trim();
         user.phone = phoneController.text.trim();
@@ -526,7 +521,9 @@ class _ProfileState extends State<ProfileScreen> {
                 widget.id,
                 referCodeController.text.trim(),
                 gstCodeController.text.trim(),
-                lastName: lastNameController.text.trim(),dob:controllerStartDate.text.trim(),gender:gender.trim())
+                lastName: lastNameController.text.trim(),
+                dob: controllerStartDate.text!=null? controllerStartDate.text.trim():'',
+                gender: gender.trim())
             .then((response) {
           Utils.hideProgressDialog(context);
           if (response.success) {
@@ -534,7 +531,7 @@ class _ProfileState extends State<ProfileScreen> {
               UserModelMobile user = UserModelMobile();
               user.fullName = firstNameController.text.trim();
               user.lastName = lastNameController.text.trim();
-              user.dob = controllerStartDate.text.trim();
+              user.dob = controllerStartDate.text!=null? controllerStartDate.text.trim():'';
               user.gender = gender.trim();
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();
@@ -546,7 +543,7 @@ class _ProfileState extends State<ProfileScreen> {
             } else {
               user.fullName = firstNameController.text.trim();
               user.lastName = lastNameController.text.trim();
-              user.dob = controllerStartDate.text.trim();
+              user.dob = controllerStartDate.text!=null? controllerStartDate.text.trim():'';
               user.gender = gender.trim();
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();

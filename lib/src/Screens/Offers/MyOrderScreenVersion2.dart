@@ -423,7 +423,10 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
             cardOrderHistoryItems.rating != '0.0') {
           title = "View Order";
         } else {
-          title = "Rate Us";
+          if (isRatingEnable)
+            title = "Rate Us";
+          else
+            title = "View Order";
         }
         break;
 

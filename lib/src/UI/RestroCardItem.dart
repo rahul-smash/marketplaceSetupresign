@@ -152,13 +152,13 @@ class RestroCardItem extends StatelessWidget {
                             Expanded(
                                 child: brandData.display_store_location == '1'
                                     ? Text(
-                                        '${storeDataObj.city}',
+                                        '${storeDataObj.location}',
                                         style: TextStyle(
                                             fontSize: 14, color: Colors.grey),
                                       )
                                     : Container()),
                             Visibility(
-                              visible: brandData.display_distance == '1',
+                              visible: brandData.display_store_location == '1',
                               child: Text(
 //                                  '${storeDataObj.distance} kms',
                                 '${_getDistance(storeDataObj)}',

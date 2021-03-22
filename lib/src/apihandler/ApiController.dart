@@ -1512,11 +1512,14 @@ class ApiController {
   }
 
   static Future<DeliveryTimeSlotModel> deliveryTimeSlotApi() async {
-    StoreModel store = await SharedPrefs.getStore();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    UserModelMobile user = await SharedPrefs.getUserMobile();
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", 'delivery_zones/') +
         ApiConstants.deliveryTimeSlot;
-    var request = new http.MultipartRequest("GET", Uri.parse(url));
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
+      request.fields.addAll({
+        "user_id": user.id,
+      });
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
 
@@ -1855,8 +1858,8 @@ class ApiController {
     }
   }
 
-
-  static Future<MobileVerified> socialSignUp(FacebookModel fbModel,
+  static Future<MobileVerified> socialSignUp(
+      FacebookModel fbModel,
       GoogleSignInAccount googleResult,
       String fullName,
       String emailId,
