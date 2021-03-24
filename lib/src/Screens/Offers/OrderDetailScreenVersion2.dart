@@ -43,6 +43,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
   double _ratingHygiene = 0;
 
   double _ratingPackaging = 0; // <---- Another instance variable
+  double _ratingRunner = 0; // <---- Another instance variable
 
   @override
   void initState() {
@@ -332,110 +333,157 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
               child: Container(
                 padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                 color: Colors.white,
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                        child: Container(
-                      padding: EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xFFE1E1E1), width: 1),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child:  InkWell(
-                        onTap: () {
-                          if (_ratingPackaging == 0)
-                            orderRatebottomSheet(context, '2');
-                        },child:
-                      Column(
-                        children: [
-                          ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Image.asset('images/packaging.png',
-                                  fit: BoxFit.fitHeight)),
-                          SizedBox(
-                            height: 5,
+                    Row(
+                      children: [
+                        Expanded(
+                            child: Container(
+                          padding: EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xFFE1E1E1), width: 1),
+                            borderRadius: BorderRadius.circular(5.0),
                           ),
-                          Text(
-                            'Rate on Packaging',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400),
-                          ),
-                            RatingBar(
-                              initialRating: _ratingPackaging,
-                              minRating: 0,
-                              itemSize: 24,
-                              direction: Axis.horizontal,
-                              allowHalfRating: false,
-                              itemCount: 5,
-                              ignoreGestures: true,
-                              itemPadding:
-                                  EdgeInsets.symmetric(horizontal: 2.0),
-                              itemBuilder: (context, _) => Icon(
-                                Icons.star,
-                                color: appThemeSecondary,
+                          child:  InkWell(
+                            onTap: () {
+                              if (_ratingPackaging == 0)
+                                orderRatebottomSheet(context, '2');
+                            },child:
+                          Column(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  child: Image.asset('images/packaging.png',
+                                      fit: BoxFit.fitHeight)),
+                              SizedBox(
+                                height: 5,
                               ),
-                              onRatingUpdate: (rating) {
-                                _ratingPackaging = rating;
-                              },
+                              Text(
+                                'Rate on Packaging',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                                RatingBar(
+                                  initialRating: _ratingPackaging,
+                                  minRating: 0,
+                                  itemSize: 24,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: false,
+                                  itemCount: 5,
+                                  ignoreGestures: true,
+                                  itemPadding:
+                                      EdgeInsets.symmetric(horizontal: 2.0),
+                                  itemBuilder: (context, _) => Icon(
+                                    Icons.star,
+                                    color: appThemeSecondary,
+                                  ),
+                                  onRatingUpdate: (rating) {
+                                    _ratingPackaging = rating;
+                                  },
 
+                              ),
+                            ],
+                          )),
+                        )),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                            child: Container(
+                          padding: EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xFFE1E1E1), width: 1),
+                            borderRadius: BorderRadius.circular(5.0),
                           ),
-                        ],
-                      )),
-                    )),
-                    SizedBox(
-                      width: 10,
+                          child:  InkWell(
+                            onTap: () {
+                              if (_ratingHygiene == 0)
+                                orderRatebottomSheet(context, '1');
+                            },child:
+                          Column(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  child: Image.asset('images/hygiene.png',
+                                      fit: BoxFit.fitHeight)),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'Rate on Hygiene',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                              RatingBar(
+                                  initialRating: _ratingHygiene,
+                                  minRating: 0,
+                                  itemSize: 24,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: false,
+                                  itemCount: 5,
+                                  ignoreGestures: true,
+                                  itemPadding:
+                                      EdgeInsets.symmetric(horizontal: 2.0),
+                                  itemBuilder: (context, _) => Icon(
+                                    Icons.star,
+                                    color: appThemeSecondary,
+                                  ),
+                                  onRatingUpdate: (rating) {
+                                    _ratingHygiene = rating;
+                                  },
+                                ),
+                            ],
+                          )),
+                        )),
+                      ],
                     ),
-                    Expanded(
-                        child: Container(
+                    SizedBox(
+                      height: 20,
+                    ),
+
+                    Container(
                       padding: EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xFFE1E1E1), width: 1),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
                       child:  InkWell(
-                        onTap: () {
-                          if (_ratingHygiene == 0)
-                            orderRatebottomSheet(context, '1');
-                        },child:
-                      Column(
+                          onTap: () {
+                            if (_ratingRunner == 0)
+                              orderRatebottomSheet(context, '3');
+                          },child:
+                      Row(
                         children: [
-                          ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Image.asset('images/hygiene.png',
-                                  fit: BoxFit.fitHeight)),
-                          SizedBox(
-                            height: 5,
-                          ),
                           Text(
-                            'Rate on Hygiene',
+                            'Rate Delivery Person:',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400),
                           ),
                           RatingBar(
-                              initialRating: _ratingHygiene,
-                              minRating: 0,
-                              itemSize: 24,
-                              direction: Axis.horizontal,
-                              allowHalfRating: false,
-                              itemCount: 5,
-                              ignoreGestures: true,
-                              itemPadding:
-                                  EdgeInsets.symmetric(horizontal: 2.0),
-                              itemBuilder: (context, _) => Icon(
-                                Icons.star,
-                                color: appThemeSecondary,
-                              ),
-                              onRatingUpdate: (rating) {
-                                _ratingHygiene = rating;
-                              },
+                            initialRating: _ratingRunner,
+                            minRating: 0,
+                            itemSize: 24,
+                            direction: Axis.horizontal,
+                            allowHalfRating: false,
+                            itemCount: 5,
+                            ignoreGestures: true,
+                            itemPadding:
+                            EdgeInsets.symmetric(horizontal: 2.0),
+                            itemBuilder: (context, _) => Icon(
+                              Icons.star,
+                              color: appThemeSecondary,
                             ),
+                            onRatingUpdate: (rating) {
+                              _ratingRunner = rating;
+                            },
+
+                          ),
                         ],
                       )),
-                    )),
+                    ),
+
                   ],
                 ),
               )),
@@ -1103,7 +1151,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                         Padding(
                           padding: EdgeInsets.only(top: 5),
                           child: Text(
-                            "${type != '1' ? 'Packaging' : 'Hygiene'}",
+                            "${type != '1' ?type == '3'?'Delivery Person': 'Packaging' : 'Hygiene'}",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.black,
@@ -1161,49 +1209,52 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                           color: Color(0xFFE1E1E1),
                           height: 1,
                         ),
-                        Container(
-                          width: double.maxFinite,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              InkWell(
-                                  onTap: () {
-                                    showAlertDialog(context, setState);
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                        top: 0, bottom: 6, left: 16, right: 16),
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            "images/placeHolder.png"),
-                                        fit: BoxFit.cover,
+                        Visibility(
+                          visible: type!='3',
+                          child: Container(
+                            width: double.maxFinite,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                InkWell(
+                                    onTap: () {
+                                      showAlertDialog(context, setState);
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          top: 0, bottom: 6, left: 16, right: 16),
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              "images/placeHolder.png"),
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-                                    ),
-                                    height: 100,
-                                    width: 120,
-                                    child: _image != null
-                                        ? Padding(
-                                            padding: EdgeInsets.all(5),
-                                            child: Image.file(
-                                              _image,
-                                              fit: BoxFit.cover,
-                                            ))
-                                        : null,
-                                  )),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    top: 0, left: 18, bottom: 30),
-                                child: Text(
-                                  "File Size limit - 1MB",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400),
+                                      height: 100,
+                                      width: 120,
+                                      child: _image != null
+                                          ? Padding(
+                                              padding: EdgeInsets.all(5),
+                                              child: Image.file(
+                                                _image,
+                                                fit: BoxFit.cover,
+                                              ))
+                                          : null,
+                                    )),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 0, left: 18, bottom: 30),
+                                  child: Text(
+                                    "File Size limit - 1MB",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         Padding(
@@ -2011,6 +2062,10 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
               break;
             case '2':
               _ratingPackaging = double.parse(
+                  orderHistoryData.reviewsHygeineAndPack[i].rating);
+              break;
+              case '3':
+              _ratingRunner = double.parse(
                   orderHistoryData.reviewsHygeineAndPack[i].rating);
               break;
           }
