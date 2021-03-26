@@ -67,6 +67,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       emailController.text = widget.addressData.email.trim();
       addressController.text = widget.addressData.address.trim();
       _selectedTag = widget.addressData.addressType.trim();
+      _isDefaultAddress= widget.addressData.set_default_address=='1';
       //_mapController.moveCamera(CameraUpdate.newLatLng(center));
     } else {
       //new address adding

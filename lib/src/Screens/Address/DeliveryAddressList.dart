@@ -205,11 +205,9 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            width: (Utils.getDeviceWidth(context) - 100),
+                            width: (Utils.getDeviceWidth(context) -100),
                             child: Text(
                               "${area.firstName}",
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
@@ -246,7 +244,8 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 Align(
                     alignment: Alignment.topRight,
                     child: Visibility(
-                      child: Wrap(children: [  Container(
+                      child: Wrap(children: [
+                        Container(
 //                        width: 70,
                         padding: EdgeInsets.only(
                             left: 15, right: 15, top: 5, bottom: 5),
@@ -262,13 +261,40 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                                 : '',
                             style: TextStyle(fontSize: 13, color: Colors.black),
                           ),
-                      ),],),
+                      ),
+
+                      ],),
 
                       visible: area.addressType != null &&
                           area.addressType.isNotEmpty,
                     )),
               ],
             ),
+            Align(
+                alignment: Alignment.topLeft,
+                child: Visibility(
+                  child: Wrap(children: [
+                    Visibility(
+                      visible: area.set_default_address=='1',
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, top: 5, bottom: 5),
+                        decoration: BoxDecoration(
+                          color: grey2,
+                          border: Border.all(color: grayLightColorSecondary),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'Default Address',
+                          style: TextStyle(fontSize: 13, color: Colors.black,fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                    ),
+                  ],),
+
+                  visible: area.addressType != null &&
+                      area.addressType.isNotEmpty,
+                )),
             Padding(
               padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
               child: Divider(color: Color(0xFFBDBDBD), thickness: 1.0),

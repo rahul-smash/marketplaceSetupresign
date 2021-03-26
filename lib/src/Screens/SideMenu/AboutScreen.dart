@@ -28,7 +28,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   String aboutUs, aboutUsBanner="";
 
-//  @override
+  @override
   void initState() {
     super.initState();
     try {

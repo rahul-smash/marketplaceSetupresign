@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -182,8 +184,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                       ),
                       addLoginButton(),
                       Visibility(
-                        visible: true,
-                        //visible: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
+                        visible: Platform.isIOS?false: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
                         child: Container(
                           margin: EdgeInsets.fromLTRB(0, 15, 0, 10),
                           width: Utils.getDeviceWidth(context),
@@ -196,8 +197,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                         ),
                       ),
                       Visibility(
-                        visible: true,
-                        //visible: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
+                        visible:Platform.isIOS?false: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
