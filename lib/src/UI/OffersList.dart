@@ -273,7 +273,7 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
                     Padding(
                         padding: EdgeInsets.all(16),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
+//                          crossAxisAlignment: CrossAxisAlignment.baseline,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
@@ -296,7 +296,7 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
                             )),
                             Expanded(
                               child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
+//                                crossAxisAlignment: CrossAxisAlignment.baseline,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
@@ -367,28 +367,33 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
                                       ),
                                     ],
                                   ),
-                                  Visibility(
-                                    visible: offersResponse.offers[index]
-                                                .minimumOrderAmount !=
-                                            null &&
-                                        offersResponse.offers[index]
-                                            .minimumOrderAmount.isNotEmpty,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Min Order',
-                                          style: TextStyle(
-                                              fontSize: 14, color: Colors.grey),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          '${offersResponse.offers[index].minimumOrderAmount}',
-                                          style: TextStyle(
-                                              fontSize: 14, color: Colors.grey),
-                                        )
-                                      ],
+                                  Flexible(
+                                    child: Visibility(
+                                      visible: offersResponse.offers[index]
+                                                  .minimumOrderAmount !=
+                                              null &&
+                                          offersResponse.offers[index]
+                                              .minimumOrderAmount.isNotEmpty,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Min Order',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 14, color: Colors.grey,),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            '${offersResponse.offers[index].minimumOrderAmount}',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 14, color: Colors.grey),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   )
                                 ],
