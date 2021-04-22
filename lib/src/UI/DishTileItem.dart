@@ -217,6 +217,38 @@ class _DishTileItemState extends State<DishTileItem> {
 //                                                  child: addQuantityView(variantId),
 //                                                ),
                                       ],
+                                    )),
+                                    Container(
+                                        // color: Colors.blue,
+                                        child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                right: 10, top: 5, bottom: 5),
+                                            child: Text(
+                                              removeAllHtmlTags(
+                                                  "${widget.dish.store_name}"),
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color:
+                                                      staticHomeDescriptionColor,
+                                                  fontWeight: FontWeight.w400),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ),
+//                                                Container(
+//                                                  width: 10,
+//                                                ),
+//                                                Align(
+//                                                  alignment: Alignment.bottomRight,
+//                                                  child: addQuantityView(variantId),
+//                                                ),
+                                      ],
                                     ))
                                   ],
                                 ))),

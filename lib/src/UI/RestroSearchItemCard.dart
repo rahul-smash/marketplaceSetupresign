@@ -98,22 +98,39 @@ class RestroSearchItemCard extends StatelessWidget {
                                     height: 80.0,
                                     color: Colors.white54,
                                     child: Center(
-                                      child: Container(
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.red, width: 1),
-                                              color: Colors.white,
-                                              borderRadius:
-                                              BorderRadius.circular(5)),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(2),
-                                            child: Text(
-                                              "Store Closed",
-                                              style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 12),
-                                            ),
-                                          )),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.red, width: 1),
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                  BorderRadius.circular(5)),
+                                              child: Padding(
+                                                padding: EdgeInsets.all(2),
+                                                child: Text(
+                                                  "Store Closed",
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 12),
+                                                ),
+                                              )),
+                                          Container(
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 15, top: 5, bottom: 10, right: 15),
+                                                child: Text(
+                                                  "${storeDataObj.timimg.closehoursMessage}",
+                                                  textAlign: TextAlign.center,
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(color: Colors.red, fontSize: 14),
+                                                ),
+                                              )),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),

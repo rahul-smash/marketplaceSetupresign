@@ -172,6 +172,7 @@ class Dish {
     this.id,
     this.image,
     this.storeId,
+    this.store_name,
     this.subCategory,
     this.subCategoryId,
     this.category,
@@ -184,6 +185,7 @@ class Dish {
   String id;
   String image;
   String storeId;
+  String store_name;
   String subCategory;
   String subCategoryId;
   String category;
@@ -196,6 +198,7 @@ class Dish {
     String id,
     String image,
     String storeId,
+    String store_name,
     String subCategory,
     String subCategoryId,
     String category,
@@ -208,6 +211,7 @@ class Dish {
         id: id ?? this.id,
         image: image ?? this.image,
         storeId: storeId ?? this.storeId,
+        store_name: storeId ?? this.store_name,
         subCategory: subCategory ?? this.subCategory,
         subCategoryId: subCategoryId ?? this.subCategoryId,
         category: category ?? this.category,
@@ -225,6 +229,7 @@ class Dish {
     id: json["id"] == null ? null : json["id"],
     image: json["image"] == null ? null : json["image"],
     storeId: json["store_id"] == null ? null : json["store_id"],
+    store_name: json["store_name"] == null ? null : json["store_name"],
     subCategory: json["sub_category"] == null ? null : json["sub_category"],
     subCategoryId: json["sub_category_id"] == null ? null : json["sub_category_id"],
     category: json["category"] == null ? null : json["category"],
@@ -238,6 +243,7 @@ class Dish {
     "id": id == null ? null : id,
     "image": image == null ? null : image,
     "store_id": storeId == null ? null : storeId,
+    "store_name": store_name == null ? null : store_name,
     "sub_category": subCategory == null ? null : subCategory,
     "sub_category_id": subCategoryId == null ? null : subCategoryId,
     "category": category == null ? null : category,

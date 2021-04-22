@@ -24,8 +24,12 @@ class RestroCardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        if(!Utils.checkStoreOpenTiming(storeDataObj)){
-          DialogUtils.displayCommonDialog(context,storeDataObj.storeName,storeDataObj.timimg.closehoursMessage,);
+        if (!Utils.checkStoreOpenTiming(storeDataObj)) {
+          DialogUtils.displayCommonDialog(
+            context,
+            storeDataObj.storeName,
+            storeDataObj.timimg.closehoursMessage,
+          );
           return;
         }
         bool isNetworkAvailable = await Utils.isNetworkAvailable();
@@ -210,18 +214,40 @@ class RestroCardItem extends StatelessWidget {
               height: 170.0,
               color: Colors.white54,
               child: Center(
-                child: Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.red, width: 2),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Padding(
-                      padding: EdgeInsets.all(5),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Column(
+                      children: [
+                        Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.red, width: 2),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Text(
+                                "Store Closed",
+                                style: TextStyle(color: Colors.red, fontSize: 18),
+                              ),
+                            )),
+
+                      ],
+                    ),
+                    Container(
+                        child: Padding(
+                      padding: EdgeInsets.only(
+                          left: 15, top: 5, bottom: 10, right: 15),
                       child: Text(
-                        "Store Closed",
-                        style: TextStyle(color: Colors.red, fontSize: 18),
+                        "${storeDataObj.timimg.closehoursMessage}",
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.red, fontSize: 14),
                       ),
                     )),
+                  ],
+                ),
               ),
             ),
           )
