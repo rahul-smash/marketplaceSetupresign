@@ -37,6 +37,7 @@ import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
+import 'package:restroapp/src/utils/HomeScreenContentText.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:restroapp/src/widgets/AutoSearch.dart';
@@ -99,7 +100,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
   LocationData _locationData;
-  String locationAddress = "Select Location";
+  String locationAddress = AppConstant.selectLocation;
   ScrollController controller = ScrollController();
 
   StoresModel allStoreData;
@@ -132,6 +133,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     getCategoryApi();
     _getTagApi();
     _getStoreApi();
+
 
     for (HomeScreenSection item in store.homeScreenSection) {
       homeViewOrderMap.putIfAbsent(item.section, () => item);
@@ -196,6 +198,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           });
         }
       });
+      _getContentApi();
     });
   }
 
@@ -1152,7 +1155,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                 InkWell(
                   onTap: () async {
                     if (widget.initialPosition != null &&
-                        locationAddress != 'Select Location') {
+                        locationAddress != AppConstant.selectLocation) {
                       showBottomSheet(context, widget.initialPosition,
                           widget.initialPosition, locationAddress);
                       return;
@@ -1371,7 +1374,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                           enabledBorder: InputBorder.none,
                           errorBorder: InputBorder.none,
                           disabledBorder: InputBorder.none,
-                          hintText: "Search"),
+                          hintText: getSearchPlaceHolderText()),
                     ),
                   ),
                   Visibility(
@@ -1646,6 +1649,16 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       });
     }
   }
+
+  void _getContentApi() {
+    ApiController.getDynamicText().then((value) {
+      if (value != null && value.success) {
+        AppConstant.dynamicResponse = value;
+      }
+      setState(() {});
+    });
+  }
+
 }
 
 class HomeScreenViewHelper {

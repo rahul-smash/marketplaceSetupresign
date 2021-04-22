@@ -11,6 +11,7 @@ import 'package:restroapp/src/models/TagsModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/HomeScreenContentText.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class RestroListScreen extends StatefulWidget {
@@ -74,7 +75,7 @@ class _RestroListScreenState extends State<RestroListScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
-                              "Quick Links",
+                              getTagHeadingPlaceHolderText(),
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 16,

@@ -2,6 +2,7 @@ import 'package:restroapp/src/models/DynamicResponse.dart';
 
 class AppConstant {
   static bool isLoggedIn = false;
+  static bool isShowStaticPlaceHolder = false;
 
   static String currency = "₹";//\u20B9
   //restro
@@ -43,6 +44,7 @@ class AppConstant {
   static final String addItems = "Please add items in cart";
 
   static final String pleaseLogin = "Please login to proceed further";
+  static final String selectLocation = "Select Location";
   static final String selectAddress = "Please select delivery address";
   static final String deleteAddress = "Are you sure you want to delete this address?";
   static final String cancelOrder = "Are you sure you want to Cancel this order?";

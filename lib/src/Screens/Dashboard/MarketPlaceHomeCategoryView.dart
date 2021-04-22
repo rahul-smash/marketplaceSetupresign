@@ -16,6 +16,7 @@ import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
+import 'package:restroapp/src/utils/HomeScreenContentText.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class MarketPlaceHomeCategoryView extends StatefulWidget {
@@ -95,13 +96,16 @@ class _MarketPlaceHomeCategoryViewState
               children: <Widget>[
                 //categories
                 Visibility(
-                  visible:
-                  (widget.homeViewOrderMap.length==0)||
-                      (widget.homeViewOrderMap[HomeScreenViewHelper.CATEGORIES]
-                          !=null&&widget.homeViewOrderMap[HomeScreenViewHelper.CATEGORIES].display),
-                        child:categorieslist.length == 0
-                            ? Container()
-                            : Column(
+                  visible: (widget.homeViewOrderMap.length == 0) ||
+                      (widget.homeViewOrderMap[
+                                  HomeScreenViewHelper.CATEGORIES] !=
+                              null &&
+                          widget
+                              .homeViewOrderMap[HomeScreenViewHelper.CATEGORIES]
+                              .display),
+                  child: categorieslist.length == 0
+                      ? Container()
+                      : Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +120,7 @@ class _MarketPlaceHomeCategoryViewState
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Text(
-                                    "Your neighbours are ordering..",
+                                    getCategoryHeadingPlaceHolderText(),
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 16,
@@ -249,13 +253,14 @@ class _MarketPlaceHomeCategoryViewState
                                     ))),
                           ],
                         ),
-                      ),
+                ),
                 //Filters
                 Visibility(
-                  visible:
-                  (widget.homeViewOrderMap.length==0)||
-                      (widget.homeViewOrderMap[HomeScreenViewHelper.FILTER]
-                          !=null&&widget.homeViewOrderMap[HomeScreenViewHelper.FILTER].display),
+                  visible: (widget.homeViewOrderMap.length == 0) ||
+                      (widget.homeViewOrderMap[HomeScreenViewHelper.FILTER] !=
+                              null &&
+                          widget.homeViewOrderMap[HomeScreenViewHelper.FILTER]
+                              .display),
                   child: Container(
                     margin: EdgeInsets.only(top: 10, left: 10),
                     height: 30,
@@ -270,40 +275,32 @@ class _MarketPlaceHomeCategoryViewState
                               print("onTap=${index}");
                               if (index != 0) {
                                 bool isNetworkAvailable =
-                                await Utils.isNetworkAvailable();
+                                    await Utils.isNetworkAvailable();
                                 if (!isNetworkAvailable) {
                                   Utils.showToast(
-                                      "No Internet connection",
-                                      false);
+                                      "No Internet connection", false);
                                   return;
                                 }
                                 Map<String, dynamic> data = {
-                                  "lat":
-                                  widget.initialPosition == null
+                                  "lat": widget.initialPosition == null
                                       ? '0.0'
-                                      : widget.initialPosition
-                                      .latitude,
-                                  "lng":
-                                  widget.initialPosition == null
+                                      : widget.initialPosition.latitude,
+                                  "lng": widget.initialPosition == null
                                       ? '0.0'
-                                      : widget.initialPosition
-                                      .longitude,
+                                      : widget.initialPosition.longitude,
                                   "filter_by": tagsList[index].value,
                                 };
                                 Utils.showProgressDialog(context);
-                                ApiController.getAllStores(
-                                    params: data)
+                                ApiController.getAllStores(params: data)
                                     .then((storesResponse) {
                                   Utils.hideProgressDialog(context);
                                   Utils.hideKeyboard(context);
                                   if (storesResponse != null &&
                                       storesResponse.success) {
-                                    widget.callback(
-                                        value: storesResponse);
+                                    widget.callback(value: storesResponse);
                                   } else {
                                     DialogUtils.displayErrorDialog(
-                                        context,
-                                        "${storesResponse.message}");
+                                        context, "${storesResponse.message}");
                                   }
                                 });
                                 setState(() {
@@ -313,211 +310,218 @@ class _MarketPlaceHomeCategoryViewState
                             },
                             child: Container(
                                 height: 30,
-                                margin: EdgeInsets.only(
-                                    left: 4, right: 4),
-                                padding:
-                                EdgeInsets.fromLTRB(6, 3, 6, 3),
+                                margin: EdgeInsets.only(left: 4, right: 4),
+                                padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
                                 decoration: BoxDecoration(
-                                    color:
-                                    selectedFilterIndex == index
+                                    color: selectedFilterIndex == index
                                         ? Colors.grey[200]
                                         : Colors.white,
                                     border: Border.all(
-                                        color: selectedFilterIndex ==
-                                            index
+                                        color: selectedFilterIndex == index
                                             ? Colors.grey[400]
                                             : grayLightColor,
                                         width: 1),
-                                    borderRadius:
-                                    BorderRadius.circular(2)),
+                                    borderRadius: BorderRadius.circular(2)),
                                 child: index == 0
                                     ? Row(
-                                  children: [
-                                    Image.asset(
-                                      "images/filtericon.png",
-                                      height: 20,
-                                      width: 20,
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                        '${tagsList[index].lable}',
-                                        style: TextStyle(
-                                            color:
-                                            Colors.grey)),
-                                  ],
-                                )
+                                        children: [
+                                          Image.asset(
+                                            "images/filtericon.png",
+                                            height: 20,
+                                            width: 20,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text('${tagsList[index].lable}',
+                                              style: TextStyle(
+                                                  color: Colors.grey)),
+                                        ],
+                                      )
                                     : Row(
-                                  children: [
-                                    Text(
-                                        '${tagsList[index].lable}',
-                                        style: TextStyle(
-                                            color:
-                                            selectedFilterIndex ==
-                                                index
-                                                ? Colors.grey[
-                                            600]
-                                                : Colors
-                                                .grey)),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Visibility(
-                                      visible:
-                                      selectedFilterIndex ==
-                                          index
-                                          ? true
-                                          : false,
-                                      child: Icon(
-                                        Icons.clear,
-                                        size: 15,
-                                      ),
-                                    )
-                                  ],
-                                )),
+                                        children: [
+                                          Text('${tagsList[index].lable}',
+                                              style: TextStyle(
+                                                  color: selectedFilterIndex ==
+                                                          index
+                                                      ? Colors.grey[600]
+                                                      : Colors.grey)),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Visibility(
+                                            visible:
+                                                selectedFilterIndex == index
+                                                    ? true
+                                                    : false,
+                                            child: Icon(
+                                              Icons.clear,
+                                              size: 15,
+                                            ),
+                                          )
+                                        ],
+                                      )),
                           );
                         },
                       ),
                     ),
                   ),
                 ),
+
                 //Quick Links (Tags)
                 Visibility(
-                  visible: (widget.homeViewOrderMap.length==0)||
-                      (widget.homeViewOrderMap[HomeScreenViewHelper.TAGS]
-                          !=null&&widget.homeViewOrderMap[HomeScreenViewHelper.TAGS].display),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [  Padding(
-                    padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          "Quick Links",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        Visibility(
-                          visible: widget.tagsModel != null &&
-                              widget.tagsModel.data.length > 8,
-                          child: InkWell(
-                            onTap: () {
-                              print("onTap =isSeeAll=${isSeeAll}");
-                              setState(() {
-                                if (isSeeAll) {
-                                  isSeeAll = false;
-                                } else {
-                                  isSeeAll = true;
-                                }
-                              });
-                            },
-                            child: Text(
-                              isSeeAll ? "View Less" : "View More",
-                              style: TextStyle(
-                                  color: appThemeSecondary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w300),
-                            ),
+                    visible: (widget.homeViewOrderMap.length == 0) ||
+                        (widget.homeViewOrderMap[HomeScreenViewHelper.TAGS] !=
+                                null &&
+                            widget.homeViewOrderMap[HomeScreenViewHelper.TAGS]
+                                .display),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                getTagHeadingPlaceHolderText(),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                              Visibility(
+                                visible: widget.tagsModel != null &&
+                                    widget.tagsModel.data.length > 8,
+                                child: InkWell(
+                                  onTap: () {
+                                    print("onTap =isSeeAll=${isSeeAll}");
+                                    setState(() {
+                                      if (isSeeAll) {
+                                        isSeeAll = false;
+                                      } else {
+                                        isSeeAll = true;
+                                      }
+                                    });
+                                  },
+                                  child: Text(
+                                    isSeeAll ? "View Less" : "View More",
+                                    style: TextStyle(
+                                        color: appThemeSecondary,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                        )
+                        ),
+                        widget.tagsModel == null
+                            ? Utils.showIndicator()
+                            : GridView.count(
+                                crossAxisCount: 4,
+                                childAspectRatio: 1.4,
+                                physics: NeverScrollableScrollPhysics(),
+                                mainAxisSpacing: 1.0,
+                                crossAxisSpacing: 0.0,
+                                shrinkWrap: true,
+                                children: _getQuickLinksItem()),
                       ],
-                    ),
-                  ),
-                    widget.tagsModel == null
-                        ? Utils.showIndicator()
-                        : GridView.count(
-                        crossAxisCount: 4,
-                        childAspectRatio: 1.4,
-                        physics: NeverScrollableScrollPhysics(),
-                        mainAxisSpacing: 1.0,
-                        crossAxisSpacing: 0.0,
-                        shrinkWrap: true,
-                        children: _getQuickLinksItem()),],)
-                ),
+                    )),
                 //Stores
-                Visibility(visible: (widget.homeViewOrderMap.length==0)||
-                    (widget.homeViewOrderMap[HomeScreenViewHelper.STORES]
-                        !=null&&widget.homeViewOrderMap[HomeScreenViewHelper.STORES].display),child:
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                  widget.storeData == null
-                      ? Utils.showIndicator()
-                      : widget.storeData != null &&
-                      widget.storeData.data != null &&
-                      widget.storeData.data.isNotEmpty
-                      ? Padding(
-                    padding: EdgeInsets.fromLTRB(10, 15, 10, 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        InkWell(
-                          child: Text(
-                            "Restaurants",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                        Visibility(
-                          visible: true,
-                          child: InkWell(
-                            child: Text(
-                              "View All",
-                              style: TextStyle(
-                                  color: appThemeSecondary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                            onTap: () async {
-                              print("onTap");
-                              bool isNetworkAvailable =
-                              await Utils.isNetworkAvailable();
-                              if (!isNetworkAvailable) {
-                                Utils.showToast(
-                                    "No Internet connection", false);
-                                return;
-                              }
-                              Map<String, dynamic> data = {
-                                "lat": widget.initialPosition == null
-                                    ? '0.0'
-                                    : widget.initialPosition.latitude,
-                                "lng": widget.initialPosition == null
-                                    ? '0.0'
-                                    : widget.initialPosition.longitude,
-                              };
-                              Utils.showProgressDialog(context);
-                              ApiController.getAllStores(params: data)
-                                  .then((storesResponse) {
-                                Utils.hideProgressDialog(context);
-                                Utils.hideKeyboard(context);
-                                if (storesResponse != null &&
-                                    storesResponse.success)
-                                  setState(() {
-                                    widget.callback(
-                                        value: storesResponse);
-                                  });
-                                else {
-                                  DialogUtils.displayErrorDialog(
-                                      context,
-                                      "${storesResponse.message}");
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                      : Container(),
-                  widget.storeData == null ? Container() : getProductsWidget(),
-                ],),
+                Visibility(
+                  visible: (widget.homeViewOrderMap.length == 0) ||
+                      (widget.homeViewOrderMap[HomeScreenViewHelper.STORES] !=
+                              null &&
+                          widget.homeViewOrderMap[HomeScreenViewHelper.STORES]
+                              .display),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      widget.storeData == null
+                          ? Utils.showIndicator()
+                          : widget.storeData != null &&
+                                  widget.storeData.data != null &&
+                                  widget.storeData.data.isNotEmpty
+                              ? Padding(
+                                  padding: EdgeInsets.fromLTRB(10, 15, 10, 5),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      InkWell(
+                                        child: Text(
+                                          getStoreHeadingPlaceHolderText(),
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: true,
+                                        child: InkWell(
+                                          child: Text(
+                                            getStoreShowAllPlaceHolderText(),
+                                            style: TextStyle(
+                                                color: appThemeSecondary,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300),
+                                          ),
+                                          onTap: () async {
+                                            print("onTap");
+                                            bool isNetworkAvailable =
+                                                await Utils
+                                                    .isNetworkAvailable();
+                                            if (!isNetworkAvailable) {
+                                              Utils.showToast(
+                                                  "No Internet connection",
+                                                  false);
+                                              return;
+                                            }
+                                            Map<String, dynamic> data = {
+                                              "lat":
+                                                  widget.initialPosition == null
+                                                      ? '0.0'
+                                                      : widget.initialPosition
+                                                          .latitude,
+                                              "lng":
+                                                  widget.initialPosition == null
+                                                      ? '0.0'
+                                                      : widget.initialPosition
+                                                          .longitude,
+                                            };
+                                            Utils.showProgressDialog(context);
+                                            ApiController.getAllStores(
+                                                    params: data)
+                                                .then((storesResponse) {
+                                              Utils.hideProgressDialog(context);
+                                              Utils.hideKeyboard(context);
+                                              if (storesResponse != null &&
+                                                  storesResponse.success)
+                                                setState(() {
+                                                  widget.callback(
+                                                      value: storesResponse);
+                                                });
+                                              else {
+                                                DialogUtils.displayErrorDialog(
+                                                    context,
+                                                    "${storesResponse.message}");
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                      widget.storeData == null
+                          ? Container()
+                          : getProductsWidget(),
+                    ],
+                  ),
                 ),
               ],
             )),
@@ -545,7 +549,7 @@ class _MarketPlaceHomeCategoryViewState
                     itemBuilder: (context, index) {
                       StoreData storeDataObj = widget.storeData.data[index];
                       return RestroCardItem(storeDataObj, widget.callback,
-                          widget.initialPosition,widget.brandData);
+                          widget.initialPosition, widget.brandData);
                     },
                   ),
                 ],
