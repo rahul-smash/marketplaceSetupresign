@@ -100,7 +100,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
   LocationData _locationData;
-  String locationAddress = AppConstant.selectLocation;
+  String locationAddress = getLocationSearchPlaceHolderText();
   ScrollController controller = ScrollController();
 
   StoresModel allStoreData;

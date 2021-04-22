@@ -1,5 +1,10 @@
 import 'package:restroapp/src/utils/AppConstants.dart';
 
+String getLocationSearchPlaceHolderText() {
+  return AppConstant
+          .dynamicResponse?.data?.homepage?.locationSearchPlaceholder ??
+      (AppConstant.isShowStaticPlaceHolder ? AppConstant.selectAddress : "");
+}
 String getSearchPlaceHolderText() {
   return AppConstant
           .dynamicResponse?.data?.homepage?.productSearchPlaceholder ??
