@@ -12,6 +12,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
 import 'package:restroapp/src/Screens/BookOrder/MyCartScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeCategoryView.dart';
+import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeFiltersView.dart';
+import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeStoresView.dart';
+import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeTagsView.dart';
 import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
@@ -38,6 +41,7 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/HomeScreenContentText.dart';
+import 'package:restroapp/src/utils/LogicalStack.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:restroapp/src/widgets/AutoSearch.dart';
@@ -118,6 +122,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   _MarketPlaceHomeScreenState(this.store);
 
   Map<String, HomeScreenSection> homeViewOrderMap = Map();
+  LogicalStack<HomeScreenSection> homeScreenStack;
 
   @override
   void initState() {
@@ -134,8 +139,10 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     getCategoryApi();
     _getTagApi();
     _getStoreApi();
+    homeScreenStack = new LogicalStack();
 
     for (HomeScreenSection item in store.homeScreenSection) {
+      _homeScreenItemsort(item);
       homeViewOrderMap.putIfAbsent(item.section, () => item);
     }
 
@@ -810,6 +817,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         this.categoriesModel = response;
         print("---CategoriesData-${categoriesModel.success}---");
       });
+      _makeHomeScreenList();
     });
     /*ApiController.getCategoriesApiRequest(store.id).then((response) {
       setState(() {
@@ -1266,7 +1274,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   Widget _newBody() {
     return Stack(
-      overflow: Overflow.visible,
+      clipBehavior: Clip.antiAlias,
       children: <Widget>[
         Container(
           decoration: isCategoryViewSelected
@@ -1488,6 +1496,41 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     ;
   }
 
+  _getViewCallBack() {
+    return <Object>({value}) {
+      setState(() {
+        if (value == null) {
+          Utils.showToast('No Data found', false);
+          return;
+        }
+        if (value is StoreDataModel) {
+          setState(() {
+            _selectedSingleStore = value;
+            _previousSelectedHomeScreen = _selectedHomeScreen;
+            _selectedHomeScreen = HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+          });
+          return;
+        }
+
+        if (value is StoresModel) {
+          setState(() {
+            allStoreData = value;
+            _previousSelectedHomeScreen = _selectedHomeScreen;
+            _selectedHomeScreen = HomeScreenEnum.HOME_RESTAURANT_VIEW;
+          });
+          return;
+        }
+      });
+      return;
+    };
+  }
+
+  List<Widget> _getWidgetList() {
+    return isLoading
+        ? <Widget>[addBanners(), Center(child: CircularProgressIndicator())]
+        : homeScreenList;
+  }
+
   Widget _getMiddleView() {
     return (_selectedHomeScreen == HomeScreenEnum.HOME_SEARCH_VIEW)
         ? Expanded(child: _getSearchList())
@@ -1495,48 +1538,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             child: SingleChildScrollView(
             controller: controller,
             child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                addBanners(),
-                isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : MarketPlaceHomeCategoryView(
-                        categoriesModel,
-                        widget.initialPosition,
-                        /*categoryResponse,*/
-                        store,
-                        subCategory,
-                        storeData: storeData,
-                        tagsModel: tagsModel, callback: <Object>({value}) {
-                        setState(() {
-                          if (value == null) {
-                            Utils.showToast('No Data found', false);
-                            return;
-                          }
-                          if (value is StoreDataModel) {
-                            setState(() {
-                              _selectedSingleStore = value;
-                              _previousSelectedHomeScreen = _selectedHomeScreen;
-                              _selectedHomeScreen =
-                                  HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
-                            });
-                            return;
-                          }
-
-                          if (value is StoresModel) {
-                            setState(() {
-                              allStoreData = value;
-                              _previousSelectedHomeScreen = _selectedHomeScreen;
-                              _selectedHomeScreen =
-                                  HomeScreenEnum.HOME_RESTAURANT_VIEW;
-                            });
-                            return;
-                          }
-                        });
-                        return;
-                      }, homeViewOrderMap: homeViewOrderMap)
-              ],
-            ),
+                mainAxisSize: MainAxisSize.max, children: _getWidgetList()),
           ));
   }
 
@@ -1654,6 +1656,81 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       setState(() {});
     });
   }
+
+  //1,5,4,2,10,3,0,19
+  //iteration 7n
+  //stack- 0,1,2,3,4,5,10,19
+  //tempList
+  void _homeScreenItemsort(HomeScreenSection item) {
+    if (homeScreenStack.length == 0) {
+      homeScreenStack.push(item);
+    } else {
+      List<HomeScreenSection> tempList = List.empty(growable: true);
+      for (int i = 0; i < homeScreenStack.length; i++) {
+        if (int.parse(homeScreenStack.peak().position) >
+            int.parse(item.position)) {
+          tempList.add(homeScreenStack.pop());
+        }
+      }
+      homeScreenStack.push(item);
+      for (int j = tempList.length - 1; j >= 0; j--) {
+        homeScreenStack.push(tempList[j]);
+      }
+      tempList.clear();
+    }
+  }
+
+  List<Widget> homeScreenList = List.empty(growable: true);
+
+  void _makeHomeScreenList() {
+    homeScreenList.clear();
+    LogicalStack<HomeScreenSection> tempStack = LogicalStack();
+    tempStack = homeScreenStack.copy(tempStack);
+    int size = tempStack.length;
+    for (int i = 0; i < size; i++) {
+      HomeScreenSection item = tempStack.firstPop();
+      switch (item.section) {
+//        case HomeScreenViewHelper.SEARCH:
+//          list.add( addBanners());
+//          break;
+        case HomeScreenViewHelper.SLIDER:
+          homeScreenList.add(addBanners());
+          break;
+        case HomeScreenViewHelper.CATEGORIES:
+          homeScreenList.add(MarketPlaceHomeCategoryView(
+              categoriesModel,
+              widget.initialPosition,
+              /*categoryResponse,*/
+              store,
+              subCategory,
+              storeData: storeData,
+              tagsModel: tagsModel,
+              callback: _getViewCallBack(),
+              homeViewOrderMap: homeViewOrderMap));
+
+          break;
+        case HomeScreenViewHelper.FILTER:
+          homeScreenList.add(MarketPlaceHomeFiltersView(widget.initialPosition,
+              callback: _getViewCallBack(),
+              homeViewOrderMap: homeViewOrderMap));
+          break;
+        case HomeScreenViewHelper.TAGS:
+          homeScreenList.add(MarketPlaceHomeTagsView(widget.initialPosition,
+              tagsModel: tagsModel,
+              callback: _getViewCallBack(),
+              homeViewOrderMap: homeViewOrderMap));
+          break;
+        case HomeScreenViewHelper.STORES:
+          homeScreenList.add(MarketPlaceHomeStoresView(
+              widget.initialPosition, store,
+              storeData: storeData,
+              tagsModel: tagsModel,
+              callback: _getViewCallBack(),
+              homeViewOrderMap: homeViewOrderMap));
+          break;
+      }
+    }
+  }
 }
 
 class HomeScreenViewHelper {
@@ -1663,5 +1740,4 @@ class HomeScreenViewHelper {
   static const FILTER = "filter";
   static const TAGS = "tags";
   static const STORES = "stores";
-  List<HomeScreenSection> homeViewList;
 }
