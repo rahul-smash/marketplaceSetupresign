@@ -116,6 +116,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   DateTime currentBackPressTime;
 
   _MarketPlaceHomeScreenState(this.store);
+
   Map<String, HomeScreenSection> homeViewOrderMap = Map();
 
   @override
@@ -133,7 +134,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     getCategoryApi();
     _getTagApi();
     _getStoreApi();
-
 
     for (HomeScreenSection item in store.homeScreenSection) {
       homeViewOrderMap.putIfAbsent(item.section, () => item);
@@ -295,10 +295,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       return Container();
     } else
       return Visibility(
-        visible:
-        (homeViewOrderMap.length==0)||
-            (homeViewOrderMap[HomeScreenViewHelper.SLIDER]
-                !=null&&homeViewOrderMap[HomeScreenViewHelper.SLIDER].display),
+        visible: (homeViewOrderMap.length == 0) ||
+            (homeViewOrderMap[HomeScreenViewHelper.SLIDER] != null &&
+                homeViewOrderMap[HomeScreenViewHelper.SLIDER].display),
         child: Column(
           children: [
             Center(
@@ -316,25 +315,25 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                   int index = imgList.indexOf(url);
                   return _current == index
                       ? Container(
-                    width: 7.0,
-                    height: 7.0,
-                    margin: EdgeInsets.symmetric(
-                        vertical: 0.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: dotIncreasedColor,
-                    ),
-                  )
+                          width: 7.0,
+                          height: 7.0,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 2.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: dotIncreasedColor,
+                          ),
+                        )
                       : Container(
-                    width: 6.0,
-                    height: 6.0,
-                    margin: EdgeInsets.symmetric(
-                        vertical: 0.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color.fromRGBO(0, 0, 0, 0.4),
-                    ),
-                  );
+                          width: 6.0,
+                          height: 6.0,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 2.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromRGBO(0, 0, 0, 0.4),
+                          ),
+                        );
                 }).toList(),
               ),
             ),
@@ -1155,7 +1154,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                 InkWell(
                   onTap: () async {
                     if (widget.initialPosition != null &&
-                        locationAddress != AppConstant.selectLocation) {
+                        locationAddress != getLocationSearchPlaceHolderText()) {
                       showBottomSheet(context, widget.initialPosition,
                           widget.initialPosition, locationAddress);
                       return;
@@ -1301,9 +1300,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   Widget _addSearchView() {
     return Visibility(
-      visible: (homeViewOrderMap.length==0)||
-          (homeViewOrderMap[HomeScreenViewHelper.SEARCH]
-              !=null&&homeViewOrderMap[HomeScreenViewHelper.SEARCH].display),
+      visible: (homeViewOrderMap.length == 0) ||
+          (homeViewOrderMap[HomeScreenViewHelper.SEARCH] != null &&
+              homeViewOrderMap[HomeScreenViewHelper.SEARCH].display),
       child: Container(
         height: 40,
         margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -1423,7 +1422,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       default:
         return Column(
           children: [
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             _addSearchView(),
             _getMiddleView()
           ],
@@ -1506,39 +1507,34 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         store,
                         subCategory,
                         storeData: storeData,
-                        tagsModel: tagsModel,
-                        callback: <Object>({value}) {
-                          setState(() {
-                            if (value == null) {
-                              Utils.showToast('No Data found', false);
-                              return;
-                            }
-                            if (value is StoreDataModel) {
-                              setState(() {
-                                _selectedSingleStore = value;
-                                _previousSelectedHomeScreen =
-                                    _selectedHomeScreen;
-                                _selectedHomeScreen =
-                                    HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
-                              });
-                              return;
-                            }
+                        tagsModel: tagsModel, callback: <Object>({value}) {
+                        setState(() {
+                          if (value == null) {
+                            Utils.showToast('No Data found', false);
+                            return;
+                          }
+                          if (value is StoreDataModel) {
+                            setState(() {
+                              _selectedSingleStore = value;
+                              _previousSelectedHomeScreen = _selectedHomeScreen;
+                              _selectedHomeScreen =
+                                  HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+                            });
+                            return;
+                          }
 
-                            if (value is StoresModel) {
-                              setState(() {
-                                allStoreData = value;
-                                _previousSelectedHomeScreen =
-                                    _selectedHomeScreen;
-                                _selectedHomeScreen =
-                                    HomeScreenEnum.HOME_RESTAURANT_VIEW;
-                              });
-                              return;
-                            }
-                          });
-                          return;
-                        },homeViewOrderMap:homeViewOrderMap
-                      )
-
+                          if (value is StoresModel) {
+                            setState(() {
+                              allStoreData = value;
+                              _previousSelectedHomeScreen = _selectedHomeScreen;
+                              _selectedHomeScreen =
+                                  HomeScreenEnum.HOME_RESTAURANT_VIEW;
+                            });
+                            return;
+                          }
+                        });
+                        return;
+                      }, homeViewOrderMap: homeViewOrderMap)
               ],
             ),
           ));
@@ -1658,7 +1654,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       setState(() {});
     });
   }
-
 }
 
 class HomeScreenViewHelper {
