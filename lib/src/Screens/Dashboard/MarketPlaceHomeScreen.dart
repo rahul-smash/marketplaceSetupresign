@@ -817,7 +817,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         this.categoriesModel = response;
         print("---CategoriesData-${categoriesModel.success}---");
       });
-      _makeHomeScreenList();
     });
     /*ApiController.getCategoriesApiRequest(store.id).then((response) {
       setState(() {
@@ -1313,7 +1312,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               homeViewOrderMap[HomeScreenViewHelper.SEARCH].display),
       child: Container(
         height: 40,
-        margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
         //padding: EdgeInsets.all(5.0),
         decoration: BoxDecoration(
             color: searchGrayColor,
@@ -1433,7 +1432,6 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             SizedBox(
               height: 10,
             ),
-            _addSearchView(),
             _getMiddleView()
           ],
         );
@@ -1527,13 +1525,23 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   List<Widget> _getWidgetList() {
     return isLoading
-        ? <Widget>[addBanners(), Center(child: CircularProgressIndicator())]
-        : homeScreenList;
+        ? <Widget>[
+//            _addSearchView(),
+//            addBanners(),
+            Center(child: CircularProgressIndicator())
+          ]
+        : _makeHomeScreenList();
   }
 
   Widget _getMiddleView() {
     return (_selectedHomeScreen == HomeScreenEnum.HOME_SEARCH_VIEW)
-        ? Expanded(child: _getSearchList())
+        ? Expanded(
+            child: Column(
+            children: [
+              _addSearchView(),
+              Expanded(child: _getSearchList()),
+            ],
+          ))
         : Expanded(
             child: SingleChildScrollView(
             controller: controller,
@@ -1680,19 +1688,16 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     }
   }
 
-  List<Widget> homeScreenList = List.empty(growable: true);
-
-  void _makeHomeScreenList() {
-    homeScreenList.clear();
-    LogicalStack<HomeScreenSection> tempStack = LogicalStack();
-    tempStack = homeScreenStack.copy(tempStack);
-    int size = tempStack.length;
-    for (int i = 0; i < size; i++) {
-      HomeScreenSection item = tempStack.firstPop();
+  List<Widget> _makeHomeScreenList() {
+    List<Widget> homeScreenList = List.empty(growable: true);
+    List<HomeScreenSection> sectionsList =
+        homeScreenStack.stack.toList(growable: true);
+    for (int i = 0; i < sectionsList.length; i++) {
+      HomeScreenSection item = sectionsList[i];
       switch (item.section) {
-//        case HomeScreenViewHelper.SEARCH:
-//          list.add( addBanners());
-//          break;
+        case HomeScreenViewHelper.SEARCH:
+          homeScreenList.add(_addSearchView());
+          break;
         case HomeScreenViewHelper.SLIDER:
           homeScreenList.add(addBanners());
           break;
@@ -1730,6 +1735,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           break;
       }
     }
+    return homeScreenList;
   }
 }
 
