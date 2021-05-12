@@ -605,6 +605,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                           });
                           return;
                         }
+                        if (value is StoresModel) {
+                          setState(() {
+                            allStoreData = value;
+                            _previousSelectedHomeScreen = _selectedHomeScreen;
+                            _selectedHomeScreen = HomeScreenEnum.HOME_RESTAURANT_VIEW;
+                          });
+                          return;
+                        }
                       });
                       return;
                     }, widget.brandData)),
@@ -1459,6 +1467,15 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             });
             return;
           }
+
+          if (value is StoresModel) {
+            setState(() {
+              allStoreData = value;
+              _previousSelectedHomeScreen = _selectedHomeScreen;
+              _selectedHomeScreen = HomeScreenEnum.HOME_RESTAURANT_VIEW;
+            });
+            return;
+          }
         });
         return;
       },
@@ -1484,6 +1501,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               _selectedSingleStore = value;
               _previousSelectedHomeScreen = _selectedHomeScreen;
               _selectedHomeScreen = HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+            });
+            return;
+          }
+          if (value is StoresModel) {
+            setState(() {
+              allStoreData = value;
+              _previousSelectedHomeScreen = _selectedHomeScreen;
+              _selectedHomeScreen = HomeScreenEnum.HOME_RESTAURANT_VIEW;
             });
             return;
           }
