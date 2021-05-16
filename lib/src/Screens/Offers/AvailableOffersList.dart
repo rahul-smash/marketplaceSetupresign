@@ -167,6 +167,17 @@ class AvailableOffersState extends State<AvailableOffersDialog> {
                                             //side: BorderSide(color: Colors.red)
                                           ),
                                           onPressed: () async {
+
+                                            if (widget.taxModel != null&&offer.discount.isNotEmpty) {
+                                              double totalAmount =
+                                              double.parse(widget.taxModel.total);
+                                              double pointAmount =
+                                              double.parse(offer.discount);
+                                              if (pointAmount > totalAmount) {
+                                                Utils.showToast('Your total amount be should be greater than ${offer.discount}.', false);
+                                                return;
+                                              }
+                                            }
                                             bool isNetworkAvailable =
                                                 await Utils
                                                     .isNetworkAvailable();

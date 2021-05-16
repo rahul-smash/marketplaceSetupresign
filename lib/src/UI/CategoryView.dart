@@ -10,7 +10,7 @@ import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
-class CategoryView extends StatelessWidget {
+class CategoryView extends StatefulWidget {
   final CategoryModel categoryModel;
   StoreDataObj store;
   int index;
@@ -25,64 +25,85 @@ class CategoryView extends StatelessWidget {
       this.selectedSubCategoryId = '',
       this.callback});
 
+  @override
+  _CategoryViewState createState() => _CategoryViewState();
+}
+
+class _CategoryViewState extends State<CategoryView> {
+  int searchResultCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    eventBus.on<updateStoreSearch>().listen((event) {
+      setState(() {
+        searchResultCount = event.searchedProductList.length;
+      });
+
+    });
+  }
+
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (isListView)
+        if (widget.isListView)
           _onListTapHandle(context);
         else
           _onTapPressed(context);
       },
       child: Container(
-        width: isListView ? (Utils.getDeviceWidth(context) / 4.2) - 3 : null,
+        width: widget.isListView
+            ? (Utils.getDeviceWidth(context) / 4.2) - 3
+            : null,
         margin: EdgeInsets.fromLTRB(
-            isListView ? 3 : 10, 0, isListView ? 3 : 10, 15),
+            widget.isListView ? 3 : 10, 0, widget.isListView ? 3 : 10, 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
                 decoration: BoxDecoration(
                     border: Border.all(
-                        color: _isCategoryViewSelected()
-                            ? appThemeSecondary
-                            : Colors.white,
+                        color:
+                            _isCategoryViewSelected() && searchResultCount == 0
+                                ? appThemeSecondary
+                                : Colors.white,
                         width: _isCategoryViewSelected() ? 2 : 0),
                     borderRadius: BorderRadius.circular(10.0)),
                 height: (Utils.getDeviceWidth(context) / 5) - 3,
                 margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
-                  child:  categoryModel.image300200.isNotEmpty?
-                  CachedNetworkImage(
-                    imageUrl: "${categoryModel.image300200}",
-                    width: (Utils.getDeviceWidth(context) / 4),
-                    fit: BoxFit.cover,
-                    //placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) {
-                      print('image error ${url}');
-                      return Container();
-                    },
-                  ): Image.asset(
-                    'images/img_placeholder.jpg',
-                    fit: BoxFit.cover,
-                  ),
-                )
-                    ),
+                  child: widget.categoryModel.image300200.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: "${widget.categoryModel.image300200}",
+                          width: (Utils.getDeviceWidth(context) / 4),
+                          fit: BoxFit.cover,
+                          //placeholder: (context, url) => CircularProgressIndicator(),
+                          errorWidget: (context, url, error) {
+                            print('image error ${url}');
+                            return Container();
+                          },
+                        )
+                      : Image.asset(
+                          'images/img_placeholder.jpg',
+                          fit: BoxFit.cover,
+                        ),
+                )),
             Padding(
 //              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
               padding: EdgeInsets.only(top: 10.0),
               child: Center(
-                child: Text(categoryModel.title,
+                child: Text(widget.categoryModel.title,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                     softWrap: true,
                     style: new TextStyle(
-                      color: _isCategoryViewSelected()
-                          ? appThemeSecondary
-                          : Colors.black,
-                      fontSize: 16.0,
-                    )),
+                        color: _isCategoryViewSelected()&& searchResultCount==0
+                            ? appThemeSecondary
+                            : Colors.black,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500)),
               ),
             ),
           ],
@@ -92,23 +113,26 @@ class CategoryView extends StatelessWidget {
   }
 
   _onTapPressed(BuildContext context) async {
-    if (checkIfStoreClosed(store)) {
-      DialogUtils.displayCommonDialog(context, store.storeName, store.storeMsg);
+    if (checkIfStoreClosed(widget.store)) {
+      DialogUtils.displayCommonDialog(
+          context, widget.store.storeName, widget.store.storeMsg);
     } else {
-      if (categoryModel != null && categoryModel.subCategory.isNotEmpty) {
+      if (widget.categoryModel != null &&
+          widget.categoryModel.subCategory.isNotEmpty) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) {
             return SubCategoryProductScreen(
-                categoryModel, isComingFromBaner, index);
+                widget.categoryModel, widget.isComingFromBaner, widget.index);
           }),
         );
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-        attributeMap["ScreenName"] = "${categoryModel.title}";
+        attributeMap["ScreenName"] = "${widget.categoryModel.title}";
         Utils.sendAnalyticsEvent("Clicked category", attributeMap);
       } else {
-        if (categoryModel != null && categoryModel.subCategory != null) {
-          if (categoryModel.subCategory.isEmpty) {
+        if (widget.categoryModel != null &&
+            widget.categoryModel.subCategory != null) {
+          if (widget.categoryModel.subCategory.isEmpty) {
             Utils.showToast("No data found!", false);
           }
         }
@@ -117,11 +141,13 @@ class CategoryView extends StatelessWidget {
   }
 
   void _onListTapHandle(BuildContext context) {
-    if (checkIfStoreClosed(store)) {
-      DialogUtils.displayCommonDialog(context, store.storeName, store.storeMsg);
+    if (checkIfStoreClosed(widget.store)) {
+      DialogUtils.displayCommonDialog(
+          context, widget.store.storeName, widget.store.storeMsg);
     } else {
-      if (categoryModel != null && categoryModel.subCategory.isNotEmpty) {
-        callback(value: categoryModel);
+      if (widget.categoryModel != null &&
+          widget.categoryModel.subCategory.isNotEmpty) {
+        widget.callback(value: widget.categoryModel);
 //        Navigator.push(
 //          context,
 //          MaterialPageRoute(builder: (context) {
@@ -130,11 +156,12 @@ class CategoryView extends StatelessWidget {
 //          }),
 //        );
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-        attributeMap["ScreenName"] = "${categoryModel.title}";
+        attributeMap["ScreenName"] = "${widget.categoryModel.title}";
         Utils.sendAnalyticsEvent("Clicked category", attributeMap);
       } else {
-        if (categoryModel != null && categoryModel.subCategory != null) {
-          if (categoryModel.subCategory.isEmpty) {
+        if (widget.categoryModel != null &&
+            widget.categoryModel.subCategory != null) {
+          if (widget.categoryModel.subCategory.isEmpty) {
             Utils.showToast("No data found!", false);
           }
         }
@@ -143,18 +170,18 @@ class CategoryView extends StatelessWidget {
   }
 
   bool _isCategoryViewSelected() {
-    if (isListView &&
-        selectedSubCategoryId != null &&
-        categoryModel != null &&
-        categoryModel.subCategory != null &&
-        categoryModel.subCategory.isNotEmpty) {
-      return selectedSubCategoryId
-              .compareTo(categoryModel.id) ==
+    if (widget.isListView &&
+        widget.selectedSubCategoryId != null &&
+        widget.categoryModel != null &&
+        widget.categoryModel.subCategory != null &&
+        widget.categoryModel.subCategory.isNotEmpty) {
+      return widget.selectedSubCategoryId.compareTo(widget.categoryModel.id) ==
           0;
     } else {
       return false;
     }
   }
+
   bool checkIfStoreClosed(StoreDataObj store) {
     if (store.storeStatus == "0") {
       //0 mean Store close

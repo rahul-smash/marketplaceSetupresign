@@ -10,7 +10,10 @@ import 'HtmlDisplayScreen.dart';
 class AdditionalInformation extends StatefulWidget {
   final BrandData store;
 
-  AdditionalInformation(this.store);
+  String titleName;
+
+  AdditionalInformation(this.store,
+      {this.titleName = "Additional Information"});
 
   @override
   _AdditionalInformationState createState() {
@@ -40,29 +43,31 @@ class _AdditionalInformationState extends State<AdditionalInformation> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: new Text('Additional Information'),
+          title: new Text('${widget.titleName}'),
           centerTitle: true,
-          actions: [    InkWell(
-            onTap: () {
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-            child: Padding(
-              padding:
-              EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
-              child: Icon(
-                Icons.home,
-                color: Colors.white,
-                size: 30,
+          actions: [
+            InkWell(
+              onTap: () {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child: Padding(
+                padding:
+                    EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
+                child: Icon(
+                  Icons.home,
+                  color: Colors.white,
+                  size: 30,
+                ),
               ),
             ),
-          ),],
+          ],
         ),
         body: SafeArea(
           child: ListView.separated(
               separatorBuilder: (context, index) => Container(
-                height: 1,
-                color: Color(0xFFDBDCDD),
-              ),
+                    height: 1,
+                    color: Color(0xFFDBDCDD),
+                  ),
               padding: EdgeInsets.zero,
               itemCount: _drawerItems.length,
               itemBuilder: (BuildContext context, int index) {

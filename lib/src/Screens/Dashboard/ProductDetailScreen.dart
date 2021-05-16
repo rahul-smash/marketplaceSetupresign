@@ -32,7 +32,11 @@ class ProductDetailsScreen extends StatefulWidget {
   bool isApiLoading = false, isFav = false;
   Variant passedVariant;
 
-  ProductDetailsScreen(this.product, this.passedVariant);
+  String productID = '';
+  String storeId = '';
+
+  ProductDetailsScreen(this.product, this.passedVariant,
+      {this.productID, this.storeId});
 
   @override
   State<StatefulWidget> createState() {
@@ -51,7 +55,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
   int selctedTag;
   StoreModel _storeModel;
   bool isVisible = true;
-  List<Product> _recommendedProducts = List();
+  List<Product> _recommendedProducts = List.empty(growable: true);
   double totalPrice = 0.00;
 
   bool _isProductOutOfStock = false;
@@ -69,8 +73,11 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
     showAddButton = false;
     _carouselController = CarouselController();
     variant = widget.passedVariant;
-    getDataFromDB();
-//    getProductDetail(widget.product.id);
+    if (widget.product == null) {
+      getProductDetail(widget.productID, widget.storeId);
+    } else {
+      getDataFromDB();
+    }
   }
 
   void getDataFromDB() {
@@ -94,6 +101,28 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
   }
 
   Widget build(BuildContext context) {
+    if (widget.product == null) {
+      print('product null');
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              return Navigator.pop(context, variant);
+            },
+          ),
+        ),
+        body: widget.isApiLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                    backgroundColor: Colors.black26,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.black26)),
+              )
+            : Utils.getEmptyView1('Data Not Found'),
+//        bottomNavigationBar: SafeArea(child: bottomBar),
+      );
+    }
     variantId = variant == null ? widget.product.variantId : variant.id;
     if (variant == null) {
       discount = widget.product.discount.toString();
@@ -678,27 +707,39 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
     );
   }
 
-  void getProductDetail(String productID) async {
-    _storeModel = await SharedPrefs.getStore();
-    ApiController.getSubCategoryProductDetail(productID).then((value) {
+  void getProductDetail(String productID, String storeId) async {
+    widget.isApiLoading = true;
+    ApiController.getSubCategoryProductDetail(productID, storeId).then((value) {
+      if (value == null) {
+        widget.isApiLoading = false;
+        setState(() {});
+        return;
+      }
+      Product product = value.subCategories.first.products.first;
+      if (widget.product == null) {
+        widget.product = product;
+      }
+      getDataFromDB();
       setState(() {
-        Product product = value.subCategories.first.products.first;
         widget.product.productImages = product.productImages;
         widget.product.description = product.description;
         widget.isApiLoading = false;
       });
     });
+    try {
+      _storeModel = await SharedPrefs.getStore();
+    } catch (e) {}
 
-    if (_storeModel != null &&
-        _storeModel.recommendedProducts.compareTo("1") == 0)
-      ApiController.getRecommendedProducts(productID).then((value) {
-        if (value != null && value.success) {
-          for (var list in value.data) {
-            _recommendedProducts.addAll(list.products);
-          }
-          setState(() {});
-        }
-      });
+//    if (_storeModel != null &&
+//        _storeModel.recommendedProducts.compareTo("1") == 0)
+//      ApiController.getRecommendedProducts(productID).then((value) {
+//        if (value != null && value.success) {
+//          for (var list in value.data) {
+//            _recommendedProducts.addAll(list.products);
+//          }
+//          setState(() {});
+//        }
+//      });
   }
 
   bool _checkVisibility() {
@@ -795,24 +836,23 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                     imageUrl: "${imageUrl}", fit: BoxFit.cover
                   ),
                 ),*/
-                  child: Center(
-                    child: imageUrl.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: "${imageUrl}",
-                            height: 280,
-                            fit: BoxFit.scaleDown,
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                          )
-                        : Image.asset(
-                            'images/img_placeholder.jpg',
-                            height: 280,
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                ));
+              child: Center(
+                child: imageUrl.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: "${imageUrl}",
+                        height: 280,
+                        fit: BoxFit.scaleDown,
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      )
+                    : Image.asset(
+                        'images/img_placeholder.jpg',
+                        height: 280,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ));
   }
 
   Widget _makeBanner(BuildContext context, int _index) {

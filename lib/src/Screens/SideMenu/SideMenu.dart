@@ -43,7 +43,11 @@ class NavDrawerMenu extends StatefulWidget {
   VoidCallback callback;
   bool isPWAThemeEnable = true;
 
-  NavDrawerMenu(this.brandData, this.userName, this.callback,);
+  NavDrawerMenu(
+    this.brandData,
+    this.userName,
+    this.callback,
+  );
 
   @override
   _NavDrawerMenuState createState() {

@@ -35,8 +35,7 @@ class MarketPlaceHomeTagsView extends StatefulWidget {
       _MarketPlaceHomeTagsViewState();
 }
 
-class _MarketPlaceHomeTagsViewState
-    extends State<MarketPlaceHomeTagsView> {
+class _MarketPlaceHomeTagsViewState extends State<MarketPlaceHomeTagsView> {
   bool isSeeAll = false;
 
   @override

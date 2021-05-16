@@ -17,6 +17,7 @@ import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/BaseState.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/HomeScreenContentText.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 
@@ -24,12 +25,9 @@ class SearchScreen extends StatefulWidget {
   LatLng initialPosition;
   CustomCallback callback;
   BrandData brandData;
+  CustomCallback dishCallBack;
 
-  SearchScreen(
-    this.initialPosition,
-    this.callback,
-      this.brandData
-  );
+  SearchScreen(this.initialPosition, this.callback, this.brandData,{this.dishCallBack});
 
   @override
   _SearchScreenState createState() {
@@ -40,14 +38,13 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends BaseState<SearchScreen> {
   TextEditingController controller = TextEditingController();
   int selctedTag;
-  List<String> tagsList = List();
-  List<SubCategoryModel> subCategoryList = List();
+  List<String> tagsList = List.empty(growable: true);
+  List<SubCategoryModel> subCategoryList = List.empty(growable: true);
   SubCategoryModel subCategory;
-  List<Product> productsList = List();
-  CartTotalPriceBottomBar bottomBar =
-      CartTotalPriceBottomBar(ParentInfo.searchList);
+  List<Product> productsList = List.empty(growable: true);
   bool isSearchEmpty;
-
+  CartTotalPriceBottomBar bottomBar =
+  CartTotalPriceBottomBar(ParentInfo.searchList);
   ScrollController _scrollController;
   GlobalKey tagskey;
 
@@ -149,7 +146,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                                 enabledBorder: InputBorder.none,
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
-                                hintText: "Search"),
+                                hintText: getSearchPlaceHolderText()),
                           ),
                         ),
                         IconButton(
@@ -269,7 +266,7 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                   } else if (itemList[index] is Dish) {
                     Dish dish = itemList[index];
                     return DishTileItem(
-                        dish, widget.callback, widget.initialPosition);
+                        dish, widget.callback, widget.initialPosition,dishCallBack: widget.dishCallBack);
                   } else {
                     return itemList[index];
                   }

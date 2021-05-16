@@ -16,13 +16,14 @@ import 'package:html/parser.dart';
 class DishTileItem extends StatefulWidget {
   Dish dish;
   CustomCallback callback;
-  List<String> tagsList = List();
+  CustomCallback dishCallBack;
+  List<String> tagsList = List.empty(growable: true);
   LatLng initialPosition;
 
   DishTileItem(
     this.dish,
     this.callback,
-    this.initialPosition,
+    this.initialPosition,{this.dishCallBack}
   );
 
   @override
@@ -67,6 +68,7 @@ class _DishTileItemState extends State<DishTileItem> {
               if (storeObject != null && storeObject.success)
                 storeObject.store.dish = widget.dish;
               widget.callback(value: storeObject);
+              widget.dishCallBack(value: widget.dish);
             });
           },
           child: Padding(

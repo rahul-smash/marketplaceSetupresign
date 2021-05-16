@@ -16,17 +16,18 @@ import 'package:restroapp/src/utils/Utils.dart';
 class HomeSearchView extends StatefulWidget {
   StoresModel allStoreData;
   CustomCallback callback;
+  CustomCallback dishCallBack;
   HomeScreenEnum selectedScreen;
   LatLng initialPosition;
   TagsModel tagsModel;
   BrandData brandData;
 
-  HomeSearchView(this.allStoreData,
-  this.brandData,
+  HomeSearchView(this.allStoreData, this.brandData,
       {this.callback,
       this.initialPosition,
       this.tagsModel,
-      this.selectedScreen});
+      this.selectedScreen,
+      this.dishCallBack});
 
   @override
   _HomeSearchViewState createState() => _HomeSearchViewState();
@@ -54,24 +55,25 @@ class _HomeSearchViewState extends State<HomeSearchView> {
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-           Expanded(
-                  child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: itemList.length,
-                  itemBuilder: (context, index) {
-                    if (itemList[index] is StoreData) {
-                      StoreData storeDataObj = itemList[index];
-                      return RestroSearchItemCard(storeDataObj, widget.callback,
-                          widget.initialPosition,widget.brandData);
-                    } else if (itemList[index] is Dish) {
-                      Dish dish = itemList[index];
-                      return DishTileItem(
-                          dish, widget.callback, widget.initialPosition);
-                    } else {
-                      return itemList[index];
-                    }
-                  },
-                )),
+          Expanded(
+              child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: itemList.length,
+            itemBuilder: (context, index) {
+              if (itemList[index] is StoreData) {
+                StoreData storeDataObj = itemList[index];
+                return RestroSearchItemCard(storeDataObj, widget.callback,
+                    widget.initialPosition, widget.brandData);
+              } else if (itemList[index] is Dish) {
+                Dish dish = itemList[index];
+                return DishTileItem(
+                    dish, widget.callback, widget.initialPosition,
+                    dishCallBack: widget.dishCallBack);
+              } else {
+                return itemList[index];
+              }
+            },
+          )),
         ],
       ),
     );
@@ -79,7 +81,8 @@ class _HomeSearchViewState extends State<HomeSearchView> {
 
   _generalizedList() {
     if (widget.allStoreData != null) {
-      if (widget.allStoreData.data!=null&& widget.allStoreData.data.isNotEmpty) {
+      if (widget.allStoreData.data != null &&
+          widget.allStoreData.data.isNotEmpty) {
         itemList.add(Padding(
           padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
           child: Row(
@@ -124,7 +127,8 @@ class _HomeSearchViewState extends State<HomeSearchView> {
                 : widget.allStoreData.data.sublist(0, 2)
             : widget.allStoreData.data);
       }
-      if (widget.allStoreData.dishes!=null&&widget.allStoreData.dishes.isNotEmpty) {
+      if (widget.allStoreData.dishes != null &&
+          widget.allStoreData.dishes.isNotEmpty) {
         itemList.add(Padding(
           padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
           child: Row(
@@ -149,10 +153,10 @@ class _HomeSearchViewState extends State<HomeSearchView> {
   void listenEvent() {
     eventBus.on<onHomeSearch>().listen((event) {
       setState(() {
-        widget.allStoreData=event.allStoreData;
-       itemList.clear();
-       visibleAllRestro=false;
-       _generalizedList();
+        widget.allStoreData = event.allStoreData;
+        itemList.clear();
+        visibleAllRestro = false;
+        _generalizedList();
       });
     });
   }

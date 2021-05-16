@@ -15,9 +15,12 @@ import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeCategoryView.dart
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeFiltersView.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeStoresView.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeTagsView.dart';
+import 'package:restroapp/src/Screens/Dashboard/ProductDetailScreen.dart';
 import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
 import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
+import 'package:restroapp/src/Screens/SideMenu/AdditionalInformation.dart';
+import 'package:restroapp/src/UI/CartBottomView.dart';
 import 'package:restroapp/src/UI/OffersList.dart';
 import 'package:restroapp/src/Screens/SideMenu/SideMenu.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
@@ -896,7 +899,13 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       print(
           "---getAddressFromLocation-------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
       setState(() {
-        locationAddress = first.addressLine;
+//        locationAddress =  first.addressLine;
+        locationAddress =
+            '${first.subLocality != null ? first.subLocality : ''}${first.locality != null ? ', ' + first.locality : ''}${first.subAdminArea != null ? ', ' + first.subAdminArea : ''}${first.adminArea != null ? ', ' + first.adminArea : ''}';
+        if (locationAddress.length > 0)
+          locationAddress = locationAddress[0] == ','
+              ? locationAddress.replaceFirst(',', '')
+              : locationAddress;
       });
     } else {
       print(
@@ -921,10 +930,19 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         var addresses =
             await Geocoder.local.findAddressesFromCoordinates(coordinates);
         var first = addresses.first;
-        localAddress = first.addressLine;
+//        localAddress = first.addressLine;
+
+        localAddress =
+            '${first.subLocality != null ? first.subLocality : ''}${first.locality != null ? ', ' + first.locality : ''}${first.subAdminArea != null ? ', ' + first.subAdminArea : ''}${first.adminArea != null ? ', ' + first.adminArea : ''}';
         if (setState != null)
           setState(() {
-            localAddress = first.addressLine;
+//            localAddress = first.addressLine;
+            localAddress =
+                '${first.subLocality != null ? first.subLocality : ''}${first.locality != null ? ', ' + first.locality : ''}${first.subAdminArea != null ? ', ' + first.subAdminArea : ''}${first.adminArea != null ? ', ' + first.adminArea : ''}';
+            if (localAddress.length > 0)
+              localAddress = localAddress[0] == ','
+                  ? localAddress.replaceFirst(',', '')
+                  : localAddress;
           });
       } catch (e) {
         print(e);
@@ -1295,10 +1313,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           color: !isCategoryViewSelected ? Colors.white : null,
         ),
         Padding(
-          padding: EdgeInsets.only(top: 10),
+          padding: EdgeInsets.only(
+              top:
+                  _selectedHomeScreen == HomeScreenEnum.HOME_SELECTED_STORE_VIEW
+                      ? 0
+                      : 10),
           child: _getCurrentBody(),
         ),
-        _getStoreView(),
+//        _getStoreView(),
       ],
     );
   }
@@ -1490,6 +1512,21 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       initialPosition: widget.initialPosition,
       tagsModel: tagsModel,
       selectedScreen: _selectedHomeScreen,
+      dishCallBack: <Object>({value}) {
+        if (value is Dish) {
+          Dish item = value;
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                builder: (BuildContext context) => ProductDetailsScreen(
+                    null, null,
+                    productID: item.id, storeId: item.storeId),
+                fullscreenDialog: true,
+              ));
+          return;
+        }
+        return;
+      },
       callback: <Object>({value}) {
         setState(() {
           if (value == null) {
@@ -1674,7 +1711,13 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       print(
           "----------${first.featureName} and ${first.addressLine}-postalCode-${first.postalCode}------");
       setState(() {
-        locationAddress = first.addressLine;
+//        locationAddress = first.addressLine;
+        locationAddress =
+            '${first.subLocality != null ? first.subLocality : ''}${first.locality != null ? ', ' + first.locality : ''}${first.subAdminArea != null ? ', ' + first.subAdminArea : ''}${first.adminArea != null ? ', ' + first.adminArea : ''}';
+        if (locationAddress.length > 0)
+          locationAddress = locationAddress[0] == ','
+              ? locationAddress.replaceFirst(',', '')
+              : locationAddress;
         //ReloadApi
         _getStoreApi();
       });

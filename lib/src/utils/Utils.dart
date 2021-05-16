@@ -7,6 +7,7 @@ import 'package:device_info/device_info.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:intl/intl.dart';
@@ -58,6 +59,19 @@ class Utils {
     } catch (e) {
       print(e);
     }
+  }
+
+  static Widget getEmptyView1(String value) {
+    return Container(
+      child: Center(
+        child: Text(value,
+            overflow: TextOverflow.ellipsis,
+            style: new TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 18.0,
+            )),
+      ),
+    );
   }
 
   static Future<PackageInfo> getAppVersionDetails() async {
@@ -406,14 +420,14 @@ class Utils {
     return formatted;
   }
 
-  static bool getDayOfWeek(String arrOpenhoursFrom,String arrOpenhoursTo) {
+  static bool getDayOfWeek(String arrOpenhoursFrom, String arrOpenhoursTo) {
     bool isStoreOpen;
     DateFormat dateFormat = DateFormat("hh:mma");
     DateFormat apiDateFormat = new DateFormat("yyyy-MM-dd hh:mm a");
 
     var currentDate = DateTime.now();
-    print(currentDate
-        .toString()); // prints something like 2019-12-10 10:02:22.287949
+//    print(currentDate
+//        .toString()); // prints something like 2019-12-10 10:02:22.287949
 
     String currentTime = apiDateFormat.format(currentDate);
     //currentTime = currentTime.replaceAll("AM", "am").replaceAll("PM","pm");
@@ -489,9 +503,11 @@ class Utils {
           status = true;
         } else if (storeObject.deliverySlot == "0" &&
             storeObject.is24X7Open == "0") {
-          bool isStoreOpenToday = Utils.checkStoreOpenDays(storeObject.storeOpenDays);
+          bool isStoreOpenToday =
+              Utils.checkStoreOpenDays(storeObject.storeOpenDays);
           if (isStoreOpenToday) {
-            bool isStoreOpen = Utils.getDayOfWeek(storeObject.openhoursFrom,storeObject.openhoursTo);
+            bool isStoreOpen = Utils.getDayOfWeek(
+                storeObject.openhoursFrom, storeObject.openhoursTo);
             status = isStoreOpen;
           } else {
             status = false;
@@ -509,9 +525,11 @@ class Utils {
               storeObject.openhoursFrom.isEmpty) {
             status = true;
           } else {
-            bool isStoreOpenToday = Utils.checkStoreOpenDays(storeObject.storeOpenDays);
+            bool isStoreOpenToday =
+                Utils.checkStoreOpenDays(storeObject.storeOpenDays);
             if (isStoreOpenToday) {
-              bool isStoreOpen = Utils.getDayOfWeek(storeObject.openhoursFrom,storeObject.openhoursTo);
+              bool isStoreOpen = Utils.getDayOfWeek(
+                  storeObject.openhoursFrom, storeObject.openhoursTo);
               status = isStoreOpen;
             } else {
               status = false;
@@ -538,9 +556,11 @@ class Utils {
           storeObject.timimg.openhoursFrom.isEmpty) {
         status = true;
       } else {
-        bool isStoreOpenToday = Utils.checkStoreOpenDays(storeObject.timimg.storeOpenDays);
+        bool isStoreOpenToday =
+            Utils.checkStoreOpenDays(storeObject.timimg.storeOpenDays);
         if (isStoreOpenToday) {
-          bool isStoreOpen = Utils.getDayOfWeek(storeObject.timimg.openhoursFrom,storeObject.timimg.openhoursTo);
+          bool isStoreOpen = Utils.getDayOfWeek(
+              storeObject.timimg.openhoursFrom, storeObject.timimg.openhoursTo);
           status = isStoreOpen;
         } else {
           status = false;
@@ -756,6 +776,22 @@ class Utils {
       param['machine'] = iosInfo.utsname.machine;
     }
     DeviceInfo.getInstance(deviceInfo: param);
+  }
+}
+
+Future<void> share2(String referEarn, BrandData store) async {
+  if (referEarn != null && store.isRefererFnEnable) {
+    await FlutterShare.share(
+        title: '${store.name}',
+        linkUrl: referEarn,
+        chooserTitle: 'Refer & Earn');
+  } else {
+    await FlutterShare.share(
+        title: 'Kindly download',
+        text: 'Kindly download' + store.name + 'app from',
+        linkUrl:
+            Platform.isIOS ? store.iphoneShareLink : store.androidShareLink,
+        chooserTitle: 'Share');
   }
 }
 

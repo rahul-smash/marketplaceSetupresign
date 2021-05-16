@@ -482,20 +482,20 @@ class ApiController {
   }
 
   static Future<SubCategoryResponse> getSubCategoryProductDetail(
-      String productID) async {
+      String productID,String storeId) async {
     SubCategoryResponse subCategoryResponse = SubCategoryResponse();
     bool isNetworkAviable = await Utils.isNetworkAvailable();
     try {
       if (isNetworkAviable) {
-        StoreDataObj store = await SharedPrefs.getStoreData();
+//        StoreDataObj store = await SharedPrefs.getStoreData();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String deviceId = prefs.getString(AppConstant.deviceId);
         print("deviceID $deviceId");
         String deviceToken = prefs.getString(AppConstant.deviceToken);
         print("deviceToken $deviceToken");
 
-        var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
-            ApiConstants.getProductDetail;
+        var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
+            ApiConstants.getProductDetail+productID;
         print(url);
         FormData formData = new FormData.fromMap({
           "user_id": "",
@@ -515,7 +515,7 @@ class ApiController {
             SubCategoryResponse.fromJson(json.decode(response.data));
         if (subCategoryResponse.success) {
           return subCategoryResponse;
-        }
+        }else return null;
       }
     } catch (e) {
       print(e);
@@ -1479,38 +1479,6 @@ class ApiController {
     }
   }
 
-  static Future<SubCategoryResponse> getSearchResults(String keyword) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String deviceId = prefs.getString(AppConstant.deviceId);
-    String deviceToken = prefs.getString(AppConstant.deviceToken);
-
-    var url =
-        ApiConstants.baseUrl3.replaceAll("storeId", '0') + ApiConstants.search;
-    var request = new http.MultipartRequest("POST", Uri.parse(url));
-
-    try {
-      request.fields.addAll({
-        "keyword": "${keyword}",
-        "user_id": "",
-        "device_id": deviceId,
-        "device_token": deviceToken,
-        "platform": Platform.isIOS ? "IOS" : "Android"
-      });
-      print("${url}");
-      final response = await request.send().timeout(Duration(seconds: timeout));
-      final respStr = await response.stream.bytesToString();
-      print("${respStr}");
-
-      final parsed = json.decode(respStr);
-      SubCategoryResponse subCategoryResponse =
-          SubCategoryResponse.fromJson(parsed);
-      return subCategoryResponse;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
-
   static Future<DeliveryTimeSlotModel> deliveryTimeSlotApi() async {
     UserModelMobile user = await SharedPrefs.getUserMobile();
     var url = ApiConstants.baseUrl3.replaceAll("storeId", 'delivery_zones/') +
@@ -1865,8 +1833,9 @@ class ApiController {
       String emailId,
       String phoneNumber,
       String user_refer_code,
-      String gstNumber,{String appleLogin='',String lastName=''}) async {
-
+      String gstNumber,
+      {String appleLogin = '',
+      String lastName = ''}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
@@ -1881,8 +1850,8 @@ class ApiController {
       socialPlatform = "facebook";
     } else if (googleResult != null) {
       socialPlatform = "google";
-    }else if(appleLogin.isNotEmpty){
-      socialPlatform=appleLogin;
+    } else if (appleLogin.isNotEmpty) {
+      socialPlatform = appleLogin;
     }
 
     try {
@@ -2012,7 +1981,7 @@ class ApiController {
         String deviceId = prefs.getString(AppConstant.deviceId);
         String deviceToken = prefs.getString(AppConstant.deviceToken);
         var url = ApiConstants.baseUrl3.replaceAll(
-                "storeId", "marketplace/homescreen/webPagesSectionContents") ;
+            "storeId", "marketplace/homescreen/webPagesSectionContents");
 
         var request = new http.MultipartRequest("POST", Uri.parse(url));
         request.fields.addAll({
@@ -2036,5 +2005,36 @@ class ApiController {
       print(e);
     }
     return null;
+  }
+  static Future<SubCategoryResponse> getSearchProductResults(String keyword,String storeID) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+    var url =
+        ApiConstants.baseUrl3.replaceAll("storeId", storeID) + ApiConstants.search;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+    try {
+      request.fields.addAll({
+        "keyword": "${keyword}",
+        "user_id": "",
+        "device_id": deviceId,
+        "device_token": deviceToken,
+        "platform": Platform.isIOS ? "IOS" : "Android"
+      });
+      print("${url}");
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print("${respStr}");
+
+      final parsed = json.decode(respStr);
+      SubCategoryResponse subCategoryResponse =
+      SubCategoryResponse.fromJson(parsed);
+      return subCategoryResponse;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
   }
 }

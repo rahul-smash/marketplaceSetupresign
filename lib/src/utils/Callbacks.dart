@@ -19,6 +19,10 @@ class onViewAllSelected {
 class updateCartCount {
   updateCartCount();
 }
+class updateStoreSearch {
+  List<Product> searchedProductList;
+  updateStoreSearch(this.searchedProductList);
+}
 
 class onCartRemoved {
   onCartRemoved();

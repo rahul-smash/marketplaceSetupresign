@@ -22,12 +22,13 @@ class RestroListScreen extends StatefulWidget {
   TagsModel tagsModel;
   BrandData brandData;
   Map<String, HomeScreenSection> homeViewOrderMap;
-  RestroListScreen(this.allStoreData,
-      this.brandData,
+
+  RestroListScreen(this.allStoreData, this.brandData,
       {this.callback,
-      this.initialPosition,
-      this.tagsModel,
-      this.selectedScreen,this.homeViewOrderMap});
+        this.initialPosition,
+        this.tagsModel,
+        this.selectedScreen,
+        this.homeViewOrderMap});
 
   @override
   _RestroListScreenState createState() => _RestroListScreenState();
@@ -187,8 +188,12 @@ class _RestroListScreenState extends State<RestroListScreen> {
                 return;
               }
               Map<String, dynamic> data = {
-                "lat": widget.initialPosition.latitude,
-                "lng": widget.initialPosition.longitude,
+                "lat": widget.initialPosition == null
+                    ? '0.0'
+                    : widget.initialPosition.latitude,
+                "lng": widget.initialPosition == null
+                    ? '0.0'
+                    : widget.initialPosition.longitude,
                 "search_by": "tag",
                 "id": "${tagObject.id}",
               };

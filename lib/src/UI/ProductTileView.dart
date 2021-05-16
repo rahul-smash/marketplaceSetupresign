@@ -62,7 +62,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
       cartData = cartDataObj;
       counter = int.parse(cartData.QUANTITY);
       showAddButton = counter == 0 ? true : false;
-      setState(() {});
+      if (mounted) setState(() {});
     });
 //    databaseHelper
 //        .checkProductsExistInFavTable(
@@ -148,7 +148,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
             ? true
             : false;
 
-    if (weight.isEmpty) {
+    if (weight==null||weight.isEmpty) {
       variantsVisibility = false;
     }
     if (widget.product.tags != null && widget.product.tags.trim().length > 0) {
