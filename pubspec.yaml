@@ -179,6 +179,13 @@ flutter:
     - images/hygiene.png
     - images/packaging.png
     - images/img_placeholder.jpg
+    - images/offergraphic1.png
+    - images/lunchicon.png
+    - images/dinnericon.png
+    - images/nextdaydelivery.png
+    - images/pickup.png
+    - images/delivernow.png
+    - images/congratsgiftimage.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

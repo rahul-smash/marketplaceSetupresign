@@ -15,6 +15,7 @@ import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginEmailScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/FAQScreen.dart';
+import 'package:restroapp/src/Screens/Subscription/aboutSubscription.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -77,6 +78,8 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         .add(DrawerChildItem(DrawerChildConstants.HOME, "images/home.png"));
     _drawerItems.add(DrawerChildItem(
         DrawerChildConstants.MY_PROFILE, "images/myprofile.png"));
+    _drawerItems
+        .add(DrawerChildItem(DrawerChildConstants.SUBSCRIBE, "images/home.png"));
     _drawerItems.add(DrawerChildItem(
         DrawerChildConstants.DELIVERY_ADDRESS, "images/deliveryaddress.png"));
     _drawerItems
@@ -225,6 +228,19 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
           Utils.sendAnalyticsEvent("Clicked ProfileScreen", attributeMap);
         } else {
           Navigator.pop(context);
+          Utils.showLoginDialog(context);
+        }
+        break;
+      case DrawerChildConstants.SUBSCRIBE:
+        if(AppConstant.isLoggedIn){
+          Navigator.pop(context);
+          Navigator.push(
+            context, MaterialPageRoute(
+            builder: (context) => SubscriptionPage()
+          )
+          );
+        }else {
+
           Utils.showLoginDialog(context);
         }
         break;
@@ -537,6 +553,7 @@ class DrawerChildItem {
 class DrawerChildConstants {
   static const HOME = "Home";
   static const MY_PROFILE = "My Profile";
+  static const SUBSCRIBE = "Subscription";
   static const DELIVERY_ADDRESS = "Delivery Address";
   static const MY_ORDERS = "My Orders";
   static const Cart = "Cart";
