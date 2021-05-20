@@ -32,6 +32,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         body: Container(
           height:  MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('images/bottomgraphic1.png'),
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.bottomLeft,
+            )
+          ),
           child: Column(
               children: [
                 SizedBox(height: 20),

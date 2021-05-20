@@ -3,7 +3,10 @@ import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
 import 'package:restroapp/src/Screens/Subscription/CancelAlert.dart';
 import 'package:restroapp/src/Screens/Subscription/CongratsVoucher.dart';
 import 'package:restroapp/src/Screens/Subscription/DeliveryType.dart';
+import 'package:restroapp/src/Screens/Subscription/RenewSubscription.dart';
+import 'package:restroapp/src/Screens/Subscription/SubscriptionOrder.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 
 class MealTime extends StatefulWidget {
   const MealTime({Key key}) : super(key: key);
@@ -11,13 +14,15 @@ class MealTime extends StatefulWidget {
   @override
   _MealTimeState createState() => _MealTimeState();
 }
-class _MealTimeState extends State<MealTime> {
 
+class _MealTimeState extends State<MealTime> {
   bool SelectedMeal = false;
   Color color1 = Colors.grey[200];
   Color color2 = Colors.grey[200];
   Color checkColor1 = Colors.grey[200];
   Color checkColor2 = Colors.grey[200];
+  Color cont1 = Colors.grey[200];
+  Color cont2 = Colors.grey[200];
 
   @override
   Widget build(BuildContext context) {
@@ -46,37 +51,53 @@ class _MealTimeState extends State<MealTime> {
                 Row(
                   children: [
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
-                          if(color1 == Colors.grey[200]){
-                          color1 = appTheme;
-                          color2 = Colors.grey[200];
-                          checkColor1 = Colors.black;
-                          checkColor2 = Colors.grey[200];
+                          if (color1 == Colors.grey[200]) {
+                            color1 = appTheme;
+                            color2 = Colors.grey[200];
+                            checkColor1 = Colors.black;
+                            checkColor2 = Colors.grey[200];
+                            cont1 = appThemeSecondary;
+                            cont2 = Colors.grey[200];
                           }
                         });
                       },
                       child: Container(
-                              height: 100,
-                              width: 150,
-                              margin: EdgeInsets.only(left: 20),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                color: color1,
-                              ),
-                              child: Column(
-                                children: [
-                                  Align(alignment: Alignment.topRight,child: Icon(Icons.check, color: checkColor1)),
-                                  Image(image: AssetImage('images/lunchicon.png'), height: 40, width: 80),
-                                  SizedBox(height: 5),
-                                  Text(
-                                  'Lunch',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 20),
-                                  textAlign: TextAlign.center,
-                                ),
-                        ]
-                              )),
+                          height: 100,
+                          width: 150,
+                          margin: EdgeInsets.only(left: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: color1,
+                          ),
+                          child: Column(children: [
+                            Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                    height: 25,
+                                    width: 35,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(10),
+                                          bottomLeft: Radius.circular(30),
+                                        ),
+                                        color: cont1
+                                    ),
+                                    child:
+                                        Icon(Icons.check, color: checkColor1))),
+                            Image(
+                                image: AssetImage('images/lunchicon.png'),
+                                height: 40,
+                                width: 80),
+                            SizedBox(height: 5),
+                            Text(
+                              'Lunch',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                              textAlign: TextAlign.center,
+                            ),
+                          ])),
                     ),
                     SizedBox(width: 20),
                     Container(
@@ -99,36 +120,52 @@ class _MealTimeState extends State<MealTime> {
                     ),
                     SizedBox(width: 20),
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
-                          if(color2 == Colors.grey[200]){
+                          if (color2 == Colors.grey[200]) {
                             color2 = appTheme;
                             color1 = Colors.grey[200];
                             checkColor2 = Colors.black;
                             checkColor1 = Colors.grey[200];
+                            cont1 = Colors.grey[200];
+                            cont2 = appThemeSecondary;
                           }
                         });
-                         },
+                      },
                       child: Container(
-                          height: 100,
-                          width: 150,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: color2,
-                              ),
-                            child: Column(
-                              children: [
-                                Align(alignment: Alignment.topRight,child: Icon(Icons.check, color: checkColor2)),
-                                Image(image: AssetImage('images/dinnericon.png'), height: 40, width: 80),
-                                SizedBox(height: 5),
-                                Text(
-                                'Dinner',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
-                                textAlign: TextAlign.center,
-                              ),]
-                            ),
+                        height: 100,
+                        width: 150,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: color2,
+                        ),
+                        child: Column(children: [
+                          Align(
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                  height: 25,
+                                  width: 35,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(10),
+                                        bottomLeft: Radius.circular(30),
+                                      ),
+                                      color: cont2),
+                                  child:
+                                      Icon(Icons.check, color: checkColor2))),
+                          Image(
+                              image: AssetImage('images/dinnericon.png'),
+                              height: 40,
+                              width: 80),
+                          SizedBox(height: 5),
+                          Text(
+                            'Dinner',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                            textAlign: TextAlign.center,
                           ),
+                        ]),
+                      ),
                     ),
                   ],
                 ),
@@ -146,7 +183,7 @@ class _MealTimeState extends State<MealTime> {
                           textAlign: TextAlign.center),
                       onPressed: () {
                         print('Add your Address');
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SelectDelivery()));
+                        // DialogUtils._showCancelAlert();
                       },
                     ))
               ],

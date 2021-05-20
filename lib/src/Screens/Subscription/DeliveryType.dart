@@ -21,8 +21,9 @@ class _SelectDeliveryState extends State<SelectDelivery> {
             child: InkWell(
               child: Image(
                   image: AssetImage('images/cancelicon.png'),
-                  height: 10,
-                  width: 10),
+                  height: 20,
+                  width: 20
+              ),
               onTap: () {
                 Navigator.pop(context);
               },
