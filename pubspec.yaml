@@ -186,6 +186,10 @@ flutter:
     - images/pickup.png
     - images/delivernow.png
     - images/congratsgiftimage.png
+    - images/tickstarbg.png
+    - images/startick.png
+    - images/congratulationgraphic.png
+    - images/bottomgraphic1.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
