@@ -14,6 +14,7 @@ import 'package:restroapp/src/models/AdminLoginModel.dart';
 import 'package:restroapp/src/models/CancelOrderModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/Categorys.dart';
+import 'package:restroapp/src/models/CreateOnlineMembership.dart';
 import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/CreatePaytmTxnTokenResponse.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
@@ -24,6 +25,8 @@ import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
 import 'package:restroapp/src/models/HtmlModelResponse.dart';
 import 'package:restroapp/src/models/LoyalityPointsModel.dart';
+import 'package:restroapp/src/models/MembershipPlanLatlngs.dart';
+import 'package:restroapp/src/models/MembershipPlanResponse.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/NotificationResponseModel.dart';
 import 'package:restroapp/src/models/OTPVerified.dart';
@@ -2037,4 +2040,108 @@ class ApiController {
       return null;
     }
   }
+  // New Subscription Module Start from here.
+  static Future<MembershipPlanResponse> getSubscriptionMembershipPlan() async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    try {
+      if (isNetworkAviable) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        var url = ApiConstants.base +
+            ApiConstants.membershipPlanDetails;
+        print(url);
+        FormData formData = new FormData.fromMap({
+          "platform" : Platform.isIOS ? "IOS" : "Android"
+        });
+        Dio dio = new Dio();
+        Response response = await dio.post(url,
+            data: formData,
+            options: new Options(responseType: ResponseType.plain));
+        print(response.data);
+        MembershipPlanResponse membershipPlan =
+        MembershipPlanResponse.fromJson(json.decode(response.data));
+        if (membershipPlan.success) {
+          return membershipPlan;
+        } else {
+          return null;
+        }
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<MembershipPlanLatlngs> getMembershipPlanLatlngs() async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    try {
+      if (isNetworkAviable) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        var url = ApiConstants.base +
+            ApiConstants.membershipPlanLatlngs;
+        print(url);
+        FormData formData = new FormData.fromMap({
+          "platform" : Platform.isIOS ? "IOS" : "Android"
+        });
+        Dio dio = new Dio();
+        Response response = await dio.post(url,
+            data: formData,
+            options: new Options(responseType: ResponseType.plain));
+        print(response.data);
+        MembershipPlanLatlngs membershipPlanlatlngs =
+        MembershipPlanLatlngs.fromJson(json.decode(response.data));
+        if (membershipPlanlatlngs.success) {
+          return membershipPlanlatlngs;
+        } else {
+          return null;
+        }
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<CreateOnlineMembership> getOnlineMembership(String id,String amount,String razorpay_order_id,) async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    try {
+      if (isNetworkAviable) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        var url = ApiConstants.base +
+            ApiConstants.createOnlineMembership;
+        print(url);
+        FormData formData = new FormData.fromMap({
+          "user_id": id,
+          //"membership_plan_detail_id": membership_plan_detail_id,
+          //"payment_type": ,
+          "amount" : amount,
+          "payment_request_id": razorpay_order_id,
+          "currency": "INR",
+        });
+        Dio dio = new Dio();
+        Response response = await dio.post(url,
+            data: formData,
+            options: new Options(responseType: ResponseType.plain));
+        print(response.data);
+        CreateOnlineMembership onlneMembership =
+        CreateOnlineMembership.fromJson(json.decode(response.data));
+        if (onlneMembership.success) {
+          return onlneMembership;
+        } else {
+          return null;
+        }
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+
+
 }
