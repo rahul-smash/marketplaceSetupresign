@@ -211,27 +211,56 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(children: <Widget>[
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                        color: getStatusColor(cardOrderHistoryItems.status)),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 5.0),
-                    child: Text(getStatus(cardOrderHistoryItems.status),
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400)),
-                  )
-                ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(3.0)),
+                                color: getStatusColor(
+                                    cardOrderHistoryItems.status)),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 5.0),
+                            child: Text(getStatus(cardOrderHistoryItems.status),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400)),
+                          ),
+                        ],
+                      ),
+                      //TODO: handle this
+                      Visibility(
+                          visible: false,
+                          child: Container(
+                              margin: EdgeInsets.only(top: 10, bottom: 10),
+                              padding: EdgeInsets.fromLTRB(15, 3, 15, 3),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Color(0xFFE6E6E6)),
+                                color: Color(0xFFE6E6E6),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(25.0)),
+                              ),
+                              child: Text(
+                                'Subscription Order',
+                                style: TextStyle(
+                                    color: appTheme,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold),
+                              )))
+                    ]),
                 Visibility(
-                  visible: isRatingEnable &&
-                      cardOrderHistoryItems.status == '5' &&
-                      _rating != 0,
+//                  visible: isRatingEnable &&
+//                      cardOrderHistoryItems.status == '5' &&
+//                      _rating != 0,
+                  visible: true,
                   child: Padding(
                     padding: EdgeInsets.only(top: 5),
                     child: Row(children: <Widget>[

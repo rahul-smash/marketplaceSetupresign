@@ -854,7 +854,11 @@ class ApiController {
       String razorpay_payment_id,
       String online_method,
       String selectedDeliverSlotValue,
-      {String cart_saving = "0.00"}) async {
+      {String cart_saving = "0.00",
+      String posBranchCode = '',
+      String membershipPlanDetailId = '',
+      String membershipId = '',
+      String additionalInfo=''}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -919,7 +923,13 @@ class ApiController {
     } catch (e) {
       print(e);
     }
-
+    String checkOutPrice =
+        double.parse(taxModel.itemSubTotal) > 0 && posBranchCode.isNotEmpty
+            ? taxModel.itemSubTotal
+            : '0';
+    String total = double.parse(taxModel.total) > 0 && posBranchCode.isNotEmpty
+        ? taxModel.total
+        : '0';
     try {
       request.fields.addAll({
         "shipping_charges": "${shipping_charges}",
@@ -937,13 +947,13 @@ class ApiController {
         "store_tax_rate_detail": "",
         "platform": Platform.isIOS ? "IOS" : "Android",
         "tax_rate": "0",
-        "total": /*taxModel == null ? '${totalPrice}' : */ '${taxModel.total}',
+        "total": /*taxModel == null ? '${totalPrice}' : */ '${total}',
         "user_id": user.id,
         "device_token": deviceToken,
         "user_address_id":
             isComingFromPickUpScreen == true ? '0' /*areaId*/ : address.id,
         "orders": orderJson,
-        "checkout": /*totalPrice*/ "${taxModel.itemSubTotal}",
+        "checkout": "${checkOutPrice}",
         "payment_method": paymentMethod == "2" ? "COD" : "online",
         "discount": taxModel == null ? "" : '${taxModel.discount}',
         "payment_request_id": razorpay_order_id,
@@ -954,6 +964,10 @@ class ApiController {
         "store_tax_rate_detail": encodedtaxLabel,
         "calculated_tax_detail": encodedtaxDetail,
         "cart_saving": cart_saving,
+        "pos_branch_code": posBranchCode,
+        "membership_plan_detail_id": membershipPlanDetailId,
+        "membership_id": membershipId,
+        "additional_info": additionalInfo,
       });
 
       print("----${url}");
@@ -1310,8 +1324,7 @@ class ApiController {
   }
 
   static Future<CreateOrderData> razorpayCreateOrderApi(
-      String amount, String orderJson, dynamic detailsJson,storeId) async {
-
+      String amount, String orderJson, dynamic detailsJson, storeId) async {
     var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
         ApiConstants.razorpayCreateOrder;
     print(url);
@@ -1345,8 +1358,7 @@ class ApiController {
   }
 
   static Future<RazorpayOrderData> razorpayVerifyTransactionApi(
-      String razorpay_order_id,String storeID) async {
-
+      String razorpay_order_id, String storeID) async {
     var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
         ApiConstants.razorpayVerifyTransaction;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
@@ -2263,7 +2275,7 @@ class ApiController {
   }
 
   static Future<OnlineMembershipResponse> getCancelOnlineMembership(
-      String membershipId,String puchaseType) async {
+      String membershipId, String puchaseType) async {
     bool isNetworkAviable = await Utils.isNetworkAvailable();
     String membershipPlanDetailId =
         SingletonBrandData.getInstance().membershipPlanResponse?.data?.id;
@@ -2280,7 +2292,7 @@ class ApiController {
           "user_id": user.id,
           "membership_plan_detail_id": membershipPlanDetailId,
           "membership_id": membershipId,
-          "puchase_type":puchaseType
+          "puchase_type": puchaseType
         });
         Dio dio = new Dio();
         Response response = await dio.post(url,

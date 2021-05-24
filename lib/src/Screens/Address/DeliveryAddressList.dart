@@ -4,6 +4,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:restroapp/src/UI/AddressByRadius.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
@@ -26,7 +27,7 @@ class DeliveryAddressList extends StatefulWidget {
 
 class _AddDeliveryAddressState extends State<DeliveryAddressList> {
   int selectedIndex = 0;
-  List<DeliveryAddressData> addressList = [];
+  List<DeliveryAddressData> addressList = List.empty(growable: true);
   Area radiusArea;
   Coordinates coordinates;
   bool isLoading = false;
@@ -44,15 +45,8 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
 
   callDeliverListApi() {
     isLoading = true;
-    ApiController.getAddressApiRequest().then((responses) async {
-      responsesData = responses;
-      addressList = responsesData.data;
-//      addressList = await Utils.checkDeletedAreaFromStore(context, addressList,
-//          showDialogBool: true, hitApi: false);
-      setState(() {
-        isLoading = false;
-      });
-    });
+    ApiController.getAddressApiRequest()
+        .then((value) => _handleResponse(value));
   }
 
   @override
@@ -138,13 +132,10 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
             setState(() {
               isLoading = true;
             });
-            DeliveryAddressResponse response =
-                await ApiController.getAddressApiRequest();
+            ApiController.getAddressApiRequest()
+                .then((value) => _handleResponse(value));
+            ;
             //Utils.hideProgressDialog(context);
-            setState(() {
-              isLoading = false;
-              addressList = response.data;
-            });
           } else {
             print("--result--else------");
           }
@@ -205,7 +196,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            width: (Utils.getDeviceWidth(context) -100),
+                            width: (Utils.getDeviceWidth(context) - 100),
                             child: Text(
                               "${area.firstName}",
                               style: TextStyle(
@@ -244,27 +235,29 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 Align(
                     alignment: Alignment.topRight,
                     child: Visibility(
-                      child: Wrap(children: [
-                        Container(
+                      child: Wrap(
+                        children: [
+                          Container(
 //                        width: 70,
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, top: 5, bottom: 5),
-                        decoration: BoxDecoration(
-                          color: grey2,
-                          border: Border.all(color: grayLightColorSecondary),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                            area.addressType != null &&
-                                area.addressType.isNotEmpty
-                                ? area.addressType
-                                : '',
-                            style: TextStyle(fontSize: 13, color: Colors.black),
+                            padding: EdgeInsets.only(
+                                left: 15, right: 15, top: 5, bottom: 5),
+                            decoration: BoxDecoration(
+                              color: grey2,
+                              border:
+                                  Border.all(color: grayLightColorSecondary),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              area.addressType != null &&
+                                      area.addressType.isNotEmpty
+                                  ? area.addressType
+                                  : '',
+                              style:
+                                  TextStyle(fontSize: 13, color: Colors.black),
+                            ),
                           ),
+                        ],
                       ),
-
-                      ],),
-
                       visible: area.addressType != null &&
                           area.addressType.isNotEmpty,
                     )),
@@ -273,27 +266,31 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
             Align(
                 alignment: Alignment.topLeft,
                 child: Visibility(
-                  child: Wrap(children: [
-                    Visibility(
-                      visible: area.set_default_address=='1',
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, top: 5, bottom: 5),
-                        decoration: BoxDecoration(
-                          color: grey2,
-                          border: Border.all(color: grayLightColorSecondary),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          'Default Address',
-                          style: TextStyle(fontSize: 13, color: Colors.black,fontStyle: FontStyle.italic),
+                  child: Wrap(
+                    children: [
+                      Visibility(
+                        visible: area.set_default_address == '1',
+                        child: Container(
+                          padding: EdgeInsets.only(
+                              left: 15, right: 15, top: 5, bottom: 5),
+                          decoration: BoxDecoration(
+                            color: grey2,
+                            border: Border.all(color: grayLightColorSecondary),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Default Address',
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.black,
+                                fontStyle: FontStyle.italic),
+                          ),
                         ),
                       ),
-                    ),
-                  ],),
-
-                  visible: area.addressType != null &&
-                      area.addressType.isNotEmpty,
+                    ],
+                  ),
+                  visible:
+                      area.addressType != null && area.addressType.isNotEmpty,
                 )),
             Padding(
               padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -354,14 +351,9 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                   setState(() {
                     isLoading = true;
                   });
-                  DeliveryAddressResponse response =
-                      await ApiController.getAddressApiRequest();
-                  //Utils.hideProgressDialog(context);
-                  setState(() {
-                    //addressList = null;
-                    isLoading = false;
-                    addressList = response.data;
-                  });
+                  ApiController.getAddressApiRequest()
+                      .then((value) => _handleResponse(value));
+                  ;
                 }
               },
             ),
@@ -460,14 +452,8 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 setState(() {
                   isLoading = true;
                 });
-                DeliveryAddressResponse response =
-                    await ApiController.getAddressApiRequest();
-                //Utils.hideProgressDialog(context);
-                setState(() {
-                  //addressList = null;
-                  isLoading = false;
-                  addressList = response.data;
-                });
+                ApiController.getAddressApiRequest()
+                    .then((value) => _handleResponse(value));
               }
             }
           } else {
@@ -526,5 +512,30 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
         ),
       ),
     );
+  }
+
+  _handleResponse(DeliveryAddressResponse responses) async {
+    responsesData = responses;
+    if (responsesData != null && responsesData.success) {
+      addressList.clear();
+      selectedIndex = 0;
+      String defaultAddressID = SingletonBrandData.getInstance()
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.defaultAddressId ??
+          '';
+      bool isSubscriptionActive = SingletonBrandData.getInstance()
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.status ??
+          false;
+      for (int i = 0; i < responsesData.data.length; i++) {
+        if (defaultAddressID != responses.data[i].id || !isSubscriptionActive)
+          addressList.add(responsesData.data[i]);
+      }
+    }
+    setState(() {
+      isLoading = false;
+    });
   }
 }

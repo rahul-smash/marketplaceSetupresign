@@ -15,6 +15,7 @@ import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+
 /*Dialogs-------------------------------------------------------------------------------------------*/
 Future<bool> showSubscriptionSuccessDialog(
     BuildContext _context, Function onPressed) async {
@@ -184,11 +185,9 @@ Future<bool> showOfferAvailDialog(
     context: _context,
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
-      bool isEnable=true;
-      UserPurchaseMembershipResponse response =
-          SingletonBrandData.getInstance().userPurchaseMembershipResponse;
+      bool isEnable = true;
       Timer t = Timer(Duration(seconds: 3), () {
-        isEnable=false;
+        isEnable = false;
         _onPressed(context);
       });
       // and later, before the timer goes off...
@@ -199,13 +198,12 @@ Future<bool> showOfferAvailDialog(
         ),
         content: WillPopScope(
           onWillPop: () {
-
             return Future(() => false);
           },
           child: InkWell(
             onTap: () {
-              if(isEnable){
-                isEnable=false;
+              if (isEnable) {
+                isEnable = false;
                 t.cancel();
                 _onPressed(context);
               }
@@ -234,8 +232,7 @@ Future<bool> showOfferAvailDialog(
                       ),
                     ),
                     TextSpan(
-                        text:
-                            '${response.data.couponDetails.discount.isNotEmpty ? response.data.couponDetails.discount : response.data.couponDetails.discountUpto.isNotEmpty ? response.data.couponDetails.discountUpto : ''}',
+                        text: '${getSubscriptionCouponDiscountPlan()}',
                         style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
@@ -268,6 +265,22 @@ Future<bool> showOfferAvailDialog(
       );
     },
   );
+}
+
+getSubscriptionCouponDiscountPlan() {
+  UserPurchaseMembershipResponse response =
+      SingletonBrandData.getInstance().userPurchaseMembershipResponse;
+  return response.data.couponDetails.discount.isNotEmpty
+      ? response.data.couponDetails.discount
+      : response.data.couponDetails.discountUpto.isNotEmpty
+          ? response.data.couponDetails.discountUpto
+          : '0';
+}
+
+String getSubscriptionCouponCodePlan() {
+  UserPurchaseMembershipResponse response =
+      SingletonBrandData.getInstance().userPurchaseMembershipResponse;
+  return response.data.couponDetails.couponCode;
 }
 
 Future<bool> showCanceledSubscriptionDialog(
@@ -303,7 +316,6 @@ Future<bool> showCanceledSubscriptionDialog(
 }
 
 /*Utils-------------------------------------------------------------------------------------------*/
-
 
 bool checkIsPlanPurchased() {
   UserPurchaseMembershipResponse response =
@@ -347,6 +359,14 @@ String convertSubscriptionDate(DateTime dateTime) {
   return formatted;
 }
 
+String getSubscriptionNextMealDate() {
+  DateTime today = DateTime.now();
+  today.add(Duration(days: 1));
+  DateFormat formatter = new DateFormat('dd MMM yyyy');
+  String formatted = formatter.format(today);
+  return formatted;
+}
+
 bool checkCurrentDateWithInThePlan() {
   DateTime now = DateTime.now();
   bool isSameDate(DateTime currentDate, DateTime other) {
@@ -362,6 +382,7 @@ bool checkCurrentDateWithInThePlan() {
   return !now.isBefore(response.data.startDate) &&
       (isOnEndDay || !now.isAfter(response.data.endDate));
 }
+
 /*Button Clicks------------------------------------------------------------------*/
 handleSubscriptionFoodOrderClick(BuildContext _context) {
   Utils.showProgressDialog(_context);
@@ -370,9 +391,9 @@ handleSubscriptionFoodOrderClick(BuildContext _context) {
 
     if (responses != null && responses.success) {
       String defaultAddressID = SingletonBrandData.getInstance()
-          ?.userPurchaseMembershipResponse
-          ?.data
-          ?.defaultAddressId ??
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.defaultAddressId ??
           '';
       DeliveryAddressData address = null;
       //find address
@@ -399,21 +420,18 @@ void _navigateToCheckoutOrder(
 
   int distanceInKms = distanceInKm.toInt();
 
-
   StoreRadiousResponse storeRadiousResponse =
-  await ApiController.storeRadiusApi();
+      await ApiController.storeRadiusApi();
 
   Area area;
   //print("---${areaList.length}---and-- ${distanceInKms}---");
   for (int i = 0; i < storeRadiousResponse.data.length; i++) {
     Area areaObject = storeRadiousResponse.data[i];
     int radius = int.parse(areaObject.radius);
-    area = areaObject;
+    if (distanceInKms < radius && areaObject.radiusCircle == "Within") {
+      area = areaObject;
       break;
-//    if (distanceInKms < radius && areaObject.radiusCircle == "Within") {
-//      area = areaObject;
-//      break;
-//    } else {}
+    } else {}
   }
   if (area == null) {
     Navigator.pop(context);
@@ -430,15 +448,15 @@ void _navigateToCheckoutOrder(
           context,
           MaterialPageRoute(
               builder: (context) => ConfirmOrderScreen(
-                address,
-                false,
-                "",
-                OrderType.SUBSCRIPTION_ORDER,
-                areaObject: area,
-                storeModel: storeModel,
-              )),
+                    address,
+                    false,
+                    "",
+                    OrderType.SUBSCRIPTION_ORDER,
+                    areaObject: area,
+                    storeModel: storeModel,
+                  )),
         );
-      } else{
+      } else {
         var result = await DialogUtils.displayOrderConfirmationDialog(
           context,
           "Confirmation",
