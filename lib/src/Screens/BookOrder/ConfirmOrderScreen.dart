@@ -109,7 +109,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   @override
   void initState() {
     super.initState();
-    _brandData = BrandModel.getInstance().brandVersionModel.brand;
+    _brandData = SingletonBrandData.getInstance().brandVersionModel.brand;
     initRazorPay();
     listenWebViewChanges();
     checkPaytmActive();
@@ -2104,7 +2104,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   void _handlePaymentSuccess(PaymentSuccessResponse responseObj) {
     //Fluttertoast.showToast(msg: "SUCCESS: " + response.paymentId, timeInSecForIos: 4);
     Utils.showProgressDialog(context);
-    ApiController.razorpayVerifyTransactionApi(responseObj.orderId)
+    ApiController.razorpayVerifyTransactionApi(responseObj.orderId,storeModel.id)
         .then((response) {
       //print("----razorpayVerifyTransactionApi----${response}--");
       if (response != null) {
@@ -2185,7 +2185,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           selectedDeliverSlotValue,
           totalSavingsText);
       ApiController.razorpayCreateOrderApi(
-              mPrice, orderJson, detailsModel.orderDetails)
+              mPrice, orderJson, detailsModel.orderDetails,storeModel.id)
           .then((response) {
         CreateOrderData model = response;
         if (model != null && response.success) {

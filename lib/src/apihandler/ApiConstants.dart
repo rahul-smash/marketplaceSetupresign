@@ -13,6 +13,7 @@ class ApiConstants{
  static String base_Url = '${base}user_authentication/';
  static String baseUrl2 = '${base}marketplace/';
  static String baseUrl3 = 'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
+ static String baseUrl4 = 'https://marketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 
   static String storeList = 'storeList';
   static String version = 'version';
@@ -116,6 +117,9 @@ class ApiConstants{
   // New subscription module
  static String membershipPlanDetails = 'membership_plan/plan_details';
  static String membershipPlanLatlngs = 'membership_plan/branch_latlngs';
+ static String userMembershipPlan = 'membership_plan/userMembershipPlan';
  static String createOnlineMembership = 'membership_plan/createOnlineMemberShip';
+ static String placeMembershipOrder = 'membership_plan/placeMembershipOrder';
+ static String cancelUserMembershipPlan = 'membership_plan/cancelUserMembershipPlan';
 
 }

@@ -74,7 +74,7 @@ class _ProfileState extends State<ProfileScreen> {
     } catch (e) {
       print(e);
     }
-    storeModel = await BrandModel.getInstance().brandVersionModel.brand;
+    storeModel = await SingletonBrandData.getInstance().brandVersionModel.brand;
     setState(() {
       if (user != null) {
         firstNameController.text = user.fullName;
@@ -509,7 +509,7 @@ class _ProfileState extends State<ProfileScreen> {
         user.phone = phoneController.text.trim();
         user.id = userResponse.user.id;
         SharedPrefs.saveUser(user);
-
+        ApiController.getUserMembershipPlanApi();
         Utils.hideProgressDialog(context);
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
@@ -539,6 +539,7 @@ class _ProfileState extends State<ProfileScreen> {
               Utils.showToast(response.message, true);
               SharedPrefs.saveUserMobile(user);
               SharedPrefs.setUserLoggedIn(true);
+              ApiController.getUserMembershipPlanApi();
               Navigator.of(context).popUntil((route) => route.isFirst);
             } else {
               user.fullName = firstNameController.text.trim();
@@ -549,6 +550,7 @@ class _ProfileState extends State<ProfileScreen> {
               user.phone = phoneController.text.trim();
               Utils.showToast(response.message, true);
               SharedPrefs.saveUserMobile(user);
+              ApiController.getUserMembershipPlanApi();
               Navigator.of(context).popUntil((route) => route.isFirst);
             }
           } else {

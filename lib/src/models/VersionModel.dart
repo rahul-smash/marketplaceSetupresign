@@ -48,6 +48,7 @@ class BrandData {
     this.zipcode,
     this.logo,
     this.currency,
+    this.currencyAbbr,
     this.showCurrency,
     this.otpSkip,
     this.cod,
@@ -87,6 +88,7 @@ class BrandData {
     this.display_store_rating,
     this.display_prepration_time,
     this.display_store_location,
+    this.isMembershipOn
   });
 
   String id;
@@ -101,6 +103,7 @@ class BrandData {
   String logo;
   String cod;
   String currency;
+  String currencyAbbr;
   String showCurrency;
   String favIcon;
   String appIcon;
@@ -138,6 +141,7 @@ class BrandData {
   String display_store_rating;
   String display_prepration_time;
   String display_store_location;
+  String isMembershipOn;
 
   factory BrandData.fromJson(Map<String, dynamic> json) =>
       BrandData(
@@ -154,6 +158,7 @@ class BrandData {
           zipcode: json["zipcode"],
           logo: json["logo"],
           currency: json["currency"],
+          currencyAbbr: json["currency_abbr"],
           otpSkip: json['otp_skip'],
           social_login: json['social_login'],
           deliveryFacility: json['delivery_facility'],
@@ -168,6 +173,7 @@ class BrandData {
           onlinePayment: json["online_payment"],
           reviewRatingDisplay: json["review_rating_display"],
           cod: json["cod"],
+          isMembershipOn: json["is_membership_on"],
           paymentGatewaySettings: json["payment_gateway_settings"] == null
               ? null
               : List<PaymentGatewaySettings>.from(
@@ -230,6 +236,7 @@ class BrandData {
         "zipcode": zipcode,
         "logo": logo,
         "currency": currency,
+        "currency_abbr": currencyAbbr,
         'otp_skip': otpSkip,
         'social_login': social_login,
         'delivery_facility': deliveryFacility,
@@ -262,6 +269,7 @@ class BrandData {
         "web_app_theme_colors": webAppThemeColors,
         "allow_customer_for_gst": allowCustomerForGst,
         "payment_gateway": paymentGateway,
+        "is_membership_on": isMembershipOn,
         "home_screen_section": homeScreenSection == null ? null : List<
             dynamic>.from(homeScreenSection.map((x) => x.toJson())),
         "filters": List<dynamic>.from(filters.map((x) => x.toJson())),

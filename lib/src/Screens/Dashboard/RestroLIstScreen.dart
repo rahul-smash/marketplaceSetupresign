@@ -308,7 +308,7 @@ class FilterRadioGroup extends StatefulWidget {
 
 class RadioGroupWidget extends State<FilterRadioGroup> {
   List<Filter> filters =
-      BrandModel.getInstance().brandVersionModel.brand.filters;
+      SingletonBrandData.getInstance().brandVersionModel.brand.filters;
 
   // Default Radio Button Selected Item.
   String radioItemHolder = '';

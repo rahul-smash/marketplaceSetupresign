@@ -61,7 +61,7 @@ Future<void> main() async {
       await ApiController.versionApiRequest("${configObject.storeId}");*/
 
   BrandVersionModel brandVersionModel = await ApiController.getBrandVersion();
-  BrandModel.getInstance(brandVersionModelObj: brandVersionModel)
+  SingletonBrandData.getInstance(brandVersionModelObj: brandVersionModel)
       .brandVersionModel;
 
   setAppThemeColors(brandVersionModel);

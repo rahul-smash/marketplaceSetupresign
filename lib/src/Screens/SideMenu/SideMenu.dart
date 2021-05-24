@@ -15,7 +15,10 @@ import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginEmailScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/FAQScreen.dart';
-import 'package:restroapp/src/Screens/Subscription/aboutSubscription.dart';
+import 'package:restroapp/src/Screens/Subscription/SubscriptionPageScreen.dart';
+import 'package:restroapp/src/Screens/Subscription/SubscriptionPurchasedScreen.dart';
+import 'package:restroapp/src/Screens/Subscription/SubscriptionRenewScreen.dart';
+import 'package:restroapp/src/Screens/Subscription/SubscriptionUtils.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -78,8 +81,10 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         .add(DrawerChildItem(DrawerChildConstants.HOME, "images/home.png"));
     _drawerItems.add(DrawerChildItem(
         DrawerChildConstants.MY_PROFILE, "images/myprofile.png"));
-    _drawerItems
-        .add(DrawerChildItem(DrawerChildConstants.SUBSCRIBE, "images/home.png"));
+    //Subscription
+    if (widget.brandData.isMembershipOn == '1')
+      _drawerItems.add(DrawerChildItem(
+          DrawerChildConstants.SUBSCRIBE, "images/my_order.png"));
     _drawerItems.add(DrawerChildItem(
         DrawerChildConstants.DELIVERY_ADDRESS, "images/deliveryaddress.png"));
     _drawerItems
@@ -117,7 +122,6 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       leftMenuLabelTextColors = Colors.black;
       leftMenuWelcomeTextColors = Colors.black;
     }
-
   }
 
   @override
@@ -177,7 +181,6 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
             ]));
   }
 
-
   Widget createDrawerItem(int index, BuildContext context) {
     var item = _drawerItems[index];
     return Padding(
@@ -232,15 +235,16 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         }
         break;
       case DrawerChildConstants.SUBSCRIBE:
-        if(AppConstant.isLoggedIn){
+        if (AppConstant.isLoggedIn) {
           Navigator.pop(context);
           Navigator.push(
-            context, MaterialPageRoute(
-            builder: (context) => SubscriptionPage()
-          )
-          );
-        }else {
-
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                  checkIsPlanPurchased()
+                      ? SubscriptionRenewScreen()
+                      : SubscriptionPageScreen()));
+        } else {
           Utils.showLoginDialog(context);
         }
         break;
@@ -325,7 +329,8 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AboutScreen(widget.brandData)),
+          MaterialPageRoute(
+              builder: (context) => AboutScreen(widget.brandData)),
         );
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
         attributeMap["ScreenName"] = "AboutScreen";
@@ -381,7 +386,8 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
           _showDialog(context);
         } else {
           Navigator.pop(context);
-          BrandData model = BrandModel.getInstance().brandVersionModel.brand;
+          BrandData model =
+              SingletonBrandData.getInstance().brandVersionModel.brand;
           print("---internationalOtp--${model.internationalOtp}");
           //User Login with Mobile and OTP = 0
           // 1 = email and 0 = ph-no
@@ -393,18 +399,15 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
             );
             Map<String, dynamic> attributeMap = new Map<String, dynamic>();
             attributeMap["ScreenName"] = "LoginMobileScreen";
-            Utils.sendAnalyticsEvent(
-                "Clicked LoginMobileScreen", attributeMap);
+            Utils.sendAnalyticsEvent("Clicked LoginMobileScreen", attributeMap);
           } else {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => LoginEmailScreen("menu")),
+              MaterialPageRoute(builder: (context) => LoginEmailScreen("menu")),
             );
             Map<String, dynamic> attributeMap = new Map<String, dynamic>();
             attributeMap["ScreenName"] = "LoginEmailScreen";
-            Utils.sendAnalyticsEvent(
-                "Clicked LoginEmailScreen", attributeMap);
+            Utils.sendAnalyticsEvent("Clicked LoginEmailScreen", attributeMap);
           }
 
           /*SharedPrefs.getStore().then((storeData) {
@@ -502,7 +505,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       SharedPrefs.removeKey(AppConstant.showReferEarnAlert);
       SharedPrefs.removeKey(AppConstant.referEarnMsg);
       SharedPrefs.removeKey("user");
-
+      SingletonBrandData.getInstance().clearData();
       AppConstant.isLoggedIn = false;
       DatabaseHelper databaseHelper = new DatabaseHelper();
 //      databaseHelper.deleteTable(DatabaseHelper.Categories_Table);

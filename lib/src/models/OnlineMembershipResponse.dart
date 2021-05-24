@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-class CreateOnlineMembership {
-  CreateOnlineMembership({
+class OnlineMembershipResponse {
+  OnlineMembershipResponse({
     this.success,
     this.message,
   });
@@ -13,20 +13,20 @@ class CreateOnlineMembership {
   bool success;
   String message;
 
-  CreateOnlineMembership copyWith({
+  OnlineMembershipResponse copyWith({
     bool success,
     String message,
   }) =>
-      CreateOnlineMembership(
+      OnlineMembershipResponse(
         success: success ?? this.success,
         message: message ?? this.message,
       );
 
-  factory CreateOnlineMembership.fromRawJson(String str) => CreateOnlineMembership.fromJson(json.decode(str));
+  factory OnlineMembershipResponse.fromRawJson(String str) => OnlineMembershipResponse.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory CreateOnlineMembership.fromJson(Map<String, dynamic> json) => CreateOnlineMembership(
+  factory OnlineMembershipResponse.fromJson(Map<String, dynamic> json) => OnlineMembershipResponse(
     success: json["success"] == null ? null : json["success"],
     message: json["message"] == null ? null : json["message"],
   );

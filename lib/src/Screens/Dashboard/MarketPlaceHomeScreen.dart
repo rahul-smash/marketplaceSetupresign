@@ -28,9 +28,11 @@ import 'package:restroapp/src/UI/OffersListDetail.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/Categorys.dart';
 import 'package:restroapp/src/models/ConfigModel.dart';
+import 'package:restroapp/src/models/MembershipPlanResponse.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
@@ -142,6 +144,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     getCategoryApi();
     _getTagApi();
     _getStoreApi();
+    //fetching Subscription plan
+    _getSubscriptionPlan();
     homeScreenStack = new LogicalStack();
 
     for (HomeScreenSection item in store.homeScreenSection) {
@@ -612,7 +616,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                           setState(() {
                             allStoreData = value;
                             _previousSelectedHomeScreen = _selectedHomeScreen;
-                            _selectedHomeScreen = HomeScreenEnum.HOME_RESTAURANT_VIEW;
+                            _selectedHomeScreen =
+                                HomeScreenEnum.HOME_RESTAURANT_VIEW;
                           });
                           return;
                         }
@@ -1804,6 +1809,17 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       }
     }
     return homeScreenList;
+  }
+
+  void _getSubscriptionPlan() {
+    ApiController.getSubscriptionMembershipPlan().then((value) {
+      if (value != null && value.success) {
+        //Setting Subscription plan to globally (Singleton)
+        SingletonBrandData.getInstance().membershipPlanResponse = value;
+        //fetching user Subscribed plan
+        if (AppConstant.isLoggedIn) ApiController.getUserMembershipPlanApi();
+      }
+    });
   }
 }
 

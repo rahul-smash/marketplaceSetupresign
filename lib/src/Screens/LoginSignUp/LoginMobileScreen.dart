@@ -46,7 +46,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
   @override
   void initState() {
     super.initState();
-    store = BrandModel.getInstance().brandVersionModel.brand;
+    store = SingletonBrandData.getInstance().brandVersionModel.brand;
     _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
@@ -160,11 +160,13 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                                 onPressed: _submitForm,
                               )),
                           Visibility(
-                            visible:Platform.isIOS?false: store == null
+                            visible: Platform.isIOS
                                 ? false
-                                : store.social_login == "0"
+                                : store == null
                                     ? false
-                                    : true,
+                                    : store.social_login == "0"
+                                        ? false
+                                        : true,
                             child: Container(
                               margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                               width: Utils.getDeviceWidth(context),
@@ -177,17 +179,19 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                             ),
                           ),
                           Visibility(
-                            visible: Platform.isIOS?false: store == null
+                            visible: Platform.isIOS
                                 ? false
-                                : store.social_login == "0"
+                                : store == null
                                     ? false
-                                    : true,
+                                    : store.social_login == "0"
+                                        ? false
+                                        : true,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 InkWell(
                                   onTap: () async {
-                                    if(!agree){
+                                    if (!agree) {
                                       selectTermsAndConditionMessage();
                                       return;
                                     }
@@ -289,8 +293,8 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                               RichText(
                                 text: TextSpan(
                                   text: 'I agree to the ',
-                                  style:
-                                  TextStyle(fontSize: 15, color: Colors.black),
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.black),
                                   children: <TextSpan>[
                                     TextSpan(
                                         text: 'Terms and Conditions',
@@ -300,7 +304,9 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      HtmlDisplayScreen(AdditionItemsConstants.TERMS_CONDITIONS)),
+                                                      HtmlDisplayScreen(
+                                                          AdditionItemsConstants
+                                                              .TERMS_CONDITIONS)),
                                             );
                                           },
                                         style: TextStyle(
@@ -312,7 +318,6 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                               )
                             ],
                           ),
-
                         ],
                       )),
                 ),
@@ -328,7 +333,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
     return OutlineButton(
       splashColor: Colors.grey,
       onPressed: () async {
-        if(!agree){
+        if (!agree) {
           selectTermsAndConditionMessage();
           return;
         }
@@ -352,7 +357,6 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
               MobileVerified verifyEmailModel =
                   await ApiController.verifyEmail(result.email);
               Utils.hideProgressDialog(context);
-
               if (verifyEmailModel.userExists == 0) {
                 Navigator.pop(context);
                 Navigator.push(
@@ -370,6 +374,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                 user.phone = verifyEmailModel.user.phone;
                 user.id = verifyEmailModel.user.id;
                 SharedPrefs.saveUser(user);
+                ApiController.getUserMembershipPlanApi();
                 Navigator.pop(context);
               }
             } else {
@@ -442,7 +447,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
             user.phone = verifyEmailModel.user.phone;
             user.id = verifyEmailModel.user.id;
             SharedPrefs.saveUser(user);
-
+            ApiController.getUserMembershipPlanApi();
             Navigator.pop(context);
           }
         } else {
@@ -514,7 +519,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
               user.phone = verifyEmailModel.user.phone;
               user.id = verifyEmailModel.user.id;
               SharedPrefs.saveUser(user);
-
+              ApiController.getUserMembershipPlanApi();
               Navigator.pop(context);
             }
           }
@@ -535,7 +540,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
     print('@@MENUGET' + menu);
 
     final FormState form = _formKey.currentState;
-    if(!agree){
+    if (!agree) {
       selectTermsAndConditionMessage();
       return;
     }
@@ -555,6 +560,7 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                 if (response.success) {
                   SharedPrefs.setUserLoggedIn(true);
                   SharedPrefs.saveUserMobile(response.user);
+                  ApiController.getUserMembershipPlanApi();
                 }
                 Navigator.pop(context);
               } else {
