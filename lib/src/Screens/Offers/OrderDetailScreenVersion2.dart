@@ -295,9 +295,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
               ],
             ),
           ),
-          //TODO: handle this
           Visibility(
-              visible: false,
+              visible: orderHistoryData.IsMembershipCouponEnabled == '1',
               child:  Container(
                   margin: EdgeInsets.only(top: 10,bottom: 10),
                   padding: EdgeInsets.fromLTRB(15, 3, 15, 3),
