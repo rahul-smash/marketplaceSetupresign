@@ -1,5 +1,6 @@
 import 'package:compressimage/compressimage.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/ForgotPasswordScreen.dart';
@@ -11,10 +12,11 @@ import 'package:restroapp/src/apihandler/ApiConstants.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/AdminLoginModel.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CancelOrderModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/Categorys.dart';
-import 'package:restroapp/src/models/CreateOnlineMembership.dart';
+import 'package:restroapp/src/models/OnlineMembershipResponse.dart';
 import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/CreatePaytmTxnTokenResponse.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
@@ -25,7 +27,7 @@ import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
 import 'package:restroapp/src/models/HtmlModelResponse.dart';
 import 'package:restroapp/src/models/LoyalityPointsModel.dart';
-import 'package:restroapp/src/models/MembershipPlanLatlngs.dart';
+import 'package:restroapp/src/models/StorelatlngsResponse.dart';
 import 'package:restroapp/src/models/MembershipPlanResponse.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/NotificationResponseModel.dart';
@@ -45,6 +47,7 @@ import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/StripeCheckOutModel.dart';
 import 'package:restroapp/src/models/StripeVerifyModel.dart';
 import 'package:restroapp/src/models/TagsModel.dart';
+import 'package:restroapp/src/models/UserPurchaseMembershipResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/StoreDeliveryAreasResponse.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
@@ -485,7 +488,7 @@ class ApiController {
   }
 
   static Future<SubCategoryResponse> getSubCategoryProductDetail(
-      String productID,String storeId) async {
+      String productID, String storeId) async {
     SubCategoryResponse subCategoryResponse = SubCategoryResponse();
     bool isNetworkAviable = await Utils.isNetworkAvailable();
     try {
@@ -498,7 +501,8 @@ class ApiController {
         print("deviceToken $deviceToken");
 
         var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
-            ApiConstants.getProductDetail+productID;
+            ApiConstants.getProductDetail +
+            productID;
         print(url);
         FormData formData = new FormData.fromMap({
           "user_id": "",
@@ -518,7 +522,8 @@ class ApiController {
             SubCategoryResponse.fromJson(json.decode(response.data));
         if (subCategoryResponse.success) {
           return subCategoryResponse;
-        }else return null;
+        } else
+          return null;
       }
     } catch (e) {
       print(e);
@@ -849,7 +854,11 @@ class ApiController {
       String razorpay_payment_id,
       String online_method,
       String selectedDeliverSlotValue,
-      {String cart_saving = "0.00"}) async {
+      {String cart_saving = "0.00",
+      String posBranchCode = '',
+      String membershipPlanDetailId = '',
+      String membershipId = '',
+      String additionalInfo=''}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -914,7 +923,13 @@ class ApiController {
     } catch (e) {
       print(e);
     }
-
+    String checkOutPrice =
+        double.parse(taxModel.itemSubTotal) > 0 && posBranchCode.isNotEmpty
+            ? taxModel.itemSubTotal
+            : '0';
+    String total = double.parse(taxModel.total) > 0 && posBranchCode.isNotEmpty
+        ? taxModel.total
+        : '0';
     try {
       request.fields.addAll({
         "shipping_charges": "${shipping_charges}",
@@ -932,13 +947,13 @@ class ApiController {
         "store_tax_rate_detail": "",
         "platform": Platform.isIOS ? "IOS" : "Android",
         "tax_rate": "0",
-        "total": /*taxModel == null ? '${totalPrice}' : */ '${taxModel.total}',
+        "total": /*taxModel == null ? '${totalPrice}' : */ '${total}',
         "user_id": user.id,
         "device_token": deviceToken,
         "user_address_id":
-            isComingFromPickUpScreen == true ? areaId : address.id,
+            isComingFromPickUpScreen == true ? '0' /*areaId*/ : address.id,
         "orders": orderJson,
-        "checkout": /*totalPrice*/ "${taxModel.itemSubTotal}",
+        "checkout": "${checkOutPrice}",
         "payment_method": paymentMethod == "2" ? "COD" : "online",
         "discount": taxModel == null ? "" : '${taxModel.discount}',
         "payment_request_id": razorpay_order_id,
@@ -949,6 +964,10 @@ class ApiController {
         "store_tax_rate_detail": encodedtaxLabel,
         "calculated_tax_detail": encodedtaxDetail,
         "cart_saving": cart_saving,
+        "pos_branch_code": posBranchCode,
+        "membership_plan_detail_id": membershipPlanDetailId,
+        "membership_id": membershipId,
+        "additional_info": additionalInfo,
       });
 
       print("----${url}");
@@ -1305,10 +1324,10 @@ class ApiController {
   }
 
   static Future<CreateOrderData> razorpayCreateOrderApi(
-      String amount, String orderJson, dynamic detailsJson) async {
-    StoreDataObj store = await SharedPrefs.getStoreData();
-    var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
+      String amount, String orderJson, dynamic detailsJson, storeId) async {
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
         ApiConstants.razorpayCreateOrder;
+    print(url);
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
@@ -1317,9 +1336,12 @@ class ApiController {
         "currency": "INR",
         "receipt": "Order",
         "payment_capture": "1",
-        "order_info": detailsJson, //JSONObject details
-        "orders": orderJson //cart jsonObject
+        "order_info": detailsJson != null ? detailsJson : '',
+        //JSONObject details
+        "orders": orderJson != null ? orderJson : ''
+        //cart jsonObject
       });
+      print(request.fields);
 
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
@@ -1336,9 +1358,8 @@ class ApiController {
   }
 
   static Future<RazorpayOrderData> razorpayVerifyTransactionApi(
-      String razorpay_order_id) async {
-    StoreDataObj store = await SharedPrefs.getStoreData();
-    var url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
+      String razorpay_order_id, String storeID) async {
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
         ApiConstants.razorpayVerifyTransaction;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
@@ -2009,13 +2030,15 @@ class ApiController {
     }
     return null;
   }
-  static Future<SubCategoryResponse> getSearchProductResults(String keyword,String storeID) async {
+
+  static Future<SubCategoryResponse> getSearchProductResults(
+      String keyword, String storeID) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
 
-    var url =
-        ApiConstants.baseUrl3.replaceAll("storeId", storeID) + ApiConstants.search;
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
+        ApiConstants.search;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
@@ -2033,32 +2056,32 @@ class ApiController {
 
       final parsed = json.decode(respStr);
       SubCategoryResponse subCategoryResponse =
-      SubCategoryResponse.fromJson(parsed);
+          SubCategoryResponse.fromJson(parsed);
       return subCategoryResponse;
     } catch (e) {
       print(e.toString());
       return null;
     }
   }
+
   // New Subscription Module Start from here.
   static Future<MembershipPlanResponse> getSubscriptionMembershipPlan() async {
     bool isNetworkAviable = await Utils.isNetworkAvailable();
     try {
       if (isNetworkAviable) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        var url = ApiConstants.base +
+        var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
             ApiConstants.membershipPlanDetails;
         print(url);
-        FormData formData = new FormData.fromMap({
-          "platform" : Platform.isIOS ? "IOS" : "Android"
-        });
+        FormData formData = new FormData.fromMap(
+            {"platform": Platform.isIOS ? "IOS" : "Android"});
         Dio dio = new Dio();
         Response response = await dio.post(url,
             data: formData,
             options: new Options(responseType: ResponseType.plain));
         print(response.data);
         MembershipPlanResponse membershipPlan =
-        MembershipPlanResponse.fromJson(json.decode(response.data));
+            MembershipPlanResponse.fromJson(json.decode(response.data));
         if (membershipPlan.success) {
           return membershipPlan;
         } else {
@@ -2073,24 +2096,22 @@ class ApiController {
     return null;
   }
 
-  static Future<MembershipPlanLatlngs> getMembershipPlanLatlngs() async {
+  static Future<StoreLatlngsResponse> getStoreLatlngsApi() async {
     bool isNetworkAviable = await Utils.isNetworkAvailable();
     try {
       if (isNetworkAviable) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        var url = ApiConstants.base +
+        var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
             ApiConstants.membershipPlanLatlngs;
         print(url);
-        FormData formData = new FormData.fromMap({
-          "platform" : Platform.isIOS ? "IOS" : "Android"
-        });
+        FormData formData = new FormData.fromMap(
+            {"platform": Platform.isIOS ? "IOS" : "Android"});
         Dio dio = new Dio();
         Response response = await dio.post(url,
             data: formData,
             options: new Options(responseType: ResponseType.plain));
         print(response.data);
-        MembershipPlanLatlngs membershipPlanlatlngs =
-        MembershipPlanLatlngs.fromJson(json.decode(response.data));
+        StoreLatlngsResponse membershipPlanlatlngs =
+            StoreLatlngsResponse.fromJson(json.decode(response.data));
         if (membershipPlanlatlngs.success) {
           return membershipPlanlatlngs;
         } else {
@@ -2105,29 +2126,82 @@ class ApiController {
     return null;
   }
 
-  static Future<CreateOnlineMembership> getOnlineMembership(String id,String amount,String razorpay_order_id,) async {
+  static Future<UserPurchaseMembershipResponse>
+      getUserMembershipPlanApi() async {
     bool isNetworkAviable = await Utils.isNetworkAvailable();
+    String membershipPlanDetailId =
+        SingletonBrandData.getInstance().membershipPlanResponse?.data?.id;
+    if (membershipPlanDetailId == null) {
+      return null;
+    }
+    UserModel user = await SharedPrefs.getUser();
+
     try {
       if (isNetworkAviable) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        var url = ApiConstants.base +
+        var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
+            ApiConstants.userMembershipPlan;
+        print(url);
+        FormData formData = new FormData.fromMap({
+          "platform": Platform.isIOS ? "IOS" : "Android",
+          "user_id": user.id,
+          "membership_plan_detail_id": membershipPlanDetailId,
+        });
+        print(formData.fields);
+        Dio dio = new Dio();
+        Response response = await dio.post(url,
+            data: formData,
+            options: new Options(responseType: ResponseType.plain));
+        print(response.data);
+        UserPurchaseMembershipResponse userPurchaseMembershipResponse =
+            UserPurchaseMembershipResponse.fromJson(json.decode(response.data));
+        if (userPurchaseMembershipResponse.success) {
+          SingletonBrandData.getInstance().userPurchaseMembershipResponse =
+              userPurchaseMembershipResponse;
+          return userPurchaseMembershipResponse;
+        } else {
+          return null;
+        }
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<OnlineMembershipResponse> getPurchaseOnlineMembership(
+      String amount, String razorpay_order_id, String paymentType) async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    String membershipPlanDetailId =
+        SingletonBrandData.getInstance().membershipPlanResponse?.data?.id;
+    if (membershipPlanDetailId == null) {
+      return null;
+    }
+    UserModel user = await SharedPrefs.getUser();
+    try {
+      if (isNetworkAviable) {
+        var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
             ApiConstants.createOnlineMembership;
         print(url);
         FormData formData = new FormData.fromMap({
-          "user_id": id,
-          //"membership_plan_detail_id": membership_plan_detail_id,
-          //"payment_type": ,
-          "amount" : amount,
+          "user_id": user.id,
+          "membership_plan_detail_id": membershipPlanDetailId,
+          "payment_type": paymentType,
+          "amount": amount,
           "payment_request_id": razorpay_order_id,
-          "currency": "INR",
+          "currency": SingletonBrandData.getInstance()
+              .brandVersionModel
+              .brand
+              .currencyAbbr,
         });
         Dio dio = new Dio();
         Response response = await dio.post(url,
             data: formData,
             options: new Options(responseType: ResponseType.plain));
         print(response.data);
-        CreateOnlineMembership onlneMembership =
-        CreateOnlineMembership.fromJson(json.decode(response.data));
+        OnlineMembershipResponse onlneMembership =
+            OnlineMembershipResponse.fromJson(json.decode(response.data));
         if (onlneMembership.success) {
           return onlneMembership;
         } else {
@@ -2142,5 +2216,102 @@ class ApiController {
     return null;
   }
 
+  static Future<OnlineMembershipResponse> getPurchasedOnlineMembership(
+      {@required String razorpay_order_id,
+      @required String puchaseType,
+      @required String amountPaid,
+      @required String additionalInfo,
+      @required String posBranchCode,
+      @required String defaultAddressId,
+      @required String paymentId,
+      @required String onlineMethod}) async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    String membershipPlanDetailId =
+        SingletonBrandData.getInstance().membershipPlanResponse?.data?.id;
+    if (membershipPlanDetailId == null) {
+      return null;
+    }
+    UserModel user = await SharedPrefs.getUser();
+    try {
+      if (isNetworkAviable) {
+        var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
+            ApiConstants.placeMembershipOrder;
+        print(url);
+        FormData formData = new FormData.fromMap({
+          "user_id": user.id,
+          "membership_plan_detail_id": membershipPlanDetailId,
+          "puchase_type": puchaseType,
+          "amount_paid": amountPaid,
+          "additional_info": additionalInfo,
+          "online_method": onlineMethod,
+          "pos_branch_code": posBranchCode,
+          "default_address_id": defaultAddressId,
+          "payment_id": paymentId,
+          "payment_request_id": razorpay_order_id,
+          "currency": SingletonBrandData.getInstance()
+              .brandVersionModel
+              .brand
+              .currencyAbbr,
+        });
+        Dio dio = new Dio();
+        Response response = await dio.post(url,
+            data: formData,
+            options: new Options(responseType: ResponseType.plain));
+        print(response.data);
+        OnlineMembershipResponse onlneMembership =
+            OnlineMembershipResponse.fromJson(json.decode(response.data));
+        if (onlneMembership.success) {
+          return onlneMembership;
+        } else {
+          return null;
+        }
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 
+  static Future<OnlineMembershipResponse> getCancelOnlineMembership(
+      String membershipId, String puchaseType) async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    String membershipPlanDetailId =
+        SingletonBrandData.getInstance().membershipPlanResponse?.data?.id;
+    if (membershipPlanDetailId == null) {
+      return null;
+    }
+    UserModel user = await SharedPrefs.getUser();
+    try {
+      if (isNetworkAviable) {
+        var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
+            ApiConstants.cancelUserMembershipPlan;
+        print(url);
+        FormData formData = new FormData.fromMap({
+          "user_id": user.id,
+          "membership_plan_detail_id": membershipPlanDetailId,
+          "membership_id": membershipId,
+          "puchase_type": puchaseType
+        });
+        Dio dio = new Dio();
+        Response response = await dio.post(url,
+            data: formData,
+            options: new Options(responseType: ResponseType.plain));
+        print(response.data);
+        OnlineMembershipResponse onlneMembership =
+            OnlineMembershipResponse.fromJson(json.decode(response.data));
+        if (onlneMembership.success) {
+          return onlneMembership;
+        } else {
+          return null;
+        }
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 }

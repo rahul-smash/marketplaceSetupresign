@@ -171,6 +171,6 @@ class _MarketPlaceHomeFiltersViewState
     Filter filterTag = Filter();
     filterTag.lable = "Filters";
     tagsList.add(filterTag);
-    tagsList.addAll(BrandModel.getInstance().brandVersionModel.brand.filters);
+    tagsList.addAll(SingletonBrandData.getInstance().brandVersionModel.brand.filters);
   }
 }

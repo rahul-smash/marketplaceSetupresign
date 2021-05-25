@@ -4,31 +4,31 @@
 
 import 'dart:convert';
 
-class MembershipPlanLatlngs {
-  MembershipPlanLatlngs({
+class StoreLatlngsResponse {
+  StoreLatlngsResponse({
     this.success,
     this.data,
   });
 
   bool success;
-  List<Datum> data;
+  List<StoreLatLngModel> data;
 
-  MembershipPlanLatlngs copyWith({
+  StoreLatlngsResponse copyWith({
     bool success,
-    List<Datum> data,
+    List<StoreLatLngModel> data,
   }) =>
-      MembershipPlanLatlngs(
+      StoreLatlngsResponse(
         success: success ?? this.success,
         data: data ?? this.data,
       );
 
-  factory MembershipPlanLatlngs.fromRawJson(String str) => MembershipPlanLatlngs.fromJson(json.decode(str));
+  factory StoreLatlngsResponse.fromRawJson(String str) => StoreLatlngsResponse.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory MembershipPlanLatlngs.fromJson(Map<String, dynamic> json) => MembershipPlanLatlngs(
+  factory StoreLatlngsResponse.fromJson(Map<String, dynamic> json) => StoreLatlngsResponse(
     success: json["success"] == null ? null : json["success"],
-    data: json["data"] == null ? null : List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+    data: json["data"] == null ? null : List<StoreLatLngModel>.from(json["data"].map((x) => StoreLatLngModel.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -37,8 +37,8 @@ class MembershipPlanLatlngs {
   };
 }
 
-class Datum {
-  Datum({
+class StoreLatLngModel {
+  StoreLatLngModel({
     this.posBranchCode,
     this.posBranchName,
     this.posChannelName,
@@ -54,7 +54,7 @@ class Datum {
   String lng;
   String brandId;
 
-  Datum copyWith({
+  StoreLatLngModel copyWith({
     String posBranchCode,
     String posBranchName,
     String posChannelName,
@@ -62,7 +62,7 @@ class Datum {
     String lng,
     String brandId,
   }) =>
-      Datum(
+      StoreLatLngModel(
         posBranchCode: posBranchCode ?? this.posBranchCode,
         posBranchName: posBranchName ?? this.posBranchName,
         posChannelName: posChannelName ?? this.posChannelName,
@@ -71,11 +71,11 @@ class Datum {
         brandId: brandId ?? this.brandId,
       );
 
-  factory Datum.fromRawJson(String str) => Datum.fromJson(json.decode(str));
+  factory StoreLatLngModel.fromRawJson(String str) => StoreLatLngModel.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory StoreLatLngModel.fromJson(Map<String, dynamic> json) => StoreLatLngModel(
     posBranchCode: json["pos_branch_code"] == null ? null : json["pos_branch_code"],
     posBranchName: json["pos_branch_name"] == null ? null : json["pos_branch_name"],
     posChannelName: json["pos_channel_name"] == null ? null : json["pos_channel_name"],

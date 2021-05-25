@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class SharedPrefs {
-
   static void saveStoreData(StoreDataObj model) async {
     SharedPreferences sharedUser = await SharedPreferences.getInstance();
     dynamic storeResponse = model.toJson();
@@ -19,11 +18,15 @@ class SharedPrefs {
 
   static Future<StoreDataObj> getStoreData() async {
     SharedPreferences sharedUser = await SharedPreferences.getInstance();
-    Map<String, dynamic> storeMap = json.decode(sharedUser.getString('store'));
-    var user = StoreDataObj.fromJson(storeMap);
-    return user;
+    String storeString = sharedUser.getString('store');
+    if (storeString != null) {
+      Map<String, dynamic> storeMap = json.decode(storeString);
+      var store = StoreDataObj.fromJson(storeMap);
+      return store;
+    } else {
+      return null;
+    }
   }
-
 
   static void saveStore(StoreModel model) async {
     SharedPreferences sharedUser = await SharedPreferences.getInstance();
@@ -69,18 +72,15 @@ class SharedPrefs {
     return sharedUser.getBool('isLoggedIn') ?? false;
   }
 
-
   static void setAppleId(String email) async {
     SharedPreferences sharedUser = await SharedPreferences.getInstance();
     sharedUser.setString('appleId', email);
-
   }
 
   static Future<String> getappleId() async {
     SharedPreferences sharedUser = await SharedPreferences.getInstance();
     return sharedUser.getBool('appleId') ?? "";
   }
-
 
   static Future storeSharedValue(String key, String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -91,7 +91,6 @@ class SharedPrefs {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove(key);
   }
-
 
   static Future<String> getStoreSharedValue(String key) async {
     SharedPreferences sharedUser = await SharedPreferences.getInstance();
@@ -151,5 +150,4 @@ class SharedPrefs {
     String version = sharedUser.getString('api_details_version');
     return version;
   }
-
 }

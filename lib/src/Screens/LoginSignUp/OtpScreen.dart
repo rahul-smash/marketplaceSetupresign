@@ -245,6 +245,8 @@ class _OtpScreen extends State<OtpScreen> {
   void proceedToNextActivity() {
     print('@@MENUGET'+widget.menu);
     if (widget.menu == ("menu")) {
+      //fetching user Subscribed plan
+      ApiController.getUserMembershipPlanApi();
       Navigator.pop(context);
       Navigator.push(context,
         MaterialPageRoute(

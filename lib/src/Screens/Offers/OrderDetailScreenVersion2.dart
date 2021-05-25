@@ -295,6 +295,23 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
               ],
             ),
           ),
+          //TODO: handle this
+          Visibility(
+              visible: false,
+              child:  Container(
+                  margin: EdgeInsets.only(top: 10,bottom: 10),
+                  padding: EdgeInsets.fromLTRB(15, 3, 15, 3),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color(0xFFE6E6E6)),
+                    color: Color(0xFFE6E6E6),
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                  ),
+                  child:Text(
+                    'Subscription Order',
+                    style: TextStyle(
+                        color: appTheme,
+                        fontSize: 14,fontWeight: FontWeight.bold),
+                  )))
         ],
       ),
     );

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:maps_launcher/maps_launcher.dart';
-import 'package:restroapp/src/Screens/Subscription/canceledPlan.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/UI/DialogCategoryView.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
@@ -16,6 +15,7 @@ import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/StorelatlngsResponse.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
@@ -735,6 +735,7 @@ class DialogUtils {
           onWillPop: () {
             //print("onWillPop onWillPop");
             //Navigator.pop(context);
+            return Future(()=>false);
           },
           child: Dialog(
               shape: RoundedRectangleBorder(
@@ -1575,7 +1576,7 @@ class DialogUtils {
         });
   }
 
- static Future<bool> displayErrorDialog(
+  static Future<bool> displayErrorDialog(
       BuildContext context, String message) async {
     return await showDialog<bool>(
         context: context,
@@ -1593,7 +1594,6 @@ class DialogUtils {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: Wrap(
                       children: <Widget>[
-
                         Container(
                           margin: EdgeInsets.fromLTRB(10.0, 00.0, 10.0, 10.0),
                           padding: EdgeInsets.all(10.0),
@@ -1644,7 +1644,6 @@ class DialogUtils {
                           padding: EdgeInsets.only(bottom: 20, top: 20),
                           child: Row(
                             children: [
-
                               Expanded(
                                 child: Padding(
                                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -2042,31 +2041,134 @@ class DialogUtils {
       );
     }
   }
-  // static Future _showCancelAlert(BuildContext context) async {
-  //   return showDialog<void>(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return WillPopScope(
-  //         onWillPop: (){},
-  //         child: AlertDialog(
-  //           title: Column(children: [
-  //             Text('Sorry you won\'t get any refund on cancellation of this plan.', textAlign: TextAlign.center,),
-  //             Divider(thickness: 2, indent: 50, endIndent: 50, height: 40),
-  //             Text('Are you sure, you want to cancel your meal delivery plan?', textAlign: TextAlign.center,),
-  //             SizedBox(height: 20,),
-  //             MaterialButton(
-  //               color: appTheme,
-  //               child: Text('Proceed to Cancel'),
-  //               onPressed: (){
-  //                 print('Your Subscription has been cancelled !');
-  //                 Navigator.push(context, MaterialPageRoute(builder: (context) => CanceledPlan()));
-  //               },
-  //             )
-  //           ]),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+
+  static Future<StoreLatLngModel> displaySubscriptionsStoreList(
+      BuildContext context, String title, StoreLatlngsResponse response) async {
+    StoreLatLngModel _selectedStore = response.data.first;
+    return await showDialog<StoreLatLngModel>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return WillPopScope(
+              onWillPop: () {
+                return Future(() => false);
+              },
+              child: AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                title: Container(
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        "${title}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ),
+                content: Container(
+                  width: double.maxFinite,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: response.data.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return Divider();
+                          },
+                          itemBuilder: (context, index) {
+                            StoreLatLngModel storeObject = response.data[index];
+                            return RadioListTile<StoreLatLngModel>(
+                              activeColor: appTheme,
+                              title: Text(
+                                storeObject.posBranchName,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              value: storeObject,
+                              groupValue: _selectedStore,
+                              onChanged: (StoreLatLngModel value) {
+                                setState(() {
+                                  _selectedStore = value;
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.resolveWith<Color>(
+                                          (Set<MaterialState> states) {
+                                    return appThemeSecondary; // Defer to the widget's default.
+                                  }),
+                                  foregroundColor:
+                                      MaterialStateProperty.resolveWith<Color>(
+                                          (Set<MaterialState> states) {
+                                    return appTheme; // Defer to the widget's default.
+                                  }),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Expanded(
+                              child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.resolveWith<
+                                            Color>((Set<MaterialState> states) {
+                                      return appThemeSecondary; // Defer to the widget's default.
+                                    }),
+                                    foregroundColor:
+                                        MaterialStateProperty.resolveWith<
+                                            Color>((Set<MaterialState> states) {
+                                      return appTheme; // Defer to the widget's default.
+                                    }),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context, _selectedStore);
+                                  },
+                                  child: Text(
+                                    'Confirm',
+                                    style: TextStyle(fontSize: 16),
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
 
 }

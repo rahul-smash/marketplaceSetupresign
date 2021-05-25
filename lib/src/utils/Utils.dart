@@ -114,7 +114,8 @@ class Utils {
       //User Login with Mobile and OTP
       // 1 = email and 0 = ph-no
       //StoreDataObj model = await SharedPrefs.getStoreData();
-      BrandData model = BrandModel.getInstance().brandVersionModel.brand;
+      BrandData model =
+          SingletonBrandData.getInstance().brandVersionModel.brand;
       if (model.internationalOtp == "0") {
         Navigator.push(
           context,
@@ -805,9 +806,18 @@ enum HomeScreenEnum {
 
 enum ClassType { CART, SubCategory, Favourites, Home, Search }
 
-enum OrderType { Delivery, PickUp, Menu }
+enum OrderType { Delivery, PickUp, Menu, SUBSCRIPTION_ORDER }
 
 enum PaymentType { COD, ONLINE, ONLINE_PAYTM, CANCEL }
+
+enum PaymentMethod {
+  WALLET,
+  ORDER,
+  SUBSCRIPTION,
+  SUBSCRIPTION_ORDER,
+  WALLET_TOP_UP
+}
+
 enum RadioButtonEnum { SELECTD, UNSELECTED }
 
 class AdditionItemsConstants {

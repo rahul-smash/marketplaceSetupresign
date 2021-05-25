@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
 import 'package:restroapp/src/Screens/Address/StoreLocationScreen.dart';
 import 'package:restroapp/src/Screens/Address/StoreLocationScreenWithMultiplePick.dart';
+import 'package:restroapp/src/Screens/Subscription/SubscriptionUtils.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
+import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
+import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class OrderSelectionScreen extends StatefulWidget {
+  String pickupfacility, delieveryAdress;
 
-  String pickupfacility,  delieveryAdress;
   OrderSelectionScreen(this.pickupfacility, this.delieveryAdress);
 
   @override
@@ -20,45 +24,44 @@ class OrderSelectionScreen extends StatefulWidget {
 }
 
 class _OrderSelectionScreen extends State<OrderSelectionScreen> {
-
   DatabaseHelper databaseHelper = new DatabaseHelper();
+
   //StoreModel store;
-  bool pickUpFacility,delieveryAddress;
+  bool pickUpFacility, delieveryAddress;
   double mheight;
 
   @override
   void initState() {
     super.initState();
     //mheight = 310;
-    print("OrderSelectionScreen ${widget.pickupfacility} and ${widget.delieveryAdress}");
-    if(widget.pickupfacility == "1" && widget.delieveryAdress == "1"){
+    print(
+        "OrderSelectionScreen ${widget.pickupfacility} and ${widget.delieveryAdress}");
+    if (widget.pickupfacility == "1" && widget.delieveryAdress == "1") {
       pickUpFacility = true;
       delieveryAddress = true;
-    }else{
-
-      if(widget.pickupfacility == "1"){
+    } else {
+      if (widget.pickupfacility == "1") {
         pickUpFacility = true;
       }
-      if(widget.pickupfacility == "0"){
+      if (widget.pickupfacility == "0") {
         pickUpFacility = false;
       }
-      if(widget.delieveryAdress == "1"){
+      if (widget.delieveryAdress == "1") {
         delieveryAddress = true;
       }
-      if(widget.delieveryAdress == "0"){
+      if (widget.delieveryAdress == "0") {
         delieveryAddress = false;
       }
 
-      if(widget.pickupfacility == "0" && widget.delieveryAdress == "0"){
+      if (widget.pickupfacility == "0" && widget.delieveryAdress == "0") {
         pickUpFacility = false;
         delieveryAddress = true;
       }
-
     }
 
-    if(pickUpFacility == true && delieveryAddress == true){
+    if (pickUpFacility == true && delieveryAddress == true) {
       mheight = 310;
-    }else{
+    } else {
       mheight = 160;
     }
   }
@@ -67,162 +70,270 @@ class _OrderSelectionScreen extends State<OrderSelectionScreen> {
   Widget build(BuildContext context) {
     return AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(5.0),
         ),
         elevation: 0.0,
         backgroundColor: Colors.white,
-        title: Text("Select Delivery Option"),
+        title: Column(
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: InkWell(
+                child: Image(
+                    image: AssetImage('images/cancelicon.png'),
+                    height: 15,
+                    width: 15),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            Text("Select Your Option"),
+          ],
+        ),
         content: Container(
-          width: double.maxFinite,
-          height: mheight,
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView(
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      Visibility(
-                        visible: delieveryAddress,
-                        child:  GestureDetector(
+            width: double.maxFinite,
+//          height: mheight,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListView(shrinkWrap: true, children: <Widget>[
+                  checkForTodaysSubscriptionOrder()
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                StoreDataObj storeObject =
+                                    await SharedPrefs.getStoreData();
+                                bool status = Utils.checkStoreOpenTime(
+                                    storeObject,
+                                    deliveryType: OrderType.Delivery);
+                                if (!status) {
+                                  Navigator.pop(context);
+                                  DialogUtils.displayCommonDialog(
+                                    context,
+                                    storeObject.storeName,
+                                    storeObject.closehoursMessage,
+                                  );
+                                  return;
+                                }
+                                Navigator.pop(context);
+                                showOfferAvailDialog(context, (_buildContext) {
+                                  handleSubscriptionFoodOrderClick(
+                                      _buildContext);
+                                });
+                              },
+                              child: Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(10.0, 00.0, 10.0, 10.0),
+                                padding: EdgeInsets.all(10.0),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          10.0, 0.0, 10.0, 10.0),
+                                      height: 100.0,
+                                      width: 150.0,
+                                      decoration: new BoxDecoration(
+                                        image: DecorationImage(
+                                          image: new AssetImage(
+                                            'images/nextdaydelivery.png',
+                                          ),
+                                          fit: BoxFit.scaleDown,
+                                        ),
+                                        shape: BoxShape.rectangle,
+                                      ),
+                                    ),
+                                    Text('${getSubscriptionPlanName()} -',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold)),
+                                    Text('next day delivery',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 18)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Divider(
+                                height: 30,
+                                thickness: 2,
+                                indent: 40,
+                                endIndent: 40),
+                          ],
+                        )
+                      : Container(),
+                  Visibility(
+                    visible: delieveryAddress,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
                           onTap: () async {
-                            print('@@CartBottomView----'+"DeliveryScreen");
+                            print('@@CartBottomView----' + "DeliveryScreen");
 
-                            StoreDataObj storeObject = await SharedPrefs.getStoreData();
-                            bool status = Utils.checkStoreOpenTime(storeObject,deliveryType:OrderType.Delivery);
-                            if(!status){
+                            StoreDataObj storeObject =
+                                await SharedPrefs.getStoreData();
+                            bool status = Utils.checkStoreOpenTime(storeObject,
+                                deliveryType: OrderType.Delivery);
+                            if (!status) {
 //                              Utils.showToast("${storeObject.closehoursMessage}", false);
                               Navigator.pop(context);
-                              DialogUtils.displayCommonDialog(context,storeObject.storeName,storeObject.closehoursMessage,);
+                              DialogUtils.displayCommonDialog(
+                                context,
+                                storeObject.storeName,
+                                storeObject.closehoursMessage,
+                              );
                               return;
                             }
                             Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => DeliveryAddressList(true,OrderType.Delivery)),
+                                  builder: (context) => DeliveryAddressList(
+                                      true, OrderType.Delivery)),
                             );
-
                           },
                           child: new Container(
                             margin: EdgeInsets.fromLTRB(10.0, 00.0, 10.0, 10.0),
                             padding: EdgeInsets.all(10.0),
-                            child: new Row(
+                            child: new Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                new Expanded(
-                                  child: new Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        margin: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 10.0),
-                                        height: 100.0,
-                                        width: 150.0,
-                                        decoration: new BoxDecoration(
-                                          image: DecorationImage(
-                                            image: new AssetImage(
-                                              'images/deliver.png',
-                                            ),
-                                            fit: BoxFit.scaleDown,
-                                          ),
-                                          shape: BoxShape.rectangle,
-                                        ),
+                                Container(
+                                  margin: const EdgeInsets.fromLTRB(
+                                      10.0, 0.0, 10.0, 10.0),
+                                  height: 100.0,
+                                  width: 150.0,
+                                  decoration: new BoxDecoration(
+                                    image: DecorationImage(
+                                      image: new AssetImage(
+                                        'images/deliver.png',
                                       ),
-                                      Text("Deliver"),
-                                      // Code to create the view for address.
-                                    ],
+                                      fit: BoxFit.scaleDown,
+                                    ),
+                                    shape: BoxShape.rectangle,
                                   ),
                                 ),
-                                // Icon to indicate the phone number.
+                                Text(
+                                  "Deliver",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                // Code to create the view for address.
                               ],
                             ),
                           ),
-                        ),),
-                      Visibility(
-                        visible: pickUpFacility,
-                        child:  GestureDetector(
-                          onTap: ()  async {
-                            print('@@CartBottomView----'+"PickUPActivy");
+                        ),
+                        Divider(
+                            height: 30,
+                            thickness: 2,
+                            indent: 40,
+                            endIndent: 40),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    visible: pickUpFacility,
+                    child: GestureDetector(
+                      onTap: () async {
+                        print('@@CartBottomView----' + "PickUPActivy");
 
-                            StoreDataObj storeObject = await SharedPrefs.getStoreData();
-                            bool status = Utils.checkStoreOpenTime(storeObject,deliveryType:OrderType.Delivery);
-                            if(!status){
+                        StoreDataObj storeObject =
+                            await SharedPrefs.getStoreData();
+                        bool status = Utils.checkStoreOpenTime(storeObject,
+                            deliveryType: OrderType.Delivery);
+                        if (!status) {
 //                              Utils.showToast("${storeObject.closehoursMessage}", false);
+                          Navigator.pop(context);
+                          DialogUtils.displayCommonDialog(
+                            context,
+                            storeObject.storeName,
+                            storeObject.closehoursMessage,
+                          );
+                          return;
+                        }
+
+                        Utils.showProgressDialog(context);
+                        ApiController.getStorePickupAddress().then((response) {
+                          Utils.hideProgressDialog(context);
+                          PickUpModel storeArea = response;
+
+                          print('---PickUpModel---${storeArea.data.length}--');
+                          if (storeArea != null && storeArea.data.isNotEmpty) {
+                            if (storeArea.data.length == 1) {
+                              Datum areaObject = storeArea.data[0];
                               Navigator.pop(context);
-                              DialogUtils.displayCommonDialog(context,storeObject.storeName,storeObject.closehoursMessage,);
-                              return;
-                            }
-
-                            Utils.showProgressDialog(context);
-                            ApiController.getStorePickupAddress().then((response){
-
-                              Utils.hideProgressDialog(context);
-                              PickUpModel storeArea = response;
-
-                              print('---PickUpModel---${storeArea.data.length}--');
-                              if(storeArea != null && storeArea.data.isNotEmpty){
-                                if(storeArea.data.length == 1){
-                                  Datum areaObject = storeArea.data[0];
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => StoreLocationScreen(areaObject,OrderType.PickUp)),
-                                  );
-                                }else{
-                                  Navigator.pop(context);
-                                  Navigator.push(context,
-                                    MaterialPageRoute(
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => StoreLocationScreen(
+                                        areaObject, OrderType.PickUp)),
+                              );
+                            } else {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
 //                                        builder: (context) => PickUpOrderScreen(storeArea,OrderType.PickUp)),
-                                        builder: (context) => StoreLocationScreenWithMultiplePick(storeArea,OrderType.PickUp)),
-                                  );
-                                }
-                              }else{
-                                Utils.showToast("No pickup data found!", true);
-                              }
-                            });
-                          },
-                          child: Container(
-                            margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                            padding: EdgeInsets.all(10.0),
-                            child: Row(
-                              children: [
-                                // First child in the Row for the name and the
-                                Expanded(
-                                  // Name and Address are in the same column
-                                  child: new Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      // Code to create the view for name.
-                                      Container(
-                                        margin: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 5.0),
-                                        height: 100.0,
-                                        width: 150.0,
-                                        decoration: new BoxDecoration(
-                                          image: DecorationImage(
-                                            image: new AssetImage(
-                                              'images/pickup.png',
-                                            ),
-                                            fit: BoxFit.scaleDown,
-                                          ),
-                                          shape: BoxShape.rectangle,
+                                    builder: (context) =>
+                                        StoreLocationScreenWithMultiplePick(
+                                            storeArea, OrderType.PickUp)),
+                              );
+                            }
+                          } else {
+                            Utils.showToast("No pickup data found!", true);
+                          }
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        padding: EdgeInsets.all(10.0),
+                        child: Row(
+                          children: [
+                            // First child in the Row for the name and the
+                            Expanded(
+                              // Name and Address are in the same column
+                              child: new Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // Code to create the view for name.
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(
+                                        10.0, 0.0, 10.0, 5.0),
+                                    height: 100.0,
+                                    width: 150.0,
+                                    decoration: new BoxDecoration(
+                                      image: DecorationImage(
+                                        image: new AssetImage(
+                                          'images/pickup.png',
                                         ),
+                                        fit: BoxFit.scaleDown,
                                       ),
-                                      // Code to create the view for address.
-                                      Text("Pickup"),
-                                    ],
+                                      shape: BoxShape.rectangle,
+                                    ),
                                   ),
-                                ),
-                                // Icon to indicate the phone number.
-                              ],
+                                  // Code to create the view for address.
+                                  Text(
+                                    "Pickup",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ),),
-                    ]),
-              )
-            ],
-          )
-        )
-    );
-
+                            // Icon to indicate the phone number.
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ])
+              ],
+            )));
   }
-
 }
