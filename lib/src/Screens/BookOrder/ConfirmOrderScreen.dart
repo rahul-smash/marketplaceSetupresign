@@ -895,7 +895,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 //TODO: recheck this
                 Text(
-                    "${AppConstant.currency}${databaseHelper.roundOffPrice(taxModel == null ? totalPrice : double.parse(taxModel.total) > 0 ? taxModel.total : 0, 2).toStringAsFixed(2)}",
+                    "${AppConstant.currency}${databaseHelper.roundOffPrice(taxModel == null ? totalPrice : double.parse(taxModel.total) > 0 ? double.parse(taxModel.total) : 0, 2).toStringAsFixed(2)}",
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ],
@@ -2227,49 +2227,47 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           print("-paymentMode-${widget.paymentMode}");
 
           ApiController.placeOrderRequest(
-            shippingCharges,
-            comment,
-            totalPrice.toString(),
-            widget.paymentMode,
-            taxModel,
-            widget.address,
-            json,
-            widget.isComingFromPickUpScreen,
-            widget.areaId,
-            widget.deliveryType,
-            payment_request_id,
-            payment_id,
-            onlineMethod,
-            selectedDeliverSlotValue,
-            cart_saving: totalSavings.toStringAsFixed(2),
-            posBranchCode: widget.subscriptionOrderType != null
-                ? SingletonBrandData.getInstance()
-                    ?.userPurchaseMembershipResponse
-                    ?.data
-                    ?.posBranchCode??''
-                : '',
-            membershipId: widget.subscriptionOrderType != null
-                ? SingletonBrandData.getInstance()
-                    ?.userPurchaseMembershipResponse
-                    ?.data
-                    ?.id??''
-                : '',
-            membershipPlanDetailId: widget.subscriptionOrderType != null
-                ? SingletonBrandData.getInstance()
-                    ?.userPurchaseMembershipResponse
-                    ?.data
-                    ?.membershipPlanDetailId??''
-                : '',
-            additionalInfo: widget.subscriptionOrderType != null
-                ? SingletonBrandData.getInstance()
-                        ?.userPurchaseMembershipResponse
-                        ?.data
-                        ?.additionalInfo ??
-                    ''
-                : '',
-              isMembershipCouponEnabled : widget.subscriptionOrderType != null
-              ? '1' : '0'
-          ).then((response) async {
+                  shippingCharges,
+                  comment,
+                  totalPrice.toString(),
+                  widget.paymentMode,
+                  taxModel,
+                  widget.address,
+                  json,
+                  widget.isComingFromPickUpScreen,
+                  widget.areaId,
+                  widget.deliveryType,
+                  payment_request_id,
+                  payment_id,
+                  onlineMethod,
+                  selectedDeliverSlotValue,
+                  cart_saving: totalSavings.toStringAsFixed(2),
+                  posBranchCode: widget.subscriptionOrderType != null
+                      ? SingletonBrandData.getInstance()
+                              ?.userPurchaseMembershipResponse
+                              ?.data
+                              ?.posBranchCode ??
+                          ''
+                      : '',
+                  membershipId: widget.subscriptionOrderType != null
+                      ? SingletonBrandData.getInstance()
+                              ?.userPurchaseMembershipResponse
+                              ?.data
+                              ?.id ??
+                          ''
+                      : '',
+                  membershipPlanDetailId: widget.subscriptionOrderType != null
+                      ? SingletonBrandData.getInstance()
+                              ?.userPurchaseMembershipResponse
+                              ?.data
+                              ?.membershipPlanDetailId ??
+                          ''
+                      : '',
+                  additionalInfo: widget.subscriptionOrderType != null
+                      ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.additionalInfo ?? ''
+                      : '',
+                  isMembershipCouponEnabled: widget.subscriptionOrderType != null ? '1' : '0')
+              .then((response) async {
             Utils.hideProgressDialog(context);
             if (response == null) {
               print("--response == null-response == null-");
