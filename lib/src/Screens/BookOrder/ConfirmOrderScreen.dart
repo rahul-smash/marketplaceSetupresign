@@ -21,6 +21,7 @@ import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/CreatePaytmTxnTokenResponse.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/DeliveryTimeSlotModel.dart';
+import 'package:restroapp/src/models/GetOrderHistory.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/OrderDetailsModel.dart';
 import 'package:restroapp/src/models/RazorpayOrderData.dart';
@@ -71,6 +72,7 @@ class ConfirmOrderScreen extends StatefulWidget {
 
 class ConfirmOrderState extends State<ConfirmOrderScreen> {
   DatabaseHelper databaseHelper = new DatabaseHelper();
+  OrderData orderData;
   double totalPrice = 0.00;
   double totalSavings = 0.00;
   String totalSavingsText = "";
@@ -113,6 +115,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   String couponType = '';
 
   ConfirmOrderState({this.storeModel});
+
+
 
   @override
   void initState() {
@@ -1731,7 +1735,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //              } else if (widget.deliveryType == OrderType.PickUp) {
 //                performPlaceOrderOperation(storeModel);
 //              }
-              performPlaceOrderOperation(storeModel);
+              performPlaceOrderOperation(storeModel, orderData);
             },
             child: Text(
               "Confirm Order",
@@ -1743,7 +1747,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     );
   }
 
-  performPlaceOrderOperation(StoreDataObj storeObject) async {
+  performPlaceOrderOperation(StoreDataObj storeObject, OrderData orderData) async {
     String json = await databaseHelper.getCartItemsListToJson(
         isOrderVariations: isOrderVariations,
         responseOrderDetail: responseOrderDetail);
@@ -2267,6 +2271,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                         ?.additionalInfo ??
                     ''
                 : '',
+              isMembershipCouponEnabled : widget.subscriptionOrderType != null
+              ? '1' : '0'
           ).then((response) async {
             Utils.hideProgressDialog(context);
             if (response == null) {
@@ -2349,7 +2355,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       if (response != null) {
         StripeVerifyModel object = response;
         if (object.success) {
-          placeOrderApiCall(payment_request_id, object.paymentId, "Stripe");
+          placeOrderApiCall(payment_request_id, object.paymentId, "Stripe",);
         } else {
           Utils.showToast(
               "Transaction is not completed, please try again!", true);
