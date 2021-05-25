@@ -236,9 +236,8 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
                           ),
                         ],
                       ),
-                      //TODO: handle this
                       Visibility(
-                          visible: false,
+                          visible: cardOrderHistoryItems.IsMembershipCouponEnabled == '1',
                           child: Container(
                               margin: EdgeInsets.only(top: 10, bottom: 10),
                               padding: EdgeInsets.fromLTRB(15, 3, 15, 3),
@@ -257,10 +256,9 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
                               )))
                     ]),
                 Visibility(
-//                  visible: isRatingEnable &&
-//                      cardOrderHistoryItems.status == '5' &&
-//                      _rating != 0,
-                  visible: true,
+                 visible: isRatingEnable &&
+                     cardOrderHistoryItems.status == '5' &&
+                     _rating != 0,
                   child: Padding(
                     padding: EdgeInsets.only(top: 5),
                     child: Row(children: <Widget>[
