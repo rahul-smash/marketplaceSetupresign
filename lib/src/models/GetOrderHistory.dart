@@ -45,6 +45,7 @@ class OrderData {
   List<DeliveryAddress> deliveryAddress;
   String rating;
   List<ReviewsHygeineAndPack> reviewsHygeineAndPack;
+  String IsMembershipCouponEnabled;
 
 
   OrderData({
@@ -75,6 +76,7 @@ class OrderData {
     this.deliveryAddress,
     this.orderRejectionNote,
     this.walletRefund,
+    this.IsMembershipCouponEnabled
   });
 
   OrderData.fromJson(Map<String, dynamic> json) {
@@ -100,6 +102,7 @@ class OrderData {
     address = json['address'];
     orderRejectionNote = json['order_rejection_note'];
     walletRefund = json['wallet_refund'];
+    IsMembershipCouponEnabled= json['is_membership_coupon_enabled'];
     reviewsHygeineAndPack= json["reviewsHygeineAndPack"] == null ? null : List<ReviewsHygeineAndPack>.from(json["reviewsHygeineAndPack"].map((x) => ReviewsHygeineAndPack.fromJson(x)));
     if (json['order_items'] != null) {
       orderItems = new List<OrderItems>();

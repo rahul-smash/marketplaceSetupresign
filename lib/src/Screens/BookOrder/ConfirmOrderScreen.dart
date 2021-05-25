@@ -2267,6 +2267,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                         ?.additionalInfo ??
                     ''
                 : '',
+              isMembershipCouponEnabled : widget.subscriptionOrderType != null
+              ? '1' : '0'
           ).then((response) async {
             Utils.hideProgressDialog(context);
             if (response == null) {
