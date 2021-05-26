@@ -66,7 +66,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
             },
             child: Padding(
               padding:
-                  EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
+              EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
               child: Icon(
                 Icons.home,
                 color: Colors.white,
@@ -79,15 +79,15 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : addressList == null
-              ? SingleChildScrollView(
-                  child: Center(child: Text("Something went wrong!")))
-              : Column(
-                  children: <Widget>[
-                    Divider(color: Colors.white, height: 2.0),
-                    addCreateAddressButton(),
-                    addAddressList()
-                  ],
-                ),
+          ? SingleChildScrollView(
+          child: Center(child: Text("Something went wrong!")))
+          : Column(
+        children: <Widget>[
+          Divider(color: Colors.white, height: 2.0),
+          addCreateAddressButton(),
+          addAddressList()
+        ],
+      ),
       bottomNavigationBar: SafeArea(
         child: widget.showProceedBar ? addProceedBar() : Container(height: 5),
       ),
@@ -209,8 +209,13 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                           addAddressInfoRow(
                             Icons.location_on,
                             area.address2 != null &&
-                                    area.address2.trim().isNotEmpty
-                                ? '${area.address != null && area.address.trim().isNotEmpty ? '${area.address}, ${area.address2}' : "${area.address2}"}'
+                                area.address2
+                                    .trim()
+                                    .isNotEmpty
+                                ? '${area.address != null && area.address
+                                .trim()
+                                .isNotEmpty ? '${area.address}, ${area
+                                .address2}' : "${area.address2}"}'
                                 : area.address,
                           ),
                           addAddressInfoRow(Icons.email, area.email),
@@ -244,16 +249,16 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                             decoration: BoxDecoration(
                               color: grey2,
                               border:
-                                  Border.all(color: grayLightColorSecondary),
+                              Border.all(color: grayLightColorSecondary),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               area.addressType != null &&
-                                      area.addressType.isNotEmpty
+                                  area.addressType.isNotEmpty
                                   ? area.addressType
                                   : '',
                               style:
-                                  TextStyle(fontSize: 13, color: Colors.black),
+                              TextStyle(fontSize: 13, color: Colors.black),
                             ),
                           ),
                         ],
@@ -290,7 +295,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                     ],
                   ),
                   visible:
-                      area.addressType != null && area.addressType.isNotEmpty,
+                  area.addressType != null && area.addressType.isNotEmpty,
                 )),
             Padding(
               padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -324,83 +329,102 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
   }
 
   Widget addOperationBar(DeliveryAddressData area, int index) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0, 0, 5, 5),
-      child: new Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Flexible(
-            child: InkWell(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text("Edit Address",
-                    style: TextStyle(
-                        color: infoLabel, fontWeight: FontWeight.w500)),
-              ),
-              onTap: () async {
-                print("edit=${area.address}");
-
-                var result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => DragMarkerMap(area),
-                      fullscreenDialog: true,
-                    ));
-                print("-Edit-result--${result}-------");
-                if (result == true) {
-                  setState(() {
-                    isLoading = true;
-                  });
-                  ApiController.getAddressApiRequest()
-                      .then((value) => _handleResponse(value));
-                  ;
-                }
-              },
-            ),
-          ),
-          Container(
-            color: Colors.grey,
+    return
+      Padding(
+        padding: EdgeInsets.fromLTRB(0, 0, 5, 5),
+        child: addressList[index].isSubscriptionOAddress ? InkWell(
+          onTap: () {
+            DialogUtils.displayCommonDialog(
+                context, 'Subcription Delivery Address', 'This Address is used for subscription orders.\nThats why we are not allowing to edit/Remove this address.');
+          },
+          child: SizedBox(
             height: 30,
-            width: 1,
-          ),
-          Flexible(
-              child: InkWell(
-            child: Align(
-              alignment: Alignment.center,
-              child: new Text("Remove Address",
-                  style:
-                      TextStyle(color: infoLabel, fontWeight: FontWeight.w500)),
+            child: Center(
+              child: Text("Subcription Delivery Address",
+                  style: TextStyle(
+                      color: infoLabel, fontWeight: FontWeight.w500)),
             ),
-            onTap: () async {
-              print(
-                  "--selectedIndex ${selectedIndex} and ${index} and ${area.id}");
-              var results = await DialogUtils.displayDialog(
-                  context, "Delete", AppConstant.deleteAddress, "Cancel", "OK");
+          ),
+        ) :
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Flexible(
+              child: InkWell(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text("Edit Address",
+                      style: TextStyle(
+                          color: infoLabel, fontWeight: FontWeight.w500)),
+                ),
+                onTap: () async {
+                  print("edit=${area.address}");
 
-              if (results == true) {
-                Utils.showProgressDialog(context);
-
-                ApiController.deleteDeliveryAddressApiRequest(area.id)
-                    .then((response) async {
-                  Utils.hideProgressDialog(context);
-                  if (response != null && response.success) {
-                    print("---showDialogForDelete-----");
-                    Utils.showToast(response.message, false);
+                  var result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => DragMarkerMap(area),
+                        fullscreenDialog: true,
+                      ));
+                  print("-Edit-result--${result}-------");
+                  if (result == true) {
                     setState(() {
-                      addressList.removeAt(index);
-                      print("--selectedIndex ${selectedIndex} and ${index}");
-                      if (selectedIndex == index && addressList.isNotEmpty) {
-                        selectedIndex = 0;
-                      }
+                      isLoading = true;
                     });
+                    ApiController.getAddressApiRequest()
+                        .then((value) => _handleResponse(value));
+                    ;
                   }
-                });
-              }
-            },
-          )),
-        ],
-      ),
-    );
+                },
+              ),
+            ),
+            Container(
+              color: Colors.grey,
+              height: 30,
+              width: 1,
+            ),
+            Flexible(
+                child: InkWell(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: new Text("Remove Address",
+                        style: TextStyle(
+                            color: infoLabel, fontWeight: FontWeight.w500)),
+                  ),
+                  onTap: () async {
+                    print(
+                        "--selectedIndex ${selectedIndex} and ${index} and ${area
+                            .id}");
+                    var results = await DialogUtils.displayDialog(
+                        context, "Delete",
+                        AppConstant.deleteAddress, "Cancel", "OK");
+
+                    if (results == true) {
+                      Utils.showProgressDialog(context);
+
+                      ApiController.deleteDeliveryAddressApiRequest(area.id)
+                          .then((response) async {
+                        Utils.hideProgressDialog(context);
+                        if (response != null && response.success) {
+                          print("---showDialogForDelete-----");
+                          Utils.showToast(response.message, false);
+                          setState(() {
+                            addressList.removeAt(index);
+                            print(
+                                "--selectedIndex ${selectedIndex} and ${index}");
+                            if (selectedIndex == index &&
+                                addressList.isNotEmpty) {
+                              selectedIndex = 0;
+                            }
+                          });
+                        }
+                      });
+                    }
+                  },
+                )),
+          ],
+        ),
+      );
   }
 
   Widget addProceedBar() {
@@ -411,7 +435,8 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
         onTap: () async {
           StoreDataObj store = await SharedPrefs.getStoreData();
           print(
-              "====${addressList[selectedIndex].lat},${addressList[selectedIndex].lng}===");
+              "====${addressList[selectedIndex]
+                  .lat},${addressList[selectedIndex].lng}===");
           double distanceInKm = Utils.calculateDistance(
               double.parse(addressList[selectedIndex].lat),
               double.parse(addressList[selectedIndex].lng),
@@ -423,7 +448,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
           print("==distanceInKm==${distanceInKms}");
 
           StoreRadiousResponse storeRadiousResponse =
-              await ApiController.storeRadiusApi();
+          await ApiController.storeRadiusApi();
 
           Area area;
           //print("---${areaList.length}---and-- ${distanceInKms}---");
@@ -437,8 +462,8 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
           }
           if (area == null) {
             bool dialogResult =
-                await DialogUtils.displayLocationNotAvailbleDialog(
-                    context, 'We dont\'t serve\nin your area');
+            await DialogUtils.displayLocationNotAvailbleDialog(
+                context, 'We dont\'t serve\nin your area');
             if (dialogResult != null && dialogResult) {
               var result = await Navigator.push(
                   context,
@@ -468,7 +493,8 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ConfirmOrderScreen(
+                      builder: (context) =>
+                          ConfirmOrderScreen(
                             addressList[selectedIndex],
                             false,
                             "",
@@ -487,13 +513,14 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ConfirmOrderScreen(
-                            addressList[selectedIndex],
-                            false,
-                            "",
-                            widget.delivery,
-                            areaObject: area,
-                            storeModel: storeModel)),
+                        builder: (context) =>
+                            ConfirmOrderScreen(
+                                addressList[selectedIndex],
+                                false,
+                                "",
+                                widget.delivery,
+                                areaObject: area,
+                                storeModel: storeModel)),
                   );
                 }
               }
@@ -519,19 +546,25 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
     if (responsesData != null && responsesData.success) {
       addressList.clear();
       selectedIndex = 0;
-      String defaultAddressID = SingletonBrandData.getInstance()
-              ?.userPurchaseMembershipResponse
-              ?.data
-              ?.defaultAddressId ??
+      String defaultAddressID = SingletonBrandData
+          .getInstance()
+          ?.userPurchaseMembershipResponse
+          ?.data
+          ?.defaultAddressId ??
           '';
-      bool isSubscriptionActive = SingletonBrandData.getInstance()
-              ?.userPurchaseMembershipResponse
-              ?.data
-              ?.status ??
+      bool isSubscriptionActive = SingletonBrandData
+          .getInstance()
+          ?.userPurchaseMembershipResponse
+          ?.data
+          ?.status ??
           false;
       for (int i = 0; i < responsesData.data.length; i++) {
-        if (defaultAddressID != responses.data[i].id || !isSubscriptionActive)
-          addressList.add(responsesData.data[i]);
+//        if (defaultAddressID != responses.data[i].id || !isSubscriptionActive)
+//          addressList.add(responsesData.data[i]);
+        if (defaultAddressID == responses.data[i].id && isSubscriptionActive) {
+          responsesData.data[i].isSubscriptionOAddress = true;
+        }
+        addressList.add(responsesData.data[i]);
       }
     }
     setState(() {

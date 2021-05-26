@@ -7,17 +7,17 @@ import 'package:restroapp/src/Screens/Subscription/SubscriptionUtils.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/MembershipPlanResponse.dart';
+import 'package:restroapp/src/models/UserPurchaseMembershipResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
-class SubscriptionRenewScreen extends StatefulWidget {
+class SubscribedPlanScreen extends StatefulWidget {
   @override
-  _SubscriptionRenewScreenState createState() =>
-      _SubscriptionRenewScreenState();
+  _SubscribedPlanScreenState createState() => _SubscribedPlanScreenState();
 }
 
-class _SubscriptionRenewScreenState extends State<SubscriptionRenewScreen> {
+class _SubscribedPlanScreenState extends State<SubscribedPlanScreen> {
   bool agree = false;
   MembershipPlanResponse _membershipPlanResponse;
   bool isApiLoading = false;
@@ -230,86 +230,84 @@ class _SubscriptionRenewScreenState extends State<SubscriptionRenewScreen> {
                           indent: 110,
                           endIndent: 110,
                         ),
-                        Visibility(
-                          visible: !SingletonBrandData.getInstance()
-                              .userPurchaseMembershipResponse
-                              .data
-                              .status,
-                          child: Wrap(
-                            alignment: WrapAlignment.center,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Checkbox(
-                                activeColor: appTheme,
-                                value: agree,
-                                onChanged: (value) {
-                                  setState(() {
-                                    agree = value;
-                                  });
-                                },
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Checkbox(
+                              activeColor: appTheme,
+                              value: agree,
+                              onChanged: (value) {
+                                setState(() {
+                                  agree = value;
+                                });
+                              },
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: 'I accept ',
+                                style: TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: 'Terms & Conditions',
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SubscriptionTermsAndConditionsScreen(
+                                                        AdditionItemsConstants
+                                                            .TERMS_CONDITIONS,
+                                                        _membershipPlanResponse
+                                                            .data.planTc)),
+                                          );
+                                        },
+                                      style: TextStyle(
+                                          color: appTheme,
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline,
+                                          fontSize: 15)),
+                                ],
                               ),
-                              RichText(
-                                text: TextSpan(
-                                  text: 'I accept ',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Colors.black),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                        text: 'Terms & Conditions',
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SubscriptionTermsAndConditionsScreen(
-                                                          AdditionItemsConstants
-                                                              .TERMS_CONDITIONS,_membershipPlanResponse.data.planTc)),
-                                            );
-                                          },
-                                        style: TextStyle(
-                                            color: appTheme,
-                                            fontWeight: FontWeight.bold,
-                                            decoration:
-                                                TextDecoration.underline,
-                                            fontSize: 15)),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
+                            )
+                          ],
                         ),
                         SizedBox(height: 20),
-                        Visibility(
-                          visible: !SingletonBrandData.getInstance()
-                              .userPurchaseMembershipResponse
-                              .data
-                              .status,
-                          child: Container(
-                            width: 170,
-                            height: 40,
-                            child: MaterialButton(
-                                color: appThemeSecondary,
-                                onPressed: () {
-                                  if (agree == true) {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SubscriptionTypeSelection(
-                                                    _membershipPlanResponse)));
-                                  } else {
-                                    Utils.showToast(
-                                        'Please check terms and conditions',
-                                        false);
-                                  }
-                                },
-                                child: Text('Renew Now',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 17,
-                                        color: appTheme))),
-                          ),
+                        Container(
+                          width: 170,
+                          height: 40,
+                          child: MaterialButton(
+                              color: appThemeSecondary,
+                              onPressed: () {
+                                if (agree == true) {
+                                  UserPurchaseMembershipResponse response =
+                                      SingletonBrandData.getInstance()
+                                          ?.userPurchaseMembershipResponse;
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SubscriptionTypeSelection(
+                                                  _membershipPlanResponse,
+                                                  response != null &&
+                                                          response.data !=
+                                                              null &&
+                                                          !response.data.status
+                                                      ? MemberShipType.RENEW
+                                                      : MemberShipType.NEW)));
+                                } else {
+                                  Utils.showToast(
+                                      'Please check terms and conditions',
+                                      false);
+                                }
+                              },
+                              child: Text('Renew Now',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17,
+                                      color: appTheme))),
                         ),
                         SizedBox(height: 20),
 //              RichText(
@@ -335,13 +333,15 @@ class _SubscriptionRenewScreenState extends State<SubscriptionRenewScreen> {
 
   _cancelSubscriptionPlan() {
     Utils.showProgressDialog(context);
-    ApiController.getCancelOnlineMembership(SingletonBrandData.getInstance()
-            .userPurchaseMembershipResponse
-            .data
-            .id,SingletonBrandData.getInstance()
-        .userPurchaseMembershipResponse
-        .data
-        .puchaseType)
+    ApiController.getCancelOnlineMembership(
+            SingletonBrandData.getInstance()
+                .userPurchaseMembershipResponse
+                .data
+                .id,
+            SingletonBrandData.getInstance()
+                .userPurchaseMembershipResponse
+                .data
+                .puchaseType)
         .then((value) async {
       Utils.hideProgressDialog(context);
       if (value != null && value.success) {

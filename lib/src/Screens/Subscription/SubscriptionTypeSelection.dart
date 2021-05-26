@@ -17,12 +17,12 @@ import 'package:restroapp/src/utils/Utils.dart';
 
 class SubscriptionTypeSelection extends StatefulWidget {
   MembershipPlanResponse membershipPlanResponse;
-
+MemberShipType _passedMemberShipType;
   @override
   _SubscriptionTypeSelectionState createState() =>
-      _SubscriptionTypeSelectionState(membershipPlanResponse);
+      _SubscriptionTypeSelectionState(membershipPlanResponse,_passedMemberShipType);
 
-  SubscriptionTypeSelection(this.membershipPlanResponse);
+  SubscriptionTypeSelection(this.membershipPlanResponse,this._passedMemberShipType);
 }
 
 enum SubscriptionType { Subscription_Lunch, Subscription_Dinner }
@@ -43,6 +43,8 @@ class _SubscriptionTypeSelectionState
   StoreLatLngModel _selectedSourceStore;
   MembershipPlanResponse membershipPlanResponse;
 
+  MemberShipType _passedMemberShipType;
+
   callApi() {
     isLoading = true;
     ApiController.getAddressApiRequest().then((responses) async {
@@ -59,7 +61,7 @@ class _SubscriptionTypeSelectionState
         PaymentMethod.SUBSCRIPTION, _handlePaymentSuccess, _handlePaymentError);
   }
 
-  _SubscriptionTypeSelectionState(this.membershipPlanResponse);
+  _SubscriptionTypeSelectionState(this.membershipPlanResponse,this._passedMemberShipType);
 
   @override
   void initState() {
@@ -734,7 +736,7 @@ class _SubscriptionTypeSelectionState
       //_extra fields
       Map<String, dynamic> _subscriptionPlanFields = Map();
       _subscriptionPlanFields.putIfAbsent(
-          'purchaseType', () => checkIsRewPlanPurchased() ? 'Renew' : 'New');
+          'purchaseType', () => checkIsRewPlanPurchased(_passedMemberShipType) );
       _subscriptionPlanFields.putIfAbsent(
           'amountPaid', () => membershipPlanResponse.data.planTotalCharges);
       _subscriptionPlanFields.putIfAbsent(
