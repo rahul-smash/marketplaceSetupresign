@@ -193,7 +193,7 @@ class _SubscriptionBuyScreenState extends BaseState<SubscriptionBuyScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            SubscriptionTypeSelection(_membershipPlanResponse,MemberShipType.RENEW)));
+                                            SubscriptionTypeSelection(_membershipPlanResponse,MemberShipType.NEW)));
                               } else {
                                 print('showing toast');
                                 Utils.showToast(

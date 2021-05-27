@@ -135,8 +135,8 @@ class DatabaseHelper {
         "id INTEGER, "
         "store_id TEXT, " // NEW
         "store_name TEXT, " // NEW
-        "category_id TEXT, "// NEW
-        "brand TEXT, "// NEW
+        "category_id TEXT, " // NEW
+        "brand TEXT, " // NEW
         "product_name TEXT, "
         "isfavorite TEXT, "
         "nutrient TEXT, "
@@ -151,11 +151,11 @@ class DatabaseHelper {
         "discount TEXT, "
         "quantity TEXT, "
         "isTaxEnable TEXT, "
-        "gst_tax_type TEXT, "// NEW
-        "gst_tax_rate TEXT, "// NEW
-        "rating TEXT, "// NEW
-        "deleted TEXT, "// NEW
-        "tags TEXT, "// NEW
+        "gst_tax_type TEXT, " // NEW
+        "gst_tax_rate TEXT, " // NEW
+        "rating TEXT, " // NEW
+        "deleted TEXT, " // NEW
+        "tags TEXT, " // NEW
         "image_100_80 TEXT, "
         "image_300_200 TEXT, "
         "unit_type TEXT"
@@ -562,7 +562,14 @@ class DatabaseHelper {
     double totalPrice = 0.00;
     //database connection
     var dbClient = await db;
-    List<String> columnsToSelect = [MRP_PRICE, PRICE, DISCOUNT, QUANTITY, 'id',VARIENT_ID];
+    List<String> columnsToSelect = [
+      MRP_PRICE,
+      PRICE,
+      DISCOUNT,
+      QUANTITY,
+      'id',
+      VARIENT_ID
+    ];
     List<Map> resultList =
         await dbClient.query(CART_Table, columns: columnsToSelect);
     // print the results
@@ -574,7 +581,7 @@ class DatabaseHelper {
       String price = "0";
       String quantity = "0";
       int id = 0;
-      String varientID='0';
+      String varientID = '0';
       resultList.forEach((row) {
         price = row[PRICE];
         quantity = row[QUANTITY];
@@ -592,24 +599,27 @@ class DatabaseHelper {
               if (responseOrderDetail[i]
                       .productStatus
                       .contains('out_of_stock') &&
-                  int.parse(responseOrderDetail[i].productId)==id
-                  &&responseOrderDetail[i].variantId.compareTo(varientID)==0) {
+                  int.parse(responseOrderDetail[i].productId) == id &&
+                  responseOrderDetail[i].variantId.compareTo(varientID) == 0) {
                 isProductOutOfStock = true;
                 break InnerFor;
               }
               if (responseOrderDetail[i]
-                  .productStatus
-                  .compareTo('price_changed') ==
-                  0 &&
-                  int.parse(responseOrderDetail[i].productId)==id
-                  &&responseOrderDetail[i].variantId.compareTo(varientID)==0) {
-                detail=responseOrderDetail[i];
+                          .productStatus
+                          .compareTo('price_changed') ==
+                      0 &&
+                  int.parse(responseOrderDetail[i].productId) == id &&
+                  responseOrderDetail[i].variantId.compareTo(varientID) == 0) {
+                detail = responseOrderDetail[i];
                 break InnerFor;
               }
             }
           }
           if (!isProductOutOfStock) {
-            double price=detail!=null&&detail.productStatus.contains('price_changed')?double.parse(detail.newPrice):total;
+            double price =
+                detail != null && detail.productStatus.contains('price_changed')
+                    ? double.parse(detail.newPrice)
+                    : total;
             totalPrice = totalPrice + roundOffPrice(price, 2);
           }
         } catch (e) {
@@ -648,8 +658,15 @@ class DatabaseHelper {
       imageUrl,
       image_100_80,
       image_300_200,
-      StoreId,CategoryId,Brand,GstTaxType,
-      GstTaxRate,Rating,Deleted,tags,storeName
+      StoreId,
+      CategoryId,
+      Brand,
+      GstTaxType,
+      GstTaxRate,
+      Rating,
+      Deleted,
+      tags,
+      storeName
     ];
 
     List<Map> resultList =
@@ -765,9 +782,13 @@ class DatabaseHelper {
           innerFor:
           for (int j = 0; j < productCartList.length; j++) {
             if (productCartList[j]
-                    .id
-                    .compareTo(responseOrderDetail[i].productId) ==
-                0&&productCartList[j].variantId.compareTo(responseOrderDetail[i].variantId)==0) {
+                        .id
+                        .compareTo(responseOrderDetail[i].productId) ==
+                    0 &&
+                productCartList[j]
+                        .variantId
+                        .compareTo(responseOrderDetail[i].variantId) ==
+                    0) {
               toBeRemovedProduct = productCartList[j];
               break innerFor;
             }
@@ -777,20 +798,21 @@ class DatabaseHelper {
           }
         }
 
-        if (responseOrderDetail[i]
-            .productStatus
-            .compareTo('price_changed') ==
+        if (responseOrderDetail[i].productStatus.compareTo('price_changed') ==
             0) {
-          for (int j = 0; j < productCartList.length; j++){
+          for (int j = 0; j < productCartList.length; j++) {
             if (productCartList[j]
-                .id
-                .compareTo(responseOrderDetail[i].productId) ==
-                0
-                &&productCartList[j].variantId.compareTo(responseOrderDetail[i].variantId)==0) {
-              productCartList[j].mrpPrice=responseOrderDetail[i].newMrpPrice;
-              productCartList[j].price=responseOrderDetail[i].newPrice;
+                        .id
+                        .compareTo(responseOrderDetail[i].productId) ==
+                    0 &&
+                productCartList[j]
+                        .variantId
+                        .compareTo(responseOrderDetail[i].variantId) ==
+                    0) {
+              productCartList[j].mrpPrice = responseOrderDetail[i].newMrpPrice;
+              productCartList[j].price = responseOrderDetail[i].newPrice;
             }
-        }
+          }
         }
       }
     }

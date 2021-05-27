@@ -5,6 +5,7 @@ import 'package:restroapp/src/Screens/Subscription/SubscriptionPurchasedScreen.d
 import 'package:restroapp/src/Screens/Subscription/SubscriptionUtils.dart';
 import 'package:restroapp/src/UI/AddressByRadius.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
+import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/MembershipPlanResponse.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
@@ -17,12 +18,15 @@ import 'package:restroapp/src/utils/Utils.dart';
 
 class SubscriptionTypeSelection extends StatefulWidget {
   MembershipPlanResponse membershipPlanResponse;
-MemberShipType _passedMemberShipType;
+  MemberShipType _passedMemberShipType;
+
   @override
   _SubscriptionTypeSelectionState createState() =>
-      _SubscriptionTypeSelectionState(membershipPlanResponse,_passedMemberShipType);
+      _SubscriptionTypeSelectionState(
+          membershipPlanResponse, _passedMemberShipType);
 
-  SubscriptionTypeSelection(this.membershipPlanResponse,this._passedMemberShipType);
+  SubscriptionTypeSelection(
+      this.membershipPlanResponse, this._passedMemberShipType);
 }
 
 enum SubscriptionType { Subscription_Lunch, Subscription_Dinner }
@@ -35,7 +39,7 @@ class _SubscriptionTypeSelectionState
 
   bool isLoading = true;
 
-  List<DeliveryAddressData> addressList;
+  List<DeliveryAddressData> addressList = List.empty(growable: true);
   Location location = new Location();
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
@@ -47,13 +51,8 @@ class _SubscriptionTypeSelectionState
 
   callApi() {
     isLoading = true;
-    ApiController.getAddressApiRequest().then((responses) async {
-      responsesData = responses;
-      addressList = responsesData.data;
-      setState(() {
-        isLoading = false;
-      });
-    });
+    ApiController.getAddressApiRequest()
+        .then((responses) => _handleResponse(responses));
 
     //fetch stores
     _callSourceStoresApi();
@@ -61,7 +60,48 @@ class _SubscriptionTypeSelectionState
         PaymentMethod.SUBSCRIPTION, _handlePaymentSuccess, _handlePaymentError);
   }
 
-  _SubscriptionTypeSelectionState(this.membershipPlanResponse,this._passedMemberShipType);
+  _SubscriptionTypeSelectionState(
+      this.membershipPlanResponse, this._passedMemberShipType);
+
+  _handleResponse(DeliveryAddressResponse responses) async {
+    print('hfdsfffff----------------------------');
+    responsesData = responses;
+    print(responses.data.length);
+    if (responsesData != null && responsesData.success) {
+      addressList.clear();
+      _selectedAddressIndex = 0;
+      print('hfdsfffff----------------------------1');
+
+      String defaultAddressID = SingletonBrandData.getInstance()
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.defaultAddressId ??
+          '';
+      print('hfdsfffff----------------------------2');
+      bool isSubscriptionActive = SingletonBrandData.getInstance()
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.status ??
+          false;
+      print('hfdsfffff----------------------------3');
+      for (int i = 0; i < responsesData.data.length; i++) {
+//        if (defaultAddressID != responses.data[i].id || !isSubscriptionActive)
+//          addressList.add(responsesData.data[i]);
+        if (defaultAddressID == responses.data[i].id && isSubscriptionActive) {
+          responsesData.data[i].isSubscriptionOAddress = true;
+          print('hfdsfffff----------------------------4');
+        }
+
+        addressList.add(responsesData.data[i]);
+        print('hfdsfffff----------------------------5');
+      }
+    }
+
+    setState(() {
+      print('hfdsfffff----------------------------6');
+      isLoading = false;
+    });
+  }
 
   @override
   void initState() {
@@ -525,91 +565,103 @@ class _SubscriptionTypeSelectionState
   Widget addOperationBar(DeliveryAddressData area, int index) {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 5, 5),
-      child: new Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Flexible(
-            child: InkWell(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text("Edit Address",
-                    style: TextStyle(
-                        color: infoLabel,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16)),
-              ),
-              onTap: () async {
-                print("edit=${area.address}");
-
-                var result = await Navigator.push(
+      child: addressList[index].isSubscriptionOAddress
+          ? InkWell(
+              onTap: () {
+                DialogUtils.displayCommonDialog(
                     context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => DragMarkerMap(area),
-                      fullscreenDialog: true,
-                    ));
-                print("-Edit-result--${result}-------");
-                if (result == true) {
-                  setState(() {
-                    isLoading = true;
-                  });
-                  DeliveryAddressResponse response =
-                      await ApiController.getAddressApiRequest();
-                  //Utils.hideProgressDialog(context);
-                  setState(() {
-                    //addressList = null;
-                    isLoading = false;
-                    addressList = response.data;
-                  });
-                }
+                    'Subscription Delivery Address',
+                    'This Address is used for subscription orders.\nThats why we are not allowing to edit/Remove this address.');
               },
-            ),
-          ),
-          Container(
-            color: Colors.grey,
-            height: 30,
-            width: 1,
-          ),
-          Flexible(
-              child: InkWell(
-            child: Align(
-              alignment: Alignment.center,
-              child: new Text("Remove Address",
-                  style: TextStyle(
-                      color: infoLabel,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16)),
-            ),
-            onTap: () async {
-              print(
-                  "--selectedIndex ${_selectedAddressIndex} and ${index} and ${area.id}");
-              var results = await DialogUtils.displayDialog(
-                  context, "Delete", AppConstant.deleteAddress, "Cancel", "OK");
+              child: SizedBox(
+                height: 30,
+                child: Center(
+                  child: Text("Subscription Delivery Address",
+                      style: TextStyle(
+                          color: infoLabel, fontWeight: FontWeight.w500)),
+                ),
+              ),
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
+                  child: InkWell(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text("Edit Address",
+                          style: TextStyle(
+                              color: infoLabel,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16)),
+                    ),
+                    onTap: () async {
+                      print("edit=${area.address}");
 
-              if (results == true) {
-                Utils.showProgressDialog(context);
-
-                ApiController.deleteDeliveryAddressApiRequest(area.id)
-                    .then((response) async {
-                  Utils.hideProgressDialog(context);
-                  if (response != null && response.success) {
-                    print("---showDialogForDelete-----");
-                    Utils.showToast(response.message, false);
-                    setState(() {
-                      addressList.removeAt(index);
-                      print(
-                          "--selectedIndex ${_selectedAddressIndex} and ${index}");
-                      if (_selectedAddressIndex == index &&
-                          addressList.isNotEmpty) {
-                        _selectedAddressIndex = 0;
+                      var result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                DragMarkerMap(area),
+                            fullscreenDialog: true,
+                          ));
+                      print("-Edit-result--${result}-------");
+                      if (result == true) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        ApiController.getAddressApiRequest()
+                            .then((responses) => _handleResponse(responses));
                       }
-                    });
-                  }
-                });
-              }
-            },
-          )),
-        ],
-      ),
+                    },
+                  ),
+                ),
+                Container(
+                  color: Colors.grey,
+                  height: 30,
+                  width: 1,
+                ),
+                Flexible(
+                    child: InkWell(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: new Text("Remove Address",
+                        style: TextStyle(
+                            color: infoLabel,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16)),
+                  ),
+                  onTap: () async {
+                    print(
+                        "--selectedIndex ${_selectedAddressIndex} and ${index} and ${area.id}");
+                    var results = await DialogUtils.displayDialog(context,
+                        "Delete", AppConstant.deleteAddress, "Cancel", "OK");
+
+                    if (results == true) {
+                      Utils.showProgressDialog(context);
+
+                      ApiController.deleteDeliveryAddressApiRequest(area.id)
+                          .then((response) async {
+                        Utils.hideProgressDialog(context);
+                        if (response != null && response.success) {
+                          print("---showDialogForDelete-----");
+                          Utils.showToast(response.message, false);
+                          setState(() {
+                            addressList.removeAt(index);
+                            print(
+                                "--selectedIndex ${_selectedAddressIndex} and ${index}");
+                            if (_selectedAddressIndex == index &&
+                                addressList.isNotEmpty) {
+                              _selectedAddressIndex = 0;
+                            }
+                          });
+                        }
+                      });
+                    }
+                  },
+                )),
+              ],
+            ),
     );
   }
 
@@ -646,13 +698,7 @@ class _SubscriptionTypeSelectionState
       setState(() {
         isLoading = true;
       });
-      DeliveryAddressResponse response =
-          await ApiController.getAddressApiRequest();
-      //Utils.hideProgressDialog(context);
-      setState(() {
-        isLoading = false;
-        addressList = response.data;
-      });
+      ApiController.getAddressApiRequest().then((value) => _handleResponse(value));
     } else {
       print("--result--else------");
     }
@@ -661,7 +707,6 @@ class _SubscriptionTypeSelectionState
   void _handlePaymentSuccess() async {
     Utils.showProgressDialog(context);
     UserPurchaseMembershipResponse response =
-
         await ApiController.getUserMembershipPlanApi();
     bool isSucceed = await showSubscriptionSuccessDialog(context, () {
       Navigator.pop(context, true);
@@ -722,21 +767,14 @@ class _SubscriptionTypeSelectionState
           setState(() {
             isLoading = true;
           });
-          DeliveryAddressResponse response =
-              await ApiController.getAddressApiRequest();
-          //Utils.hideProgressDialog(context);
-          setState(() {
-            //addressList = null;
-            isLoading = false;
-            addressList = response.data;
-          });
+          ApiController.getAddressApiRequest().then((value) => _handleResponse(value));
         }
       }
     } else {
       //_extra fields
       Map<String, dynamic> _subscriptionPlanFields = Map();
       _subscriptionPlanFields.putIfAbsent(
-          'purchaseType', () => checkIsRewPlanPurchased(_passedMemberShipType) );
+          'purchaseType', () => checkIsRewPlanPurchased(_passedMemberShipType));
       _subscriptionPlanFields.putIfAbsent(
           'amountPaid', () => membershipPlanResponse.data.planTotalCharges);
       _subscriptionPlanFields.putIfAbsent(
@@ -765,6 +803,7 @@ class _SubscriptionTypeSelectionState
           _selectedSourceStore =
               await DialogUtils.displaySubscriptionsStoreList(
                   context, 'Select Store', response);
+        setState(() {});
 
         return _selectedSourceStore;
       }

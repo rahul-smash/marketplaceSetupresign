@@ -148,7 +148,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
             ? true
             : false;
 
-    if (weight==null||weight.isEmpty) {
+    if (weight == null || weight.isEmpty) {
       variantsVisibility = false;
     }
     if (widget.product.tags != null && widget.product.tags.trim().length > 0) {
@@ -209,7 +209,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
             }
           },
           child: Padding(
-              padding: EdgeInsets.only(top: 0, bottom: variantsVisibility?15:15),
+              padding:
+                  EdgeInsets.only(top: 0, bottom: variantsVisibility ? 15 : 15),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -223,33 +224,33 @@ class _ProductTileItemState extends State<ProductTileItem> {
                           child: Stack(
                             children: <Widget>[
                               Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 7, right: 20, top: 5),
+                                  child: Container(
                                       padding: EdgeInsets.only(
-                                          left: 7, right: 20, top: 5),
-                                      child: Container(
-                                          padding: EdgeInsets.only(
-                                              left: 2, top: 2,
-                                              right: 2,bottom: 2),
-                                          decoration:  BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(5.0)),
-                                            border: Border.all(
-                                              color: Colors.grey,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                          width: 75.0,
-                                          height: 75.0,
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                            child: imageUrl.isNotEmpty?
-                                            CachedNetworkImage(
+                                          left: 2, top: 2, right: 2, bottom: 2),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5.0)),
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      width: 75.0,
+                                      height: 75.0,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        child: imageUrl.isNotEmpty
+                                            ? CachedNetworkImage(
                                                 imageUrl: "${imageUrl}",
-                                                fit: BoxFit.cover): Image.asset(
-                                            'images/img_placeholder.jpg',
-                                            fit: BoxFit.cover,
-                                          ),
-                                          ))),
+                                                fit: BoxFit.cover)
+                                            : Image.asset(
+                                                'images/img_placeholder.jpg',
+                                                fit: BoxFit.cover,
+                                              ),
+                                      ))),
                               Visibility(
                                 visible: (discount == "0.00" ||
                                         discount == "0" ||
@@ -543,58 +544,89 @@ class _ProductTileItemState extends State<ProductTileItem> {
                     )),
                   ])),
         ),
-        Visibility(
-            visible: variantsVisibility,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 10, left: 15),
-              child: widget.product.variants != null
-                  ? Wrap(
-                      children: widget.product.variants
-                          .map((f) => GestureDetector(
-                                child: Container(
-                                  height: 35,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20.0, vertical: 3.0),
-                                  margin: EdgeInsets.only(
-                                      left: 5.0,right: 5.0,top: 0.0, bottom: 5.0),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: (f.id == (variant == null ? widget.product.variantId : variant.id))
-                                              ? Colors.transparent
-                                              : staticCategoryListingButtonBorderColor,
-                                          width: 1.0),
-                                      borderRadius: BorderRadius.all( Radius.circular( 5.0)  ),
-                                      color: (f.id ==(variant == null ? widget.product.variantId : variant.id))
-                                          ? appThemeSecondary
-                                          : categoryListingBoxBackgroundColor
-                                  ),
-                                  child: priceContainer(f),
-                                ),
-                                onTap: () {
-                                  if (widget.product.variants.length != null) {
-                                    if (widget.product.variants.length == 1) {
-                                      return;
-                                    }
-                                  }
-                                  variant = f;
-                                  if (variant != null) {
-                                    databaseHelper
-                                        .getProductQuantitiy(variant.id)
-                                        .then((cartDataObj) {
-                                      cartData = cartDataObj;
-                                      counter = int.parse(cartData.QUANTITY);
-                                      showAddButton =
-                                          counter == 0 ? true : false;
-                                      setState(() {});
-                                    });
-                                  }
-                                  _checkOutOfStock(findNext: false);
-                                },
-                              ))
-                          .toList(),
-                    )
-                  : Container(),
-            )),
+        widget.classType == ClassType.CART
+            ?Container(
+          padding: EdgeInsets.symmetric(
+              horizontal: 20.0, vertical: 10.0),
+          margin: EdgeInsets.only(
+              left: 20.0,
+              right: 5.0,
+              top: 0.0,
+              bottom: 5.0),
+          decoration: BoxDecoration(
+              border: Border.all(
+                  color: staticCategoryListingButtonBorderColor,
+                  width: 1.0),
+              borderRadius: BorderRadius.all(
+                  Radius.circular(5.0)),
+              color:  appThemeSecondary,),
+          child: Text("$weight", style: TextStyle(color: darkGrey)),
+        )
+            : Visibility(
+                visible: variantsVisibility,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10, left: 15),
+                  child: widget.product.variants != null
+                      ? Wrap(
+                          children: widget.product.variants
+                              .map((f) => GestureDetector(
+                                    child: Container(
+                                      height: 35,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 20.0, vertical: 3.0),
+                                      margin: EdgeInsets.only(
+                                          left: 5.0,
+                                          right: 5.0,
+                                          top: 0.0,
+                                          bottom: 5.0),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: (f.id ==
+                                                      (variant == null
+                                                          ? widget
+                                                              .product.variantId
+                                                          : variant.id))
+                                                  ? Colors.transparent
+                                                  : staticCategoryListingButtonBorderColor,
+                                              width: 1.0),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5.0)),
+                                          color: (f.id ==
+                                                  (variant == null
+                                                      ? widget.product.variantId
+                                                      : variant.id))
+                                              ? appThemeSecondary
+                                              : categoryListingBoxBackgroundColor),
+                                      child: priceContainer(f),
+                                    ),
+                                    onTap: () {
+                                      if (widget.product.variants.length !=
+                                          null) {
+                                        if (widget.product.variants.length ==
+                                            1) {
+                                          return;
+                                        }
+                                      }
+                                      variant = f;
+                                      if (variant != null) {
+                                        databaseHelper
+                                            .getProductQuantitiy(variant.id)
+                                            .then((cartDataObj) {
+                                          cartData = cartDataObj;
+                                          counter =
+                                              int.parse(cartData.QUANTITY);
+                                          showAddButton =
+                                              counter == 0 ? true : false;
+                                          setState(() {});
+                                        });
+                                      }
+                                      _checkOutOfStock(findNext: false);
+                                    },
+                                  ))
+                              .toList(),
+                        )
+                      : Container(),
+                )),
         Container(
             height: 5,
             width: MediaQuery.of(context).size.width,
@@ -612,7 +644,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-         Visibility(
+        Visibility(
           visible: (v.id ==
                   (variant == null ? widget.product.variantId : variant.id))
               ? true
@@ -630,7 +662,10 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //            padding: EdgeInsets.only(right: 8),
             child: Text("$weight",
                 style: TextStyle(
-                    color: (v.id == (variant == null? widget.product.variantId: variant.id))
+                    color: (v.id ==
+                            (variant == null
+                                ? widget.product.variantId
+                                : variant.id))
                         ? whiteColor
                         : darkGrey))),
         /* (v.discount == "0.00" || v.discount == "0" || v.discount == "0.0")

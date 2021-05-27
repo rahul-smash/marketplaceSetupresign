@@ -406,7 +406,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         : '';
     databaseHelper.getCartItemsListToJson().then((json) {
       ApiController.multipleTaxCalculationRequest(
-              couponCode, discount, "$shippingCharges", json)
+              couponCode, discount, "$shippingCharges", json,
+              isMembershipCouponEnabled:
+                  widget.subscriptionOrderType != null ? '1' : '0')
           .then((response) async {
         //{"success":false,"message":"Some products are not available."}
         TaxCalculationResponse model = response;
@@ -2278,6 +2280,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   context, _brandData.name, response.message);
               return;
             }
+            if (AppConstant.isLoggedIn)
+              ApiController.getUserMembershipPlanApi();
             eventBus.fire(updateCartCount());
             print("${widget.deliveryType}");
             //print("Location = ${storeModel.lat},${storeModel.lng}");

@@ -801,7 +801,7 @@ class ApiController {
 
   static Future<TaxCalculationResponse> multipleTaxCalculationRequest(
       String couponCode, String discount, String shipping, String orderJson,
-      {String couponType = ''}) async {
+      {String couponType = '',String isMembershipCouponEnabled='0'}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -822,6 +822,8 @@ class ApiController {
         "shipping": shipping,
         "order_detail": orderJson,
         "device_id": deviceId,
+        "coupon_code":couponCode.toString(),
+        "is_membership_coupon_enabled": isMembershipCouponEnabled
       });
       print("--fields---${request.fields.toString()}");
       final response = await request.send().timeout(Duration(seconds: timeout));
@@ -2196,6 +2198,7 @@ class ApiController {
               .brand
               .currencyAbbr,
         });
+        print(formData.fields.toString());
         Dio dio = new Dio();
         Response response = await dio.post(url,
             data: formData,
@@ -2254,6 +2257,7 @@ class ApiController {
               .brand
               .currencyAbbr,
         });
+        print(formData.fields.toString());
         Dio dio = new Dio();
         Response response = await dio.post(url,
             data: formData,

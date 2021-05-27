@@ -291,12 +291,7 @@ class _SubscribedPlanScreenState extends State<SubscribedPlanScreen> {
                                           builder: (context) =>
                                               SubscriptionTypeSelection(
                                                   _membershipPlanResponse,
-                                                  response != null &&
-                                                          response.data !=
-                                                              null &&
-                                                          !response.data.status
-                                                      ? MemberShipType.RENEW
-                                                      : MemberShipType.NEW)));
+                                                  MemberShipType.RENEW)));
                                 } else {
                                   Utils.showToast(
                                       'Please check terms and conditions',

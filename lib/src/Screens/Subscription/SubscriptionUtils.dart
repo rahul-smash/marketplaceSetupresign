@@ -185,7 +185,7 @@ Future<bool> showOfferAvailDialog(
     context: _context,
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
-      bool isEnable = true;
+//      bool isEnable = true;
 //      Timer t = Timer(Duration(seconds: 3), () {
 //        isEnable = false;
 //        _onPressed(context);
@@ -249,7 +249,7 @@ Future<bool> showOfferAvailDialog(
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                   TextSpan(
-                      text: 'on this offer',
+                      text: 'on this order',
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
@@ -282,11 +282,11 @@ Future<bool> showOfferAvailDialog(
                           ),
                         ),
                         onPressed: () {
-                          if (isEnable) {
-                            isEnable = false;
+//                          if (isEnable) {
+//                            isEnable = false;
 //                        t.cancel();
                             _onPressed(context);
-                          }
+//                          }
                         },
                       ),
                     ),
