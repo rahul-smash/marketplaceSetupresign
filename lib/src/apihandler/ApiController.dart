@@ -860,7 +860,8 @@ class ApiController {
       String posBranchCode = '',
       String membershipPlanDetailId = '',
       String membershipId = '',
-      String additionalInfo='',String isMembershipCouponEnabled = '0'}) async {
+      String additionalInfo = '',
+      String isMembershipCouponEnabled = '0'}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -970,7 +971,9 @@ class ApiController {
         "membership_plan_detail_id": membershipPlanDetailId,
         "membership_id": membershipId,
         "additional_info": additionalInfo,
-        "is_membership_coupon_enabled": isMembershipCouponEnabled
+        "is_membership_coupon_enabled": isMembershipCouponEnabled,
+        "shipping_tax_rate": taxModel != null ? taxModel.shipping_tax_rate : '',
+        "shipping_tax": taxModel != null ? taxModel.shipping_tax : '',
       });
 
       print("----${url}");

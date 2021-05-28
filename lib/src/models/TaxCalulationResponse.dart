@@ -9,11 +9,11 @@ class TaxCalculationResponse {
   TaxCalculationResponse({this.success, this.taxCalculation});
 
   TaxCalculationResponse.fromJson(
-      String couponCode,String couponType, Map<String, dynamic> json) {
+      String couponCode, String couponType, Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
     taxCalculation = json['data'] != null
-        ? TaxCalculationModel.fromJson(couponCode,couponType, json['data'])
+        ? TaxCalculationModel.fromJson(couponCode, couponType, json['data'])
         : null;
   }
 
@@ -34,6 +34,8 @@ class TaxCalculationModel {
   String tax;
   String discount;
   String shipping;
+  String shipping_tax_rate;
+  String shipping_tax;
   String couponCode;
   String couponType;
   String fixedTaxAmount;
@@ -49,6 +51,8 @@ class TaxCalculationModel {
       this.tax,
       this.discount,
       this.shipping,
+      this.shipping_tax_rate,
+      this.shipping_tax,
       this.couponCode,
       this.couponType,
       this.fixedTaxAmount,
@@ -59,7 +63,7 @@ class TaxCalculationModel {
       this.isChanged});
 
   factory TaxCalculationModel.fromJson(
-      String couponCode,String couponType, Map<String, dynamic> json) {
+      String couponCode, String couponType, Map<String, dynamic> json) {
     TaxCalculationModel model = TaxCalculationModel();
 
     model.total = json['total'];
@@ -67,6 +71,8 @@ class TaxCalculationModel {
     model.tax = json['tax'];
     model.discount = json['discount'];
     model.shipping = json['shipping'];
+    model.shipping_tax_rate = json['shipping_tax_rate'];
+    model.shipping_tax = json['shipping_tax'];
     model.couponCode = couponCode;
     model.couponType = couponType;
     model.fixedTaxAmount = json['fixed_tax_amount'];
@@ -104,6 +110,8 @@ class TaxCalculationModel {
     data['tax'] = this.tax;
     data['discount'] = this.discount;
     data['shipping'] = this.shipping;
+    data['shipping_tax_rate'] = this.shipping_tax_rate;
+    data['shipping_tax'] = this.shipping_tax;
     data['fixed_tax_amount'] = this.fixedTaxAmount;
     if (this.taxDetail != null) {
       data['tax_detail'] = this.taxDetail.map((v) => v.toJson()).toList();
