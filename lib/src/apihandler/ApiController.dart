@@ -934,7 +934,7 @@ class ApiController {
         : '0';
     try {
       request.fields.addAll({
-        "shipping_charges": "${shipping_charges}",
+        "shipping_charges": "${taxModel.shipping}",
         "note": note,
         "calculated_tax_detail": "",
         "coupon_code": taxModel == null ? "" : '${taxModel.couponCode}',

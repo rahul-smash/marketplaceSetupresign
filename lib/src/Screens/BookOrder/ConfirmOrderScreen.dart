@@ -837,7 +837,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 Text("Delivery charges:",
                     style: TextStyle(color: Colors.black)),
                 Text(
-                    "${AppConstant.currency}${widget.areaObject == null ? "0" : widget.areaObject.charges}",
+                    "${AppConstant.currency}${taxModel == null ? widget.areaObject == null ? "0" : widget.areaObject.charges : taxModel.shipping}",
                     style: TextStyle(color: Colors.black)),
               ],
             ),
@@ -1522,7 +1522,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                                   couponCodeController.text,
                                   couponModel.discountAmount,
                                   "0",
-                                  json);
+                                  json,
+                                  isMembershipCouponEnabled:
+                                      widget.subscriptionOrderType != null
+                                          ? '1'
+                                          : '0');
                           Utils.hideProgressDialog(context);
                           if (model != null && !model.success) {
                             Utils.showToast(model.message, true);
@@ -1759,22 +1763,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     if (widget.deliveryType == OrderType.PickUp)
       Utils.showProgressDialog(context);
 
-    TaxCalculationResponse response =
-        await ApiController.multipleTaxCalculationRequest(
-            "${couponCode}", "${discount}", shippingCharges, json);
-
-    if (response != null && !response.success) {
-      Utils.showToast(response.message, true);
-//      databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
-      databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-//      databaseHelper.deleteTable(DatabaseHelper.Products_Table);
-      eventBus.fire(updateCartCount());
-      eventBus.fire(onCartRemoved());
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      return;
-    }
-
-    taxModel = response.taxCalculation;
 
     Map<String, dynamic> attributeMap = new Map<String, dynamic>();
     attributeMap["ScreenName"] = "Order Confirm Screen";
@@ -1874,7 +1862,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             responseOrderDetail: responseOrderDetail)
         .then((json) {
       ApiController.multipleTaxCalculationRequest(
-              "", "0", "${shippingCharges}", json)
+              "", "0", "${shippingCharges}", json,
+              isMembershipCouponEnabled:
+                  widget.subscriptionOrderType != null ? '1' : '0')
           .then((response) async {
         Utils.hideProgressDialog(context);
         Utils.hideKeyboard(context);
