@@ -193,12 +193,13 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.initialPosition == null) {
-        DialogUtils.displayLocationNotAvailbleDialog(
-            context, "Location not available", buttonText1: 'Dismiss',
-            button1: () async {
-          getCurrentLocation();
-          Navigator.pop(context);
-        });
+        getCurrentLocation();
+//        DialogUtils.displayLocationNotAvailbleDialog(
+//            context, "Location not available", buttonText1: 'Dismiss',
+//            button1: () async {
+//
+//          Navigator.pop(context);
+//        });
       }
       location.onLocationChanged.listen((LocationData currentLocation) {
         // Use current location
