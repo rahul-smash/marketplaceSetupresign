@@ -203,6 +203,7 @@ class _RestroListScreenState extends State<RestroListScreen> {
                 Utils.hideKeyboard(context);
                 if (storesResponse != null && storesResponse.success) {
                   widget.allStoreData = storesResponse;
+                  widget.callback(value: storesResponse);
                 }
               });
             },

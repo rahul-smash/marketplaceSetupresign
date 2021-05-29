@@ -118,10 +118,11 @@ class ApiController {
         ApiConstants.brandVersion;
 
     var request = new http.MultipartRequest("GET", Uri.parse(url));
+    print("----url---${url}");
     try {
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
-      print("----url---${url}");
+
       print("----respStr---${respStr}");
       final parsed = json.decode(respStr);
       BrandVersionModel storeArea = BrandVersionModel.fromJson(parsed);
@@ -801,7 +802,7 @@ class ApiController {
 
   static Future<TaxCalculationResponse> multipleTaxCalculationRequest(
       String couponCode, String discount, String shipping, String orderJson,
-      {String couponType = '',String isMembershipCouponEnabled='0'}) async {
+      {String couponType = '', String isMembershipCouponEnabled = '0'}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -822,7 +823,7 @@ class ApiController {
         "shipping": shipping,
         "order_detail": orderJson,
         "device_id": deviceId,
-        "coupon_code":couponCode.toString(),
+        "coupon_code": couponCode.toString(),
         "is_membership_coupon_enabled": isMembershipCouponEnabled
       });
       print("--fields---${request.fields.toString()}");

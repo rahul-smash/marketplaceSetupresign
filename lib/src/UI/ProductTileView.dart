@@ -317,7 +317,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                           MainAxisAlignment.start,
                                       children: <Widget>[
                                         Visibility(
-                                          visible: AppConstant.isRestroApp,
+                                          visible: AppConstant.isRestroApp &&
+                                              widget
+                                                  .product.nutrient.isNotEmpty,
                                           child: addVegNonVegOption(),
                                         ),
                                         Expanded(

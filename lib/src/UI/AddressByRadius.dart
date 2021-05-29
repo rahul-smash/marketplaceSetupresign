@@ -336,7 +336,8 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
         this.zipCode = "${first.postalCode}";
 
         setState(() {
-          address = first.addressLine;
+//          address = first.addressLine;
+          address = '${first.subLocality!=null?first.subLocality:''}${first.locality!=null?', '+first.locality:''}${first.subAdminArea!=null?', '+first.subAdminArea:''}${first.adminArea!=null?', '+first.adminArea:''}';
           cityController.text = first.locality;
           stateController.text = first.adminArea;
         });
@@ -536,10 +537,11 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
         var addresses =
             await Geocoder.local.findAddressesFromCoordinates(coordinates);
         var first = addresses.first;
-        localAddress = first.addressLine;
+//        localAddress = first.addressLine;
+        localAddress = '${first.subLocality!=null?first.subLocality:''}${first.locality!=null?', '+first.locality:''}${first.subAdminArea!=null?', '+first.subAdminArea:''}${first.adminArea!=null?', '+first.adminArea:''}';
         if (setState != null)
           setState(() {
-            localAddress = first.addressLine;
+            localAddress = '${first.subLocality!=null?first.subLocality:''}${first.locality!=null?', '+first.locality:''}${first.subAdminArea!=null?', '+first.subAdminArea:''}${first.adminArea!=null?', '+first.adminArea:''}';
           });
       } catch (e) {
         print(e);

@@ -5,8 +5,6 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:package_info/package_info.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
@@ -21,7 +19,6 @@ import 'package:permission_handler/permission_handler.dart'
     as permission_handler;
 import 'src/models/BrandModel.dart';
 import 'src/models/VersionModel.dart';
-import 'src/utils/DialogUtils.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,21 +91,10 @@ class MarketPlaceApp extends StatefulWidget {
 }
 
 class _MarketPlaceAppState extends State<MarketPlaceApp> {
-  Location location = new Location();
-  bool _serviceEnabled;
-  PermissionStatus _permissionGranted;
-  LocationData _locationData;
-  LatLng initialPosition;
-  Timer _timer;
-  int _start = 10;
-  bool userDisabledGps = false;
 
   @override
   void initState() {
     super.initState();
-    initialPosition = null;
-    userDisabledGps = false;
-    getCurrentLocation(context);
   }
 
   @override
@@ -120,111 +106,16 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
         primaryColor: appTheme,
       ),
       navigatorObservers: <NavigatorObserver>[MarketPlaceApp.observer],
-      home: showHomeScreen(widget.storeData,widget.configObject,widget.packageInfo,initialPosition),
-//      home: Container(
-//        decoration: BoxDecoration(
-//            image: DecorationImage(
-//                image: AssetImage(widget.configObject.isGroceryApp == 'true'
-//                    ? "images/mk_splash_grocery.jpg"
-//                    : "images/mk_splash.jpg"),
-//                fit: BoxFit.fill)),
-//        child: initialPosition == null
-//            ? userDisabledGps
-//                ? Container(child: LocationAlertDialog())
-//                : _start < 1
-//                    ? showHomeScreen(widget.storeData, widget.configObject,
-//                        widget.packageInfo, initialPosition)
-//                    : Container()
-//            : showHomeScreen(widget.storeData, widget.configObject,
-//                widget.packageInfo, initialPosition),
-//      ),
-    );
-  }
-
-  Future<void> getCurrentLocation(BuildContext context) async {
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        print("----!_serviceEnabled----$_serviceEnabled");
-        setState(() {
-          userDisabledGps = true;
-        });
-        return;
-      }
-    }
-    _permissionGranted = await location.hasPermission();
-    print("permission sttsu $_permissionGranted");
-    if (_permissionGranted == PermissionStatus.denied) {
-      print("permission deniedddd");
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        print("permission not grantedd");
-        setState(() {
-          userDisabledGps = true;
-        });
-        return;
-      }
-    }
-//    if (Platform.isAndroid) {
-    await location.changeSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 0,
-      interval: 1000,
-    );
-//    }
-    location.onLocationChanged.listen((LocationData currentLocation) {
-      // Use current location
-      if (initialPosition == null) {
-        initialPosition =
-            LatLng(currentLocation.latitude, currentLocation.longitude);
-        setState(() {
-          print("----initialPosition----=$initialPosition");
-        });
-        if (_timer != null && _timer.isActive) {
-          _timer.cancel();
-        }
-      }
-    });
-    startTimer();
-//    _locationData = await location.getLocation();
-//    initialPosition = LatLng(_locationData.latitude, _locationData.longitude);
-//    setState(() {
-//      print("----initialPosition----=$initialPosition");
-//    });
-  }
-
-  void startTimer() {
-    //print('--startTimer===  $_start');
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(
-      oneSec,
-      (Timer timer) {
-        //print('--periodic===  $_start');
-        setState(
-          () {
-            if (_start < 1) {
-              timer.cancel();
-            } else {
-              _start = _start - 1;
-            }
-          },
-        );
-      },
+      home: showHomeScreen(widget.storeData,widget.configObject,widget.packageInfo,),
     );
   }
 }
 
 Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject,
-    PackageInfo packageInfo, LatLng initialPosition) {
+    PackageInfo packageInfo,) {
   String version = packageInfo.version;
   if (model.success) {
     setStoreCurrency(model, configObject);
-    /*SharedPrefs.storeSharedValue(
-        AppConstant.DeliverySlot, model.brand.deliverySlot);
-    SharedPrefs.storeSharedValue(
-        AppConstant.is24x7Open, model.store.is24x7Open);*/
-
     List<ForceDownload> forceDownload = model.brand.forceDownload;
     //print("app= ${version} and -androidAppVerison--${forceDownload[0].androidAppVerison}");
     int index1 = version.lastIndexOf(".");
@@ -242,15 +133,14 @@ Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject,
     } catch (e) {
       //print("-apiVesrion--catch--${e}----");
     }
-    print("x-initialPosition--${initialPosition}----");
     //print("--currentVesrion--${currentVesrion} and ${apiVesrion}");
     if (apiVesrion > currentVesrion) {
       //return ForceUpdateAlert(forceDownload[0].forceDownloadMessage,appName);
       return MarketPlaceHomeScreen(
-          model.brand, configObject, true, initialPosition);
+          model.brand, configObject, true, );
     } else {
       return MarketPlaceHomeScreen(
-          model.brand, configObject, false, initialPosition);
+          model.brand, configObject, false, );
     }
   } else {
     return Container();
@@ -274,25 +164,6 @@ void setStoreCurrency(BrandVersionModel store, ConfigModel configObject) {
 }
 
 void setAppThemeColors(BrandVersionModel store) {
-//  AppThemeColors appThemeColors = store.appThemeColors;
-//  left_menu_header_bkground =
-//      Color(int.parse(appThemeColors.leftMenuHeaderBackgroundColor));
-//  left_menu_icon_colors = Color(int.parse(appThemeColors.leftMenuIconColor));
-//  left_menu_background_color =
-//      Color(int.parse(appThemeColors.leftMenuBackgroundColor));
-//  leftMenuWelcomeTextColors =
-//      Color(int.parse(appThemeColors.leftMenuUsernameColor));
-//  leftMenuUsernameColors =
-//      Color(int.parse(appThemeColors.leftMenuUsernameColor));
-//  bottomBarIconColor = Color(int.parse(appThemeColors.bottomBarIconColor));
-//  bottomBarTextColor = Color(int.parse(appThemeColors.bottomBarTextColor));
-//  dotIncreasedColor = Color(int.parse(appThemeColors.dotIncreasedColor));
-//  bottomBarBackgroundColor =
-//      Color(int.parse(appThemeColors.bottom_bar_background_color));
-//  leftMenuLabelTextColors =
-//      Color(int.parse(appThemeColors.left_menu_label_Color));
-
-  //flow change
   if (store.brand.webAppThemeColors != null) {
     WebAppThemeColors webAppThemeColors = store.brand.webAppThemeColors;
     appTheme = Utils.colorGeneralization(

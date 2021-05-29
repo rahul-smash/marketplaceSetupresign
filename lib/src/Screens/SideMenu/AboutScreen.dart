@@ -6,6 +6,7 @@ import 'package:maps_launcher/maps_launcher.dart';
 import 'package:restroapp/src/Screens/Dashboard/ContactScreen.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
@@ -16,6 +17,7 @@ import 'ContactUs.dart';
 
 class AboutScreen extends StatefulWidget {
   BrandData store;
+
   AboutScreen(this.store);
 
   @override
@@ -25,11 +27,12 @@ class AboutScreen extends StatefulWidget {
 }
 
 class _AboutScreenState extends State<AboutScreen> {
-
-  String aboutUs, aboutUsBanner="";
+  UserModel user;
+  String aboutUs, aboutUsBanner = "";
 
   @override
   void initState() {
+    getuser();
     super.initState();
     try {
       print("aboutusBanner=${widget.store.aboutusBanner[0].image}");
@@ -52,52 +55,49 @@ class _AboutScreenState extends State<AboutScreen> {
             children: <Widget>[
               Visibility(
                 child: CachedNetworkImage(
-                    imageUrl: aboutUsBanner,
-                    fit: BoxFit.fitWidth
-                ),
-                visible : widget.store.aboutusBanner == null ? false :true,
+                    imageUrl: aboutUsBanner, fit: BoxFit.fitWidth),
+                visible: widget.store.aboutusBanner == null ? false : true,
               ),
               widget.store.about_us == null
                   ? Container()
                   : Html(
-                data: widget.store.about_us,
-                padding: EdgeInsets.all(10.0),
-              ),
+                      data: widget.store.about_us,
+                      padding: EdgeInsets.all(10.0),
+                    ),
             ],
           ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Container(
-            height: 50,
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(width: 1.0, color: whiteColor),
-              ),
+          height: 50,
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(width: 1.0, color: whiteColor),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                  child: FlatButton(
-                    child: Text('Contact Us'),
-                    color: appThemeSecondary,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      //Navigator.pop(context, false);
-                      if (AppConstant.isLoggedIn) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ContactUs()),
-                        );
-                      }else{
-                        Utils.showToast(AppConstant.pleaseLogin, true);
-                      }
-
-                    },
-                  ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                child: FlatButton(
+                  child: Text('Contact Us'),
+                  color: appThemeSecondary,
+                  textColor: Colors.white,
+                  onPressed: () {
+                    //Navigator.pop(context, false);
+                    if (AppConstant.isLoggedIn) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ContactUs(user)),
+                      );
+                    } else {
+                      Utils.showToast(AppConstant.pleaseLogin, true);
+                    }
+                  },
                 ),
+              ),
 //                Container(
 //                  margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
 //                  child: FlatButton(
@@ -120,12 +120,14 @@ class _AboutScreenState extends State<AboutScreen> {
 //                    },
 //                  ),
 //                ),
-              ],
-            ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-
+  void getuser() async {
+    user = await SharedPrefs.getUser();
+  }
 }

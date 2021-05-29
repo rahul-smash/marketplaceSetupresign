@@ -210,7 +210,7 @@ class _OrderSelectionScreen extends State<OrderSelectionScreen> {
                                   decoration: new BoxDecoration(
                                     image: DecorationImage(
                                       image: new AssetImage(
-                                        'images/deliver.png',
+                                        'images/delivernow.png',
                                       ),
                                       fit: BoxFit.scaleDown,
                                     ),
