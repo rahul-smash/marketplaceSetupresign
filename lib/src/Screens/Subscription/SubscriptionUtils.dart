@@ -185,11 +185,11 @@ Future<bool> showOfferAvailDialog(
     context: _context,
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
-      bool isEnable = true;
-      Timer t = Timer(Duration(seconds: 3), () {
-        isEnable = false;
-        _onPressed(context);
-      });
+//      bool isEnable = true;
+//      Timer t = Timer(Duration(seconds: 3), () {
+//        isEnable = false;
+//        _onPressed(context);
+//      });
       // and later, before the timer goes off...
 
       return AlertDialog(
@@ -200,87 +200,105 @@ Future<bool> showOfferAvailDialog(
           onWillPop: () {
             return Future(() => false);
           },
-          child: InkWell(
-            onTap: () {
-              if (isEnable) {
-                isEnable = false;
-                t.cancel();
-                _onPressed(context);
-              }
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image(
-                  image: AssetImage('images/congratsgiftimage.png'),
-                ),
-                Text('Congrats,'),
-                Text('we will got,'),
-                SizedBox(
-                  height: 15,
-                ),
-                RichText(
-                  text: TextSpan(children: [
-                    WidgetSpan(
-                      child: Transform.translate(
-                        offset: const Offset(0.0, -4.0),
-                        child: Text(
-                          '${AppConstant.currency}',
-                          style: TextStyle(
-                              fontSize: 19, fontWeight: FontWeight.bold),
-                        ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image(
+                image: AssetImage('images/congratsgiftimage.png'),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                'Congrats,',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              ),
+              Text('You will get'),
+              SizedBox(
+                height: 15,
+              ),
+              RichText(
+                text: TextSpan(children: [
+                  WidgetSpan(
+                    child: Transform.translate(
+                      offset: const Offset(0.0, -4.0),
+                      child: Text(
+                        '${AppConstant.currency}',
+                        style: TextStyle(
+                            fontSize: 19, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    TextSpan(
-                        text: '${getSubscriptionCouponDiscountPlan()}',
-                        style: TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black)),
-                  ]),
+                  ),
+                  TextSpan(
+                      text: '${getSubscriptionCouponDiscountPlan()}',
+                      style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                ]),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              RichText(
+                text: TextSpan(children: [
+                  TextSpan(
+                      text: 'discount ',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  TextSpan(
+                      text: 'on this order',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black)),
+                ]),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 150,
+                      child: ElevatedButton(
+                        child: Text(
+                          'Proceed',
+                          style: TextStyle(color: appTheme),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              appThemeSecondary),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+//                          if (isEnable) {
+//                            isEnable = false;
+//                        t.cancel();
+                            _onPressed(context);
+//                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  height: 15,
-                ),
-                RichText(
-                  text: TextSpan(children: [
-                    TextSpan(
-                        text: 'discount ',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black)),
-                    TextSpan(
-                        text: 'on this offer',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black)),
-                  ]),
-                )
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );
     },
   );
-}
-
-getSubscriptionCouponDiscountPlan() {
-  UserPurchaseMembershipResponse response =
-      SingletonBrandData.getInstance().userPurchaseMembershipResponse;
-  return response.data.couponDetails.discount.isNotEmpty
-      ? response.data.couponDetails.discount
-      : response.data.couponDetails.discountUpto.isNotEmpty
-          ? response.data.couponDetails.discountUpto
-          : '0';
-}
-
-String getSubscriptionCouponCodePlan() {
-  UserPurchaseMembershipResponse response =
-      SingletonBrandData.getInstance().userPurchaseMembershipResponse;
-  return response.data.couponDetails.couponCode;
 }
 
 Future<bool> showCanceledSubscriptionDialog(
@@ -296,7 +314,7 @@ Future<bool> showCanceledSubscriptionDialog(
         child: AlertDialog(
           title: Column(children: [
             Text('Your plan'),
-            Text('has been canceled.'),
+            Text('has been cancelled.'),
             SizedBox(
               height: 20,
             ),
@@ -317,16 +335,30 @@ Future<bool> showCanceledSubscriptionDialog(
 
 /*Utils-------------------------------------------------------------------------------------------*/
 
-bool checkIsPlanPurchased() {
+getSubscriptionCouponDiscountPlan() {
   UserPurchaseMembershipResponse response =
       SingletonBrandData.getInstance().userPurchaseMembershipResponse;
+  return response.data.couponDetails.discount.isNotEmpty
+      ? response.data.couponDetails.discount
+      : response.data.couponDetails.discountUpto.isNotEmpty
+          ? response.data.couponDetails.discountUpto
+          : '0';
+}
+
+String getSubscriptionCouponCodePlan() {
+  UserPurchaseMembershipResponse response =
+      SingletonBrandData.getInstance()?.userPurchaseMembershipResponse;
+  return response.data.couponDetails.couponCode;
+}
+
+bool checkIsPlanPurchased() {
+  UserPurchaseMembershipResponse response =
+      SingletonBrandData.getInstance()?.userPurchaseMembershipResponse;
   return response != null && response.data.status;
 }
 
-bool checkIsRewPlanPurchased() {
-  UserPurchaseMembershipResponse response =
-      SingletonBrandData.getInstance().userPurchaseMembershipResponse;
-  return response != null && response.data != null && !response.data.status;
+String checkIsRewPlanPurchased(MemberShipType _membershipType) {
+  return _membershipType == MemberShipType.RENEW ? 'Renew' : 'New';
 }
 
 bool checkForTodaysSubscriptionOrder() {
@@ -342,6 +374,8 @@ bool checkForTodaysSubscriptionOrder() {
       !response.data.todayOrdered &&
       checkCurrentDateWithInThePlan();
 }
+
+enum MemberShipType { RENEW, NEW }
 
 String getSubscriptionPlanName() {
   MembershipPlanResponse response =
@@ -369,18 +403,33 @@ String getSubscriptionNextMealDate() {
 
 bool checkCurrentDateWithInThePlan() {
   DateTime now = DateTime.now();
+
   bool isSameDate(DateTime currentDate, DateTime other) {
     return currentDate.year == other.year &&
         currentDate.month == currentDate.month &&
         currentDate.day == other.day;
   }
 
+  bool isSameDateAndTimeConstraint(DateTime currentDate, DateTime other) {
+    DateTime startTime =
+        DateTime(currentDate.year, currentDate.month, currentDate.day, 5);
+    DateTime endTime =
+        DateTime(currentDate.year, currentDate.month, currentDate.day, 22);
+    return currentDate.isAfter(startTime) && currentDate.isBefore(endTime);
+  }
+
   UserPurchaseMembershipResponse response =
       SingletonBrandData.getInstance().userPurchaseMembershipResponse;
-  //TODO: recheck About this
-  bool isOnEndDay = isSameDate(now, response.data.endDate);
-  return !now.isBefore(response.data.startDate) &&
-      (isOnEndDay || !now.isAfter(response.data.endDate));
+//  DateTime createdDate=response.data.created;
+  DateTime modifiedDate = response.data.modified;
+  bool isInitDay = isSameDate(now, modifiedDate);
+  bool isCurrentDateWithInThePlan =
+      (isInitDay || !now.isBefore(response.data.modified)) &&
+          !now.isAfter(response.data.endDate);
+//case check: if date within the InitDay and checkTime
+  isCurrentDateWithInThePlan = isCurrentDateWithInThePlan &&
+      isSameDateAndTimeConstraint(now, modifiedDate);
+  return isCurrentDateWithInThePlan;
 }
 
 /*Button Clicks------------------------------------------------------------------*/

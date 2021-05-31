@@ -188,7 +188,7 @@ class _SubscriptionPurchasedScreenState
                                                       offset: const Offset(
                                                           0.0, -3.0),
                                                       child: Text(
-                                                        'orders from ${convertSubscriptionDate(SingletonBrandData.getInstance().userPurchaseMembershipResponse.data.startDate)}',
+                                                        'orders from ${convertSubscriptionDate(SingletonBrandData.getInstance().userPurchaseMembershipResponse.data.modified)}',
                                                         style: TextStyle(
                                                             fontSize: 19,
                                                             fontWeight:

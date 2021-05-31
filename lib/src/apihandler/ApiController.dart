@@ -801,7 +801,7 @@ class ApiController {
 
   static Future<TaxCalculationResponse> multipleTaxCalculationRequest(
       String couponCode, String discount, String shipping, String orderJson,
-      {String couponType = ''}) async {
+      {String couponType = '',String isMembershipCouponEnabled='0'}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -822,6 +822,8 @@ class ApiController {
         "shipping": shipping,
         "order_detail": orderJson,
         "device_id": deviceId,
+        "coupon_code":couponCode.toString(),
+        "is_membership_coupon_enabled": isMembershipCouponEnabled
       });
       print("--fields---${request.fields.toString()}");
       final response = await request.send().timeout(Duration(seconds: timeout));
@@ -858,7 +860,8 @@ class ApiController {
       String posBranchCode = '',
       String membershipPlanDetailId = '',
       String membershipId = '',
-      String additionalInfo='',String isMembershipCouponEnabled = '0'}) async {
+      String additionalInfo = '',
+      String isMembershipCouponEnabled = '0'}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -932,7 +935,7 @@ class ApiController {
         : '0';
     try {
       request.fields.addAll({
-        "shipping_charges": "${shipping_charges}",
+        "shipping_charges": "${taxModel.shipping}",
         "note": note,
         "calculated_tax_detail": "",
         "coupon_code": taxModel == null ? "" : '${taxModel.couponCode}',
@@ -968,7 +971,9 @@ class ApiController {
         "membership_plan_detail_id": membershipPlanDetailId,
         "membership_id": membershipId,
         "additional_info": additionalInfo,
-        "is_membership_coupon_enabled": isMembershipCouponEnabled
+        "is_membership_coupon_enabled": isMembershipCouponEnabled,
+        "shipping_tax_rate": taxModel != null ? taxModel.shipping_tax_rate : '',
+        "shipping_tax": taxModel != null ? taxModel.shipping_tax : '',
       });
 
       print("----${url}");
@@ -2196,6 +2201,7 @@ class ApiController {
               .brand
               .currencyAbbr,
         });
+        print(formData.fields.toString());
         Dio dio = new Dio();
         Response response = await dio.post(url,
             data: formData,
@@ -2254,6 +2260,7 @@ class ApiController {
               .brand
               .currencyAbbr,
         });
+        print(formData.fields.toString());
         Dio dio = new Dio();
         Response response = await dio.post(url,
             data: formData,

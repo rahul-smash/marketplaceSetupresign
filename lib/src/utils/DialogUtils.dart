@@ -1670,7 +1670,7 @@ class DialogUtils {
 
   static Future<bool> displayLocationNotAvailbleDialog(
       BuildContext context, String message,
-      {Function button1, String buttonText1 = ''}) async {
+      {Function button1, String buttonText1 = 'Change Location'}) async {
     return await showDialog<bool>(
         context: context,
         barrierDismissible: true,
@@ -1802,9 +1802,8 @@ class DialogUtils {
                                 color: appTheme,
                                 padding: EdgeInsets.all(5.0),
                                 textColor: Colors.white,
-                                child: Text(buttonText1.isNotEmpty
-                                    ? buttonText1
-                                    : "Change Location"),
+                                child: Text( buttonText1
+                                    ),
                               ),
                             ),
                           ),

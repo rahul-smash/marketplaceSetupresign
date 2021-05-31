@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:restroapp/src/Screens/SideMenu/HtmlDisplayScreen.dart';
 import 'package:restroapp/src/Screens/Subscription/BaseState.dart';
 import 'package:restroapp/src/Screens/Subscription/SubscriptionTermsAndConditionsScreen.dart';
+import 'package:restroapp/src/Screens/Subscription/SubscriptionUtils.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/MembershipPlanResponse.dart';
@@ -12,13 +13,13 @@ import 'package:restroapp/src/utils/Utils.dart';
 
 import 'SubscriptionTypeSelection.dart';
 
-class SubscriptionPageScreen extends StatefulWidget {
+class SubscriptionBuyScreen extends StatefulWidget {
 
   @override
-  _SubscriptionPageScreenState createState() => _SubscriptionPageScreenState();
+  _SubscriptionBuyScreenState createState() => _SubscriptionBuyScreenState();
 }
 
-class _SubscriptionPageScreenState extends BaseState<SubscriptionPageScreen> {
+class _SubscriptionBuyScreenState extends BaseState<SubscriptionBuyScreen> {
   bool agree = false;
   MembershipPlanResponse _membershipPlanResponse;
 
@@ -192,7 +193,7 @@ class _SubscriptionPageScreenState extends BaseState<SubscriptionPageScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            SubscriptionTypeSelection(_membershipPlanResponse)));
+                                            SubscriptionTypeSelection(_membershipPlanResponse,MemberShipType.NEW)));
                               } else {
                                 print('showing toast');
                                 Utils.showToast(

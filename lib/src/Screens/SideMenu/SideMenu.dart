@@ -15,9 +15,9 @@ import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginEmailScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/FAQScreen.dart';
-import 'package:restroapp/src/Screens/Subscription/SubscriptionPageScreen.dart';
+import 'package:restroapp/src/Screens/Subscription/SubscriptionBuyScreen.dart';
 import 'package:restroapp/src/Screens/Subscription/SubscriptionPurchasedScreen.dart';
-import 'package:restroapp/src/Screens/Subscription/SubscriptionRenewScreen.dart';
+import 'package:restroapp/src/Screens/Subscription/SubscriedPlanScreen.dart';
 import 'package:restroapp/src/Screens/Subscription/SubscriptionUtils.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
@@ -242,8 +242,8 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
               MaterialPageRoute(
                   builder: (context) =>
                   checkIsPlanPurchased()
-                      ? SubscriptionRenewScreen()
-                      : SubscriptionPageScreen()));
+                      ? SubscribedPlanScreen()
+                      : SubscriptionBuyScreen()));
         } else {
           Utils.showLoginDialog(context);
         }

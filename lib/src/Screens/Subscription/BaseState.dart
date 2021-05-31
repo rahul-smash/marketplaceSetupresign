@@ -65,7 +65,7 @@ abstract class BaseState<T extends StatefulWidget> extends State {
     price = price * 100;
     String mPrice =
         price.toString().substring(0, price.toString().indexOf('.'));
-  String id= await _getStoreId();
+    String id = await _getStoreId();
     ApiController.razorpayCreateOrderApi(
             mPrice, orderJson, detailsModel?.orderDetails, id)
         .then((response) {
@@ -142,11 +142,10 @@ abstract class BaseState<T extends StatefulWidget> extends State {
     }
   }
 
-  void _handleRazorPayPaymentSuccess(PaymentSuccessResponse responseObj) async{
+  void _handleRazorPayPaymentSuccess(PaymentSuccessResponse responseObj) async {
     Utils.showProgressDialog(context);
-    String id= await _getStoreId();
-    ApiController.razorpayVerifyTransactionApi(
-            responseObj.orderId, id)
+    String id = await _getStoreId();
+    ApiController.razorpayVerifyTransactionApi(responseObj.orderId, id)
         .then((response) {
       if (response != null) {
         RazorpayOrderData model = response;
@@ -244,7 +243,7 @@ abstract class BaseState<T extends StatefulWidget> extends State {
     });
   }
 
- Future<String> _getStoreId() async {
+  Future<String> _getStoreId() async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     switch (_paymentMethod) {
       case PaymentMethod.SUBSCRIPTION:

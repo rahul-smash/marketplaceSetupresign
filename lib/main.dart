@@ -120,27 +120,24 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
         primaryColor: appTheme,
       ),
       navigatorObservers: <NavigatorObserver>[MarketPlaceApp.observer],
-      //home: showHomeScreen(widget.storeData,widget.configObject,widget.packageInfo),
-      home: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage(widget.configObject.isGroceryApp == 'true'
-                    ? "images/mk_splash_grocery.jpg"
-                    : "images/mk_splash.jpg"),
-                fit: BoxFit.fill)),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: initialPosition == null
-              ? userDisabledGps
-                  ? Container(child: LocationAlertDialog())
-                  : _start < 1
-                      ? showHomeScreen(widget.storeData, widget.configObject,
-                          widget.packageInfo, initialPosition)
-                      : Container()
-              : showHomeScreen(widget.storeData, widget.configObject,
-                  widget.packageInfo, initialPosition),
-        ),
-      ),
+      home: showHomeScreen(widget.storeData,widget.configObject,widget.packageInfo,initialPosition),
+//      home: Container(
+//        decoration: BoxDecoration(
+//            image: DecorationImage(
+//                image: AssetImage(widget.configObject.isGroceryApp == 'true'
+//                    ? "images/mk_splash_grocery.jpg"
+//                    : "images/mk_splash.jpg"),
+//                fit: BoxFit.fill)),
+//        child: initialPosition == null
+//            ? userDisabledGps
+//                ? Container(child: LocationAlertDialog())
+//                : _start < 1
+//                    ? showHomeScreen(widget.storeData, widget.configObject,
+//                        widget.packageInfo, initialPosition)
+//                    : Container()
+//            : showHomeScreen(widget.storeData, widget.configObject,
+//                widget.packageInfo, initialPosition),
+//      ),
     );
   }
 

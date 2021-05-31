@@ -21,7 +21,6 @@ import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/CreatePaytmTxnTokenResponse.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/DeliveryTimeSlotModel.dart';
-import 'package:restroapp/src/models/GetOrderHistory.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/OrderDetailsModel.dart';
 import 'package:restroapp/src/models/RazorpayOrderData.dart';
@@ -72,7 +71,6 @@ class ConfirmOrderScreen extends StatefulWidget {
 
 class ConfirmOrderState extends State<ConfirmOrderScreen> {
   DatabaseHelper databaseHelper = new DatabaseHelper();
-  OrderData orderData;
   double totalPrice = 0.00;
   double totalSavings = 0.00;
   String totalSavingsText = "";
@@ -115,8 +113,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   String couponType = '';
 
   ConfirmOrderState({this.storeModel});
-
-
 
   @override
   void initState() {
@@ -410,7 +406,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         : '';
     databaseHelper.getCartItemsListToJson().then((json) {
       ApiController.multipleTaxCalculationRequest(
-              couponCode, discount, "$shippingCharges", json)
+              couponCode, discount, "$shippingCharges", json,
+              isMembershipCouponEnabled:
+                  widget.subscriptionOrderType != null ? '1' : '0')
           .then((response) async {
         //{"success":false,"message":"Some products are not available."}
         TaxCalculationResponse model = response;
@@ -839,7 +837,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 Text("Delivery charges:",
                     style: TextStyle(color: Colors.black)),
                 Text(
-                    "${AppConstant.currency}${widget.areaObject == null ? "0" : widget.areaObject.charges}",
+                    "${AppConstant.currency}${taxModel == null ? widget.areaObject == null ? "0" : widget.areaObject.charges : taxModel.shipping}",
                     style: TextStyle(color: Colors.black)),
               ],
             ),
@@ -899,7 +897,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 //TODO: recheck this
                 Text(
-                    "${AppConstant.currency}${databaseHelper.roundOffPrice(taxModel == null ? totalPrice : double.parse(taxModel.total) > 0 ? taxModel.total : 0, 2).toStringAsFixed(2)}",
+                    "${AppConstant.currency}${databaseHelper.roundOffPrice(taxModel == null ? totalPrice : double.parse(taxModel.total) > 0 ? double.parse(taxModel.total) : 0, 2).toStringAsFixed(2)}",
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ],
@@ -1524,7 +1522,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                                   couponCodeController.text,
                                   couponModel.discountAmount,
                                   "0",
-                                  json);
+                                  json,
+                                  isMembershipCouponEnabled:
+                                      widget.subscriptionOrderType != null
+                                          ? '1'
+                                          : '0');
                           Utils.hideProgressDialog(context);
                           if (model != null && !model.success) {
                             Utils.showToast(model.message, true);
@@ -1735,7 +1737,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //              } else if (widget.deliveryType == OrderType.PickUp) {
 //                performPlaceOrderOperation(storeModel);
 //              }
-              performPlaceOrderOperation(storeModel, orderData);
+              performPlaceOrderOperation(storeModel);
             },
             child: Text(
               "Confirm Order",
@@ -1747,7 +1749,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     );
   }
 
-  performPlaceOrderOperation(StoreDataObj storeObject, OrderData orderData) async {
+  performPlaceOrderOperation(StoreDataObj storeObject) async {
     String json = await databaseHelper.getCartItemsListToJson(
         isOrderVariations: isOrderVariations,
         responseOrderDetail: responseOrderDetail);
@@ -1761,22 +1763,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     if (widget.deliveryType == OrderType.PickUp)
       Utils.showProgressDialog(context);
 
-    TaxCalculationResponse response =
-        await ApiController.multipleTaxCalculationRequest(
-            "${couponCode}", "${discount}", shippingCharges, json);
-
-    if (response != null && !response.success) {
-      Utils.showToast(response.message, true);
-//      databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
-      databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-//      databaseHelper.deleteTable(DatabaseHelper.Products_Table);
-      eventBus.fire(updateCartCount());
-      eventBus.fire(onCartRemoved());
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      return;
-    }
-
-    taxModel = response.taxCalculation;
 
     Map<String, dynamic> attributeMap = new Map<String, dynamic>();
     attributeMap["ScreenName"] = "Order Confirm Screen";
@@ -1876,7 +1862,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             responseOrderDetail: responseOrderDetail)
         .then((json) {
       ApiController.multipleTaxCalculationRequest(
-              "", "0", "${shippingCharges}", json)
+              "", "0", "${shippingCharges}", json,
+              isMembershipCouponEnabled:
+                  widget.subscriptionOrderType != null ? '1' : '0')
           .then((response) async {
         Utils.hideProgressDialog(context);
         Utils.hideKeyboard(context);
@@ -2231,49 +2219,47 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           print("-paymentMode-${widget.paymentMode}");
 
           ApiController.placeOrderRequest(
-            shippingCharges,
-            comment,
-            totalPrice.toString(),
-            widget.paymentMode,
-            taxModel,
-            widget.address,
-            json,
-            widget.isComingFromPickUpScreen,
-            widget.areaId,
-            widget.deliveryType,
-            payment_request_id,
-            payment_id,
-            onlineMethod,
-            selectedDeliverSlotValue,
-            cart_saving: totalSavings.toStringAsFixed(2),
-            posBranchCode: widget.subscriptionOrderType != null
-                ? SingletonBrandData.getInstance()
-                    ?.userPurchaseMembershipResponse
-                    ?.data
-                    ?.posBranchCode??''
-                : '',
-            membershipId: widget.subscriptionOrderType != null
-                ? SingletonBrandData.getInstance()
-                    ?.userPurchaseMembershipResponse
-                    ?.data
-                    ?.id??''
-                : '',
-            membershipPlanDetailId: widget.subscriptionOrderType != null
-                ? SingletonBrandData.getInstance()
-                    ?.userPurchaseMembershipResponse
-                    ?.data
-                    ?.membershipPlanDetailId??''
-                : '',
-            additionalInfo: widget.subscriptionOrderType != null
-                ? SingletonBrandData.getInstance()
-                        ?.userPurchaseMembershipResponse
-                        ?.data
-                        ?.additionalInfo ??
-                    ''
-                : '',
-              isMembershipCouponEnabled : widget.subscriptionOrderType != null
-              ? '1' : '0'
-          ).then((response) async {
+                  shippingCharges,
+                  comment,
+                  totalPrice.toString(),
+                  widget.paymentMode,
+                  taxModel,
+                  widget.address,
+                  json,
+                  widget.isComingFromPickUpScreen,
+                  widget.areaId,
+                  widget.deliveryType,
+                  payment_request_id,
+                  payment_id,
+                  onlineMethod,
+                  selectedDeliverSlotValue,
+                  cart_saving: totalSavings.toStringAsFixed(2),
+                  posBranchCode: widget.subscriptionOrderType != null
+                      ? SingletonBrandData.getInstance()
+                              ?.userPurchaseMembershipResponse
+                              ?.data
+                              ?.posBranchCode ??
+                          ''
+                      : '',
+                  membershipId: widget.subscriptionOrderType != null
+                      ? SingletonBrandData.getInstance()
+                              ?.userPurchaseMembershipResponse
+                              ?.data
+                              ?.id ??
+                          ''
+                      : '',
+                  membershipPlanDetailId: widget.subscriptionOrderType != null
+                      ? SingletonBrandData.getInstance()
+                              ?.userPurchaseMembershipResponse
+                              ?.data
+                              ?.membershipPlanDetailId ??
+                          ''
+                      : '',
+                  additionalInfo: widget.subscriptionOrderType != null
+                      ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.additionalInfo ?? ''
+                      : '',
+                  isMembershipCouponEnabled: widget.subscriptionOrderType != null ? '1' : '0')
+              .then((response) async {
             Utils.hideProgressDialog(context);
             if (response == null) {
               print("--response == null-response == null-");
@@ -2284,6 +2270,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   context, _brandData.name, response.message);
               return;
             }
+            if (AppConstant.isLoggedIn)
+              ApiController.getUserMembershipPlanApi();
             eventBus.fire(updateCartCount());
             print("${widget.deliveryType}");
             //print("Location = ${storeModel.lat},${storeModel.lng}");
@@ -2355,7 +2343,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       if (response != null) {
         StripeVerifyModel object = response;
         if (object.success) {
-          placeOrderApiCall(payment_request_id, object.paymentId, "Stripe",);
+          placeOrderApiCall(payment_request_id, object.paymentId, "Stripe");
         } else {
           Utils.showToast(
               "Transaction is not completed, please try again!", true);

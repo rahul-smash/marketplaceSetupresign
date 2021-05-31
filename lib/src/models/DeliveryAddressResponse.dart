@@ -52,6 +52,7 @@ class DeliveryAddressData {
   String lng;
   String addressType;
   String set_default_address;
+  bool isSubscriptionOAddress=false;
   //DeliveryTimeSlot deliveryTimeSlot;
 
   DeliveryAddressData({
