@@ -153,7 +153,7 @@ class _SubscriptionTypeSelectionState
                                   borderRadius: BorderRadius.circular(10),
                                   color: _selectedType ==
                                           SubscriptionType.Subscription_Lunch
-                                      ? appTheme
+                                      ? appThemeSecondary
                                       : Colors.grey[200],
                                 ),
                                 child: Stack(
@@ -172,7 +172,7 @@ class _SubscriptionTypeSelectionState
                                           color: _selectedType ==
                                                   SubscriptionType
                                                       .Subscription_Lunch
-                                              ? appThemeSecondary
+                                              ? Colors.white
                                               : appTheme,
                                         ),
                                         SizedBox(height: 5),
@@ -184,7 +184,7 @@ class _SubscriptionTypeSelectionState
                                               color: _selectedType ==
                                                       SubscriptionType
                                                           .Subscription_Lunch
-                                                  ? appThemeSecondary
+                                                  ? Colors.white
                                                   : appTheme),
                                           textAlign: TextAlign.center,
                                         ),
@@ -197,18 +197,17 @@ class _SubscriptionTypeSelectionState
                                           alignment: Alignment.topRight,
                                           child: Container(
                                               height: 25,
-                                              width: 35,
+                                              width: 30,
                                               decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.only(
                                                     topRight:
                                                         Radius.circular(10),
                                                     bottomLeft:
-                                                        Radius.circular(30),
+                                                        Radius.circular(20),
                                                   ),
-                                                  color: appThemeSecondary),
-                                              child: Icon(Icons.check,
-                                                  color: Colors.white))),
+                                                  color: Colors.red[900]),
+                                              child: Image(image: AssetImage('images/selectmealtick.png'),color: Colors.white,))),
                                     ),
                                   ],
                                 ),
@@ -220,7 +219,7 @@ class _SubscriptionTypeSelectionState
                             width: 30,
                             margin: EdgeInsets.only(left: 20, right: 20),
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
+                              border: Border.all(color: Colors.grey, width: 0.5),
                               borderRadius: BorderRadius.circular(20),
                               color: Colors.white,
                             ),
@@ -248,7 +247,7 @@ class _SubscriptionTypeSelectionState
                                   borderRadius: BorderRadius.circular(10),
                                   color: _selectedType ==
                                           SubscriptionType.Subscription_Dinner
-                                      ? appTheme
+                                      ? appThemeSecondary
                                       : Colors.grey[200],
                                 ),
                                 child: Stack(
@@ -267,7 +266,7 @@ class _SubscriptionTypeSelectionState
                                             color: _selectedType ==
                                                     SubscriptionType
                                                         .Subscription_Dinner
-                                                ? appThemeSecondary
+                                                ? Colors.white
                                                 : appTheme),
                                         SizedBox(height: 5),
                                         Text(
@@ -278,7 +277,7 @@ class _SubscriptionTypeSelectionState
                                               color: _selectedType ==
                                                       SubscriptionType
                                                           .Subscription_Dinner
-                                                  ? appThemeSecondary
+                                                  ? Colors.white
                                                   : appTheme),
                                           textAlign: TextAlign.center,
                                         ),
@@ -291,18 +290,17 @@ class _SubscriptionTypeSelectionState
                                           alignment: Alignment.topRight,
                                           child: Container(
                                               height: 25,
-                                              width: 35,
+                                              width: 30,
                                               decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.only(
                                                     topRight:
                                                         Radius.circular(10),
                                                     bottomLeft:
-                                                        Radius.circular(30),
+                                                        Radius.circular(20),
                                                   ),
-                                                  color: appThemeSecondary),
-                                              child: Icon(Icons.check,
-                                                  color: Colors.white))),
+                                                  color: Colors.red[900]),
+                                              child:Image(image: AssetImage('images/selectmealtick.png'),color: Colors.white,))),
                                     ),
                                   ],
                                 ),
@@ -372,11 +370,11 @@ class _SubscriptionTypeSelectionState
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.resolveWith<Color>(
                           (Set<MaterialState> states) {
-                        return appTheme; // Defer to the widget's default.
+                        return appThemeSecondary; // Defer to the widget's default.
                       }),
                       foregroundColor: MaterialStateProperty.resolveWith<Color>(
                           (Set<MaterialState> states) {
-                        return appThemeSecondary; // Defer to the widget's default.
+                        return Colors.white; // Defer to the widget's default.
                       }),
                     ),
                     onPressed: _handleConfirmClick,

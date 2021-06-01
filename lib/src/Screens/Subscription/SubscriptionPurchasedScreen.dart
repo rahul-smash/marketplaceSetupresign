@@ -109,27 +109,24 @@ class _SubscriptionPurchasedScreenState
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold)),
                                   SizedBox(height: 30),
-                                  Row(children: [
                                     Container(
-                                      alignment: Alignment.centerRight,
-                                      margin: EdgeInsets.only(right: 10),
-                                      height: 60,
-                                      width: 120,
-                                      child: CircleAvatar(
-                                        radius: 30,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage:
-                                            AssetImage('images/tickstarbg.png'),
-                                        child: Image(
-                                          image:
-                                              AssetImage('images/startick.png'),
-                                          height: 25,
-                                          width: 25,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
+                                        decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                                image: AssetImage(
+                                                    'images/tickstarbg.png'),
+                                                fit: BoxFit.cover)),
+                                        height: 60,
+                                        width: 60,
+                                        child: Align(
+                                            alignment: Alignment.center,
+                                            child: Image(
+                                              image: AssetImage(
+                                                  'images/startick.png'),
+                                              height: 30,
+                                              width: 20,
+                                            ))),
+                                  SizedBox(height: 30),
+                                    Flexible(
                                       child: RichText(
                                           text: TextSpan(
                                               text:
@@ -156,14 +153,13 @@ class _SubscriptionPurchasedScreenState
                                                   '${convertSubscriptionDate(SingletonBrandData.getInstance().userPurchaseMembershipResponse.data.endDate)}',
                                               style: TextStyle(
                                                 color: Colors.grey[600],
-                                                fontSize: 18,
+                                                  fontSize: 18,
                                               ),
                                             )
                                           ])),
-                                    )
-                                  ]),
+                                    ),
                                   Divider(
-                                    height: 50,
+                                    height: 30,
                                     thickness: 2,
                                     color: Colors.grey[300],
                                     indent: 110,
@@ -215,7 +211,7 @@ class _SubscriptionPurchasedScreenState
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 17,
-                                                      color: appTheme))),
+                                                      color: Colors.white))),
                                         ),
                                       ],
                                     ),

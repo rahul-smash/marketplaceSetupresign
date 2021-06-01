@@ -78,90 +78,87 @@ class _SubscribedPlanScreenState extends State<SubscribedPlanScreen> {
                 isApiLoading
                     ? CircularProgressIndicator()
                     : Column(children: [
-                        SizedBox(height: 20),
+                        SizedBox(height: 50),
                         Image(
-                            image: AssetImage('images/offergraphic1.png'),
-                            height: 250,
-                            width: 300),
-                        Flexible(
-                          child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(colors: [
-                                Colors.white,
-                                appTheme.withOpacity(0.1),
-                                Colors.white
-                              ])),
-                              child: Center(
-                                  child: Text(
-                                      _membershipPlanResponse.data.planName,
-                                      style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold)))),
-                        ),
-                        Flexible(
-                            flex: 1,
-                            child: Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(colors: [
-                                  Colors.white,
-                                  appTheme.withOpacity(0.1),
-                                  Colors.white
-                                ])),
-                                child: Center(
+                            image: AssetImage('images/graphic1.png'),
+                            height: 220,
+                            width: 270),
+                  Flexible(
+                      child: Container(
+                          height: 100,
+                          width: 260,
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+
+                                  colors: [
+                                    Colors.white,
+                                    Colors.grey.withOpacity(0.2),
+                                    Colors.white
+                                  ])),
+                          child: Column(
+                              children: [
+                                SizedBox(height: 20),
+                                Text('${_membershipPlanResponse.data.planName}',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold)),
+                                Center(
                                     child: RichText(
-                                  text: TextSpan(children: [
-                                    WidgetSpan(
-                                      child: Transform.translate(
-                                        offset: const Offset(0.0, -4.0),
-                                        child: Text(
-                                          '${AppConstant.currency}',
-                                          style: TextStyle(
-                                              fontSize: 19,
-                                              fontWeight: FontWeight.bold),
+                                      text: TextSpan(children: [
+                                        WidgetSpan(
+                                          child: Transform.translate(
+                                            offset: const Offset(0.0, -4.0),
+                                            child: Text(
+                                              '${AppConstant.currency}',
+                                              style: TextStyle(
+                                                  fontSize: 19,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                    TextSpan(
-                                        text:
+                                        TextSpan(
+                                            text:
                                             '${_membershipPlanResponse.data.planTotalCharges}',
-                                        style: TextStyle(
-                                            fontSize: 26,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black)),
-                                    WidgetSpan(
-                                      child: Transform.translate(
-                                        offset: const Offset(0.0, -7.0),
-                                        child: Text(
-                                          '*',
-                                          style: TextStyle(
-                                              fontSize: 19,
-                                              fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                                fontSize: 26,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black)),
+                                        WidgetSpan(
+                                          child: Transform.translate(
+                                            offset: const Offset(0.0, -7.0),
+                                            child: Text(
+                                              '*',
+                                              style: TextStyle(
+                                                  fontSize: 19,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ]),
-                                )))),
+                                      ]),
+                                    )),
+                              ])
+                      )
+                  ),
                         SizedBox(height: 30),
                         Row(children: [
                           Container(
-                            alignment: Alignment.centerRight,
-                            margin: EdgeInsets.only(right: 10),
-                            height: 60,
-                            width: 120,
-                            child: CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Colors.white,
-                              backgroundImage:
-                                  AssetImage('images/tickstarbg.png'),
-                              child: Image(
-                                image: AssetImage('images/startick.png'),
-                                height: 25,
-                                width: 25,
-                              ),
-                            ),
-                          ),
+                            margin: EdgeInsets.only(left: 60, right: 10),
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                          'images/tickstarbg.png'),
+                                      fit: BoxFit.cover)),
+                              height: 60,
+                              width: 60,
+                              child: Align(
+                                  alignment: Alignment.center,
+                                  child: Image(
+                                    image: AssetImage(
+                                        'images/startick.png'),
+                                    height: 30,
+                                    width: 20,
+                                  ))),
                           Expanded(
                             flex: 2,
                             child: RichText(
@@ -302,7 +299,7 @@ class _SubscribedPlanScreenState extends State<SubscribedPlanScreen> {
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 17,
-                                      color: appTheme))),
+                                      color: Colors.white))),
                         ),
                         SizedBox(height: 20),
 //              RichText(
