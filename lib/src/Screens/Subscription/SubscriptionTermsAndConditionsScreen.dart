@@ -5,7 +5,7 @@ class SubscriptionTermsAndConditionsScreen extends StatelessWidget {
   String appScreen;
   String htmlData = '';
 
-  SubscriptionTermsAndConditionsScreen(this.appScreen,this.htmlData);
+  SubscriptionTermsAndConditionsScreen(this.appScreen, this.htmlData);
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +19,9 @@ class SubscriptionTermsAndConditionsScreen extends StatelessWidget {
           child: Html(
             data: htmlData,
             padding: EdgeInsets.all(10.0),
+            customTextStyle: (node, base) {
+              return TextStyle(fontSize: 16);
+            },
           ),
         ),
       ),
