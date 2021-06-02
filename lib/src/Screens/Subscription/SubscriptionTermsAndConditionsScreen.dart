@@ -20,7 +20,7 @@ class SubscriptionTermsAndConditionsScreen extends StatelessWidget {
             data: htmlData,
             padding: EdgeInsets.all(10.0),
             customTextStyle: (node, base) {
-              return TextStyle(fontSize: 16);
+              return TextStyle(fontSize: 18);
             },
           ),
         ),
