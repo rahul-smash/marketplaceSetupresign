@@ -133,10 +133,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 .toLowerCase() ==
             'lunch') {
           selectedDeliverSlotValue =
-              selectedDeliverSlotValue + "1:00 PM - 3:00 PM";
+              selectedDeliverSlotValue + ", 1:00 PM - 3:00 PM";
         } else {
           selectedDeliverSlotValue =
-              selectedDeliverSlotValue + "7:00 PM - 9:00 PM";
+              selectedDeliverSlotValue + ", 7:00 PM - 9:00 PM";
         }
       }
     }

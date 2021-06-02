@@ -18,7 +18,7 @@ class SubscriptionTermsAndConditionsScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Html(
             data: htmlData,
-            padding: EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(20.0),
             customTextStyle: (node, base) {
               return TextStyle(fontSize: 18);
             },

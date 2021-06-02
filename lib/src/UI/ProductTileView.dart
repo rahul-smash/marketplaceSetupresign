@@ -563,7 +563,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                     width: 1.0),
                 borderRadius: BorderRadius.all(
                     Radius.circular(5.0)),
-                color:  appThemeSecondary,),
+                color:  Colors.white,),
           child: Text("$weight", style: TextStyle(color: darkGrey)),
         ),
             )

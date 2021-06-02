@@ -49,7 +49,10 @@ Future<bool> showSubscriptionSuccessDialog(
                   Container(
                     width: 150,
                     child: ElevatedButton(
-                      child: Text('Ok',style: TextStyle(color: Colors.white),),
+                      child: Text(
+                        'Ok',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all<Color>(appThemeSecondary),
@@ -395,9 +398,11 @@ String convertSubscriptionDate(DateTime dateTime) {
 
 String getSubscriptionNextMealDate() {
   DateTime today = DateTime.now();
-  today.add(Duration(days: 1));
-  DateFormat formatter = new DateFormat('dd MMM yyyy');
+  today=today.add(Duration(days: 1));
+//  2021-05-10, 7:30 PM - 8:30 PM
+  DateFormat formatter = new DateFormat('yyyy-MM-dd');
   String formatted = formatter.format(today);
+  print("--------------------------------------------------" + formatted);
   return formatted;
 }
 
