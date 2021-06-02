@@ -119,8 +119,28 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     super.initState();
     _brandData = SingletonBrandData.getInstance().brandVersionModel.brand;
     if (widget.subscriptionOrderType != null) {
+      //selecting delivery slots
       selectedDeliverSlotValue = getSubscriptionNextMealDate();
+      if (SingletonBrandData.getInstance()
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.additionalInfo !=
+          null) {
+        if (SingletonBrandData.getInstance()
+                .userPurchaseMembershipResponse
+                .data
+                .additionalInfo
+                .toLowerCase() ==
+            'lunch') {
+          selectedDeliverSlotValue =
+              selectedDeliverSlotValue + "1:00 PM - 3:00 PM";
+        } else {
+          selectedDeliverSlotValue =
+              selectedDeliverSlotValue + "7:00 PM - 9:00 PM";
+        }
+      }
     }
+
     initRazorPay();
     listenWebViewChanges();
     checkPaytmActive();
@@ -828,7 +848,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //            color: Colors.black12,
 //            width: MediaQuery.of(context).size.width),
         Visibility(
-          visible: widget.address == null ? false : true,
+          visible:
+              widget.address != null && widget.subscriptionOrderType == null
+                  ? true
+                  : false,
           child: Padding(
             padding: EdgeInsets.fromLTRB(15, 10, 20, 10),
             child: Row(
@@ -1763,7 +1786,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     if (widget.deliveryType == OrderType.PickUp)
       Utils.showProgressDialog(context);
 
-
     Map<String, dynamic> attributeMap = new Map<String, dynamic>();
     attributeMap["ScreenName"] = "Order Confirm Screen";
     attributeMap["action"] = "Place Order Request";
@@ -1772,14 +1794,14 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     attributeMap["paymentMode"] = "${widget.paymentMode}";
     attributeMap["shippingCharges"] = "${shippingCharges}";
     Utils.sendAnalyticsEvent("Clicked Place Order button", attributeMap);
-    if (taxModel != null &&
-        double.parse(taxModel.total) <= 0 &&
-        widget.paymentMode != '2') {
+
+    if (widget.subscriptionOrderType != null &&
+        widget.paymentMode == "3" &&
+        taxModel != null &&
+        double.parse(taxModel.total) <= 0) {
       Utils.hideProgressDialog(context);
-      Utils.showToast("Choose COD Method to Avail this Offer.", false);
-      return;
-    }
-    if (widget.paymentMode == "3") {
+      placeOrderApiCall('0', '0', "Razorpay");
+    } else if (widget.paymentMode == "3") {
       Utils.hideProgressDialog(context);
 
       if (ispaytmSelected) {
@@ -1788,7 +1810,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         String paymentGateway = _brandData.paymentGateway;
         if (_brandData.paymentGatewaySettings != null &&
             _brandData.paymentGatewaySettings.isNotEmpty) {
-          //case only single gateway is comming
+          //case only single gateway is coming
           if (_brandData.paymentGatewaySettings.length == 1) {
             paymentGateway =
                 _brandData.paymentGatewaySettings.first.paymentGateway;

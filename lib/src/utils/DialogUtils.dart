@@ -2144,7 +2144,7 @@ class DialogUtils {
                                     foregroundColor:
                                         MaterialStateProperty.resolveWith<
                                             Color>((Set<MaterialState> states) {
-                                      return appTheme; // Defer to the widget's default.
+                                      return Colors.white; // Defer to the widget's default.
                                     }),
                                   ),
                                   onPressed: () {
