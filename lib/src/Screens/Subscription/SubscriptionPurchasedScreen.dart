@@ -103,11 +103,15 @@ class _SubscriptionPurchasedScreenState
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  Text(
-                                      '${_membershipPlanResponse.data.planName} is Active',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold)),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 10,right:10),
+                                    child: Text(
+                                        '${_membershipPlanResponse.data.planName} is Active',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
                                   SizedBox(height: 30),
                                     Container(
                                         decoration: BoxDecoration(
@@ -200,6 +204,7 @@ class _SubscriptionPurchasedScreenState
                                         Container(
                                           width: 170,
                                           height: 40,
+                                          margin: EdgeInsets.only(bottom: 20),
                                           child: MaterialButton(
                                               color: appThemeSecondary,
                                               onPressed: () {
