@@ -76,8 +76,6 @@ class _SubscriptionBuyScreenState extends BaseState<SubscriptionBuyScreen> {
                             width: 270),
                         Flexible(
                           child: Container(
-                            height: 100,
-                            width: 260,
                             decoration: BoxDecoration(
                                 gradient: LinearGradient(
 
@@ -148,7 +146,6 @@ class _SubscriptionBuyScreenState extends BaseState<SubscriptionBuyScreen> {
                                 },
                               ),
                             ),
-
                             RichText(
                               text: TextSpan(
                                 text: 'I accept ',
