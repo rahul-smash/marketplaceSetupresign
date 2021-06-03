@@ -317,7 +317,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                           MainAxisAlignment.start,
                                       children: <Widget>[
                                         Visibility(
-                                          visible: AppConstant.isRestroApp,
+                                          visible: AppConstant.isRestroApp &&
+                                              widget
+                                                  .product.nutrient.isNotEmpty,
                                           child: addVegNonVegOption(),
                                         ),
                                         Expanded(
@@ -545,88 +547,87 @@ class _ProductTileItemState extends State<ProductTileItem> {
                   ])),
         ),
         widget.classType == ClassType.CART
-            ?Container(
+            ?Visibility(
+          visible: weight!=null&&weight.isNotEmpty,
+              child: Container(
           padding: EdgeInsets.symmetric(
-              horizontal: 20.0, vertical: 10.0),
+                horizontal: 20.0, vertical: 10.0),
           margin: EdgeInsets.only(
-              left: 20.0,
-              right: 5.0,
-              top: 0.0,
-              bottom: 5.0),
+                left: 20.0,
+                right: 5.0,
+                top: 0.0,
+                bottom: 5.0),
           decoration: BoxDecoration(
-              border: Border.all(
-                  color: staticCategoryListingButtonBorderColor,
-                  width: 1.0),
-              borderRadius: BorderRadius.all(
-                  Radius.circular(5.0)),
-              color:  appThemeSecondary,),
+                border: Border.all(
+                    color: staticCategoryListingButtonBorderColor,
+                    width: 1.0),
+                borderRadius: BorderRadius.all(
+                    Radius.circular(5.0)),
+                color:  Colors.white,),
           child: Text("$weight", style: TextStyle(color: darkGrey)),
-        )
-            : Visibility(
-                visible: variantsVisibility,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10, left: 15),
-                  child: widget.product.variants != null
-                      ? Wrap(
-                          children: widget.product.variants
-                              .map((f) => GestureDetector(
-                                    child: Container(
-                                      height: 35,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 20.0, vertical: 3.0),
-                                      margin: EdgeInsets.only(
-                                          left: 5.0,
-                                          right: 5.0,
-                                          top: 0.0,
-                                          bottom: 5.0),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: (f.id ==
-                                                      (variant == null
-                                                          ? widget
-                                                              .product.variantId
-                                                          : variant.id))
-                                                  ? Colors.transparent
-                                                  : staticCategoryListingButtonBorderColor,
-                                              width: 1.0),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5.0)),
+        ),
+            )
+            :Visibility(
+            visible: variantsVisibility,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 10, left: 15),
+              child: widget.product.variants != null
+                  ? Wrap(
+                      children: widget.product.variants
+                          .map((f) => GestureDetector(
+                                child: Container(
+                                  height: 35,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20.0, vertical: 3.0),
+                                  margin: EdgeInsets.only(
+                                      left: 5.0,
+                                      right: 5.0,
+                                      top: 0.0,
+                                      bottom: 5.0),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
                                           color: (f.id ==
                                                   (variant == null
                                                       ? widget.product.variantId
                                                       : variant.id))
-                                              ? appThemeSecondary
-                                              : categoryListingBoxBackgroundColor),
-                                      child: priceContainer(f),
-                                    ),
-                                    onTap: () {
-                                      if (widget.product.variants.length !=
-                                          null) {
-                                        if (widget.product.variants.length ==
-                                            1) {
-                                          return;
-                                        }
-                                      }
-                                      variant = f;
-                                      if (variant != null) {
-                                        databaseHelper
-                                            .getProductQuantitiy(variant.id)
-                                            .then((cartDataObj) {
-                                          cartData = cartDataObj;
-                                          counter =
-                                              int.parse(cartData.QUANTITY);
-                                          showAddButton =
-                                              counter == 0 ? true : false;
-                                          setState(() {});
-                                        });
-                                      }
-                                      _checkOutOfStock(findNext: false);
-                                    },
-                                  ))
-                              .toList(),
-                        )
-                      : Container(),
-                )),
+                                              ? Colors.transparent
+                                              : staticCategoryListingButtonBorderColor,
+                                          width: 1.0),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0)),
+                                      color: (f.id ==
+                                              (variant == null
+                                                  ? widget.product.variantId
+                                                  : variant.id))
+                                          ? appThemeSecondary
+                                          : categoryListingBoxBackgroundColor),
+                                  child: priceContainer(f),
+                                ),
+                                onTap: () {
+                                  if (widget.product.variants.length != null) {
+                                    if (widget.product.variants.length == 1) {
+                                      return;
+                                    }
+                                  }
+                                  variant = f;
+                                  if (variant != null) {
+                                    databaseHelper
+                                        .getProductQuantitiy(variant.id)
+                                        .then((cartDataObj) {
+                                      cartData = cartDataObj;
+                                      counter = int.parse(cartData.QUANTITY);
+                                      showAddButton =
+                                          counter == 0 ? true : false;
+                                      setState(() {});
+                                    });
+                                  }
+                                  _checkOutOfStock(findNext: false);
+                                },
+                              ))
+                          .toList(),
+                    )
+                  : Container(),
+            )),
         Container(
             height: 5,
             width: MediaQuery.of(context).size.width,

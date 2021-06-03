@@ -64,41 +64,34 @@ class _SubscriptionTypeSelectionState
       this.membershipPlanResponse, this._passedMemberShipType);
 
   _handleResponse(DeliveryAddressResponse responses) async {
-    print('hfdsfffff----------------------------');
     responsesData = responses;
     print(responses.data.length);
     if (responsesData != null && responsesData.success) {
       addressList.clear();
       _selectedAddressIndex = 0;
-      print('hfdsfffff----------------------------1');
 
       String defaultAddressID = SingletonBrandData.getInstance()
               ?.userPurchaseMembershipResponse
               ?.data
               ?.defaultAddressId ??
           '';
-      print('hfdsfffff----------------------------2');
       bool isSubscriptionActive = SingletonBrandData.getInstance()
               ?.userPurchaseMembershipResponse
               ?.data
               ?.status ??
           false;
-      print('hfdsfffff----------------------------3');
       for (int i = 0; i < responsesData.data.length; i++) {
 //        if (defaultAddressID != responses.data[i].id || !isSubscriptionActive)
 //          addressList.add(responsesData.data[i]);
         if (defaultAddressID == responses.data[i].id && isSubscriptionActive) {
           responsesData.data[i].isSubscriptionOAddress = true;
-          print('hfdsfffff----------------------------4');
         }
 
         addressList.add(responsesData.data[i]);
-        print('hfdsfffff----------------------------5');
       }
     }
 
     setState(() {
-      print('hfdsfffff----------------------------6');
       isLoading = false;
     });
   }
@@ -207,7 +200,11 @@ class _SubscriptionTypeSelectionState
                                                         Radius.circular(20),
                                                   ),
                                                   color: Colors.red[900]),
-                                              child: Image(image: AssetImage('images/selectmealtick.png'),color: Colors.white,))),
+                                              child: Image(
+                                                image: AssetImage(
+                                                    'images/selectmealtick.png'),
+                                                color: Colors.white,
+                                              ))),
                                     ),
                                   ],
                                 ),
@@ -219,7 +216,8 @@ class _SubscriptionTypeSelectionState
                             width: 30,
                             margin: EdgeInsets.only(left: 20, right: 20),
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey, width: 0.5),
+                              border:
+                                  Border.all(color: Colors.grey, width: 0.5),
                               borderRadius: BorderRadius.circular(20),
                               color: Colors.white,
                             ),
@@ -300,7 +298,11 @@ class _SubscriptionTypeSelectionState
                                                         Radius.circular(20),
                                                   ),
                                                   color: Colors.red[900]),
-                                              child:Image(image: AssetImage('images/selectmealtick.png'),color: Colors.white,))),
+                                              child: Image(
+                                                image: AssetImage(
+                                                    'images/selectmealtick.png'),
+                                                color: Colors.white,
+                                              ))),
                                     ),
                                   ],
                                 ),
@@ -347,7 +349,11 @@ class _SubscriptionTypeSelectionState
                                           addressList.isNotEmpty
                                       ? TextDecoration.underline
                                       : TextDecoration.none,
-                                  color: appThemeSecondary),
+                                  color: isLoading == false &&
+                                          addressList != null &&
+                                          addressList.isNotEmpty
+                                      ? appThemeSecondary
+                                      : Colors.white),
                               textAlign: TextAlign.center),
                           onTap: _addAddress,
                         )),
@@ -387,7 +393,7 @@ class _SubscriptionTypeSelectionState
                     ),
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 20,
                   )
                 ],
               ),
@@ -696,7 +702,8 @@ class _SubscriptionTypeSelectionState
       setState(() {
         isLoading = true;
       });
-      ApiController.getAddressApiRequest().then((value) => _handleResponse(value));
+      ApiController.getAddressApiRequest()
+          .then((value) => _handleResponse(value));
     } else {
       print("--result--else------");
     }
@@ -765,7 +772,8 @@ class _SubscriptionTypeSelectionState
           setState(() {
             isLoading = true;
           });
-          ApiController.getAddressApiRequest().then((value) => _handleResponse(value));
+          ApiController.getAddressApiRequest()
+              .then((value) => _handleResponse(value));
         }
       }
     } else {
