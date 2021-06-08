@@ -189,7 +189,7 @@ class _HomeCategoryListViewState extends State<HomeCategoryListView> {
   _showAllSubCategories() {
     if (Utils.checkIfStoreClosed(widget.store)) {
       DialogUtils.displayCommonDialog(
-          context, widget.store.storeName, widget.store.storeMsg);
+          context, widget.store.storeName, widget.store.stor6eMsg);
     } else {
       if (widget.selectedCategory != null &&
           widget.selectedCategory.subCategory != null &&
