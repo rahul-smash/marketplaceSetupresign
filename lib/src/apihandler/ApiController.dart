@@ -801,7 +801,7 @@ class ApiController {
 
   static Future<TaxCalculationResponse> multipleTaxCalculationRequest(
       String couponCode, String discount, String shipping, String orderJson,
-      {String couponType = '',String isMembershipCouponEnabled='0'}) async {
+      {String couponType = '', String isMembershipCouponEnabled = '0'}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -822,7 +822,7 @@ class ApiController {
         "shipping": shipping,
         "order_detail": orderJson,
         "device_id": deviceId,
-        "coupon_code":couponCode.toString(),
+        "coupon_code": couponCode.toString(),
         "is_membership_coupon_enabled": isMembershipCouponEnabled
       });
       print("--fields---${request.fields.toString()}");
@@ -927,10 +927,10 @@ class ApiController {
       print(e);
     }
     String checkOutPrice =
-        double.parse(taxModel.itemSubTotal) > 0 && posBranchCode.isNotEmpty
+        double.parse(taxModel.itemSubTotal) > 0 || posBranchCode.isNotEmpty
             ? taxModel.itemSubTotal
             : '0';
-    String total = double.parse(taxModel.total) > 0 && posBranchCode.isNotEmpty
+    String total = double.parse(taxModel.total) > 0 || posBranchCode.isNotEmpty
         ? taxModel.total
         : '0';
     try {
