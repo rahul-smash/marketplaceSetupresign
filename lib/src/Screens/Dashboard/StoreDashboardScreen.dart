@@ -335,7 +335,51 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                 ),
               ),
             ),
-          )
+          ),
+          Visibility(
+            visible: !Utils.checkStoreOpenTime(store),
+            child: Container(
+              height: 150.0,
+              color: Colors.black45,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.red, width: 1),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Padding(
+                          padding: EdgeInsets.all(2),
+                          child: Text(
+                            "Store Closed",
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        )),
+                    Container(
+                        child: Padding(
+                      padding: EdgeInsets.only(
+                          left: 15, top: 5, bottom: 10, right: 15),
+                      child: Text(
+                        "${store.closehoursMessage}",
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -379,10 +423,28 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
               if (products[index] is Product && searchedProductList.isEmpty) {
                 Product product = products[index];
                 product.storeName = store.storeName;
-                return Container(
-                  child: ProductTileItem(product, () {
-                    SharedPrefs.saveStoreData(store);
-                  }, ClassType.Home),
+                bool isStoreClosed = !Utils.checkStoreOpenTime(store);
+                return InkWell(
+                  onTap: () {
+                    if (isStoreClosed) {
+                      DialogUtils.displayCommonDialog(
+                        context,
+                        store.storeName,
+                        store.closehoursMessage,
+                      );
+                      return;
+                    }
+                  },
+                  child: Container(
+                    child: ProductTileItem(
+                      product,
+                      () {
+                        SharedPrefs.saveStoreData(store);
+                      },
+                      ClassType.Home,
+                      isStoreClosed: isStoreClosed,
+                    ),
+                  ),
                 );
               } else if (products[index] is SubCategoryModel &&
                   searchedProductList.isEmpty) {
@@ -539,32 +601,17 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                           ),
                                           onPressed: () {
                                             Utils.hideKeyboard(context);
-                                            if (searchController.text
-                                                .trim()
-                                                .isEmpty) {
-                                              Utils.showToast(
-                                                  "Please enter some valid keyword",
-                                                  false);
-                                            } else {
-                                              callSearchApi(
-                                                  searchController.text,
-                                                  store.id);
-                                            }
+                                            callSearchApi(
+                                                searchController.text);
                                           }),
                                       Flexible(
                                         child: TextField(
                                           textInputAction:
                                               TextInputAction.search,
                                           onSubmitted: (value) {
-                                            if (value.trim().isEmpty) {
-                                              Utils.showToast(
-                                                  "Please enter some valid keyword",
-                                                  false);
-                                            } else {
-                                              callSearchApi(
-                                                  searchController.text,
-                                                  store.id);
-                                            }
+                                            callSearchApi(
+                                              value,
+                                            );
                                           },
                                           focusNode: _searchFocusNode,
                                           controller: searchController,
@@ -587,7 +634,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                         ),
                                       ),
                                       Visibility(
-                                        visible: searchController.text.trim().isNotEmpty,
+                                        visible: searchController.text
+                                            .trim()
+                                            .isNotEmpty,
                                         child: IconButton(
                                             icon: Icon(
                                               Icons.clear,
@@ -677,6 +726,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           setState(() {});
         }
       });
+      //Calling search api if search value came from previous screen
+      callSearchApi(store.searchKeyWord);
+      searchController.text = store.searchKeyWord;
+      store.searchKeyWord = '';
+
       eventBus.fire(OnProductTileDbRefresh());
     } else {
       products.add(addBanners());
@@ -704,16 +758,25 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     super.dispose();
   }
 
-  void callSearchApi(String keyWord, String storeID) {
+  void callSearchApi(String keyWord) {
+    if (keyWord.trim().isEmpty) {
+      return;
+    }
     Utils.showProgressDialog(context);
     updateSearch(true, false);
-    ApiController.getSearchProductResults(keyWord, storeID).then((value) {
+    ApiController.getSearchProductResults(keyWord, store.id).then((value) {
       Utils.hideProgressDialog(context);
       if (value != null && value.success) {
-        for (int i = 0; i < value.subCategories.length; i++) {
-          searchedProductList.addAll(value.subCategories[i].products);
+        if (value.subCategories != null && value.subCategories.isEmpty) {
+          Utils.showToast("No Result Found", false);
+        } else {
+          for (int i = 0; i < value.subCategories.length; i++) {
+            searchedProductList.addAll(value.subCategories[i].products);
+          }
+          updateSearch(false, false);
         }
-        updateSearch(false, false);
+      } else {
+        Utils.showToast("No Result Found", false);
       }
     });
   }

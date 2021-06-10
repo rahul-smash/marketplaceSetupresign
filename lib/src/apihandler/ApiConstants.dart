@@ -113,7 +113,7 @@ class ApiConstants{
   static String homeOffers = '/coupons/homeOffersList';
   static String couponDetails = '/coupons/couponDetail';
   static String reviewRating = '/review_rating';
-
+  static String logout = 'logout';
   // New subscription module
  static String membershipPlanDetails = 'membership_plan/plan_details';
  static String membershipPlanLatlngs = 'membership_plan/branch_latlngs';

@@ -212,6 +212,7 @@ class StoreDataObj {
 
   //optional
   Dish dish;
+  String searchKeyWord='';
 
   StoreDataObj copyWith({
     String id,

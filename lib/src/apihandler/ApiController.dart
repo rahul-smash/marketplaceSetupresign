@@ -26,6 +26,7 @@ import 'package:restroapp/src/models/DynamicResponse.dart';
 import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
 import 'package:restroapp/src/models/HtmlModelResponse.dart';
+import 'package:restroapp/src/models/LogoutResponse.dart';
 import 'package:restroapp/src/models/LoyalityPointsModel.dart';
 import 'package:restroapp/src/models/StorelatlngsResponse.dart';
 import 'package:restroapp/src/models/MembershipPlanResponse.dart';
@@ -727,8 +728,8 @@ class ApiController {
     }
   }
 
-  static Future<StoreOffersResponse> storeOffersApiRequest(
-      String areaId) async {
+  static Future<StoreOffersResponse> storeOffersApiRequest(String areaId,
+      {bool isComingFromPickUpScreen = false}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
 
@@ -740,7 +741,7 @@ class ApiController {
       request.fields.addAll({
         "store_id": store.id,
         "user_id": user.id,
-        "order_facility": "Delivery"
+        "order_facility": isComingFromPickUpScreen ? "PickUp" : "Delivery"
       });
 
       if (areaId != null) {
@@ -1509,15 +1510,14 @@ class ApiController {
     }
   }
 
-  static Future<DeliveryTimeSlotModel> deliveryTimeSlotApi() async {
+  static Future<DeliveryTimeSlotModel> deliveryTimeSlotApi(
+      String storeID) async {
     UserModelMobile user = await SharedPrefs.getUserMobile();
     var url = ApiConstants.baseUrl3.replaceAll("storeId", 'delivery_zones/') +
         ApiConstants.deliveryTimeSlot;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
-      request.fields.addAll({
-        "user_id": user.id,
-      });
+      request.fields.addAll({"user_id": user.id, "store_id": storeID});
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
 
@@ -2321,5 +2321,37 @@ class ApiController {
       print(e);
     }
     return null;
+  }
+
+  static Future<LogoutResponse> getLogout() async {
+    UserModel user = await SharedPrefs.getUser();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+    var url = ApiConstants.base_Url.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.logout;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+    try {
+      request.fields.addAll({
+        "user_id": user.id,
+        "device_id": deviceId,
+        "device_token": deviceToken,
+        "platform": Platform.isIOS ? "IOS" : "Android"
+      });
+      print("${url}");
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print("${respStr}");
+
+      final parsed = json.decode(respStr);
+      LogoutResponse logoutResponse =
+      LogoutResponse.fromJson(parsed);
+      return logoutResponse;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
   }
 }

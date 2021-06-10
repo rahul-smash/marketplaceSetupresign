@@ -27,7 +27,13 @@ class _OffersListScreenScreenState extends State<OffersListScreenScreen> {
     super.initState();
     dynamicResponse=AppConstant.dynamicResponse;
     if(dynamicResponse!=null)
-
+      ApiController.getDynamicText().then((value) {
+        if (value != null && value.success) {
+          dynamicResponse = value;
+          AppConstant.dynamicResponse = value;
+        }
+        setState(() {});
+      });
 
     ApiController.homeOffersApiRequest().then((value) {
       isLoading = false;

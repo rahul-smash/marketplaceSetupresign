@@ -152,8 +152,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     try {
       checkLoyalityPointsOption();
       if (widget.deliveryType == OrderType.Delivery) {
-        if (storeModel.deliverySlot == "1") {
-          ApiController.deliveryTimeSlotApi().then((response) {
+      /*if (storeModel.deliverySlot == "1")*/ {
+          ApiController.deliveryTimeSlotApi(storeModel.id).then((response) {
             setState(() {
               if (!response.success) {
                 isDeliveryResponseFalse = true;

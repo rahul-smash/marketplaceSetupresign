@@ -1511,24 +1511,25 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     );
   }
 
-  Widget _getSearchList() {
+  Widget _getSearchList({String searchKeyword = ''}) {
     return HomeSearchView(
       allStoreData,
       widget.brandData,
       initialPosition: widget.initialPosition,
       tagsModel: tagsModel,
       selectedScreen: _selectedHomeScreen,
+      searchKeyword: searchKeyword,
       dishCallBack: <Object>({value}) {
         if (value is Dish) {
-          Dish item = value;
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (BuildContext context) => ProductDetailsScreen(
-                    null, null,
-                    productID: item.id, storeId: item.storeId),
-                fullscreenDialog: true,
-              ));
+//          Dish item = value;
+//          Navigator.push(
+//              context,
+//              new MaterialPageRoute(
+//                builder: (BuildContext context) => ProductDetailsScreen(
+//                    null, null,
+//                    productID: item.id, storeId: item.storeId),
+//                fullscreenDialog: true,
+//              ));
           return;
         }
         return;
@@ -1607,7 +1608,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
             child: Column(
             children: [
               _addSearchView(),
-              Expanded(child: _getSearchList()),
+              Expanded(child: _getSearchList(searchKeyword: _controller.text)),
             ],
           ))
         : Expanded(

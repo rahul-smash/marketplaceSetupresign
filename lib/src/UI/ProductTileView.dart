@@ -21,10 +21,12 @@ class ProductTileItem extends StatefulWidget {
   VoidCallback callback;
   ClassType classType;
   CustomCallback favCallback;
-  List<String> tagsList = List();
+  List<String> tagsList = List.empty(growable: true);
+
+  bool isStoreClosed;
 
   ProductTileItem(this.product, this.callback, this.classType,
-      {this.favCallback});
+      {this.favCallback, this.isStoreClosed = false});
 
   @override
   _ProductTileItemState createState() => _ProductTileItemState();
@@ -163,6 +165,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
         InkWell(
           onTap: () async {
             //print("----print-----");
+            if (widget.isStoreClosed) {
+              return;
+            }
             if (widget.classType != ClassType.CART) {
               var result = await Navigator.push(
                   context,
@@ -731,6 +736,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
           child: showAddButton
               ? InkWell(
                   onTap: () async {
+                    if (widget.isStoreClosed) {
+                      return;
+                    }
                     print("---1-----add onTap------------");
                     bool checkIfDifferentStore =
                         await checkIfDifferentStoreInCart(widget.product);
@@ -778,6 +786,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
                           width: 25.0, // you can adjust the width as you need
                           child: GestureDetector(
                               onTap: () async {
+                                if (widget.isStoreClosed) {
+                                  return;
+                                }
                                 bool checkIfDifferentStore =
                                     await checkIfDifferentStoreInCart(
                                         widget.product);
@@ -845,6 +856,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
                           width: 25.0, // you can adjust the width as you need
                           child: GestureDetector(
                             onTap: () async {
+                              if (widget.isStoreClosed) {
+                                return;
+                              }
                               print("--3------add onTap------------");
                               bool checkIfDifferentStore =
                                   await checkIfDifferentStoreInCart(
