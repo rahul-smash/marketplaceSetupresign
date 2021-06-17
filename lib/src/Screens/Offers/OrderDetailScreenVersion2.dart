@@ -19,6 +19,7 @@ import 'package:restroapp/src/utils/Utils.dart';
 class OrderDetailScreenVersion2 extends StatefulWidget {
   OrderData orderHistoryData;
   bool isRatingEnable;
+  RunnerDetail runnerDetail;
 
   OrderDetailScreenVersion2(this.orderHistoryData, this.isRatingEnable);
 
@@ -172,41 +173,100 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                 )
               ],
             ),
-            body: SafeArea(
-              child: SingleChildScrollView(
-                child: Container(
-                  color: Color(0xffDCDCDC),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      firstRow(widget.orderHistoryData),
-                      Container(
-                        color: Colors.white,
-                        margin: EdgeInsets.only(top: 5),
-                        padding: EdgeInsets.all(16),
-                        width: Utils.getDeviceWidth(context),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Track Order',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            _getTrackWidget(),
-                            SizedBox(
-                              height: 16,
-                            ),
-                          ],
+            body: Column(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: SingleChildScrollView(
+                  child: Container(
+                    color: Color(0xffDCDCDC),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        firstRow(widget.orderHistoryData),
+                        Container(
+                          color: Colors.white,
+                          margin: EdgeInsets.only(top: 5),
+                          padding: EdgeInsets.all(16),
+                          width: Utils.getDeviceWidth(context),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'Track Order',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              SizedBox(
+                                height: 16,
+                              ),
+                              _getTrackWidget(),
+                              SizedBox(
+                                height: 16,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      secondRow(widget.orderHistoryData)
-                    ],
+                        secondRow(widget.orderHistoryData)
+                      ],
+                    ),
                   ),
-                ),
               ),
+                ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(width: 10.0, color: Colors.grey[300]),
+                      ),
+                      color: Colors.white,
+                    ),
+                    height: 100,
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 30,
+                          width: 30,
+                          margin: EdgeInsets.only(left: 30, right: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Image(image: AssetImage('images/whatsapp.png'),
+                           // NetworkImage(imageUrl.isEmpty ? AppConstant.placeholderImageUrl : imageUrl),)
+                        ),),
+                            Expanded(
+                              // margin: EdgeInsets.only(top: 5),
+                              child: RichText(
+                                text: TextSpan(
+                                  text: 'Delivery Boy',
+                                  style: TextStyle(color: Colors.black, fontSize: 16),
+                                  children: [
+                                    TextSpan(text: '\nRajesh Kumar',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
+                                    //TextSpan(text: '\n${widget.runnerDetail.fullName}',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
+                                  ]
+                                )
+                              ),
+                            ),
+                        Container(
+                            margin: EdgeInsets.only(right: 20.0),
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                color: Color(0xff75990B),
+                              borderRadius: BorderRadius.circular(20)
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                print('Calling');
+                                //_launchCaller(widget.runnerDetail.phone);
+                              },
+                              child: Icon(
+                                Icons.call_outlined,
+                                size: 25.0,
+                                color: Colors.white,
+                              ),
+                            ))
+                          ],
+                    )
+                  )
+    ]
             ),
           );
   }
