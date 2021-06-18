@@ -15,12 +15,12 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+import 'package:restroapp/src/UI/OrderTracker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetailScreenVersion2 extends StatefulWidget {
   OrderData orderHistoryData;
   bool isRatingEnable;
-  RunnerDetail runnerDetail;
-
   OrderDetailScreenVersion2(this.orderHistoryData, this.isRatingEnable);
 
   @override
@@ -31,6 +31,7 @@ class OrderDetailScreenVersion2 extends StatefulWidget {
 class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
   var screenWidth;
 
+  OrderData orderHistoryData;
   var mainContext;
   String deliverySlotDate = '';
 
@@ -229,9 +230,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Image(image: AssetImage('images/whatsapp.png'),
-                           // NetworkImage(imageUrl.isEmpty ? AppConstant.placeholderImageUrl : imageUrl),)
-                        ),),
+                          child:  Image(image: AssetImage('images/whatsapp.png' )),//_getImage(widget.orderHistoryData),
+                         ),
                             Expanded(
                               // margin: EdgeInsets.only(top: 5),
                               child: RichText(
@@ -239,7 +239,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                   text: 'Delivery Boy',
                                   style: TextStyle(color: Colors.black, fontSize: 16),
                                   children: [
-                                    TextSpan(text: '\nRajesh Kumar',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
+                                    TextSpan(text: _getRunnerName(widget.orderHistoryData),style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold))
                                     //TextSpan(text: '\n${widget.runnerDetail.fullName}',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
                                   ]
                                 )
@@ -255,6 +255,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                             child: GestureDetector(
                               onTap: () {
                                 print('Calling');
+                                _launchCaller(widget.orderHistoryData);
                                 //_launchCaller(widget.runnerDetail.phone);
                               },
                               child: Icon(
@@ -262,7 +263,32 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                 size: 25.0,
                                 color: Colors.white,
                               ),
-                            ))
+                            ),),
+                        Container(
+                            margin: EdgeInsets.only(right: 20.0),
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                color: Color(0xff75990B),
+                                borderRadius: BorderRadius.circular(20)
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                print('Map');
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => OrderTrackerLive(widget.orderHistoryData),
+                                    ),
+                                  );
+                                //_launchCaller(widget.runnerDetail.phone);
+                              },
+                              child: Icon(
+                                Icons.gps_fixed_outlined,
+                                size: 25.0,
+                                color: Colors.white,
+                              ),
+                            ),),
                           ],
                     )
                   )
@@ -2149,4 +2175,40 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
       }
     }
   }
+
+ String _getRunnerName(OrderData orderHistoryData) {
+   if (orderHistoryData.runnerDetail != null &&
+       orderHistoryData.runnerDetail.isNotEmpty) {
+     String name = '${orderHistoryData.runnerDetail.first.fullName}';
+
+     return '\n$name';
+   } else {
+     return '\nRajesh Kumar' ;
+   }
+  }
+
+  _getImage(OrderData orderHistoryData) {
+    //Image(image: AssetImage('images/whatsapp.png' ),
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      AppConstant.placeholderUrl = '${orderHistoryData.runnerDetail.first.profileImage}';
+      return Image(image: AssetImage(AppConstant.placeholderUrl));
+    } else {
+      return Image(image: AssetImage('images/whatsapp.png' )) ;
+    }
+  }
+
+  void _launchCaller(OrderData orderHistoryData) async{
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty){
+      String contact = '${orderHistoryData.runnerDetail.first.phone}';
+      String url = "tel:${contact}";
+      if (await canLaunch(url)) {
+        await launch(url);
+        } else {
+       throw 'Could not launch $url';
+       }
+    }
+  }
+
 }
