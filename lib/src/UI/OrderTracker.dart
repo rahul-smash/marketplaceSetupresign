@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restroapp/src/models/GetOrderHistory.dart';
+import 'package:geolocator/geolocator.dart';
 
 class OrderTrackerLive extends StatefulWidget {
   OrderData orderHistoryData;
@@ -22,8 +23,6 @@ class _OrderTrackerLiveState extends State<OrderTrackerLive> {
   List <LatLng> routeCoordinates = List();
   LatLng _new = LatLng(30.341288, 76.419609);
   LatLng _news = LatLng(31.6231717, 74.8689733);
-
-
 
   @override
   void initState() {

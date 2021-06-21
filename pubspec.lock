@@ -279,13 +279,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.6"
-  flutter_polyline_points:
-    dependency: "direct main"
-    description:
-      name: flutter_polyline_points
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.4"
   flutter_pull_to_refresh:
     dependency: "direct main"
     description:
