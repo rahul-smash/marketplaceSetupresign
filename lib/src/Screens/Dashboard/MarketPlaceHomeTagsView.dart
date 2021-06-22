@@ -151,13 +151,20 @@ class _MarketPlaceHomeTagsViewState extends State<MarketPlaceHomeTagsView> {
             },
             child: Container(
               margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5.0),
-                image: DecorationImage(
-                  image: NetworkImage("${tagObject.image}"),
-                  fit: BoxFit.cover,
-                ),
-              ),
+              decoration: false
+                  ? BoxDecoration(
+                      gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.transparent, Colors.black45],
+                    ))
+                  : BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      image: DecorationImage(
+                        image: NetworkImage("${tagObject.image}"),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
             ),
           );
         })
