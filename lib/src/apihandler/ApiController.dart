@@ -12,6 +12,7 @@ import 'package:restroapp/src/apihandler/ApiConstants.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/AdminLoginModel.dart';
+import 'package:restroapp/src/models/BannerResponse.dart';
 import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CancelOrderModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
@@ -2354,4 +2355,40 @@ class ApiController {
       return null;
     }
   }
+
+  static Future<BannerResponse> getBannersApi(String city) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+    var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.banners;
+
+    print("----url--${url}");
+    try {
+      FormData formData = new FormData.fromMap({
+        "device_id": deviceId,
+        "device_token": "${deviceToken}",
+        "platform": Platform.isIOS ? "IOS" : "Android",
+        "city":city
+      });
+      print(formData.fields.toString());
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      BannerResponse bannerResponse = BannerResponse.fromJson(json.decode(response.data));
+      print("-------tagsApiRequest ---${bannerResponse.success}");
+
+      return bannerResponse;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
 }

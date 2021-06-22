@@ -11,19 +11,23 @@ String tagsModelToJson(TagsModel data) => json.encode(data.toJson());
 class TagsModel {
   TagsModel({
     this.success,
+    this.tagSetting,
     this.data,
   });
 
   bool success;
+  dynamic tagSetting;
   List<TagData> data;
 
   factory TagsModel.fromJson(Map<String, dynamic> json) => TagsModel(
     success: json["success"],
+    tagSetting: json["tag_setting"],
     data: List<TagData>.from(json["data"].map((x) => TagData.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "success": success,
+    "tag_setting": tagSetting,
     "data": List<dynamic>.from(data.map((x) => x.toJson())),
   };
 }
