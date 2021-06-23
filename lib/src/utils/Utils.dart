@@ -806,7 +806,7 @@ enum HomeScreenEnum {
 
 enum ClassType { CART, SubCategory, Favourites, Home, Search }
 
-enum OrderType { Delivery, PickUp, Menu, SUBSCRIPTION_ORDER }
+enum OrderType { Delivery, PickUp, Menu, SUBSCRIPTION_ORDER ,DineIn}
 
 enum PaymentType { COD, ONLINE, ONLINE_PAYTM, CANCEL }
 

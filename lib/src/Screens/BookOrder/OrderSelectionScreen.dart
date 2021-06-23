@@ -15,9 +15,10 @@ import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class OrderSelectionScreen extends StatefulWidget {
-  String pickupfacility, delieveryAdress;
+  String pickupfacility, delieveryAdress, dineInFacility;
 
-  OrderSelectionScreen(this.pickupfacility, this.delieveryAdress);
+  OrderSelectionScreen(this.pickupfacility, this.delieveryAdress,
+      {this.dineInFacility = '0'});
 
   @override
   _OrderSelectionScreen createState() => _OrderSelectionScreen();
@@ -27,42 +28,25 @@ class _OrderSelectionScreen extends State<OrderSelectionScreen> {
   DatabaseHelper databaseHelper = new DatabaseHelper();
 
   //StoreModel store;
-  bool pickUpFacility, delieveryAddress;
-  double mheight;
+  bool pickUpFacility = false, delieveryAddress = false, dineInFacility = false;
 
   @override
   void initState() {
     super.initState();
-    //mheight = 310;
-    print(
-        "OrderSelectionScreen ${widget.pickupfacility} and ${widget.delieveryAdress}");
-    if (widget.pickupfacility == "1" && widget.delieveryAdress == "1") {
+    if (widget.pickupfacility == "1") {
       pickUpFacility = true;
-      delieveryAddress = true;
-    } else {
-      if (widget.pickupfacility == "1") {
-        pickUpFacility = true;
-      }
-      if (widget.pickupfacility == "0") {
-        pickUpFacility = false;
-      }
-      if (widget.delieveryAdress == "1") {
-        delieveryAddress = true;
-      }
-      if (widget.delieveryAdress == "0") {
-        delieveryAddress = false;
-      }
-
-      if (widget.pickupfacility == "0" && widget.delieveryAdress == "0") {
-        pickUpFacility = false;
-        delieveryAddress = true;
-      }
     }
-
-    if (pickUpFacility == true && delieveryAddress == true) {
-      mheight = 310;
-    } else {
-      mheight = 160;
+    if (widget.delieveryAdress == "1") {
+      delieveryAddress = true;
+    }
+    if (widget.dineInFacility == "1") {
+      dineInFacility = true;
+    }
+    //If all options are disable then show delivery option
+    if (widget.pickupfacility == "0" &&
+        widget.delieveryAdress == "0" &&
+        widget.dineInFacility == "0") {
+      delieveryAddress = true;
     }
   }
 
@@ -245,7 +229,7 @@ class _OrderSelectionScreen extends State<OrderSelectionScreen> {
                         StoreDataObj storeObject =
                             await SharedPrefs.getStoreData();
                         bool status = Utils.checkStoreOpenTime(storeObject,
-                            deliveryType: OrderType.Delivery);
+                            deliveryType: OrderType.PickUp);
                         if (!status) {
 //                              Utils.showToast("${storeObject.closehoursMessage}", false);
                           Navigator.pop(context);
@@ -319,6 +303,102 @@ class _OrderSelectionScreen extends State<OrderSelectionScreen> {
                                   // Code to create the view for address.
                                   Text(
                                     "Pickup",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Icon to indicate the phone number.
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: dineInFacility,
+                    child: GestureDetector(
+                      onTap: () async {
+                        print('@@CartBottomView----' + "PickUPActivy");
+
+                        StoreDataObj storeObject =
+                            await SharedPrefs.getStoreData();
+                        //In DineIN uses the same approach of PickUp
+                        bool status = Utils.checkStoreOpenTime(storeObject,
+                            deliveryType: OrderType.PickUp);
+                        if (!status) {
+//                              Utils.showToast("${storeObject.closehoursMessage}", false);
+                          Navigator.pop(context);
+                          DialogUtils.displayCommonDialog(
+                            context,
+                            storeObject.storeName,
+                            storeObject.closehoursMessage,
+                          );
+                          return;
+                        }
+                        Utils.showProgressDialog(context);
+                        ApiController.getStorePickupAddress().then((response) {
+                          Utils.hideProgressDialog(context);
+                          PickUpModel storeArea = response;
+
+                          print('---PickUpModel---${storeArea.data.length}--');
+                          if (storeArea != null && storeArea.data.isNotEmpty) {
+                            if (storeArea.data.length == 1) {
+                              Datum areaObject = storeArea.data[0];
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => StoreLocationScreen(
+                                        areaObject, OrderType.DineIn)),
+                              );
+                            } else {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+//                                        builder: (context) => PickUpOrderScreen(storeArea,OrderType.PickUp)),
+                                    builder: (context) =>
+                                        StoreLocationScreenWithMultiplePick(
+                                            storeArea, OrderType.DineIn)),
+                              );
+                            }
+                          } else {
+                            Utils.showToast("No DineIn data found!", true);
+                          }
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                        padding: EdgeInsets.all(10.0),
+                        child: Row(
+                          children: [
+                            // First child in the Row for the name and the
+                            Expanded(
+                              // Name and Address are in the same column
+                              child: new Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // Code to create the view for name.
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(
+                                        10.0, 0.0, 10.0, 5.0),
+                                    height: 100.0,
+                                    width: 150.0,
+                                    decoration: new BoxDecoration(
+                                      image: DecorationImage(
+                                        image: new AssetImage(
+                                          'images/pickup.png',
+                                        ),
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                                      shape: BoxShape.rectangle,
+                                    ),
+                                  ),
+                                  // Code to create the view for address.
+                                  Text(
+                                    "DineIn",
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
