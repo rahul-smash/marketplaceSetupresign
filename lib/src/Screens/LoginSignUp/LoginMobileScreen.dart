@@ -554,26 +554,34 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
             if (response != null && response.success) {
               print(
                   "=====otpVerify===${response.user.otpVerify}--and--${response.userExists}-----");
-              if (response.userExists == 1) {
-                print(
-                    '@@userExists=${response.userExists} and otpSkip = ${response.user.otpVerify}');
-                if (response.success) {
-                  SharedPrefs.setUserLoggedIn(true);
-                  SharedPrefs.saveUserMobile(response.user);
-                  ApiController.getUserMembershipPlanApi();
-                }
-                Navigator.pop(context);
-              } else {
-                //print('@@NOTP__Screen');
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          OtpScreen(menu, response, loginMobile)),
-                  //    MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              }
+              //Code commented due to Client Request
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        OtpScreen(menu, response, loginMobile)),
+                //    MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
+//              if (response.userExists == 1) {
+//                print(
+//                    '@@userExists=${response.userExists} and otpSkip = ${response.user.otpVerify}');
+//                if (response.success) {
+//                  SharedPrefs.setUserLoggedIn(true);
+//                  SharedPrefs.saveUserMobile(response.user);
+//                }
+//                Navigator.pop(context);
+//              } else {
+//                //print('@@NOTP__Screen');
+//                Navigator.pop(context);
+//                Navigator.push(
+//                  context,
+//                  MaterialPageRoute(
+//                      builder: (context) =>
+//                          OtpScreen(menu, response, loginMobile)),
+//                  //    MaterialPageRoute(builder: (context) => LoginScreen()),
+//                );
+//              }
             }
           });
         } else {
