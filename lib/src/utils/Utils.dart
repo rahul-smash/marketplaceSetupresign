@@ -517,7 +517,7 @@ class Utils {
           status = true;
         }
       } else {
-        if (deliveryType == OrderType.PickUp) {
+        if (deliveryType == OrderType.PickUp||deliveryType==OrderType.DineIn) {
           if (storeObject.is24X7Open == "1") {
             // 1 = means store open 24x7
             // 0 = not open for 24x7

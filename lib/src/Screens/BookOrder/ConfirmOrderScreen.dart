@@ -340,7 +340,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
       if (widget.address.zipCode != null && widget.address.zipCode.isNotEmpty)
         pin = widget.address.zipCode;
-    } else if (widget.deliveryType == OrderType.PickUp) {
+    } else if (widget.deliveryType == OrderType.PickUp||widget.deliveryType == OrderType.DineIn) {
 //      address = widget.areaObject.pickupAdd;
       //TODO add pickupAdd
       address = '';
@@ -1783,7 +1783,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
     String couponCode = taxModel == null ? "" : taxModel.couponCode;
     String discount = taxModel == null ? "0" : taxModel.discount;
-    if (widget.deliveryType == OrderType.PickUp)
+    if (widget.deliveryType == OrderType.PickUp||widget.deliveryType ==OrderType.DineIn)
       Utils.showProgressDialog(context);
 
     Map<String, dynamic> attributeMap = new Map<String, dynamic>();
@@ -2001,7 +2001,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   }
 
   Future<void> checkMinOrderPickAmount() async {
-    if (widget.deliveryType == OrderType.PickUp && widget.areaObject != null) {
+    if ((widget.deliveryType == OrderType.PickUp||widget.deliveryType == OrderType.DineIn) && widget.areaObject != null) {
       print("----minAmount=${widget.areaObject.minOrder}");
       print("----notAllow=${widget.areaObject.notAllow}");
       print("--------------------------------------------");
@@ -2297,7 +2297,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             eventBus.fire(updateCartCount());
             print("${widget.deliveryType}");
             //print("Location = ${storeModel.lat},${storeModel.lng}");
-            if (widget.deliveryType == OrderType.PickUp) {
+            if (widget.deliveryType == OrderType.PickUp||widget.deliveryType==OrderType.DineIn) {
               bool result = await DialogUtils.displayPickUpDialog(context);
               if (result == true) {
                 //print("==result== ${result}");
