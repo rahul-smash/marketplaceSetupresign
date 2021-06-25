@@ -139,7 +139,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Order - ${widget.orderHistoryData.orderId}',
+                    'Order - ${widget.orderHistoryData.displayOrderId}',
                     style: TextStyle(),
                     textAlign: TextAlign.left,
                   ),
