@@ -540,7 +540,7 @@ class ReviewsHygeineAndPack {
     rating: json["rating"] == null ? null : json["rating"],
     image: json["image"] == null ? null : json["image"],
     orderId: json["order_id"] == null ? null : json["order_id"],
-    platform: json["platform"] == null ? null : json["platform"],
+    platform: json["platform"] == null ? null :  json["platform"],
     type: json["type"] == null ? null : json["type"],
     created: json["created"] == null ? null : DateTime.parse(json["created"]),
     modified: json["modified"] == null ? null : DateTime.parse(json["modified"]),

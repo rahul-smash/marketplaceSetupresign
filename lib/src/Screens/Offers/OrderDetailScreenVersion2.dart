@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -2220,7 +2221,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
         orderHistoryData.runnerDetail.isNotEmpty) {
       AppConstant.placeholderUrl =
           '${orderHistoryData.runnerDetail.first.profileImage}';
-      return Image(image: AssetImage('images/whatsapp.png'));
+      return CachedNetworkImage(imageUrl: "${orderHistoryData.runnerDetail.first.profileImage}");
     } else {
       return Image(image: AssetImage('images/whatsapp.png'));
     }
