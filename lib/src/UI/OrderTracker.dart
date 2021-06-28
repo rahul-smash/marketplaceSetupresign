@@ -19,18 +19,28 @@ class OrderTrackerLive extends StatefulWidget {
 
 class _OrderTrackerLiveState extends State<OrderTrackerLive> {
   GoogleMapController _controller;
-  static const LatLng _center = const LatLng(30.341288, 76.419609);
+  double Runlattitude;
+  double Runlongitude;
+  double Uslattitude;
+  double Uslongitude;
+  static final LatLng _center = LatLng(45.521563, -122.677433);
   final Set<Marker> _markers = {};
-  LatLng _lastMapPosition = _center;
-  //final Set<Polyline> polyLine = {};
-  List <LatLng> routeCoordinates = List();
-  LatLng _new = LatLng(30.341288, 76.419609);
-  LatLng _news = LatLng(31.6231717, 74.8689733);
+  LatLng _currentMapPosition = _center;
+  void _onMapCreated(GoogleMapController controller) {
+    _controller = controller;
+  }
 
   @override
   void initState() {
     super.initState();
-  }
+    _getRunlatlng(widget.orderHistoryData);
+    _getUslatlng(widget.orderHistoryData);
+        _markers.add(Marker(
+          markerId: MarkerId(_currentMapPosition.toString()),
+          position: _currentMapPosition,
+          icon: BitmapDescriptor.defaultMarker,
+        ));
+    }
 
   @override
   void dispose() {
@@ -39,52 +49,22 @@ class _OrderTrackerLiveState extends State<OrderTrackerLive> {
 
   @override
   Widget build(BuildContext context) {
-    _markers.add(Marker(
-      markerId: MarkerId(_lastMapPosition.toString()),
-      position: _lastMapPosition,
-      infoWindow: InfoWindow(
-        title: 'Really cool place',
-        snippet: '5 Star Rating',
-      ),
-      icon: BitmapDescriptor.defaultMarker,
-
-    ));
-    routeCoordinates.add(_new);
-    routeCoordinates.add(_news);
-    // polyLine.add(Polyline(
-    //   polylineId: PolylineId(_lastMapPosition.toString()),
-    //   visible: true,
-    //   points: routeCoordinates,
-    //   color: Colors.blue,
-    //   startCap: Cap.roundCap,
-    //   endCap: Cap.buttCap,
-    // ));
     return Scaffold(
       body: Stack(
         children: [
           Column(
             children: [
-              // Align(
-              //   alignment: Alignment.topRight,
-              //   child: IconButton(
-              //     icon: Icon(Icons.clear),
-              //     onPressed: () {
-              //       Navigator.pop(context);
-              //     },
-              //   ),
-              // ),
               Expanded(
                 child: GoogleMap(
                     initialCameraPosition: CameraPosition(
-                      target: LatLng(30.341288, 76.419609),
+                      target: LatLng(Runlattitude, Runlongitude),
                       zoom: 14.0,
                     ),
-                  mapType: MapType.normal,
-                 // polylines: polyLine,37.4219983, -122.084
-                  markers: _markers,
+                  //mapType: MapType.normal,
+                  markers:  _markers,
                 ),
               ),
-              //Expanded(child: Text(_liveTrackerMap(widget.orderHistoryData))),
+
               Container(
                   decoration: BoxDecoration(
                     border: Border(
@@ -175,8 +155,8 @@ class _OrderTrackerLiveState extends State<OrderTrackerLive> {
       ),
     );
   }
-  
-  
+
+
 
   void onMapCreated(GoogleMapController controller){
     setState(() {
@@ -202,7 +182,6 @@ class _OrderTrackerLiveState extends State<OrderTrackerLive> {
   }
   _getImage(OrderData orderHistoryData) {
     //Image(image: AssetImage('images/whatsapp.png' ),
-
     if (orderHistoryData.runnerDetail != null &&
         orderHistoryData.runnerDetail.isNotEmpty) {
       AppConstant.placeholderUrl =
@@ -237,4 +216,47 @@ class _OrderTrackerLiveState extends State<OrderTrackerLive> {
     }
   }
 
+  _getRunlatlng(OrderData orderHistoryData) {
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty
+    ) {
+      String runlat = '${orderHistoryData.runnerDetail.first.lat}';
+      String runlng = '${orderHistoryData.runnerDetail.first.lng}';
+      setState(() {
+        Runlattitude = double.parse('$runlat');
+        Runlongitude= double.parse('$runlng');
+          _markers.add(Marker(
+            markerId: MarkerId(_currentMapPosition.toString()),
+            position: LatLng(Runlattitude, Runlongitude),
+            icon: BitmapDescriptor.defaultMarker,
+          ));
+      });
+      print('${Runlattitude}');
+      print('${Runlongitude}');
+      return LatLng(Runlattitude, Runlongitude);
+    } else {
+      return 'Location not given yet';
+    }
+  }
+  _getUslatlng(OrderData orderHistoryData) {
+    if (orderHistoryData.deliveryAddress != null &&
+        orderHistoryData.deliveryAddress.isNotEmpty) {
+      String uslat = '${orderHistoryData.deliveryAddress.first.lat}';
+      String uslng = '${orderHistoryData.deliveryAddress.first.lng}';
+      setState(() {
+        Uslattitude = double.parse('$uslat');
+        Uslongitude= double.parse('$uslng');
+        _markers.add(Marker(
+          markerId: MarkerId(_currentMapPosition.toString()),
+          position: LatLng(Uslattitude, Uslongitude),
+          icon: BitmapDescriptor.defaultMarker,
+        ));
+      });
+      print('${Uslattitude}');
+      print('${Uslongitude}');
+      return LatLng(Uslattitude, Uslongitude);
+    } else {
+      return 'Location not given yet';
+    }
+  }
 }
