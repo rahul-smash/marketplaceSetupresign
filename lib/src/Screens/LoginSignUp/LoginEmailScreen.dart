@@ -189,7 +189,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                           width: Utils.getDeviceWidth(context),
                           child: Center(
                             child: Text(
-                              "──────── "+"OR CONNECT WITH" +" ────────",
+                              "OR CONNECT WITH",
                               style: TextStyle(color: gray9),
                             ),
                           ),
