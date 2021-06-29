@@ -50,7 +50,6 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
     _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
-        'https://www.googleapis.com/auth/contacts.readonly',
       ],
     );
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
@@ -184,7 +183,8 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                       ),
                       addLoginButton(),
                       Visibility(
-                        visible: Platform.isIOS?false: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
+                        visible: true,
+//                        visible: Platform.isIOS?false: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
                         child: Container(
                           margin: EdgeInsets.fromLTRB(0, 15, 0, 10),
                           width: Utils.getDeviceWidth(context),
@@ -197,7 +197,8 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                         ),
                       ),
                       Visibility(
-                        visible:Platform.isIOS?false: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
+                        visible: true,
+//                        visible:Platform.isIOS?false: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -320,6 +321,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                 user.phone = verifyEmailModel.user.phone;
                 user.id = verifyEmailModel.user.id;
                 SharedPrefs.saveUser(user);
+                ApiController.getUserMembershipPlanApi();
                 Navigator.pop(context);
               }
             } else {
@@ -388,6 +390,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
             user.phone = verifyEmailModel.user.phone;
             user.id = verifyEmailModel.user.id;
             SharedPrefs.saveUser(user);
+            ApiController.getUserMembershipPlanApi();
             Navigator.pop(context);
           }
         } else {
@@ -497,6 +500,8 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
             Utils.hideProgressDialog(context);
             if (response != null && response.success) {
               Navigator.pop(context);
+              SharedPrefs.setUserLoggedIn(true);
+              ApiController.getUserMembershipPlanApi();
               Utils.showToast("Login Successfully", true);
             }else{
               Utils.showToast(response.message, true);
