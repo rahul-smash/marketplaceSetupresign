@@ -183,8 +183,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                       ),
                       addLoginButton(),
                       Visibility(
-                        visible: true,
-//                        visible: Platform.isIOS?false: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
+                        visible: Platform.isIOS?false: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
                         child: Container(
                           margin: EdgeInsets.fromLTRB(0, 15, 0, 10),
                           width: Utils.getDeviceWidth(context),
@@ -197,8 +196,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                         ),
                       ),
                       Visibility(
-                        visible: true,
-//                        visible:Platform.isIOS?false: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
+                        visible:Platform.isIOS?false: storeModel == null ? false : storeModel.social_login == "0" ? false : true,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
