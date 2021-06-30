@@ -117,8 +117,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     String orderFacility = widget.orderHistoryData.orderFacility != null
         ? '${widget.orderHistoryData.orderFacility}, '
         : '';
-    return isLoading
-        ? Scaffold(
+    if (isLoading) {
+      return Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
               title: Column(
@@ -134,8 +134,9 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
               centerTitle: false,
             ),
             body: Center(child: CircularProgressIndicator()),
-          )
-        : new Scaffold(
+          );
+    } else {
+      return new Scaffold(
             backgroundColor: Color(0xffDCDCDC),
             appBar: AppBar(
               title: Column(
@@ -213,93 +214,119 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                   ),
                 ),
               ),
-              Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(width: 10.0, color: Colors.grey[300]),
-                    ),
-                    color: Colors.white,
-                  ),
-                  height: 100,
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 30,
-                        width: 30,
-                        margin: EdgeInsets.only(left: 30, right: 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: _getImage(widget.orderHistoryData),
-                      ),
-                      Expanded(
-                        // margin: EdgeInsets.only(top: 5),
-                        child: RichText(
-                          text: TextSpan(
-                              text: 'Delivery Boy',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 16),
-                              children: [
-                                TextSpan(
-                                    text:
-                                        '\n${_getRunnerName(widget.orderHistoryData)}',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold))
-                                //TextSpan(text: '\n${widget.runnerDetail.fullName}',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
-                              ]),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(right: 20.0),
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: Color(0xff75990B),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: GestureDetector(
-                          onTap: () {
-                            print('Calling');
-                            _launchCaller(widget.orderHistoryData);
-                            //_launchCaller(widget.runnerDetail.phone);
-                          },
-                          child: Icon(
-                            Icons.call_outlined,
-                            size: 25.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(right: 20.0),
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: Color(0xff75990B),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: GestureDetector(
-                          onTap: () {
-                            print('Map');
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    OrderTrackerLive(widget.orderHistoryData),
-                              ),
-                            );
-                            //_launchCaller(widget.runnerDetail.phone);
-                          },
-                          child: Icon(
-                            Icons.gps_fixed_outlined,
-                            size: 25.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+             maincontainer(widget.orderHistoryData),
                     ],
-                  ))
-            ]),
+            ),
           );
+    }
+  }
+
+  Widget maincontainer(OrderData orderHistoryData){
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty){
+      return Container(
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(width: 10.0, color: Colors.grey[300]),
+            ),
+            color: Colors.white,
+          ),
+          height: 100,
+          child: Row(
+            children: [
+              Container(
+                height: 30,
+                width: 30,
+                margin: EdgeInsets.only(left: 30, right: 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: _getImage(widget.orderHistoryData),
+              ),
+              Expanded(
+                // margin: EdgeInsets.only(top: 5),
+                child: RichText(
+                  text: TextSpan(
+                      text:  '${_getRunnertitle(widget.orderHistoryData)}',
+                      style:
+                      TextStyle(color: Colors.black, fontSize: 16),
+                      children: [
+                        TextSpan(
+                            text:
+                            '\n${_getRunnerName(widget.orderHistoryData)}',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold))
+                        //TextSpan(text: '\n${widget.runnerDetail.fullName}',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
+                      ]),
+                ),
+              ),
+              caller(widget.orderHistoryData),
+              mapper(widget.orderHistoryData)
+            ],
+          ));}
+    else return Container(
+     height: 10
+    );
+  }
+
+  Widget caller(OrderData orderHistoryData){
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty){
+    return Container(
+      margin: EdgeInsets.only(right: 20.0),
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+          color: Color(0xff75990B),
+          borderRadius: BorderRadius.circular(20)),
+      child: GestureDetector(
+        onTap: () {
+          print('Calling');
+          _launchCaller(widget.orderHistoryData);
+        },
+        child: Icon(
+          Icons.call_outlined,
+          size: 25.0,
+          color: Colors.white,
+        ),
+      ),
+    );}
+    else return Container(
+    );
+  }
+  Widget mapper(OrderData orderHistoryData){
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty
+        ){
+      return  Container(
+        margin: EdgeInsets.only(right: 20.0),
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+            color: Color(0xff75990B),
+            borderRadius: BorderRadius.circular(20)),
+        child: GestureDetector(
+          onTap: () {
+            print('Map');
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    OrderTrackerLive(widget.orderHistoryData),
+              ),
+            );
+            //_launchCaller(widget.runnerDetail.phone);
+          },
+          child: Icon(
+            Icons.gps_fixed_outlined,
+            size: 25.0,
+            color: Colors.white,
+          ),
+        ),
+      );}
+    else return Container(
+    );
   }
 
   Widget firstRow(OrderData orderHistoryData) {
@@ -2203,6 +2230,18 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     }
   }
 
+  String _getRunnertitle(OrderData orderHistoryData) {
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      String name = '${orderHistoryData.runnerDetail.first.fullName}';
+
+      return 'Delivery Boy';
+    } else {
+      return '';
+    }
+  }
+
+
   String _getRunnerName(OrderData orderHistoryData) {
     if (orderHistoryData.runnerDetail != null &&
         orderHistoryData.runnerDetail.isNotEmpty) {
@@ -2210,7 +2249,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
 
       return '$name';
     } else {
-      return 'Rajesh Kumar';
+      return 'Runner yet to be decided';
     }
   }
 
@@ -2223,7 +2262,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
           '${orderHistoryData.runnerDetail.first.profileImage}';
       return CachedNetworkImage(imageUrl: "${orderHistoryData.runnerDetail.first.profileImage}");
     } else {
-      return Image(image: AssetImage('images/whatsapp.png'));
+      return ;
     }
   }
 
