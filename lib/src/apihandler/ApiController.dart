@@ -765,7 +765,8 @@ class ApiController {
       String couponCode,
       String paymentMode,
       String orderJson,
-      String coupon_type) async {
+      String coupon_type,
+      String orderFacilities) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -783,6 +784,7 @@ class ApiController {
         "user_id": user.id,
         "device_token": deviceToken,
         "orders": "$orderJson",
+        "order_facilities": orderFacilities,
         "payment_method": paymentMode,
         "platform": Platform.isIOS ? "IOS" : "Android"
       });

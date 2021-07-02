@@ -205,7 +205,7 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
     return Padding(
       padding: EdgeInsets.only(top: 20),
       child: Row(
-        crossAxisAlignment:CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Expanded(
             child: Column(
@@ -213,92 +213,88 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(3.0)),
+                                color: getStatusColor(
+                                    cardOrderHistoryItems.status)),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 5.0),
+                            child: Text(getStatus(cardOrderHistoryItems),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400)),
+                          ),
+                        ],
+                      ),
+                      Visibility(
+                          visible:
+                              cardOrderHistoryItems.IsMembershipCouponEnabled ==
+                                  '1',
+                          child: Container(
+                              margin: EdgeInsets.only(right: 20),
+                              padding: EdgeInsets.fromLTRB(15, 3, 15, 3),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Color(0xFFE6E6E6)),
+                                color: Color(0xFFE6E6E6),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(25.0)),
+                              ),
+                              child: Text(
+                                'Subscription Order',
+                                style: TextStyle(
+                                    color: appTheme,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold),
+                              )))
+                    ]),
+                Visibility(
+                  visible: isRatingEnable &&
+                      cardOrderHistoryItems.status == '5' &&
+                      _rating != 0,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 5),
+                    child: Row(children: <Widget>[
+                      RatingBar(
+                        initialRating: _rating,
+                        minRating: 1,
+                        itemSize: 26,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: appThemeSecondary,
+                        ),
+                        ignoreGestures: true,
+                        onRatingUpdate: (rating) {},
+                      ),
                       Container(
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(3.0)),
-                            color: getStatusColor(
-                                cardOrderHistoryItems.status)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 5.0),
-                        child: Text(getStatus(cardOrderHistoryItems.status),
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400)),
-                      ),
-                    ],
-                  ),
-                  Visibility(
-                      visible:
-                          cardOrderHistoryItems.IsMembershipCouponEnabled ==
-                              '1',
-                      child: Container(
-                          margin: EdgeInsets.only(right: 20),
-                          padding: EdgeInsets.fromLTRB(15, 3, 15, 3),
+                          margin: EdgeInsets.only(left: 6),
+                          padding: EdgeInsets.fromLTRB(8, 3, 8, 3),
                           decoration: BoxDecoration(
                             border: Border.all(color: Color(0xFFE6E6E6)),
                             color: Color(0xFFE6E6E6),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(25.0)),
+                                BorderRadius.all(Radius.circular(15.0)),
                           ),
-                          child: Text(
-                            'Subscription Order',
-                            style: TextStyle(
-                                color: appTheme,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold),
-                          )))
-                ]),
-
-                    Visibility(
-                          visible:   isRatingEnable &&
-                              cardOrderHistoryItems.status == '5' &&
-                              _rating != 0,
-                      child: Padding(
-                          padding: EdgeInsets.only(top: 5),
-                          child: Row(children: <Widget>[
-                            RatingBar(
-                              initialRating: _rating,
-                              minRating: 1,
-                              itemSize: 26,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              itemCount: 5,
-                              itemPadding:
-                                  EdgeInsets.symmetric(horizontal: 2.0),
-                              itemBuilder: (context, _) => Icon(
-                                Icons.star,
-                                color: appThemeSecondary,
-                              ),
-                              ignoreGestures: true,
-                              onRatingUpdate: (rating) {},
-                            ),
-                            Container(
-                                margin: EdgeInsets.only(left: 6),
-                                padding: EdgeInsets.fromLTRB(8, 3, 8, 3),
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: Color(0xFFE6E6E6)),
-                                  color: Color(0xFFE6E6E6),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(15.0)),
-                                ),
-                                child: Text('${_rating}',
-                                    style: TextStyle(
-                                        color: Color(0xFF39444D),
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 13)))
-                          ]),
-                        ),
-                    )
-
+                          child: Text('${_rating}',
+                              style: TextStyle(
+                                  color: Color(0xFF39444D),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13)))
+                    ]),
+                  ),
+                )
               ],
             ),
           ),
@@ -330,28 +326,41 @@ class _MyOrderScreenVersion2 extends State<MyOrderScreenVersion2> {
 //  8 =>'Ready to be Picked',
 //  7 =>'On the way',
 //  5 =>'delivered' );
-  String getStatus(status) {
-    if (status == "0") {
+  String getStatus(OrderData cardOrderHistoryItems) {
+    if (cardOrderHistoryItems.status == "0") {
       return 'Pending';
-    } else if (status == "1") {
+    }
+    if (cardOrderHistoryItems.status == "1") {
       return 'Processing';
     }
-    if (status == "2") {
+    if (cardOrderHistoryItems.status == "2") {
       return 'Rejected';
     }
-    if (status == "4") {
-      return 'Shipped';
+    if (cardOrderHistoryItems.status == "4") {
+      return cardOrderHistoryItems.orderFacility
+              .toLowerCase()
+              .contains('dinein')
+          ? 'Served'
+          : 'Shipped';
     }
-    if (status == "5") {
-      return 'Delivered';
+    if (cardOrderHistoryItems.status == "5") {
+      return cardOrderHistoryItems.orderFacility
+              .toLowerCase()
+              .contains('dinein')
+          ? 'Completed'
+          : 'Delivered';
     }
-    if (status == "6") {
+    if (cardOrderHistoryItems.status == "6") {
       return 'Cancelled';
     }
-    if (status == '8') {
-      return 'Ready to be Picked';
+    if (cardOrderHistoryItems.status == '8') {
+      return cardOrderHistoryItems.orderFacility
+              .toLowerCase()
+              .contains('dinein')
+          ? 'Ready to Serve'
+          : 'Ready to be Picked';
     }
-    if (status == '7') {
+    if (cardOrderHistoryItems.status == '7') {
       return 'On the way';
     } else {
       return "Waiting";

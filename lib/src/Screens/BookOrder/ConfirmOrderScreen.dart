@@ -1536,7 +1536,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                                 couponCodeController.text,
                                 widget.paymentMode,
                                 json,
-                                couponType);
+                                couponType,widget.isComingFromPickUpScreen?'1':'2');
                         if (couponModel.success) {
                           print("---success----");
                           Utils.showToast("${couponModel.message}", false);
