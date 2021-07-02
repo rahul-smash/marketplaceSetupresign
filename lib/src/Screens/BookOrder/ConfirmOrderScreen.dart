@@ -133,10 +133,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 .toLowerCase() ==
             'lunch') {
           selectedDeliverSlotValue =
-              selectedDeliverSlotValue + ", 1:00 PM - 3:00 PM";
+              selectedDeliverSlotValue + ", 11:30 AM - 12:30 PM";
         } else {
           selectedDeliverSlotValue =
-              selectedDeliverSlotValue + ", 7:00 PM - 9:00 PM";
+              selectedDeliverSlotValue + ", 7:30 PM - 8:30 PM";
         }
       }
     }
@@ -152,7 +152,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     try {
       checkLoyalityPointsOption();
       if (widget.deliveryType == OrderType.Delivery) {
-      /*if (storeModel.deliverySlot == "1")*/ {
+        /*if (storeModel.deliverySlot == "1")*/ {
           ApiController.deliveryTimeSlotApi(storeModel.id).then((response) {
             setState(() {
               if (!response.success) {
@@ -394,7 +394,32 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           deviceToken,
           storeAddress,
           selectedDeliverSlotValue,
-          totalSavingsText);
+          totalSavingsText,
+          posBranchCode: widget.subscriptionOrderType != null
+          ? SingletonBrandData.getInstance()
+          ?.userPurchaseMembershipResponse
+          ?.data
+          ?.posBranchCode ??
+          ''
+          : '',
+          membershipId: widget.subscriptionOrderType != null
+              ? SingletonBrandData.getInstance()
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.id ??
+              ''
+              : '',
+          membershipPlanDetailId: widget.subscriptionOrderType != null
+              ? SingletonBrandData.getInstance()
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.membershipPlanDetailId ??
+              ''
+              : '',
+          additionalInfo: widget.subscriptionOrderType != null
+              ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.additionalInfo ?? ''
+              : '',
+          isMembershipCouponEnabled: widget.subscriptionOrderType != null ? '1' : '0');
       ApiController.createPaytmTxnToken(
               address, pin, amount, orderJson, detailsModel.orderDetails)
           .then((value) async {
@@ -424,9 +449,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     String couponCode = widget.subscriptionOrderType != null
         ? getSubscriptionCouponCodePlan()
         : '';
+
+    String charges =
+        widget.subscriptionOrderType != null ? '0' : shippingCharges;
     databaseHelper.getCartItemsListToJson().then((json) {
       ApiController.multipleTaxCalculationRequest(
-              couponCode, discount, "$shippingCharges", json,
+              couponCode, discount, "$charges", json,
               isMembershipCouponEnabled:
                   widget.subscriptionOrderType != null ? '1' : '0')
           .then((response) async {
@@ -2195,7 +2223,32 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           deviceToken,
           storeAddress,
           selectedDeliverSlotValue,
-          totalSavingsText);
+          totalSavingsText,
+          posBranchCode: widget.subscriptionOrderType != null
+          ? SingletonBrandData.getInstance()
+          ?.userPurchaseMembershipResponse
+          ?.data
+          ?.posBranchCode ??
+          ''
+          : '',
+          membershipId: widget.subscriptionOrderType != null
+              ? SingletonBrandData.getInstance()
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.id ??
+              ''
+              : '',
+          membershipPlanDetailId: widget.subscriptionOrderType != null
+              ? SingletonBrandData.getInstance()
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.membershipPlanDetailId ??
+              ''
+              : '',
+          additionalInfo: widget.subscriptionOrderType != null
+              ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.additionalInfo ?? ''
+              : '',
+          isMembershipCouponEnabled: widget.subscriptionOrderType != null ? '1' : '0');
       ApiController.razorpayCreateOrderApi(
               mPrice, orderJson, detailsModel.orderDetails, storeModel.id)
           .then((response) {
