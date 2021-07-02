@@ -50,7 +50,6 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
     _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
-        'https://www.googleapis.com/auth/contacts.readonly',
       ],
     );
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {

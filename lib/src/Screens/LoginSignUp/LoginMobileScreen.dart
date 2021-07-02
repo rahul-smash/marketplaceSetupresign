@@ -50,7 +50,6 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
     _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
-        'https://www.googleapis.com/auth/contacts.readonly',
       ],
     );
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
