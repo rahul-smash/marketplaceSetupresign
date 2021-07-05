@@ -117,6 +117,10 @@ class ApiConstants {
   static String cancelUserMembershipPlan =
       'membership_plan/cancelUserMembershipPlan';
 
+  static String peachPayCreateOrder='/peachpay/peachpayCreateOrder';
+  static String processPeachpayPayment='/peachpay/processPeachpayPayment/';
+  static String peachpayVerifyTransaction='/peachpay/peachpayVerifyTransaction';
+
 // get peach pay details
 // http://devmarketplace.restroapp.com/2/v1/marketplace/homescreen/version?ip=124.253.110.23
 // detailspeach payament is added
@@ -128,4 +132,5 @@ class ApiConstants {
 // API : verifyOrder
 // http://devmarketplace.restroapp.com/2/v1/2167/peachpay/VerifyTransaction
 // checkout_id=19885B13DA6E12D269B02F772737C999.uat01-vm-tx04
+//http://devmarketplace.restroapp.com/2/v1/storeId/peachpay/peachPayVerify?id=C19277FB92BFDFFBBF716818766F3BC4.uat01-vm-tx02&resourcePath=%2Fv1%2Fcheckouts%2FC19277FB92BFDFFBBF716818766F3BC4.uat01-vm-tx02%2Fpayment
 }
