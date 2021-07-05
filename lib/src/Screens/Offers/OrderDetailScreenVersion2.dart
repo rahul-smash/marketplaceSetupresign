@@ -22,6 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 class OrderDetailScreenVersion2 extends StatefulWidget {
   OrderData orderHistoryData;
   bool isRatingEnable;
+  String bullet = "\u2022 ";
   OrderDetailScreenVersion2(this.orderHistoryData, this.isRatingEnable);
 
   @override
@@ -221,54 +222,77 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     }
   }
 
-  Widget maincontainer(OrderData orderHistoryData){
-    if (orderHistoryData.runnerDetail != null &&
-        orderHistoryData.runnerDetail.isNotEmpty){
-      return Container(
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(width: 10.0, color: Colors.grey[300]),
+  Widget maincontainer(OrderData orderHistoryData) {
+    if (widget.orderHistoryData.status != '5') {
+      if (orderHistoryData.runnerDetail != null &&
+          orderHistoryData.runnerDetail.isNotEmpty) {
+        return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(width: 10.0, color: Colors.grey[300]),
+              ),
+              color: Colors.white,
             ),
-            color: Colors.white,
-          ),
-          height: 100,
-          child: Row(
-            children: [
-              Container(
-                height: 30,
-                width: 30,
-                margin: EdgeInsets.only(left: 30, right: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+            height: 100,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                        margin: EdgeInsets.only(left: 40, top: 5),
+                        height: 30,
+                        width: 200,
+                        child: Text('${_getBottomTrack()}')
+                    ),
+                  ],
                 ),
-                child: _getImage(widget.orderHistoryData),
-              ),
-              Expanded(
-                // margin: EdgeInsets.only(top: 5),
-                child: RichText(
-                  text: TextSpan(
-                      text:  '${_getRunnertitle(widget.orderHistoryData)}',
-                      style:
-                      TextStyle(color: Colors.black, fontSize: 16),
-                      children: [
-                        TextSpan(
-                            text:
-                            '\n${_getRunnerName(widget.orderHistoryData)}',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold))
-                        //TextSpan(text: '\n${widget.runnerDetail.fullName}',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
-                      ]),
+                Row(
+                  children: [
+                    Container(
+                      height: 30,
+                      width: 30,
+                      margin: EdgeInsets.only(left: 30, right: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: _getImage(widget.orderHistoryData),
+                    ),
+                    Expanded(
+                      // margin: EdgeInsets.only(top: 5),
+                      child: RichText(
+                        text: TextSpan(
+                            text: '${_getRunnertitle(widget.orderHistoryData)}',
+                            style:
+                            TextStyle(color: Colors.black, fontSize: 16),
+                            children: [
+                              TextSpan(
+                                  text:
+                                  '\n${_getRunnerName(
+                                      widget.orderHistoryData)}',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold))
+                              //TextSpan(text: '\n${widget.runnerDetail.fullName}',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
+                            ]),
+                      ),
+                    ),
+                    caller(widget.orderHistoryData),
+                    mapper(widget.orderHistoryData)
+                  ],
                 ),
-              ),
-              caller(widget.orderHistoryData),
-              mapper(widget.orderHistoryData)
-            ],
-          ));}
-    else return Container(
-     height: 10
-    );
+              ],
+            ));
+      }
+      else
+        return Container(
+            height: 10
+        );
+    }
+    else
+      return Container(
+          height: 10
+      );
   }
 
   Widget caller(OrderData orderHistoryData){
@@ -2266,6 +2290,25 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     }
   }
 
+  _getBottomTrack() {
+    // Delivered == 5, On Way to destination == 7
+    String bullet = "\u2022 ";
+    print('${widget.orderHistoryData.status}');
+    switch(widget.orderHistoryData.status)
+    {
+      case '6':
+        return bullet + ' Order Cancelled';
+        break;
+      case '7':
+        return bullet+' On the way to destination';
+        break;
+      case '8':
+        return bullet+' On the way to take your order';
+        break;
+      default:
+        return '';
+    }
+  }
   void _launchCaller(OrderData orderHistoryData) async {
     if (orderHistoryData.runnerDetail != null &&
         orderHistoryData.runnerDetail.isNotEmpty) {
