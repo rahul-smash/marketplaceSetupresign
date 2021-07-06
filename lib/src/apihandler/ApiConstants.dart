@@ -121,6 +121,8 @@ class ApiConstants {
   static String processPeachpayPayment='/peachpay/processPeachpayPayment/';
   static String peachpayVerifyTransaction='/peachpay/peachpayVerifyTransaction';
 
+  //new Banner Api
+  static String banners = 'homescreen/banners';
 // get peach pay details
 // http://devmarketplace.restroapp.com/2/v1/marketplace/homescreen/version?ip=124.253.110.23
 // detailspeach payament is added

@@ -67,6 +67,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     Utils.hideProgressDialog(context);
     getCategoryApi();
     listenEvent();
+    imgList.indexWhere((element) => false);
     try {
       AppConstant.placeholderUrl = store.banner300200;
       if (store.banner300200.isNotEmpty) {

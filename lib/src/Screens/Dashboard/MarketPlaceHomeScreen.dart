@@ -81,7 +81,7 @@ class MarketPlaceHomeScreen extends StatefulWidget {
 class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   BrandData store;
   FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
-  List<NetworkImage> imgList = [];
+  List<NetworkImage> imgList = List.empty(growable: true);
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
   UserModel user;
@@ -158,13 +158,13 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       if (store.banners.isEmpty) {
 //        imgList = [NetworkImage(AppConstant.placeholderImageUrl)];
       } else {
-        for (var i = 0; i < store.banners.length; i++) {
-          String imageUrl = store.banners[i].image;
-          imgList.add(
-            NetworkImage(
-                imageUrl.isEmpty ? AppConstant.placeholderImageUrl : imageUrl),
-          );
-        }
+//        for (var i = 0; i < store.banners.length; i++) {
+//          String imageUrl = store.banners[i].image;
+//          imgList.add(
+//            NetworkImage(
+//                imageUrl.isEmpty ? AppConstant.placeholderImageUrl : imageUrl),
+//          );
+//        }
       }
       if (widget.showForceUploadAlert) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -862,36 +862,25 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     });
   }
 
-  Future logout(BuildContext context, BranchData selectedStore) async {
-    /*try {
-      Utils.showProgressDialog(context);
-      SharedPrefs.setUserLoggedIn(false);
-      SharedPrefs.storeSharedValue(AppConstant.isAdminLogin, "false");
-      SharedPrefs.removeKey(AppConstant.showReferEarnAlert);
-      SharedPrefs.removeKey(AppConstant.referEarnMsg);
-      AppConstant.isLoggedIn = false;
-      DatabaseHelper databaseHelper = new DatabaseHelper();
-      databaseHelper.deleteTable(DatabaseHelper.Categories_Table);
-      databaseHelper.deleteTable(DatabaseHelper.Sub_Categories_Table);
-      databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
-      databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-      databaseHelper.deleteTable(DatabaseHelper.Products_Table);
-      eventBus.fire(updateCartCount());
-
-      StoreResponse storeData =
-      await ApiController.versionApiRequest(selectedStore.id);
-      CategoryResponse categoryResponse =
-      await ApiController.getCategoriesApiRequest(storeData.store.id);
+  void _getBannersApi({String city = ""}) {
+    ApiController.getBannersApi(city).then((bannerResponse) {
       setState(() {
-        this.store = storeData.store;
-        this.branchData = selectedStore;
-        this.categoryResponse = categoryResponse;
-        Utils.hideProgressDialog(context);
+        if (bannerResponse != null && bannerResponse.success) {
+          imgList.clear();
+          for (var i = 0; i < bannerResponse.data.banners.length; i++) {
+            String imageUrl = bannerResponse.data.banners[i].image;
+            imgList.add(
+              NetworkImage(imageUrl.isEmpty
+                  ? AppConstant.placeholderImageUrl
+                  : imageUrl),
+            );
+          }
+        }
       });
-    } catch (e) {
-      print(e);
-    }*/
+    });
   }
+
+  Future logout(BuildContext context, BranchData selectedStore) async {}
 
   getAddressFromLocation() async {
     if (widget.initialPosition != null) {
@@ -927,6 +916,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     localSelectedLocation = selectedLocation;
     Set<Marker> markers = Set();
     String localAddress = address;
+    var firstAddress;
     getAddressFromLocationFromMap(double latitude, double longitude,
         {StateSetter setState}) async {
       try {
@@ -935,16 +925,16 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
         Coordinates coordinates = new Coordinates(latitude, longitude);
         var addresses =
             await Geocoder.local.findAddressesFromCoordinates(coordinates);
-        var first = addresses.first;
+        firstAddress = addresses.first;
 //        localAddress = first.addressLine;
 
         localAddress =
-            '${first.subLocality != null ? first.subLocality : ''}${first.locality != null ? ', ' + first.locality : ''}${first.subAdminArea != null ? ', ' + first.subAdminArea : ''}${first.adminArea != null ? ', ' + first.adminArea : ''}';
+            '${firstAddress.subLocality != null ? firstAddress.subLocality : ''}${firstAddress.locality != null ? ', ' + firstAddress.locality : ''}${firstAddress.subAdminArea != null ? ', ' + firstAddress.subAdminArea : ''}${firstAddress.adminArea != null ? ', ' + firstAddress.adminArea : ''}';
         if (setState != null)
           setState(() {
 //            localAddress = first.addressLine;
             localAddress =
-                '${first.subLocality != null ? first.subLocality : ''}${first.locality != null ? ', ' + first.locality : ''}${first.subAdminArea != null ? ', ' + first.subAdminArea : ''}${first.adminArea != null ? ', ' + first.adminArea : ''}';
+                '${firstAddress.subLocality != null ? firstAddress.subLocality : ''}${firstAddress.locality != null ? ', ' + firstAddress.locality : ''}${firstAddress.subAdminArea != null ? ', ' + firstAddress.subAdminArea : ''}${firstAddress.adminArea != null ? ', ' + firstAddress.adminArea : ''}';
             if (localAddress.length > 0)
               localAddress = localAddress[0] == ','
                   ? localAddress.replaceFirst(',', '')
@@ -1158,6 +1148,14 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                             eventBus.fire(
                                 onLocationChanged(widget.initialPosition));
                             Navigator.pop(context);
+
+                            // banners api
+                            _getBannersApi(
+                                city: (firstAddress != null &&
+                                        firstAddress.subAdminArea != null &&
+                                        firstAddress.subAdminArea.isNotEmpty)
+                                    ? firstAddress.subAdminArea
+                                    : "");
                             //ReloadApi
                             _getStoreApi();
                           },
@@ -1725,6 +1723,11 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           locationAddress = locationAddress[0] == ','
               ? locationAddress.replaceFirst(',', '')
               : locationAddress;
+        //banners reload
+        _getBannersApi(
+            city: (first.subAdminArea != null && first.subAdminArea.isNotEmpty)
+                ? first.subAdminArea
+                : "");
         //ReloadApi
         _getStoreApi();
       });

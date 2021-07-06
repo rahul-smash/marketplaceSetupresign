@@ -517,7 +517,7 @@ class Utils {
           status = true;
         }
       } else {
-        if (deliveryType == OrderType.PickUp) {
+        if (deliveryType == OrderType.PickUp||deliveryType==OrderType.DineIn) {
           if (storeObject.is24X7Open == "1") {
             // 1 = means store open 24x7
             // 0 = not open for 24x7
@@ -806,7 +806,7 @@ enum HomeScreenEnum {
 
 enum ClassType { CART, SubCategory, Favourites, Home, Search }
 
-enum OrderType { Delivery, PickUp, Menu, SUBSCRIPTION_ORDER }
+enum OrderType { Delivery, PickUp, Menu, SUBSCRIPTION_ORDER ,DineIn}
 
 enum PaymentType { COD, ONLINE, ONLINE_PAYTM, CANCEL }
 
