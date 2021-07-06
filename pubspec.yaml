@@ -148,7 +148,7 @@ flutter:
     - images/unselectedmyordericon.png
     - images/menuicon.png
     - images/searchicon.png
-    - images/placeHolder.png
+    - images/placeholder.png
     - images/cancelicon.png
     - images/dropdownarrowicon.png
     - images/favouriteicon.png

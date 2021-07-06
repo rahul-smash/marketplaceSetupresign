@@ -1022,7 +1022,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
-                                            "images/placeHolder.png"),
+                                            "images/placeholder.png"),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -1242,7 +1242,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
                                           image: AssetImage(
-                                              "images/placeHolder.png"),
+                                              "images/placeholder.png"),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
