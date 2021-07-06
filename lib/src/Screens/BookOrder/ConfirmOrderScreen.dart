@@ -2232,7 +2232,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             }
           });
           break;
-        case "PeachPayments":
+        case "Peachpay":
           ApiController.peachPayCreateOrderApi(
               taxModel.total, orderJson, detailsModel.orderDetails,
               storeModel.id,
@@ -2429,7 +2429,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           Utils.hideProgressDialog(context);
           placeOrderApiCall(response.data.checkoutId, response.data.id, 'PeachPayments');
         } else {
-          Utils.showToast("payment cancelled", true);
+          Utils.showToast("payment failed", true);
           Utils.hideProgressDialog(context);
         }
       } else {
