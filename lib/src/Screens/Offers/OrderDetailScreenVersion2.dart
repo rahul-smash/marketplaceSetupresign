@@ -223,6 +223,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
   }
 
   Widget maincontainer(OrderData orderHistoryData) {
+    String bullet = "\u2022 ";
     if (widget.orderHistoryData.status != '5') {
       if (orderHistoryData.runnerDetail != null &&
           orderHistoryData.runnerDetail.isNotEmpty) {
@@ -242,7 +243,19 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                         margin: EdgeInsets.only(left: 40, top: 5),
                         height: 30,
                         width: 200,
-                        child: Text('${_getBottomTrack()}')
+                        child: RichText(
+                            text: TextSpan(
+                              text: '${bullet}',
+                              style: TextStyle(fontSize: 15, color: Color(0xff75990B)),
+                              children: [
+                                TextSpan(
+                                  text: '${_getBottomTrack()}', style: TextStyle(fontSize: 12, color: Colors.black),
+                                )
+
+                              ],
+
+                            )
+                        )
                     ),
                   ],
                 ),
@@ -263,7 +276,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                         text: TextSpan(
                             text: '${_getRunnertitle(widget.orderHistoryData)}',
                             style:
-                            TextStyle(color: Colors.black, fontSize: 16),
+                            TextStyle(color: Colors.black, fontSize: 13),
                             children: [
                               TextSpan(
                                   text:
@@ -300,10 +313,13 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
         orderHistoryData.runnerDetail.isNotEmpty){
     return Container(
       margin: EdgeInsets.only(right: 20.0),
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.all(6),
       decoration: BoxDecoration(
           color: Color(0xff75990B),
-          borderRadius: BorderRadius.circular(20)),
+          border: Border.all(
+            width: 4,
+            color: Colors.grey[200],),
+          borderRadius: BorderRadius.circular(25)),
       child: GestureDetector(
         onTap: () {
           print('Calling');
@@ -325,10 +341,13 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
         ){
       return  Container(
         margin: EdgeInsets.only(right: 20.0),
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(6),
         decoration: BoxDecoration(
             color: Color(0xff75990B),
-            borderRadius: BorderRadius.circular(20)),
+            border: Border.all(
+              width: 4,
+              color: Colors.grey[200],),
+            borderRadius: BorderRadius.circular(25)),
         child: GestureDetector(
           onTap: () {
             print('Map');
@@ -2121,7 +2140,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
           visible: widget.orderHistoryData.status == '5',
           child: RichText(
             text: TextSpan(
-                text: '     by',
+                text: '${_getRunnerBy(widget.orderHistoryData)}',
                 style: TextStyle(color: Colors.black, fontSize: 14),
                 children: [
                   TextSpan(
@@ -2273,10 +2292,17 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
 
       return '$name';
     } else {
-      return 'Runner yet to be decided';
+      return '';
     }
   }
-
+  String _getRunnerBy(OrderData orderHistoryData) {
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      return '     by';
+    } else {
+      return '';
+    }
+  }
   _getImage(OrderData orderHistoryData) {
     //Image(image: AssetImage('images/whatsapp.png' ),
 
@@ -2297,13 +2323,13 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     switch(widget.orderHistoryData.status)
     {
       case '6':
-        return bullet + ' Order Cancelled';
+        return 'Order Cancelled';
         break;
       case '7':
-        return bullet+' On the way to destination';
+        return 'On the way to destination';
         break;
       case '8':
-        return bullet+' On the way to take your order';
+        return 'On the way to take your order';
         break;
       default:
         return '';

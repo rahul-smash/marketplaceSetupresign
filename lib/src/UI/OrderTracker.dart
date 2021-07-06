@@ -144,7 +144,19 @@ class _OrderTrackerLiveState extends State<OrderTrackerLive> {
                               margin: EdgeInsets.only(left: 25, top: 5),
                               height: 30,
                               width: 200,
-                              child: Text('${_getBottomTrack()}')
+                              child: RichText(
+                                text: TextSpan(
+                                  text: '${bullet}',
+                                    style: TextStyle(fontSize: 15, color: Color(0xff75990B)),
+                                  children: [
+                                    TextSpan(
+                                      text: '${_getBottomTrack()}', style: TextStyle(fontSize: 12, color: Colors.black),
+                                    )
+
+                                  ],
+
+                                )
+                                )
                           ),
                         ],
                       ),
@@ -165,7 +177,7 @@ class _OrderTrackerLiveState extends State<OrderTrackerLive> {
                               text: TextSpan(
                                   text: 'Delivery Boy',
                                   style:
-                                  TextStyle(color: Colors.black, fontSize: 16),
+                                  TextStyle(color: Colors.grey[700], fontSize: 13),
                                   children: [
                                     TextSpan(
                                         text:
@@ -180,10 +192,13 @@ class _OrderTrackerLiveState extends State<OrderTrackerLive> {
                           ),
                           Container(
                             margin: EdgeInsets.only(right: 25.0),
-                            padding: EdgeInsets.all(8),
+                            padding: EdgeInsets.all(6),
                             decoration: BoxDecoration(
                                 color: Color(0xff75990B),
-                                borderRadius: BorderRadius.circular(20)),
+                                border: Border.all(
+                                  width: 4,
+                                color: Colors.grey[200],),
+                                borderRadius: BorderRadius.circular(25)),
                             child: GestureDetector(
                               onTap: () {
                                 print('Calling');
@@ -314,13 +329,13 @@ class _OrderTrackerLiveState extends State<OrderTrackerLive> {
     switch(widget.orderHistoryData.status)
     {
       case '6':
-        return bullet + ' Order Cancelled';
+        return 'Order Cancelled';
         break;
       case '7':
-        return bullet+' On the way to destination';
+        return 'On the way to destination';
         break;
       case '8':
-        return bullet+' On the way to take your order';
+        return 'On the way to take your order';
         break;
       default:
         return '';
