@@ -69,8 +69,6 @@ dependencies:
   app_settings: ^4.0.4
   apple_sign_in: ^0.1.0
 
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -199,6 +197,7 @@ flutter:
     - images/refresh.png
     - images/runner-location.png
     - images/user-location.png
+    - images/dine_in.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

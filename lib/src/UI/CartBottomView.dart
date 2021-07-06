@@ -33,6 +33,8 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
   StoreDataObj store;
   String pickupfacility, delieveryAdress;
 
+  String dineIn='0';
+
   @override
   void initState() {
     super.initState();
@@ -172,6 +174,7 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                   store = await SharedPrefs.getStoreData();
                   pickupfacility = store.pickupFacility;
                   delieveryAdress = store.deliveryFacility;
+                  dineIn = store.dineIn;
 
                   print(
                       '---------${pickupfacility} and ${delieveryAdress}--------');
@@ -179,7 +182,7 @@ class _CartTotalPriceBottomBarState extends State<CartTotalPriceBottomBar> {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) =>
-                          OrderSelectionScreen(pickupfacility, delieveryAdress),
+                          OrderSelectionScreen(pickupfacility, delieveryAdress,dineInFacility: dineIn,),
                     );
                   } else if (pickupfacility == "1") {
                     StoreDataObj storeObject = await SharedPrefs.getStoreData();

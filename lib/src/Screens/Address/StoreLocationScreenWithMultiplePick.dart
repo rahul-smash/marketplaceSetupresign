@@ -4,6 +4,7 @@ import 'package:restroapp/src/Screens/BookOrder/ConfirmOrderScreen.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/BaseState.dart';
@@ -13,9 +14,9 @@ import 'package:restroapp/src/utils/Utils.dart';
 class StoreLocationScreenWithMultiplePick extends StatefulWidget {
   Datum areaObject;
   PickUpModel storeArea;
-  OrderType pickUp;
+  OrderType orderFacility;
 
-  StoreLocationScreenWithMultiplePick(this.storeArea, this.pickUp) {
+  StoreLocationScreenWithMultiplePick(this.storeArea, this.orderFacility) {
     this.areaObject = storeArea.data.first;
   }
 
@@ -202,7 +203,8 @@ class _StoreLocationScreenWithMultiplePickState
         child: BottomAppBar(
           child: InkWell(
             onTap: () async {
-             StoreModel storeModel=await SharedPrefs.getStore();
+              StoreDataObj storeModel = await SharedPrefs.getStoreData();
+//              StoreModel storeModel=await SharedPrefs.getStore();
               if (widget.areaObject.note.isEmpty) {
                 Navigator.pop(context);
 //                Navigator.push(

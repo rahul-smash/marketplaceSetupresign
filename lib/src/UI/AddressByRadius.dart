@@ -67,7 +67,7 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
       emailController.text = widget.addressData.email.trim();
       addressController.text = widget.addressData.address.trim();
       _selectedTag = widget.addressData.addressType.trim();
-      _isDefaultAddress= widget.addressData.set_default_address=='1';
+      _isDefaultAddress = widget.addressData.set_default_address == '1';
       //_mapController.moveCamera(CameraUpdate.newLatLng(center));
     } else {
       //new address adding
@@ -336,9 +336,14 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
         this.zipCode = "${first.postalCode}";
 
         setState(() {
-          address = first.addressLine;
-          cityController.text = first.locality;
-          stateController.text = first.adminArea;
+//          address = first.addressLine;
+          cityController.text = first.subAdminArea != null ?first.subAdminArea:'';
+          stateController.text =first.adminArea != null ? first.adminArea:'';
+          address =
+              '${first.subLocality != null ? first.subLocality : ''}${first.locality != null ? ', ' + first.locality : ''}${first.subAdminArea != null ? ', ' + first.subAdminArea : ''}${first.adminArea != null ? ', ' + first.adminArea : ''}';
+          if (address.length > 0)
+            address =
+                address[0] == ',' ? address.replaceFirst(',', '') : address;
         });
       } else {
         address = "No address found!";

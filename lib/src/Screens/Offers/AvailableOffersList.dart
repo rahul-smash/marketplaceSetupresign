@@ -259,7 +259,7 @@ class AvailableOffersState extends State<AvailableOffersDialog> {
     print("----couponCode-----=>${couponCode}");
     Utils.showProgressDialog(
         context);
-    ApiController.validateOfferApiRequest(couponCode, widget.paymentMode, json,counpon_type)
+    ApiController.validateOfferApiRequest(couponCode, widget.paymentMode, json,counpon_type,widget.isComingFromPickUpScreen?'1':'2')
         .then((validCouponModel) {
       if (validCouponModel != null && validCouponModel.success) {
         Utils.showToast(validCouponModel.message, true);

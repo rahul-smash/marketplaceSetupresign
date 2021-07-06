@@ -144,7 +144,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Order - ${widget.orderHistoryData.orderId}',
+                    'Order - ${widget.orderHistoryData.displayOrderId}',
                     style: TextStyle(),
                     textAlign: TextAlign.left,
                   ),
@@ -623,42 +623,47 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                     SizedBox(
                       height: 20,
                     ),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: InkWell(
-                          onTap: () {
-                            if (_ratingRunner == 0)
-                              orderRatebottomSheet(context, '3');
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'Rate Delivery Person:',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              RatingBar(
-                                initialRating: _ratingRunner,
-                                minRating: 0,
-                                itemSize: 24,
-                                direction: Axis.horizontal,
-                                allowHalfRating: false,
-                                itemCount: 5,
-                                ignoreGestures: true,
-                                itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 2.0),
-                                itemBuilder: (context, _) => Icon(
-                                  Icons.star,
-                                  color: appThemeSecondary,
+                    Visibility(
+                      visible: widget.orderHistoryData.orderFacility
+                          .toLowerCase()
+                          .contains('delivery'),
+                      child: Container(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: InkWell(
+                            onTap: () {
+                              if (_ratingRunner == 0)
+                                orderRatebottomSheet(context, '3');
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Rate Delivery Person:',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400),
                                 ),
-                                onRatingUpdate: (rating) {
-                                  _ratingRunner = rating;
-                                },
-                              ),
-                            ],
-                          )),
+                                RatingBar(
+                                  initialRating: _ratingRunner,
+                                  minRating: 0,
+                                  itemSize: 24,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: false,
+                                  itemCount: 5,
+                                  ignoreGestures: true,
+                                  itemPadding:
+                                      EdgeInsets.symmetric(horizontal: 2.0),
+                                  itemBuilder: (context, _) => Icon(
+                                    Icons.star,
+                                    color: appThemeSecondary,
+                                  ),
+                                  onRatingUpdate: (rating) {
+                                    _ratingRunner = rating;
+                                  },
+                                ),
+                              ],
+                            )),
+                      ),
                     ),
                   ],
                 ),
@@ -1955,7 +1960,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                   ),
                   Expanded(
                       child: Text(
-                    'Ready for PickUp',
+                    widget.orderHistoryData.orderFacility
+                            .toLowerCase()
+                            .contains('dinein')
+                        ? 'Ready to Serve'
+                        : 'Ready for PickUp',
                     style: TextStyle(fontSize: 16, color: orderReadyForPickUp),
                   )),
                   Text(
@@ -2048,7 +2057,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                   ),
                   Expanded(
                       child: Text(
-                    'Order Shipped',
+                    widget.orderHistoryData.orderFacility
+                            .toLowerCase()
+                            .contains('dinein')
+                        ? 'Order Served'
+                        : 'Order Shipped',
                     style: TextStyle(fontSize: 16, color: orderShipped),
                   )),
                   Text(
@@ -2097,7 +2110,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                       : !widget.orderHistoryData.orderFacility
                               .toLowerCase()
                               .contains('pick')
-                          ? 'Order Delivered'
+                          ? widget.orderHistoryData.orderFacility
+                                  .toLowerCase()
+                                  .contains('dinein')
+                              ? 'Order Completed'
+                              : 'Order Delivered'
                           : 'Order Picked',
                   style: TextStyle(fontSize: 16, color: orderDelivered),
                 )),

@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:restroapp/src/UI/CartBottomView.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
+import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
+import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
+import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
@@ -79,7 +82,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
               },
               child: Padding(
                 padding:
-                EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
+                    EdgeInsets.only(top: 0.0, bottom: 0.0, left: 0, right: 10),
                 child: Icon(
                   Icons.home,
                   color: Colors.white,
@@ -88,7 +91,6 @@ class _MyCartScreenState extends State<MyCartScreen> {
               ),
             ),
           ),
-
         ],
       ),
       body: WillPopScope(
@@ -136,6 +138,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
         cartList = response;
         isLoading = false;
         eventBus.fire(updateCartCount());
+        _getSelectedStore(cartList.length);
       });
     });
   }
@@ -183,6 +186,22 @@ class _MyCartScreenState extends State<MyCartScreen> {
           },
         ),
       );
+    }
+  }
+
+  void _getSelectedStore(int length) async {
+    if (length != null && length > 0) {
+      StoreDataObj store = await SharedPrefs.getStoreData();
+//      Utils.showProgressDialog(context);
+      ApiController.getStoreVersionData(store.id).then((response) {
+//        Utils.hideProgressDialog(context);
+        Utils.hideKeyboard(context);
+        StoreDataModel storeObject = response;
+        if (storeObject != null && storeObject.success)
+          setState(() {
+            SharedPrefs.saveStoreData(storeObject.store);
+          });
+      });
     }
   }
 }

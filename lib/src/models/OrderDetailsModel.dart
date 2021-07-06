@@ -81,7 +81,7 @@ class OrderDetailsModel {
         "total": '${taxModel.total}',
         "user_id": userId,
         "device_token": deviceToken,
-        "delivery_type": this.deliveryType==OrderType.Delivery?'Delivery':'PickUp',
+        "delivery_type": this.deliveryType==OrderType.Delivery?'Delivery':this.deliveryType==OrderType.PickUp? 'PickUp':'DineIn',
         "user_address_id":
             isComingFromPickUpScreen == true ? areaId : address.id,
         "checkout": /*totalPrice*/ "${taxModel.itemSubTotal}",
