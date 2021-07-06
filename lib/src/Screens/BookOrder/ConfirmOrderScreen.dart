@@ -350,7 +350,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
       if (widget.address.zipCode != null && widget.address.zipCode.isNotEmpty)
         pin = widget.address.zipCode;
-    } else if (widget.deliveryType == OrderType.PickUp||widget.deliveryType == OrderType.DineIn) {
+    } else if (widget.deliveryType == OrderType.PickUp ||
+        widget.deliveryType == OrderType.DineIn) {
 //      address = widget.areaObject.pickupAdd;
       //TODO add pickupAdd
       address = '';
@@ -1517,7 +1518,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                             couponCodeController.text,
                             widget.paymentMode,
                             json,
-                            couponType,widget.isComingFromPickUpScreen?'1':'2');
+                            couponType,
+                            widget.isComingFromPickUpScreen ? '1' : '2');
                         if (couponModel.success) {
                           print("---success----");
                           Utils.showToast("${couponModel.message}", false);
@@ -1764,7 +1766,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
     String couponCode = taxModel == null ? "" : taxModel.couponCode;
     String discount = taxModel == null ? "0" : taxModel.discount;
-    if (widget.deliveryType == OrderType.PickUp||widget.deliveryType ==OrderType.DineIn)
+    if (widget.deliveryType == OrderType.PickUp ||
+        widget.deliveryType == OrderType.DineIn)
       Utils.showProgressDialog(context);
 
     Map<String, dynamic> attributeMap = new Map<String, dynamic>();
@@ -1986,7 +1989,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   }
 
   Future<void> checkMinOrderPickAmount() async {
-    if ((widget.deliveryType == OrderType.PickUp||widget.deliveryType == OrderType.DineIn) && widget.areaObject != null) {
+    if ((widget.deliveryType == OrderType.PickUp ||
+        widget.deliveryType == OrderType.DineIn) && widget.areaObject != null) {
       print("----minAmount=${widget.areaObject.minOrder}");
       print("----notAllow=${widget.areaObject.notAllow}");
       print("--------------------------------------------");
@@ -2234,7 +2238,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           break;
         case "Peachpay":
           ApiController.peachPayCreateOrderApi(
-              taxModel.total, orderJson, detailsModel.orderDetails,
+              double.parse(taxModel.total).toStringAsFixed(2), orderJson,
+              detailsModel.orderDetails,
               storeModel.id,
               _brandData.currencyAbbr)
               .then((response) {
@@ -2244,7 +2249,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PeachPayWebView(model,storeModel.id)),
+                    builder: (context) =>
+                        PeachPayWebView(model, storeModel.id)),
               );
             } else {
               Utils.showToast("Server Error", true);
@@ -2351,7 +2357,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             eventBus.fire(updateCartCount());
             print("${widget.deliveryType}");
             //print("Location = ${storeModel.lat},${storeModel.lng}");
-            if (widget.deliveryType == OrderType.PickUp||widget.deliveryType==OrderType.DineIn) {
+            if (widget.deliveryType == OrderType.PickUp ||
+                widget.deliveryType == OrderType.DineIn) {
               bool result = await DialogUtils.displayPickUpDialog(context);
               if (result == true) {
                 //print("==result== ${result}");
@@ -2427,7 +2434,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         PeachPayVerifyResponse model = response;
         if (model.success) {
           Utils.hideProgressDialog(context);
-          placeOrderApiCall(response.data.checkoutId, response.data.id, 'PeachPayments');
+          placeOrderApiCall(
+              response.data.checkoutId, response.data.id, 'PeachPayments');
         } else {
           Utils.showToast("payment failed", true);
           Utils.hideProgressDialog(context);
