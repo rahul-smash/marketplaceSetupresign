@@ -2412,6 +2412,10 @@ class ApiController {
       dynamic detailsJson,
       storeId,
       String currencyAbr) async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    if (!isNetworkAviable) {
+      return null;
+    }
     var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
         ApiConstants.peachPayCreateOrder;
     print(url);

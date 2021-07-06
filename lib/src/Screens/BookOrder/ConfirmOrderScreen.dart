@@ -2243,9 +2243,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               storeModel.id,
               _brandData.currencyAbbr)
               .then((response) {
-            PeachPayCheckOutResponse model = response;
             Utils.hideProgressDialog(context);
-            if (model != null && response.success) {
+            PeachPayCheckOutResponse model = response;
+            if (model == null) {
+              Utils.showToast(AppConstant.noInternet, false);
+            }
+            else if (model != null && response.success) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -2254,7 +2257,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               );
             } else {
               Utils.showToast("Server Error", true);
-              Utils.hideProgressDialog(context);
             }
           });
           break;
@@ -2429,20 +2431,19 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     ApiController.peachPayVerifyTransactionApi(
         checkoutID, storeModel.id)
         .then((response) {
+      Utils.hideProgressDialog(context);
       //print("----razorpayVerifyTransactionApi----${response}--");
       if (response != null) {
         PeachPayVerifyResponse model = response;
         if (model.success) {
-          Utils.hideProgressDialog(context);
           placeOrderApiCall(
               response.data.checkoutId, response.data.id, 'PeachPayments');
         } else {
           Utils.showToast("payment failed", true);
-          Utils.hideProgressDialog(context);
+
         }
       } else {
         Utils.showToast("Something went wrong!", true);
-        Utils.hideProgressDialog(context);
       }
     });
   }
