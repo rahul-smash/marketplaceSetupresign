@@ -13,9 +13,9 @@ import 'package:restroapp/src/utils/Utils.dart';
 
 class StoreLocationScreen extends StatefulWidget {
   Datum areaObject;
-  OrderType pickUp;
+  OrderType orderFacility;
 
-  StoreLocationScreen(this.areaObject, this.pickUp);
+  StoreLocationScreen(this.areaObject, this.orderFacility);
 
   @override
   _StoreLocationScreenState createState() {
@@ -135,7 +135,7 @@ class _StoreLocationScreenState extends BaseState<StoreLocationScreen> {
                         null,
                         true,
                         widget.areaObject.areaId.toString(),
-                        OrderType.PickUp,
+                        widget.orderFacility,
                         storeModel: storeModel,
                       ),
                     ));
@@ -154,7 +154,7 @@ class _StoreLocationScreenState extends BaseState<StoreLocationScreen> {
                                 null,
                                 true,
                                 widget.areaObject.areaId.toString(),
-                                OrderType.PickUp,
+                                widget.orderFacility,
                                 storeModel: storeModel,
                               )));
                 }

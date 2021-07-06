@@ -12,6 +12,7 @@ import 'package:restroapp/src/apihandler/ApiConstants.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/AdminLoginModel.dart';
+import 'package:restroapp/src/models/BannerResponse.dart';
 import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CancelOrderModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
@@ -764,7 +765,8 @@ class ApiController {
       String couponCode,
       String paymentMode,
       String orderJson,
-      String coupon_type) async {
+      String coupon_type,
+      String orderFacilities) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -782,6 +784,7 @@ class ApiController {
         "user_id": user.id,
         "device_token": deviceToken,
         "orders": "$orderJson",
+        "order_facilities": orderFacilities,
         "payment_method": paymentMode,
         "platform": Platform.isIOS ? "IOS" : "Android"
       });
@@ -868,12 +871,17 @@ class ApiController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-
+    String orderFacility = deliveryType == OrderType.Delivery
+        ? 'Delivery'
+        : deliveryType == OrderType.PickUp
+            ? 'PickUp'
+            : 'DineIn';
     var url;
     if (deliveryType == OrderType.Delivery) {
       url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
           ApiConstants.placeOrder;
-    } else {
+    } else if (deliveryType == OrderType.PickUp ||
+        deliveryType == OrderType.DineIn) {
       url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
           ApiConstants.pickupPlaceOrder;
     }
@@ -972,6 +980,7 @@ class ApiController {
         "membership_plan_detail_id": membershipPlanDetailId,
         "membership_id": membershipId,
         "additional_info": additionalInfo,
+        "order_facility": orderFacility,
         "is_membership_coupon_enabled": isMembershipCouponEnabled,
         "shipping_tax_rate": taxModel != null ? taxModel.shipping_tax_rate : '',
         "shipping_tax": taxModel != null ? taxModel.shipping_tax : '',
@@ -2346,12 +2355,47 @@ class ApiController {
       print("${respStr}");
 
       final parsed = json.decode(respStr);
-      LogoutResponse logoutResponse =
-      LogoutResponse.fromJson(parsed);
+      LogoutResponse logoutResponse = LogoutResponse.fromJson(parsed);
       return logoutResponse;
     } catch (e) {
       print(e.toString());
       return null;
     }
+  }
+
+  static Future<BannerResponse> getBannersApi(String city) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+    var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.banners;
+
+    print("----url--${url}");
+    try {
+      FormData formData = new FormData.fromMap({
+        "device_id": deviceId,
+        "device_token": "${deviceToken}",
+        "platform": Platform.isIOS ? "IOS" : "Android",
+        "city": city
+      });
+      print(formData.fields.toString());
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      BannerResponse bannerResponse =
+          BannerResponse.fromJson(json.decode(response.data));
+      print("-------tagsApiRequest ---${bannerResponse.success}");
+
+      return bannerResponse;
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 }

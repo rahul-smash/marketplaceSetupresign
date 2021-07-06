@@ -139,7 +139,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Order - ${widget.orderHistoryData.orderId}',
+                    'Order - ${widget.orderHistoryData.displayOrderId}',
                     style: TextStyle(),
                     textAlign: TextAlign.left,
                   ),
@@ -297,19 +297,20 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
           ),
           Visibility(
               visible: orderHistoryData.IsMembershipCouponEnabled == '1',
-              child:  Container(
-                  margin: EdgeInsets.only(top: 10,bottom: 10),
+              child: Container(
+                  margin: EdgeInsets.only(top: 10, bottom: 10),
                   padding: EdgeInsets.fromLTRB(15, 3, 15, 3),
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xFFE6E6E6)),
                     color: Color(0xFFE6E6E6),
                     borderRadius: BorderRadius.all(Radius.circular(25.0)),
                   ),
-                  child:Text(
+                  child: Text(
                     'Subscription Order',
                     style: TextStyle(
                         color: appTheme,
-                        fontSize: 14,fontWeight: FontWeight.bold),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
                   )))
         ],
       ),
@@ -357,51 +358,51 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                             child: Container(
                           padding: EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Color(0xFFE1E1E1), width: 1),
+                            border:
+                                Border.all(color: Color(0xFFE1E1E1), width: 1),
                             borderRadius: BorderRadius.circular(5.0),
                           ),
-                          child:  InkWell(
-                            onTap: () {
-                              if (_ratingPackaging == 0)
-                                orderRatebottomSheet(context, '2');
-                            },child:
-                          Column(
-                            children: [
-                              ClipRRect(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  child: Image.asset('images/packaging.png',
-                                      fit: BoxFit.fitHeight)),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                'Rate on Packaging',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                                RatingBar(
-                                  initialRating: _ratingPackaging,
-                                  minRating: 0,
-                                  itemSize: 24,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: false,
-                                  itemCount: 5,
-                                  ignoreGestures: true,
-                                  itemPadding:
-                                      EdgeInsets.symmetric(horizontal: 2.0),
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: appThemeSecondary,
+                          child: InkWell(
+                              onTap: () {
+                                if (_ratingPackaging == 0)
+                                  orderRatebottomSheet(context, '2');
+                              },
+                              child: Column(
+                                children: [
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      child: Image.asset('images/packaging.png',
+                                          fit: BoxFit.fitHeight)),
+                                  SizedBox(
+                                    height: 5,
                                   ),
-                                  onRatingUpdate: (rating) {
-                                    _ratingPackaging = rating;
-                                  },
-
-                              ),
-                            ],
-                          )),
+                                  Text(
+                                    'Rate on Packaging',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  RatingBar(
+                                    initialRating: _ratingPackaging,
+                                    minRating: 0,
+                                    itemSize: 24,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: false,
+                                    itemCount: 5,
+                                    ignoreGestures: true,
+                                    itemPadding:
+                                        EdgeInsets.symmetric(horizontal: 2.0),
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color: appThemeSecondary,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      _ratingPackaging = rating;
+                                    },
+                                  ),
+                                ],
+                              )),
                         )),
                         SizedBox(
                           width: 10,
@@ -410,32 +411,79 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                             child: Container(
                           padding: EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Color(0xFFE1E1E1), width: 1),
+                            border:
+                                Border.all(color: Color(0xFFE1E1E1), width: 1),
                             borderRadius: BorderRadius.circular(5.0),
                           ),
-                          child:  InkWell(
+                          child: InkWell(
+                              onTap: () {
+                                if (_ratingHygiene == 0)
+                                  orderRatebottomSheet(context, '1');
+                              },
+                              child: Column(
+                                children: [
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      child: Image.asset('images/hygiene.png',
+                                          fit: BoxFit.fitHeight)),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    'Rate on Hygiene',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  RatingBar(
+                                    initialRating: _ratingHygiene,
+                                    minRating: 0,
+                                    itemSize: 24,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: false,
+                                    itemCount: 5,
+                                    ignoreGestures: true,
+                                    itemPadding:
+                                        EdgeInsets.symmetric(horizontal: 2.0),
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color: appThemeSecondary,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      _ratingHygiene = rating;
+                                    },
+                                  ),
+                                ],
+                              )),
+                        )),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Visibility(
+                      visible: widget.orderHistoryData.orderFacility
+                          .toLowerCase()
+                          .contains('delivery'),
+                      child: Container(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: InkWell(
                             onTap: () {
-                              if (_ratingHygiene == 0)
-                                orderRatebottomSheet(context, '1');
-                            },child:
-                          Column(
-                            children: [
-                              ClipRRect(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  child: Image.asset('images/hygiene.png',
-                                      fit: BoxFit.fitHeight)),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                'Rate on Hygiene',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              RatingBar(
-                                  initialRating: _ratingHygiene,
+                              if (_ratingRunner == 0)
+                                orderRatebottomSheet(context, '3');
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Rate Delivery Person:',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                RatingBar(
+                                  initialRating: _ratingRunner,
                                   minRating: 0,
                                   itemSize: 24,
                                   direction: Axis.horizontal,
@@ -449,57 +497,13 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                     color: appThemeSecondary,
                                   ),
                                   onRatingUpdate: (rating) {
-                                    _ratingHygiene = rating;
+                                    _ratingRunner = rating;
                                   },
                                 ),
-                            ],
-                          )),
-                        )),
-                      ],
+                              ],
+                            )),
+                      ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-
-                    Container(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child:  InkWell(
-                          onTap: () {
-                            if (_ratingRunner == 0)
-                              orderRatebottomSheet(context, '3');
-                          },child:
-                      Row(
-                        children: [
-                          Text(
-                            'Rate Delivery Person:',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400),
-                          ),
-                          RatingBar(
-                            initialRating: _ratingRunner,
-                            minRating: 0,
-                            itemSize: 24,
-                            direction: Axis.horizontal,
-                            allowHalfRating: false,
-                            itemCount: 5,
-                            ignoreGestures: true,
-                            itemPadding:
-                            EdgeInsets.symmetric(horizontal: 2.0),
-                            itemBuilder: (context, _) => Icon(
-                              Icons.star,
-                              color: appThemeSecondary,
-                            ),
-                            onRatingUpdate: (rating) {
-                              _ratingRunner = rating;
-                            },
-
-                          ),
-                        ],
-                      )),
-                    ),
-
                   ],
                 ),
               )),
@@ -1167,7 +1171,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                         Padding(
                           padding: EdgeInsets.only(top: 5),
                           child: Text(
-                            "${type != '1' ?type == '3'?'Delivery Person': 'Packaging' : 'Hygiene'}",
+                            "${type != '1' ? type == '3' ? 'Delivery Person' : 'Packaging' : 'Hygiene'}",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.black,
@@ -1226,7 +1230,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                           height: 1,
                         ),
                         Visibility(
-                          visible: type!='3',
+                          visible: type != '3',
                           child: Container(
                             width: double.maxFinite,
                             child: Column(
@@ -1238,7 +1242,10 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                     },
                                     child: Container(
                                       margin: EdgeInsets.only(
-                                          top: 0, bottom: 6, left: 16, right: 16),
+                                          top: 0,
+                                          bottom: 6,
+                                          left: 16,
+                                          right: 16),
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
                                           image: AssetImage(
@@ -1612,7 +1619,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
 //        : grayLightColorSecondary;
 
     Color orderShipped = widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'||  widget.orderHistoryData.status == '7'
+            widget.orderHistoryData.status == '5' ||
+            widget.orderHistoryData.status == '7'
         ? Colors.black
         : grayLightColorSecondary;
     Color orderDelivered = widget.orderHistoryData.status == '2' ||
@@ -1643,7 +1651,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
 //        ? 100
 //        : 0;
     double orderShippedProgress = widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'||  widget.orderHistoryData.status == '7'
+            widget.orderHistoryData.status == '5' ||
+            widget.orderHistoryData.status == '7'
         ? 100
         : 0;
     double orderDeliveredProgress = widget.orderHistoryData.status == '2' ||
@@ -1790,7 +1799,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                   ),
                   Expanded(
                       child: Text(
-                    'Ready for PickUp',
+                    widget.orderHistoryData.orderFacility
+                            .toLowerCase()
+                            .contains('dinein')
+                        ? 'Ready to Serve'
+                        : 'Ready for PickUp',
                     style: TextStyle(fontSize: 16, color: orderReadyForPickUp),
                   )),
                   Text(
@@ -1883,7 +1896,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                   ),
                   Expanded(
                       child: Text(
-                    'Order Shipped',
+                    widget.orderHistoryData.orderFacility
+                            .toLowerCase()
+                            .contains('dinein')
+                        ? 'Order Served'
+                        : 'Order Shipped',
                     style: TextStyle(fontSize: 16, color: orderShipped),
                   )),
                   Text(
@@ -1932,7 +1949,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                       : !widget.orderHistoryData.orderFacility
                               .toLowerCase()
                               .contains('pick')
-                          ? 'Order Delivered'
+                          ? widget.orderHistoryData.orderFacility
+                                  .toLowerCase()
+                                  .contains('dinein')
+                              ? 'Order Completed'
+                              : 'Order Delivered'
                           : 'Order Picked',
                   style: TextStyle(fontSize: 16, color: orderDelivered),
                 )),
@@ -2080,7 +2101,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
               _ratingPackaging = double.parse(
                   orderHistoryData.reviewsHygeineAndPack[i].rating);
               break;
-              case '3':
+            case '3':
               _ratingRunner = double.parse(
                   orderHistoryData.reviewsHygeineAndPack[i].rating);
               break;
