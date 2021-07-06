@@ -462,42 +462,47 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                     SizedBox(
                       height: 20,
                     ),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: InkWell(
-                          onTap: () {
-                            if (_ratingRunner == 0)
-                              orderRatebottomSheet(context, '3');
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'Rate Delivery Person:',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              RatingBar(
-                                initialRating: _ratingRunner,
-                                minRating: 0,
-                                itemSize: 24,
-                                direction: Axis.horizontal,
-                                allowHalfRating: false,
-                                itemCount: 5,
-                                ignoreGestures: true,
-                                itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 2.0),
-                                itemBuilder: (context, _) => Icon(
-                                  Icons.star,
-                                  color: appThemeSecondary,
+                    Visibility(
+                      visible: widget.orderHistoryData.orderFacility
+                          .toLowerCase()
+                          .contains('delivery'),
+                      child: Container(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: InkWell(
+                            onTap: () {
+                              if (_ratingRunner == 0)
+                                orderRatebottomSheet(context, '3');
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Rate Delivery Person:',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400),
                                 ),
-                                onRatingUpdate: (rating) {
-                                  _ratingRunner = rating;
-                                },
-                              ),
-                            ],
-                          )),
+                                RatingBar(
+                                  initialRating: _ratingRunner,
+                                  minRating: 0,
+                                  itemSize: 24,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: false,
+                                  itemCount: 5,
+                                  ignoreGestures: true,
+                                  itemPadding:
+                                      EdgeInsets.symmetric(horizontal: 2.0),
+                                  itemBuilder: (context, _) => Icon(
+                                    Icons.star,
+                                    color: appThemeSecondary,
+                                  ),
+                                  onRatingUpdate: (rating) {
+                                    _ratingRunner = rating;
+                                  },
+                                ),
+                              ],
+                            )),
+                      ),
                     ),
                   ],
                 ),
