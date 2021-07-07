@@ -259,14 +259,14 @@ Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject,
 
 void setStoreCurrency(BrandVersionModel store, ConfigModel configObject) {
   if (store.brand.showCurrency == "symbol") {
-    if (store.brand.currency.isEmpty) {
-      AppConstant.currency = store.brand.currency;
+    if (store.brand.currency.isNotEmpty) {
+      AppConstant.currency = Utils.removeAllHtmlTags(store.brand.currency);
     } else {
       AppConstant.currency = configObject.currency;
     }
   } else {
-    if (store.brand.currency.isEmpty) {
-      AppConstant.currency = store.brand.currency;
+    if (store.brand.currency.isNotEmpty) {
+      AppConstant.currency = Utils.removeAllHtmlTags(store.brand.currency);
     } else {
       AppConstant.currency = configObject.currency;
     }
