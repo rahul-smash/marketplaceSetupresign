@@ -29,6 +29,8 @@ import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:html/parser.dart';
+
 
 import 'DialogUtils.dart';
 
@@ -777,6 +779,16 @@ class Utils {
       param['machine'] = iosInfo.utsname.machine;
     }
     DeviceInfo.getInstance(deviceInfo: param);
+  }
+  static String removeAllHtmlTags(String htmlText) {
+    try {
+      var document = parse(htmlText);
+      String parsedString = parse(document.body.text).documentElement.text;
+      return parsedString;
+    } catch (e) {
+      print(e);
+      return "";
+    }
   }
 }
 
