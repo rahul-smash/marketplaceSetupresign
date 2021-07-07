@@ -21,6 +21,7 @@ class OrderData {
   String displayOrderId;
   int paid;
   String runnerId;
+  List<RunnerDetail> runnerDetail;
   String paymentMethod;
   String note;
   String deliveryTimeSlot;
@@ -53,6 +54,7 @@ class OrderData {
     this.displayOrderId,
     this.paid,
     this.runnerId,
+    this.runnerDetail,
     this.paymentMethod,
     this.note,
     this.deliveryTimeSlot,
@@ -84,6 +86,7 @@ class OrderData {
     displayOrderId = json['display_order_id'];
     paid = json['paid'];
     runnerId = json['runner_id'];
+    runnerDetail= List<RunnerDetail>.from(json["runnerDetail"].map((x) => RunnerDetail.fromJson(x)));
     paymentMethod = json['payment_method'];
     note = json['note'];
     deliveryTimeSlot = json['delivery_time_slot'];
@@ -537,7 +540,7 @@ class ReviewsHygeineAndPack {
     rating: json["rating"] == null ? null : json["rating"],
     image: json["image"] == null ? null : json["image"],
     orderId: json["order_id"] == null ? null : json["order_id"],
-    platform: json["platform"] == null ? null : json["platform"],
+    platform: json["platform"] == null ? null :  json["platform"],
     type: json["type"] == null ? null : json["type"],
     created: json["created"] == null ? null : DateTime.parse(json["created"]),
     modified: json["modified"] == null ? null : DateTime.parse(json["modified"]),
@@ -557,6 +560,50 @@ class ReviewsHygeineAndPack {
     "type": type == null ? null : type,
     "created": created == null ? null : created.toIso8601String(),
     "modified": modified == null ? null : modified.toIso8601String(),
+  };
+}
+
+class RunnerDetail {
+  RunnerDetail({
+    this.id,
+    this.email,
+    this.phone,
+    this.fullName,
+    this.profileImage,
+    this.lat,
+    this.lng,
+    this.currentAddress,
+  });
+
+  String id;
+  String email;
+  String phone;
+  String fullName;
+  String profileImage;
+  String lat;
+  String lng;
+  String currentAddress;
+
+  factory RunnerDetail.fromJson(Map<String, dynamic> json) => RunnerDetail(
+    id: json["id"],
+    email: json["email"],
+    phone: json["phone"],
+    fullName: json["full_name"],
+    profileImage: json["profile_image"],
+    lat: json["lat"],
+    lng: json["lng"],
+    currentAddress: json["current_address"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "email": email,
+    "phone": phone,
+    "full_name": fullName,
+    "profile_image": profileImage,
+    "lat": lat,
+    "lng": lng,
+    "current_address": currentAddress,
   };
 }
 
