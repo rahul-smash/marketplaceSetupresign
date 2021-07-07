@@ -2136,6 +2136,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   }
 
   void callOrderIdApi(String paymentGateWay) async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    if (!isNetworkAviable) {
+      Utils.showToast(AppConstant.noInternet, false);
+      return ;
+    }
     Utils.showProgressDialog(context);
     double price = double.parse(taxModel.total); //totalPrice ;
     print("=======1===${price}===total==${taxModel.total}======");

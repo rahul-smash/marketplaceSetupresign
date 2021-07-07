@@ -23,6 +23,7 @@ class OrderDetailScreenVersion2 extends StatefulWidget {
   OrderData orderHistoryData;
   bool isRatingEnable;
   String bullet = "\u2022 ";
+
   OrderDetailScreenVersion2(this.orderHistoryData, this.isRatingEnable);
 
   @override
@@ -120,105 +121,105 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
         : '';
     if (isLoading) {
       return Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: AppBar(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Order Details',
-                    style: TextStyle(),
-                    textAlign: TextAlign.left,
-                  ),
-                ],
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Order Details',
+                style: TextStyle(),
+                textAlign: TextAlign.left,
               ),
-              centerTitle: false,
-            ),
-            body: Center(child: CircularProgressIndicator()),
-          );
+            ],
+          ),
+          centerTitle: false,
+        ),
+        body: Center(child: CircularProgressIndicator()),
+      );
     } else {
       return new Scaffold(
-            backgroundColor: Color(0xffDCDCDC),
-            appBar: AppBar(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Order - ${widget.orderHistoryData.displayOrderId}',
-                    style: TextStyle(),
-                    textAlign: TextAlign.left,
-                  ),
-                  Text(
-                    '$orderFacility$itemText${AppConstant.currency} ${widget.orderHistoryData.total}',
-                    style: TextStyle(fontSize: 13),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                  ),
-                ],
+        backgroundColor: Color(0xffDCDCDC),
+        appBar: AppBar(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Order - ${widget.orderHistoryData.displayOrderId}',
+                style: TextStyle(),
+                textAlign: TextAlign.left,
               ),
-              centerTitle: false,
-              actions: <Widget>[
-                Visibility(
-                  visible: showCancelButton(widget.orderHistoryData.status),
-                  child: InkWell(
-                      onTap: () async {
-                        cancelOrderBottomSheet(
-                            context, widget.orderHistoryData);
-                      },
-                      child: Center(
-                        child: Padding(
-                            padding: EdgeInsets.only(right: 16, left: 16),
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w400),
-                            )),
-                      )),
-                )
-              ],
-            ),
-            body: Column(children: [
-              Expanded(
-                flex: 4,
-                child: SingleChildScrollView(
-                  child: Container(
-                    color: Color(0xffDCDCDC),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        firstRow(widget.orderHistoryData),
-                        Container(
-                          color: Colors.white,
-                          margin: EdgeInsets.only(top: 5),
-                          padding: EdgeInsets.all(16),
-                          width: Utils.getDeviceWidth(context),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                'Track Order',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                              SizedBox(
-                                height: 16,
-                              ),
-                              _getTrackWidget(),
-                              SizedBox(
-                                height: 16,
-                              ),
-                            ],
-                          ),
+              Text(
+                '$orderFacility$itemText${AppConstant.currency} ${widget.orderHistoryData.total}',
+                style: TextStyle(fontSize: 13),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+              ),
+            ],
+          ),
+          centerTitle: false,
+          actions: <Widget>[
+            Visibility(
+              visible: showCancelButton(widget.orderHistoryData.status),
+              child: InkWell(
+                  onTap: () async {
+                    cancelOrderBottomSheet(context, widget.orderHistoryData);
+                  },
+                  child: Center(
+                    child: Padding(
+                        padding: EdgeInsets.only(right: 16, left: 16),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w400),
+                        )),
+                  )),
+            )
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              flex: 4,
+              child: SingleChildScrollView(
+                child: Container(
+                  color: Color(0xffDCDCDC),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      firstRow(widget.orderHistoryData),
+                      Container(
+                        color: Colors.white,
+                        margin: EdgeInsets.only(top: 5),
+                        padding: EdgeInsets.all(16),
+                        width: Utils.getDeviceWidth(context),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Track Order',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            _getTrackWidget(),
+                            SizedBox(
+                              height: 16,
+                            ),
+                          ],
                         ),
-                        secondRow(widget.orderHistoryData)
-                      ],
-                    ),
+                      ),
+                      secondRow(widget.orderHistoryData)
+                    ],
                   ),
                 ),
               ),
-             maincontainer(widget.orderHistoryData),
-                    ],
             ),
-          );
+            maincontainer(widget.orderHistoryData),
+          ],
+        ),
+      );
     }
   }
 
@@ -245,18 +246,17 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                         width: 200,
                         child: RichText(
                             text: TextSpan(
-                              text: '${bullet}',
-                              style: TextStyle(fontSize: 15, color: Color(0xff75990B)),
-                              children: [
-                                TextSpan(
-                                  text: '${_getBottomTrack()}', style: TextStyle(fontSize: 12, color: Colors.black),
-                                )
-
-                              ],
-
+                          text: '${bullet}',
+                          style:
+                              TextStyle(fontSize: 15, color: Color(0xff75990B)),
+                          children: [
+                            TextSpan(
+                              text: '${_getBottomTrack()}',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.black),
                             )
-                        )
-                    ),
+                          ],
+                        ))),
                   ],
                 ),
                 Row(
@@ -275,13 +275,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                       child: RichText(
                         text: TextSpan(
                             text: '${_getRunnertitle(widget.orderHistoryData)}',
-                            style:
-                            TextStyle(color: Colors.black, fontSize: 13),
+                            style: TextStyle(color: Colors.black, fontSize: 13),
                             children: [
                               TextSpan(
                                   text:
-                                  '\n${_getRunnerName(
-                                      widget.orderHistoryData)}',
+                                      '\n${_getRunnerName(widget.orderHistoryData)}',
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
@@ -296,57 +294,53 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                 ),
               ],
             ));
-      }
-      else
-        return Container(
-            height: 10
-        );
-    }
-    else
-      return Container(
-          height: 10
-      );
+      } else
+        return Container(height: 10);
+    } else
+      return Container(height: 10);
   }
 
-  Widget caller(OrderData orderHistoryData){
+  Widget caller(OrderData orderHistoryData) {
     if (orderHistoryData.runnerDetail != null &&
-        orderHistoryData.runnerDetail.isNotEmpty){
-    return Container(
-      margin: EdgeInsets.only(right: 20.0),
-      padding: EdgeInsets.all(6),
-      decoration: BoxDecoration(
-          color: Color(0xff75990B),
-          border: Border.all(
-            width: 4,
-            color: Colors.grey[200],),
-          borderRadius: BorderRadius.circular(25)),
-      child: GestureDetector(
-        onTap: () {
-          print('Calling');
-          _launchCaller(widget.orderHistoryData);
-        },
-        child: Icon(
-          Icons.call_outlined,
-          size: 25.0,
-          color: Colors.white,
-        ),
-      ),
-    );}
-    else return Container(
-    );
-  }
-  Widget mapper(OrderData orderHistoryData){
-    if (orderHistoryData.runnerDetail != null &&
-        orderHistoryData.runnerDetail.isNotEmpty
-        ){
-      return  Container(
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      return Container(
         margin: EdgeInsets.only(right: 20.0),
         padding: EdgeInsets.all(6),
         decoration: BoxDecoration(
             color: Color(0xff75990B),
             border: Border.all(
               width: 4,
-              color: Colors.grey[200],),
+              color: Colors.grey[200],
+            ),
+            borderRadius: BorderRadius.circular(25)),
+        child: GestureDetector(
+          onTap: () {
+            print('Calling');
+            _launchCaller(widget.orderHistoryData);
+          },
+          child: Icon(
+            Icons.call_outlined,
+            size: 25.0,
+            color: Colors.white,
+          ),
+        ),
+      );
+    } else
+      return Container();
+  }
+
+  Widget mapper(OrderData orderHistoryData) {
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      return Container(
+        margin: EdgeInsets.only(right: 20.0),
+        padding: EdgeInsets.all(6),
+        decoration: BoxDecoration(
+            color: Color(0xff75990B),
+            border: Border.all(
+              width: 4,
+              color: Colors.grey[200],
+            ),
             borderRadius: BorderRadius.circular(25)),
         child: GestureDetector(
           onTap: () {
@@ -355,8 +349,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    OrderTrackerLive(widget.orderHistoryData),
+                builder: (context) => OrderTrackerLive(widget.orderHistoryData),
               ),
             );
             //_launchCaller(widget.runnerDetail.phone);
@@ -367,9 +360,9 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
             color: Colors.white,
           ),
         ),
-      );}
-    else return Container(
-    );
+      );
+    } else
+      return Container();
   }
 
   Widget firstRow(OrderData orderHistoryData) {
@@ -1708,11 +1701,16 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
   String _getAddress(OrderData orderHistoryData) {
     if (orderHistoryData.deliveryAddress != null &&
         orderHistoryData.deliveryAddress.isNotEmpty) {
-      String name = '${orderHistoryData.deliveryAddress.first.firstName}';
-      String address = ', ${orderHistoryData.deliveryAddress.first.address}';
-      String area = ', ${orderHistoryData.deliveryAddress.first.areaName}';
-      String city = ', ${orderHistoryData.deliveryAddress.first.city}';
-      String ZipCode = ', ${orderHistoryData.deliveryAddress.first.zipcode}';
+      String name = orderHistoryData?.deliveryAddress?.first?.firstName ??
+          '${orderHistoryData.deliveryAddress.first.firstName}';
+      String address = orderHistoryData?.deliveryAddress?.first?.address ??
+          ', ${orderHistoryData.deliveryAddress.first.address}';
+      String area = orderHistoryData?.deliveryAddress?.first?.areaName ??
+          ', ${orderHistoryData.deliveryAddress.first.areaName}';
+      String city = orderHistoryData?.deliveryAddress?.first?.city ??
+          ', ${orderHistoryData.deliveryAddress.first.city}';
+      String ZipCode = orderHistoryData?.deliveryAddress?.first?.zipcode ??
+          ', ${orderHistoryData.deliveryAddress.first.zipcode}';
       return '$name$address$area$city$ZipCode';
     } else {
       String address = '${orderHistoryData.address}';
@@ -2157,17 +2155,19 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
           visible: widget.orderHistoryData.status == '5',
           child: RichText(
             text: TextSpan(
-                text: '${_getRunnerBy(widget.orderHistoryData)}',
-                style: TextStyle(color: Colors.black, fontSize: 14),
-                children: [
-                  TextSpan(
-                      text: ' ${_getRunnerName(widget.orderHistoryData)}',
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 16,
-                          ),),
-                  //TextSpan(text: '\n${widget.runnerDetail.fullName}',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
-                ],),
+              text: '${_getRunnerBy(widget.orderHistoryData)}',
+              style: TextStyle(color: Colors.black, fontSize: 14),
+              children: [
+                TextSpan(
+                  text: ' ${_getRunnerName(widget.orderHistoryData)}',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16,
+                  ),
+                ),
+                //TextSpan(text: '\n${widget.runnerDetail.fullName}',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
+              ],
+            ),
           ),
         ),
       ],
@@ -2301,7 +2301,6 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     }
   }
 
-
   String _getRunnerName(OrderData orderHistoryData) {
     if (orderHistoryData.runnerDetail != null &&
         orderHistoryData.runnerDetail.isNotEmpty) {
@@ -2312,6 +2311,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
       return '';
     }
   }
+
   String _getRunnerBy(OrderData orderHistoryData) {
     if (orderHistoryData.runnerDetail != null &&
         orderHistoryData.runnerDetail.isNotEmpty) {
@@ -2320,6 +2320,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
       return '';
     }
   }
+
   _getImage(OrderData orderHistoryData) {
     //Image(image: AssetImage('images/whatsapp.png' ),
 
@@ -2327,9 +2328,10 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
         orderHistoryData.runnerDetail.isNotEmpty) {
       AppConstant.placeholderUrl =
           '${orderHistoryData.runnerDetail.first.profileImage}';
-      return CachedNetworkImage(imageUrl: "${orderHistoryData.runnerDetail.first.profileImage}");
+      return CachedNetworkImage(
+          imageUrl: "${orderHistoryData.runnerDetail.first.profileImage}");
     } else {
-      return ;
+      return;
     }
   }
 
@@ -2337,8 +2339,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     // Delivered == 5, On Way to destination == 7
     String bullet = "\u2022 ";
     print('${widget.orderHistoryData.status}');
-    switch(widget.orderHistoryData.status)
-    {
+    switch (widget.orderHistoryData.status) {
       case '6':
         return 'Order Cancelled';
         break;
@@ -2352,6 +2353,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
         return '';
     }
   }
+
   void _launchCaller(OrderData orderHistoryData) async {
     if (orderHistoryData.runnerDetail != null &&
         orderHistoryData.runnerDetail.isNotEmpty) {
