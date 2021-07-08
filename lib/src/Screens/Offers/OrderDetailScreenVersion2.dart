@@ -1701,16 +1701,25 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
   String _getAddress(OrderData orderHistoryData) {
     if (orderHistoryData.deliveryAddress != null &&
         orderHistoryData.deliveryAddress.isNotEmpty) {
-      String name = orderHistoryData?.deliveryAddress?.first?.firstName ??
-          '${orderHistoryData.deliveryAddress.first.firstName}';
-      String address = orderHistoryData?.deliveryAddress?.first?.address ??
-          ', ${orderHistoryData.deliveryAddress.first.address}';
-      String area = orderHistoryData?.deliveryAddress?.first?.areaName ??
-          ', ${orderHistoryData.deliveryAddress.first.areaName}';
-      String city = orderHistoryData?.deliveryAddress?.first?.city ??
-          ', ${orderHistoryData.deliveryAddress.first.city}';
-      String ZipCode = orderHistoryData?.deliveryAddress?.first?.zipcode ??
-          ', ${orderHistoryData.deliveryAddress.first.zipcode}';
+      String name =
+          orderHistoryData?.deliveryAddress?.first?.firstName!=null
+              ? '${orderHistoryData.deliveryAddress.first.firstName}'
+              : '';
+      String address =
+          orderHistoryData?.deliveryAddress?.first?.address!=null
+              ? ', ${orderHistoryData.deliveryAddress.first.address}'
+              : '';
+      String area =
+          orderHistoryData?.deliveryAddress?.first?.areaName!=null
+              ? ', ${orderHistoryData.deliveryAddress.first.areaName}'
+              : '';
+      String city = orderHistoryData?.deliveryAddress?.first?.city!=null
+          ? ', ${orderHistoryData.deliveryAddress.first.city}'
+          : '';
+      String ZipCode =
+          orderHistoryData?.deliveryAddress?.first?.zipcode!=null
+              ? ', ${orderHistoryData.deliveryAddress.first.zipcode}'
+              : '';
       return '$name$address$area$city$ZipCode';
     } else {
       String address = '${orderHistoryData.address}';
