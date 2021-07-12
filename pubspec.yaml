@@ -194,6 +194,9 @@ flutter:
     - images/congratulationgraphic.png
     - images/sunscriptionicon.png
     - images/selectmealtick.png
+    - images/refresh.png
+    - images/runner-location.png
+    - images/user-location.png
     - images/dine_in.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

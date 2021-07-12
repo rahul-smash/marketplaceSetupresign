@@ -75,4 +75,11 @@ class onPayTMPageFinished {
 
   onPayTMPageFinished(this.url, this.orderId, this.txnId);
 }
+class onPeachPayFinished {
+  String url;
+  String checkoutID;
+  String resourcePath;
+
+  onPeachPayFinished(this.url, this.checkoutID, this.resourcePath);
+}
 

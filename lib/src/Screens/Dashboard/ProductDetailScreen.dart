@@ -847,7 +847,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       )
                     : Image.asset(
-                        'images/img_placeholder.jpg',
+                        'images/placeholder.jpg',
                         height: 280,
                         fit: BoxFit.cover,
                       ),

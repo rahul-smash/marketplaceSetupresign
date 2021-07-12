@@ -120,7 +120,8 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
         primaryColor: appTheme,
       ),
       navigatorObservers: <NavigatorObserver>[MarketPlaceApp.observer],
-      home: showHomeScreen(widget.storeData,widget.configObject,widget.packageInfo,initialPosition),
+      home: showHomeScreen(widget.storeData, widget.configObject,
+          widget.packageInfo, initialPosition),
 //      home: Container(
 //        decoration: BoxDecoration(
 //            image: DecorationImage(

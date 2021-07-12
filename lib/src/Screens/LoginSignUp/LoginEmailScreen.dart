@@ -189,7 +189,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                           width: Utils.getDeviceWidth(context),
                           child: Center(
                             child: Text(
-                              "──────── "+"OR CONNECT WITH" +" ────────",
+                              "OR CONNECT WITH",
                               style: TextStyle(color: gray9),
                             ),
                           ),
@@ -319,6 +319,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                 user.phone = verifyEmailModel.user.phone;
                 user.id = verifyEmailModel.user.id;
                 SharedPrefs.saveUser(user);
+                ApiController.getUserMembershipPlanApi();
                 Navigator.pop(context);
               }
             } else {
@@ -387,6 +388,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
             user.phone = verifyEmailModel.user.phone;
             user.id = verifyEmailModel.user.id;
             SharedPrefs.saveUser(user);
+            ApiController.getUserMembershipPlanApi();
             Navigator.pop(context);
           }
         } else {
@@ -496,6 +498,8 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
             Utils.hideProgressDialog(context);
             if (response != null && response.success) {
               Navigator.pop(context);
+              SharedPrefs.setUserLoggedIn(true);
+              ApiController.getUserMembershipPlanApi();
               Utils.showToast("Login Successfully", true);
             }else{
               Utils.showToast(response.message, true);

@@ -44,8 +44,8 @@ class ApiConstants {
 
   static String getReferDetails = 'getReferDetails';
 
-  static String stripePaymentCheckout = 'stripePaymentCheckout';
-  static String stripeVerifyTransaction = 'stripeVerifyTransaction';
+  static String stripePaymentCheckout = 'stripe/stripePaymentCheckout';
+  static String stripeVerifyTransaction = 'stripe/stripeVerifyTransaction';
 
   static String createPaytmTxnToken = 'createPaytmTxnToken';
 
@@ -117,6 +117,22 @@ class ApiConstants {
   static String cancelUserMembershipPlan =
       'membership_plan/cancelUserMembershipPlan';
 
+  static String peachPayCreateOrder='/peachpay/peachpayCreateOrder';
+  static String processPeachpayPayment='/peachpay/processPeachpayPayment/';
+  static String peachpayVerifyTransaction='/peachpay/peachpayVerifyTransaction';
+
   //new Banner Api
   static String banners = 'homescreen/banners';
+// get peach pay details
+// http://devmarketplace.restroapp.com/2/v1/marketplace/homescreen/version?ip=124.253.110.23
+// detailspeach payament is added
+// API : create order
+// http://devmarketplace.restroapp.com/2/v1/2167/peachpay/peachpayCreateOrder
+// order_info,orders,amount,currency
+// load web page : process order
+// http://devmarketplace.restroapp.com/2/v1/2167/peachpay/processPeachpayPayment/19885B13DA6E12D269B02F772737C999.uat01-vm-tx04
+// API : verifyOrder
+// http://devmarketplace.restroapp.com/2/v1/2167/peachpay/VerifyTransaction
+// checkout_id=19885B13DA6E12D269B02F772737C999.uat01-vm-tx04
+//http://devmarketplace.restroapp.com/2/v1/storeId/peachpay/peachPayVerify?id=C19277FB92BFDFFBBF716818766F3BC4.uat01-vm-tx02&resourcePath=%2Fv1%2Fcheckouts%2FC19277FB92BFDFFBBF716818766F3BC4.uat01-vm-tx02%2Fpayment
 }
