@@ -2037,7 +2037,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     String mPrice =
     price.toString().substring(0, price.toString().indexOf('.')).trim();
     print("----mPrice----${mPrice}--");
-    ApiController.stripePaymentApi(mPrice).then((response) {
+    ApiController.stripePaymentApi(mPrice,storeModel.id).then((response) {
       Utils.hideProgressDialog(context);
       print("----stripePaymentApi------");
       if (response != null) {
@@ -2455,7 +2455,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   void callStripeVerificationApi(String payment_request_id) {
     Utils.showProgressDialog(context);
-    ApiController.stripeVerifyTransactionApi(payment_request_id)
+    ApiController.stripeVerifyTransactionApi(payment_request_id,storeModel.id)
         .then((response) {
       Utils.hideProgressDialog(context);
       if (response != null) {
@@ -2759,7 +2759,7 @@ class _StripeWebViewState extends State<StripeWebView> {
             onPageFinished: (String url) {
               print('======Page finished loading======: $url');
               if (url
-                  .contains("api/stripeVerifyTransaction?response=success")) {
+                  .contains("stripe/stripeVerifyTransaction?response=success")) {
                 eventBus.fire(onPageFinished(
                     widget.stripeCheckOutModel.paymentRequestId));
                 Navigator.pop(context);

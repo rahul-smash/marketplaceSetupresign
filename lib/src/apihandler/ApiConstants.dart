@@ -44,8 +44,8 @@ class ApiConstants {
 
   static String getReferDetails = 'getReferDetails';
 
-  static String stripePaymentCheckout = 'stripePaymentCheckout';
-  static String stripeVerifyTransaction = 'stripeVerifyTransaction';
+  static String stripePaymentCheckout = 'stripe/stripePaymentCheckout';
+  static String stripeVerifyTransaction = 'stripe/stripeVerifyTransaction';
 
   static String createPaytmTxnToken = 'createPaytmTxnToken';
 
