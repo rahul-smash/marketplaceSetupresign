@@ -227,7 +227,12 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     String bullet = "\u2022 ";
     if (widget.orderHistoryData.status != '5') {
       if (orderHistoryData.runnerDetail != null &&
-          orderHistoryData.runnerDetail.isNotEmpty) {
+          orderHistoryData.runnerDetail.isNotEmpty)
+        {
+          print("${widget.orderHistoryData.status}");
+        if(widget.orderHistoryData.status == '6' ||
+          widget.orderHistoryData.status == '7' || widget.orderHistoryData.status == '8'
+        ) {
         return Container(
             decoration: BoxDecoration(
               border: Border(
@@ -294,7 +299,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                 ),
               ],
             ));
-      } else
+      }else
+          return Container(
+              height: 10
+          );
+        } else
         return Container(height: 10);
     } else
       return Container(height: 10);
