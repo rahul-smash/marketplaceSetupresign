@@ -5,6 +5,8 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:package_info/package_info.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeScreen.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
@@ -16,9 +18,10 @@ import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:permission_handler/permission_handler.dart'
-    as permission_handler;
+as permission_handler;
 import 'src/models/BrandModel.dart';
 import 'src/models/VersionModel.dart';
+import 'src/utils/DialogUtils.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +49,7 @@ Future<void> main() async {
   }
 
   String branch_id =
-      await SharedPrefs.getStoreSharedValue(AppConstant.branch_id);
+  await SharedPrefs.getStoreSharedValue(AppConstant.branch_id);
   if (branch_id == null || branch_id.isEmpty) {
   } else if (branch_id.isNotEmpty) {
     configObject.storeId = branch_id;
@@ -80,7 +83,7 @@ class MarketPlaceApp extends StatefulWidget {
   ConfigModel configObject;
   static FirebaseAnalytics analytics = FirebaseAnalytics();
   static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
+  FirebaseAnalyticsObserver(analytics: analytics);
   BrandVersionModel storeData;
   PackageInfo packageInfo;
 
@@ -91,10 +94,21 @@ class MarketPlaceApp extends StatefulWidget {
 }
 
 class _MarketPlaceAppState extends State<MarketPlaceApp> {
+  Location location = new Location();
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
+  LatLng initialPosition;
+  Timer _timer;
+  int _start = 10;
+  bool userDisabledGps = false;
 
   @override
   void initState() {
     super.initState();
+    initialPosition = null;
+    userDisabledGps = false;
+    getCurrentLocation(context);
   }
 
   @override
@@ -186,10 +200,10 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
-      (Timer timer) {
+          (Timer timer) {
         //print('--periodic===  $_start');
         setState(
-          () {
+              () {
             if (_start < 1) {
               timer.cancel();
             } else {
@@ -203,10 +217,15 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
 }
 
 Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject,
-    PackageInfo packageInfo,) {
+    PackageInfo packageInfo, LatLng initialPosition) {
   String version = packageInfo.version;
   if (model.success) {
     setStoreCurrency(model, configObject);
+    /*SharedPrefs.storeSharedValue(
+        AppConstant.DeliverySlot, model.brand.deliverySlot);
+    SharedPrefs.storeSharedValue(
+        AppConstant.is24x7Open, model.store.is24x7Open);*/
+
     List<ForceDownload> forceDownload = model.brand.forceDownload;
     //print("app= ${version} and -androidAppVerison--${forceDownload[0].androidAppVerison}");
     int index1 = version.lastIndexOf(".");
@@ -224,14 +243,15 @@ Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject,
     } catch (e) {
       //print("-apiVesrion--catch--${e}----");
     }
+    print("x-initialPosition--${initialPosition}----");
     //print("--currentVesrion--${currentVesrion} and ${apiVesrion}");
     if (apiVesrion > currentVesrion) {
       //return ForceUpdateAlert(forceDownload[0].forceDownloadMessage,appName);
       return MarketPlaceHomeScreen(
-          model.brand, configObject, true, );
+          model.brand, configObject, true, initialPosition);
     } else {
       return MarketPlaceHomeScreen(
-          model.brand, configObject, false, );
+          model.brand, configObject, false, initialPosition);
     }
   } else {
     return Container();
@@ -255,6 +275,25 @@ void setStoreCurrency(BrandVersionModel store, ConfigModel configObject) {
 }
 
 void setAppThemeColors(BrandVersionModel store) {
+//  AppThemeColors appThemeColors = store.appThemeColors;
+//  left_menu_header_bkground =
+//      Color(int.parse(appThemeColors.leftMenuHeaderBackgroundColor));
+//  left_menu_icon_colors = Color(int.parse(appThemeColors.leftMenuIconColor));
+//  left_menu_background_color =
+//      Color(int.parse(appThemeColors.leftMenuBackgroundColor));
+//  leftMenuWelcomeTextColors =
+//      Color(int.parse(appThemeColors.leftMenuUsernameColor));
+//  leftMenuUsernameColors =
+//      Color(int.parse(appThemeColors.leftMenuUsernameColor));
+//  bottomBarIconColor = Color(int.parse(appThemeColors.bottomBarIconColor));
+//  bottomBarTextColor = Color(int.parse(appThemeColors.bottomBarTextColor));
+//  dotIncreasedColor = Color(int.parse(appThemeColors.dotIncreasedColor));
+//  bottomBarBackgroundColor =
+//      Color(int.parse(appThemeColors.bottom_bar_background_color));
+//  leftMenuLabelTextColors =
+//      Color(int.parse(appThemeColors.left_menu_label_Color));
+
+  //flow change
   if (store.brand.webAppThemeColors != null) {
     WebAppThemeColors webAppThemeColors = store.brand.webAppThemeColors;
     appTheme = Utils.colorGeneralization(
