@@ -20,11 +20,10 @@ class DishTileItem extends StatefulWidget {
   List<String> tagsList = List.empty(growable: true);
   LatLng initialPosition;
 
-  DishTileItem(
-    this.dish,
-    this.callback,
-    this.initialPosition,{this.dishCallBack}
-  );
+  String searchKeyword='';
+
+  DishTileItem(this.dish, this.callback, this.initialPosition,
+      {this.dishCallBack, this.searchKeyword});
 
   @override
   _DishTileItemState createState() => _DishTileItemState();
@@ -65,6 +64,7 @@ class _DishTileItemState extends State<DishTileItem> {
               Utils.hideProgressDialog(context);
               Utils.hideKeyboard(context);
               StoreDataModel storeObject = response;
+              storeObject.store.searchKeyWord = widget.searchKeyword;
               if (storeObject != null && storeObject.success)
                 storeObject.store.dish = widget.dish;
               widget.callback(value: storeObject);

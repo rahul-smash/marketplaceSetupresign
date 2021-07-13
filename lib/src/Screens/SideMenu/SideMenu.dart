@@ -24,6 +24,7 @@ import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
+import 'package:restroapp/src/models/LogoutResponse.dart';
 import 'package:restroapp/src/models/ReferEarnData.dart';
 import 'package:restroapp/src/models/SocialModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
@@ -73,7 +74,6 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
     _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
-        'https://www.googleapis.com/auth/contacts.readonly',
       ],
     );
     //print("isRefererFnEnable=${widget.store.isRefererFnEnable}");
@@ -84,7 +84,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
     //Subscription
     if (widget.brandData.isMembershipOn == '1')
       _drawerItems.add(DrawerChildItem(
-          DrawerChildConstants.SUBSCRIBE, "images/my_order.png"));
+          DrawerChildConstants.SUBSCRIBE, "images/sunscriptionicon.png"));
     _drawerItems.add(DrawerChildItem(
         DrawerChildConstants.DELIVERY_ADDRESS, "images/deliveryaddress.png"));
     _drawerItems
@@ -428,10 +428,10 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
     }
   }
 
-  void _showDialog(BuildContext context) {
+  void _showDialog(BuildContext sideMenuContext) {
     // flutter defined function
     showDialog(
-      context: context,
+      context: sideMenuContext,
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
@@ -449,7 +449,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
               child: const Text('YES'),
               onPressed: () async {
                 Navigator.of(context).pop();
-                logout(context);
+                logout(sideMenuContext);
               },
             ),
           ],
@@ -499,29 +499,33 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       if (isGoogleSignedIn) {
         await _googleSignIn.signOut();
       }
+      Utils.showProgressDialog(context);
+      LogoutResponse logoutResponse = await ApiController.getLogout();
+      Utils.hideProgressDialog(context);
+      if (logoutResponse != null && logoutResponse.success) {
+        SharedPrefs.setUserLoggedIn(false);
+        SharedPrefs.storeSharedValue(AppConstant.isAdminLogin, "false");
+        SharedPrefs.removeKey(AppConstant.showReferEarnAlert);
+        SharedPrefs.removeKey(AppConstant.referEarnMsg);
+        SharedPrefs.removeKey("user");
+        SingletonBrandData.getInstance().clearData();
+        AppConstant.isLoggedIn = false;
+        DatabaseHelper databaseHelper = new DatabaseHelper();
+        databaseHelper.deleteTable(DatabaseHelper.CART_Table);
+        eventBus.fire(updateCartCount());
+        eventBus.fire(onCartRemoved());
+        Utils.showToast(AppConstant.logoutSuccess, true);
 
-      SharedPrefs.setUserLoggedIn(false);
-      SharedPrefs.storeSharedValue(AppConstant.isAdminLogin, "false");
-      SharedPrefs.removeKey(AppConstant.showReferEarnAlert);
-      SharedPrefs.removeKey(AppConstant.referEarnMsg);
-      SharedPrefs.removeKey("user");
-      SingletonBrandData.getInstance().clearData();
-      AppConstant.isLoggedIn = false;
-      DatabaseHelper databaseHelper = new DatabaseHelper();
-//      databaseHelper.deleteTable(DatabaseHelper.Categories_Table);
-//      databaseHelper.deleteTable(DatabaseHelper.Sub_Categories_Table);
-//      databaseHelper.deleteTable(DatabaseHelper.Favorite_Table);
-      databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-//      databaseHelper.deleteTable(DatabaseHelper.Products_Table);
-      eventBus.fire(updateCartCount());
-      eventBus.fire(onCartRemoved());
-      Utils.showToast(AppConstant.logoutSuccess, true);
+        setState(() {
+          widget.userName == null;
+        });
+        //Pop Drawer
+        Navigator.pop(context);
+      } else {
+        Utils.showToast('Something went wrong!', false);
+      }
 
-      setState(() {
-        widget.userName == null;
-      });
-      //Pop Drawer
-      Navigator.pop(context);
+
     } catch (e) {
       print(e);
     }

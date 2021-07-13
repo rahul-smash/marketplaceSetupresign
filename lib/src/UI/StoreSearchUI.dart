@@ -6,6 +6,7 @@ import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 
 class StoreSearchUI extends StatefulWidget {
@@ -41,7 +42,8 @@ class _StoreSearchUIState extends State<StoreSearchUI> {
             Container(
               color: Colors.white,
               child: Padding(
-                padding: EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 15),
+                padding:
+                    EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -62,10 +64,23 @@ class _StoreSearchUIState extends State<StoreSearchUI> {
                 itemCount: widget.searchedProductList.length,
                 itemBuilder: (BuildContext context, int index) {
                   Product product = widget.searchedProductList[index];
-                  return Container(
-                    child: ProductTileItem(product, () {
-                      SharedPrefs.saveStoreData(widget.store);
-                    }, ClassType.Home),
+                  bool isStoreClosed = !Utils.checkStoreOpenTime(widget.store);
+                  return InkWell(
+                    onTap: () {
+                      if (isStoreClosed) {
+                        DialogUtils.displayCommonDialog(
+                          context,
+                          widget.store.storeName,
+                          widget.store.closehoursMessage,
+                        );
+                        return;
+                      }
+                    },
+                    child: Container(
+                      child: ProductTileItem(product, () {
+                        SharedPrefs.saveStoreData(widget.store);
+                      }, ClassType.Home,isStoreClosed: isStoreClosed,),
+                    ),
                   );
                 }),
           ],

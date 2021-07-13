@@ -125,6 +125,7 @@ class StoreDataObj {
     this.display_store_rating,
     this.display_prepration_time,
     this.display_store_location,
+    this.dineIn,
   });
 
   String id;
@@ -209,9 +210,11 @@ class StoreDataObj {
   String display_store_rating;
   String display_prepration_time;
   String display_store_location;
+  String dineIn;
 
   //optional
   Dish dish;
+  String searchKeyWord = '';
 
   StoreDataObj copyWith({
     String id,
@@ -296,6 +299,7 @@ class StoreDataObj {
     String display_store_rating,
     String display_prepration_time,
     String display_store_location,
+    String dineIn,
   }) =>
       StoreDataObj(
         id: id ?? this.id,
@@ -386,6 +390,7 @@ class StoreDataObj {
             display_prepration_time ?? this.display_prepration_time,
         display_store_location:
             display_store_location ?? this.display_store_location,
+        dineIn: display_store_location ?? this.dineIn,
       );
 
   factory StoreDataObj.fromRawJson(String str) =>
@@ -587,6 +592,7 @@ class StoreDataObj {
         display_store_location: json["display_store_location"] == null
             ? null
             : json["display_store_location"].toString(),
+        dineIn: json["dine_in"] == null ? null : json["dine_in"].toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -693,10 +699,12 @@ class StoreDataObj {
         "banner_300_200": banner300200 == null ? null : banner300200,
         "repeat_order": repeatOrder == null ? null : repeatOrder,
         "display_distance": display_distance == null ? null : display_distance,
-        "display_store_rating": display_store_rating == null ? null : display_store_rating,
-        "display_prepration_time": display_prepration_time == null ? null : display_prepration_time,
-        "display_store_location": display_store_location == null ? null : display_store_location,
-
-
+        "display_store_rating":
+            display_store_rating == null ? null : display_store_rating,
+        "display_prepration_time":
+            display_prepration_time == null ? null : display_prepration_time,
+        "display_store_location":
+            display_store_location == null ? null : display_store_location,
+        "dine_in": dineIn == null ? null : dineIn,
       };
 }

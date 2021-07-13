@@ -148,7 +148,7 @@ flutter:
     - images/unselectedmyordericon.png
     - images/menuicon.png
     - images/searchicon.png
-    - images/placeHolder.png
+    - images/placeholder.png
     - images/cancelicon.png
     - images/dropdownarrowicon.png
     - images/favouriteicon.png
@@ -179,7 +179,7 @@ flutter:
     - images/hygiene.png
     - images/packaging.png
     - images/img_placeholder.jpg
-    - images/offergraphic1.png
+    - images/graphic1.png
     - images/lunchicon.png
     - images/dinnericon.png
     - images/nextdaydelivery.png
@@ -192,6 +192,12 @@ flutter:
     - images/bottomgraphic1.png
     - images/bottomgraphic2.png
     - images/congratulationgraphic.png
+    - images/sunscriptionicon.png
+    - images/selectmealtick.png
+    - images/refresh.png
+    - images/runner-location.png
+    - images/user-location.png
+    - images/dine_in.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

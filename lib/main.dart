@@ -106,7 +106,98 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
         primaryColor: appTheme,
       ),
       navigatorObservers: <NavigatorObserver>[MarketPlaceApp.observer],
-      home: showHomeScreen(widget.storeData,widget.configObject,widget.packageInfo,),
+      home: showHomeScreen(widget.storeData, widget.configObject,
+          widget.packageInfo, initialPosition),
+//      home: Container(
+//        decoration: BoxDecoration(
+//            image: DecorationImage(
+//                image: AssetImage(widget.configObject.isGroceryApp == 'true'
+//                    ? "images/mk_splash_grocery.jpg"
+//                    : "images/mk_splash.jpg"),
+//                fit: BoxFit.fill)),
+//        child: initialPosition == null
+//            ? userDisabledGps
+//                ? Container(child: LocationAlertDialog())
+//                : _start < 1
+//                    ? showHomeScreen(widget.storeData, widget.configObject,
+//                        widget.packageInfo, initialPosition)
+//                    : Container()
+//            : showHomeScreen(widget.storeData, widget.configObject,
+//                widget.packageInfo, initialPosition),
+//      ),
+    );
+  }
+
+  Future<void> getCurrentLocation(BuildContext context) async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        print("----!_serviceEnabled----$_serviceEnabled");
+        setState(() {
+          userDisabledGps = true;
+        });
+        return;
+      }
+    }
+    _permissionGranted = await location.hasPermission();
+    print("permission sttsu $_permissionGranted");
+    if (_permissionGranted == PermissionStatus.denied) {
+      print("permission deniedddd");
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        print("permission not grantedd");
+        setState(() {
+          userDisabledGps = true;
+        });
+        return;
+      }
+    }
+//    if (Platform.isAndroid) {
+    await location.changeSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 0,
+      interval: 1000,
+    );
+//    }
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      // Use current location
+      if (initialPosition == null) {
+        initialPosition =
+            LatLng(currentLocation.latitude, currentLocation.longitude);
+        setState(() {
+          print("----initialPosition----=$initialPosition");
+        });
+        if (_timer != null && _timer.isActive) {
+          _timer.cancel();
+        }
+      }
+    });
+    startTimer();
+//    _locationData = await location.getLocation();
+//    initialPosition = LatLng(_locationData.latitude, _locationData.longitude);
+//    setState(() {
+//      print("----initialPosition----=$initialPosition");
+//    });
+  }
+
+  void startTimer() {
+    //print('--startTimer===  $_start');
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        //print('--periodic===  $_start');
+        setState(
+          () {
+            if (_start < 1) {
+              timer.cancel();
+            } else {
+              _start = _start - 1;
+            }
+          },
+        );
+      },
     );
   }
 }
@@ -149,14 +240,14 @@ Widget showHomeScreen(BrandVersionModel model, ConfigModel configObject,
 
 void setStoreCurrency(BrandVersionModel store, ConfigModel configObject) {
   if (store.brand.showCurrency == "symbol") {
-    if (store.brand.currency.isEmpty) {
-      AppConstant.currency = store.brand.currency;
+    if (store.brand.currency.isNotEmpty) {
+      AppConstant.currency = Utils.removeAllHtmlTags(store.brand.currency);
     } else {
       AppConstant.currency = configObject.currency;
     }
   } else {
-    if (store.brand.currency.isEmpty) {
-      AppConstant.currency = store.brand.currency;
+    if (store.brand.currency.isNotEmpty) {
+      AppConstant.currency = Utils.removeAllHtmlTags(store.brand.currency);
     } else {
       AppConstant.currency = configObject.currency;
     }

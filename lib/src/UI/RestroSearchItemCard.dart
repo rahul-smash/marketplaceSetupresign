@@ -16,15 +16,22 @@ class RestroSearchItemCard extends StatelessWidget {
   CustomCallback callback;
   LatLng initialPosition;
   BrandData brandData;
+  String searchKeyword = '';
 
-  RestroSearchItemCard(this.storeDataObj, this.callback, this.initialPosition,this.brandData);
+  RestroSearchItemCard(
+      this.storeDataObj, this.callback, this.initialPosition, this.brandData,
+      {this.searchKeyword});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        if(!Utils.checkStoreOpenTiming(storeDataObj)){
-          DialogUtils.displayCommonDialog(context,storeDataObj.storeName,storeDataObj.timimg.closehoursMessage,);
+        if (!Utils.checkStoreOpenTiming(storeDataObj)) {
+          DialogUtils.displayCommonDialog(
+            context,
+            storeDataObj.storeName,
+            storeDataObj.timimg.closehoursMessage,
+          );
           return;
         }
         bool isNetworkAvailable = await Utils.isNetworkAvailable();
@@ -38,6 +45,7 @@ class RestroSearchItemCard extends StatelessWidget {
           Utils.hideProgressDialog(context);
           Utils.hideKeyboard(context);
           StoreDataModel storeObject = response;
+          storeObject.store.searchKeyWord = searchKeyword;
           callback(value: storeObject);
         });
       },
@@ -118,7 +126,9 @@ class RestroSearchItemCard extends StatelessWidget {
                                           ],
                                         ),
                                         Visibility(
-                                          visible: brandData.display_store_location=='1',
+                                          visible:
+                                              brandData.display_store_location ==
+                                                  '1',
                                           child: Container(
                                               child: Row(
                                             mainAxisAlignment:

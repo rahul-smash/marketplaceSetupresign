@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -15,10 +16,13 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+import 'package:restroapp/src/UI/OrderTracker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetailScreenVersion2 extends StatefulWidget {
   OrderData orderHistoryData;
   bool isRatingEnable;
+  String bullet = "\u2022 ";
 
   OrderDetailScreenVersion2(this.orderHistoryData, this.isRatingEnable);
 
@@ -30,6 +34,7 @@ class OrderDetailScreenVersion2 extends StatefulWidget {
 class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
   var screenWidth;
 
+  OrderData orderHistoryData;
   var mainContext;
   String deliverySlotDate = '';
 
@@ -114,65 +119,68 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     String orderFacility = widget.orderHistoryData.orderFacility != null
         ? '${widget.orderHistoryData.orderFacility}, '
         : '';
-    return isLoading
-        ? Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: AppBar(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Order Details',
-                    style: TextStyle(),
-                    textAlign: TextAlign.left,
-                  ),
-                ],
+    if (isLoading) {
+      return Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Order Details',
+                style: TextStyle(),
+                textAlign: TextAlign.left,
               ),
-              centerTitle: false,
-            ),
-            body: Center(child: CircularProgressIndicator()),
-          )
-        : new Scaffold(
-            backgroundColor: Color(0xffDCDCDC),
-            appBar: AppBar(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Order - ${widget.orderHistoryData.orderId}',
-                    style: TextStyle(),
-                    textAlign: TextAlign.left,
-                  ),
-                  Text(
-                    '$orderFacility$itemText${AppConstant.currency} ${widget.orderHistoryData.total}',
-                    style: TextStyle(fontSize: 13),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                  ),
-                ],
+            ],
+          ),
+          centerTitle: false,
+        ),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    } else {
+      return new Scaffold(
+        backgroundColor: Color(0xffDCDCDC),
+        appBar: AppBar(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Order - ${widget.orderHistoryData.displayOrderId}',
+                style: TextStyle(),
+                textAlign: TextAlign.left,
               ),
-              centerTitle: false,
-              actions: <Widget>[
-                Visibility(
-                  visible: showCancelButton(widget.orderHistoryData.status),
-                  child: InkWell(
-                      onTap: () async {
-                        cancelOrderBottomSheet(
-                            context, widget.orderHistoryData);
-                      },
-                      child: Center(
-                        child: Padding(
-                            padding: EdgeInsets.only(right: 16, left: 16),
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w400),
-                            )),
-                      )),
-                )
-              ],
-            ),
-            body: SafeArea(
+              Text(
+                '$orderFacility$itemText${AppConstant.currency} ${widget.orderHistoryData.total}',
+                style: TextStyle(fontSize: 13),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+              ),
+            ],
+          ),
+          centerTitle: false,
+          actions: <Widget>[
+            Visibility(
+              visible: showCancelButton(widget.orderHistoryData.status),
+              child: InkWell(
+                  onTap: () async {
+                    cancelOrderBottomSheet(context, widget.orderHistoryData);
+                  },
+                  child: Center(
+                    child: Padding(
+                        padding: EdgeInsets.only(right: 16, left: 16),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w400),
+                        )),
+                  )),
+            )
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              flex: 4,
               child: SingleChildScrollView(
                 child: Container(
                   color: Color(0xffDCDCDC),
@@ -208,7 +216,162 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                 ),
               ),
             ),
+            maincontainer(widget.orderHistoryData),
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget maincontainer(OrderData orderHistoryData) {
+    String bullet = "\u2022 ";
+    if (widget.orderHistoryData.status != '5') {
+      if (orderHistoryData.runnerDetail != null &&
+          orderHistoryData.runnerDetail.isNotEmpty)
+        {
+          print("${widget.orderHistoryData.status}");
+        if(widget.orderHistoryData.status == '6' ||
+          widget.orderHistoryData.status == '7' || widget.orderHistoryData.status == '8'
+        ) {
+        return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(width: 10.0, color: Colors.grey[300]),
+              ),
+              color: Colors.white,
+            ),
+            height: 100,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                        margin: EdgeInsets.only(left: 40, top: 5),
+                        height: 30,
+                        width: 200,
+                        child: RichText(
+                            text: TextSpan(
+                          text: '${bullet}',
+                          style:
+                              TextStyle(fontSize: 15, color: Color(0xff75990B)),
+                          children: [
+                            TextSpan(
+                              text: '${_getBottomTrack()}',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.black),
+                            )
+                          ],
+                        ))),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Container(
+                      height: 30,
+                      width: 30,
+                      margin: EdgeInsets.only(left: 30, right: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: _getImage(widget.orderHistoryData),
+                    ),
+                    Expanded(
+                      // margin: EdgeInsets.only(top: 5),
+                      child: RichText(
+                        text: TextSpan(
+                            text: '${_getRunnertitle(widget.orderHistoryData)}',
+                            style: TextStyle(color: Colors.black, fontSize: 13),
+                            children: [
+                              TextSpan(
+                                  text:
+                                      '\n${_getRunnerName(widget.orderHistoryData)}',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold))
+                              //TextSpan(text: '\n${widget.runnerDetail.fullName}',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
+                            ]),
+                      ),
+                    ),
+                    caller(widget.orderHistoryData),
+                    mapper(widget.orderHistoryData)
+                  ],
+                ),
+              ],
+            ));
+      }else
+          return Container(
+              height: 10
           );
+        } else
+        return Container(height: 10);
+    } else
+      return Container(height: 10);
+  }
+
+  Widget caller(OrderData orderHistoryData) {
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      return Container(
+        margin: EdgeInsets.only(right: 20.0),
+        padding: EdgeInsets.all(6),
+        decoration: BoxDecoration(
+            color: Color(0xff75990B),
+            border: Border.all(
+              width: 4,
+              color: Colors.grey[200],
+            ),
+            borderRadius: BorderRadius.circular(25)),
+        child: GestureDetector(
+          onTap: () {
+            print('Calling');
+            _launchCaller(widget.orderHistoryData);
+          },
+          child: Icon(
+            Icons.call_outlined,
+            size: 25.0,
+            color: Colors.white,
+          ),
+        ),
+      );
+    } else
+      return Container();
+  }
+
+  Widget mapper(OrderData orderHistoryData) {
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      return Container(
+        margin: EdgeInsets.only(right: 20.0),
+        padding: EdgeInsets.all(6),
+        decoration: BoxDecoration(
+            color: Color(0xff75990B),
+            border: Border.all(
+              width: 4,
+              color: Colors.grey[200],
+            ),
+            borderRadius: BorderRadius.circular(25)),
+        child: GestureDetector(
+          onTap: () {
+            print('Map');
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderTrackerLive(widget.orderHistoryData),
+              ),
+            );
+            //_launchCaller(widget.runnerDetail.phone);
+          },
+          child: Icon(
+            Icons.gps_fixed_outlined,
+            size: 25.0,
+            color: Colors.white,
+          ),
+        ),
+      );
+    } else
+      return Container();
   }
 
   Widget firstRow(OrderData orderHistoryData) {
@@ -297,19 +460,20 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
           ),
           Visibility(
               visible: orderHistoryData.IsMembershipCouponEnabled == '1',
-              child:  Container(
-                  margin: EdgeInsets.only(top: 10,bottom: 10),
+              child: Container(
+                  margin: EdgeInsets.only(top: 10, bottom: 10),
                   padding: EdgeInsets.fromLTRB(15, 3, 15, 3),
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xFFE6E6E6)),
                     color: Color(0xFFE6E6E6),
                     borderRadius: BorderRadius.all(Radius.circular(25.0)),
                   ),
-                  child:Text(
+                  child: Text(
                     'Subscription Order',
                     style: TextStyle(
                         color: appTheme,
-                        fontSize: 14,fontWeight: FontWeight.bold),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
                   )))
         ],
       ),
@@ -357,51 +521,51 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                             child: Container(
                           padding: EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Color(0xFFE1E1E1), width: 1),
+                            border:
+                                Border.all(color: Color(0xFFE1E1E1), width: 1),
                             borderRadius: BorderRadius.circular(5.0),
                           ),
-                          child:  InkWell(
-                            onTap: () {
-                              if (_ratingPackaging == 0)
-                                orderRatebottomSheet(context, '2');
-                            },child:
-                          Column(
-                            children: [
-                              ClipRRect(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  child: Image.asset('images/packaging.png',
-                                      fit: BoxFit.fitHeight)),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                'Rate on Packaging',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                                RatingBar(
-                                  initialRating: _ratingPackaging,
-                                  minRating: 0,
-                                  itemSize: 24,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: false,
-                                  itemCount: 5,
-                                  ignoreGestures: true,
-                                  itemPadding:
-                                      EdgeInsets.symmetric(horizontal: 2.0),
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: appThemeSecondary,
+                          child: InkWell(
+                              onTap: () {
+                                if (_ratingPackaging == 0)
+                                  orderRatebottomSheet(context, '2');
+                              },
+                              child: Column(
+                                children: [
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      child: Image.asset('images/packaging.png',
+                                          fit: BoxFit.fitHeight)),
+                                  SizedBox(
+                                    height: 5,
                                   ),
-                                  onRatingUpdate: (rating) {
-                                    _ratingPackaging = rating;
-                                  },
-
-                              ),
-                            ],
-                          )),
+                                  Text(
+                                    'Rate on Packaging',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  RatingBar(
+                                    initialRating: _ratingPackaging,
+                                    minRating: 0,
+                                    itemSize: 24,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: false,
+                                    itemCount: 5,
+                                    ignoreGestures: true,
+                                    itemPadding:
+                                        EdgeInsets.symmetric(horizontal: 2.0),
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color: appThemeSecondary,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      _ratingPackaging = rating;
+                                    },
+                                  ),
+                                ],
+                              )),
                         )),
                         SizedBox(
                           width: 10,
@@ -410,32 +574,79 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                             child: Container(
                           padding: EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Color(0xFFE1E1E1), width: 1),
+                            border:
+                                Border.all(color: Color(0xFFE1E1E1), width: 1),
                             borderRadius: BorderRadius.circular(5.0),
                           ),
-                          child:  InkWell(
+                          child: InkWell(
+                              onTap: () {
+                                if (_ratingHygiene == 0)
+                                  orderRatebottomSheet(context, '1');
+                              },
+                              child: Column(
+                                children: [
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      child: Image.asset('images/hygiene.png',
+                                          fit: BoxFit.fitHeight)),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    'Rate on Hygiene',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  RatingBar(
+                                    initialRating: _ratingHygiene,
+                                    minRating: 0,
+                                    itemSize: 24,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: false,
+                                    itemCount: 5,
+                                    ignoreGestures: true,
+                                    itemPadding:
+                                        EdgeInsets.symmetric(horizontal: 2.0),
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color: appThemeSecondary,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      _ratingHygiene = rating;
+                                    },
+                                  ),
+                                ],
+                              )),
+                        )),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Visibility(
+                      visible: widget.orderHistoryData.orderFacility
+                          .toLowerCase()
+                          .contains('delivery'),
+                      child: Container(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: InkWell(
                             onTap: () {
-                              if (_ratingHygiene == 0)
-                                orderRatebottomSheet(context, '1');
-                            },child:
-                          Column(
-                            children: [
-                              ClipRRect(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  child: Image.asset('images/hygiene.png',
-                                      fit: BoxFit.fitHeight)),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                'Rate on Hygiene',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              RatingBar(
-                                  initialRating: _ratingHygiene,
+                              if (_ratingRunner == 0)
+                                orderRatebottomSheet(context, '3');
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Rate Delivery Person:',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                RatingBar(
+                                  initialRating: _ratingRunner,
                                   minRating: 0,
                                   itemSize: 24,
                                   direction: Axis.horizontal,
@@ -449,57 +660,13 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                     color: appThemeSecondary,
                                   ),
                                   onRatingUpdate: (rating) {
-                                    _ratingHygiene = rating;
+                                    _ratingRunner = rating;
                                   },
                                 ),
-                            ],
-                          )),
-                        )),
-                      ],
+                              ],
+                            )),
+                      ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-
-                    Container(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child:  InkWell(
-                          onTap: () {
-                            if (_ratingRunner == 0)
-                              orderRatebottomSheet(context, '3');
-                          },child:
-                      Row(
-                        children: [
-                          Text(
-                            'Rate Delivery Person:',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400),
-                          ),
-                          RatingBar(
-                            initialRating: _ratingRunner,
-                            minRating: 0,
-                            itemSize: 24,
-                            direction: Axis.horizontal,
-                            allowHalfRating: false,
-                            itemCount: 5,
-                            ignoreGestures: true,
-                            itemPadding:
-                            EdgeInsets.symmetric(horizontal: 2.0),
-                            itemBuilder: (context, _) => Icon(
-                              Icons.star,
-                              color: appThemeSecondary,
-                            ),
-                            onRatingUpdate: (rating) {
-                              _ratingRunner = rating;
-                            },
-
-                          ),
-                        ],
-                      )),
-                    ),
-
                   ],
                 ),
               )),
@@ -1022,7 +1189,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
-                                            "images/placeHolder.png"),
+                                            "images/placeholder.png"),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -1167,7 +1334,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                         Padding(
                           padding: EdgeInsets.only(top: 5),
                           child: Text(
-                            "${type != '1' ?type == '3'?'Delivery Person': 'Packaging' : 'Hygiene'}",
+                            "${type != '1' ? type == '3' ? 'Delivery Person' : 'Packaging' : 'Hygiene'}",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.black,
@@ -1226,7 +1393,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                           height: 1,
                         ),
                         Visibility(
-                          visible: type!='3',
+                          visible: type != '3',
                           child: Container(
                             width: double.maxFinite,
                             child: Column(
@@ -1238,11 +1405,14 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                     },
                                     child: Container(
                                       margin: EdgeInsets.only(
-                                          top: 0, bottom: 6, left: 16, right: 16),
+                                          top: 0,
+                                          bottom: 6,
+                                          left: 16,
+                                          right: 16),
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
                                           image: AssetImage(
-                                              "images/placeHolder.png"),
+                                              "images/placeholder.png"),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -1540,11 +1710,25 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
   String _getAddress(OrderData orderHistoryData) {
     if (orderHistoryData.deliveryAddress != null &&
         orderHistoryData.deliveryAddress.isNotEmpty) {
-      String name = '${orderHistoryData.deliveryAddress.first.firstName}';
-      String address = ', ${orderHistoryData.deliveryAddress.first.address}';
-      String area = ', ${orderHistoryData.deliveryAddress.first.areaName}';
-      String city = ', ${orderHistoryData.deliveryAddress.first.city}';
-      String ZipCode = ', ${orderHistoryData.deliveryAddress.first.zipcode}';
+      String name =
+          orderHistoryData?.deliveryAddress?.first?.firstName!=null
+              ? '${orderHistoryData.deliveryAddress.first.firstName}'
+              : '';
+      String address =
+          orderHistoryData?.deliveryAddress?.first?.address!=null
+              ? ', ${orderHistoryData.deliveryAddress.first.address}'
+              : '';
+      String area =
+          orderHistoryData?.deliveryAddress?.first?.areaName!=null
+              ? ', ${orderHistoryData.deliveryAddress.first.areaName}'
+              : '';
+      String city = orderHistoryData?.deliveryAddress?.first?.city!=null
+          ? ', ${orderHistoryData.deliveryAddress.first.city}'
+          : '';
+      String ZipCode =
+          orderHistoryData?.deliveryAddress?.first?.zipcode!=null
+              ? ', ${orderHistoryData.deliveryAddress.first.zipcode}'
+              : '';
       return '$name$address$area$city$ZipCode';
     } else {
       String address = '${orderHistoryData.address}';
@@ -1612,7 +1796,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
 //        : grayLightColorSecondary;
 
     Color orderShipped = widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'||  widget.orderHistoryData.status == '7'
+            widget.orderHistoryData.status == '5' ||
+            widget.orderHistoryData.status == '7'
         ? Colors.black
         : grayLightColorSecondary;
     Color orderDelivered = widget.orderHistoryData.status == '2' ||
@@ -1643,7 +1828,8 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
 //        ? 100
 //        : 0;
     double orderShippedProgress = widget.orderHistoryData.status == '4' ||
-            widget.orderHistoryData.status == '5'||  widget.orderHistoryData.status == '7'
+            widget.orderHistoryData.status == '5' ||
+            widget.orderHistoryData.status == '7'
         ? 100
         : 0;
     double orderDeliveredProgress = widget.orderHistoryData.status == '2' ||
@@ -1790,7 +1976,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                   ),
                   Expanded(
                       child: Text(
-                    'Ready for PickUp',
+                    widget.orderHistoryData.orderFacility
+                            .toLowerCase()
+                            .contains('dinein')
+                        ? 'Ready to Serve'
+                        : 'Ready for PickUp',
                     style: TextStyle(fontSize: 16, color: orderReadyForPickUp),
                   )),
                   Text(
@@ -1883,7 +2073,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                   ),
                   Expanded(
                       child: Text(
-                    'Order Shipped',
+                    widget.orderHistoryData.orderFacility
+                            .toLowerCase()
+                            .contains('dinein')
+                        ? 'Order Served'
+                        : 'Order Shipped',
                     style: TextStyle(fontSize: 16, color: orderShipped),
                   )),
                   Text(
@@ -1932,7 +2126,11 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                       : !widget.orderHistoryData.orderFacility
                               .toLowerCase()
                               .contains('pick')
-                          ? 'Order Delivered'
+                          ? widget.orderHistoryData.orderFacility
+                                  .toLowerCase()
+                                  .contains('dinein')
+                              ? 'Order Completed'
+                              : 'Order Delivered'
                           : 'Order Picked',
                   style: TextStyle(fontSize: 16, color: orderDelivered),
                 )),
@@ -1947,29 +2145,49 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
           ],
         ),
         Visibility(
-            visible: isNoteVisible,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          visible: isNoteVisible,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                noteHeading,
+                style: TextStyle(color: Colors.black, fontSize: 18),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 4),
+                child: Text(
+                  orderRejectionNote,
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+              )
+            ],
+          ),
+        ),
+        Visibility(
+          visible: widget.orderHistoryData.status == '5',
+          child: RichText(
+            text: TextSpan(
+              text: '${_getRunnerBy(widget.orderHistoryData)}',
+              style: TextStyle(color: Colors.black, fontSize: 14),
               children: [
-                SizedBox(
-                  height: 15,
-                ),
-                Text(
-                  noteHeading,
-                  style: TextStyle(color: Colors.black, fontSize: 18),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 4),
-                  child: Text(
-                    orderRejectionNote,
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                TextSpan(
+                  text: ' ${_getRunnerName(widget.orderHistoryData)}',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16,
                   ),
-                )
+                ),
+                //TextSpan(text: '\n${widget.runnerDetail.fullName}',style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))
               ],
-            ))
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -2080,12 +2298,89 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
               _ratingPackaging = double.parse(
                   orderHistoryData.reviewsHygeineAndPack[i].rating);
               break;
-              case '3':
+            case '3':
               _ratingRunner = double.parse(
                   orderHistoryData.reviewsHygeineAndPack[i].rating);
               break;
           }
         }
+      }
+    }
+  }
+
+  String _getRunnertitle(OrderData orderHistoryData) {
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      String name = '${orderHistoryData.runnerDetail.first.fullName}';
+
+      return 'Delivery Boy';
+    } else {
+      return '';
+    }
+  }
+
+  String _getRunnerName(OrderData orderHistoryData) {
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      String name = '${orderHistoryData.runnerDetail.first.fullName}';
+
+      return '$name';
+    } else {
+      return '';
+    }
+  }
+
+  String _getRunnerBy(OrderData orderHistoryData) {
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      return '     by';
+    } else {
+      return '';
+    }
+  }
+
+  _getImage(OrderData orderHistoryData) {
+    //Image(image: AssetImage('images/whatsapp.png' ),
+
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      AppConstant.placeholderUrl =
+          '${orderHistoryData.runnerDetail.first.profileImage}';
+      return CachedNetworkImage(
+          imageUrl: "${orderHistoryData.runnerDetail.first.profileImage}");
+    } else {
+      return;
+    }
+  }
+
+  _getBottomTrack() {
+    // Delivered == 5, On Way to destination == 7
+    String bullet = "\u2022 ";
+    print('${widget.orderHistoryData.status}');
+    switch (widget.orderHistoryData.status) {
+      case '6':
+        return 'Order Cancelled';
+        break;
+      case '7':
+        return 'On the way to destination';
+        break;
+      case '8':
+        return 'On the way to take your order';
+        break;
+      default:
+        return '';
+    }
+  }
+
+  void _launchCaller(OrderData orderHistoryData) async {
+    if (orderHistoryData.runnerDetail != null &&
+        orderHistoryData.runnerDetail.isNotEmpty) {
+      String contact = '${orderHistoryData.runnerDetail.first.phone}';
+      String url = "tel:${contact}";
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
       }
     }
   }

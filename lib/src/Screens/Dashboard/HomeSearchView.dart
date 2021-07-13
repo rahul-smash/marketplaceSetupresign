@@ -22,20 +22,27 @@ class HomeSearchView extends StatefulWidget {
   TagsModel tagsModel;
   BrandData brandData;
 
-  HomeSearchView(this.allStoreData, this.brandData,
-      {this.callback,
-      this.initialPosition,
-      this.tagsModel,
-      this.selectedScreen,
-      this.dishCallBack});
+  String searchKeyword;
+
+  HomeSearchView(
+    this.allStoreData,
+    this.brandData, {
+    this.callback,
+    this.initialPosition,
+    this.tagsModel,
+    this.selectedScreen,
+    this.dishCallBack,
+    this.searchKeyword,
+  });
 
   @override
   _HomeSearchViewState createState() => _HomeSearchViewState();
 }
 
 class _HomeSearchViewState extends State<HomeSearchView> {
-  List<dynamic> itemList = List();
+  List<dynamic> itemList = List.empty(growable: true);
   bool visibleAllRestro = false;
+
 
   @override
   void initState() {
@@ -62,13 +69,22 @@ class _HomeSearchViewState extends State<HomeSearchView> {
             itemBuilder: (context, index) {
               if (itemList[index] is StoreData) {
                 StoreData storeDataObj = itemList[index];
-                return RestroSearchItemCard(storeDataObj, widget.callback,
-                    widget.initialPosition, widget.brandData);
+                return RestroSearchItemCard(
+                  storeDataObj,
+                  widget.callback,
+                  widget.initialPosition,
+                  widget.brandData,
+                  searchKeyword: widget.searchKeyword,
+                );
               } else if (itemList[index] is Dish) {
                 Dish dish = itemList[index];
                 return DishTileItem(
-                    dish, widget.callback, widget.initialPosition,
-                    dishCallBack: widget.dishCallBack);
+                  dish,
+                  widget.callback,
+                  widget.initialPosition,
+                  dishCallBack: widget.dishCallBack,
+                  searchKeyword: widget.searchKeyword,
+                );
               } else {
                 return itemList[index];
               }

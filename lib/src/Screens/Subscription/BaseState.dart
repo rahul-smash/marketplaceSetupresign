@@ -67,7 +67,14 @@ abstract class BaseState<T extends StatefulWidget> extends State {
         price.toString().substring(0, price.toString().indexOf('.'));
     String id = await _getStoreId();
     ApiController.razorpayCreateOrderApi(
-            mPrice, orderJson, detailsModel?.orderDetails, id)
+            mPrice,
+            orderJson,
+            detailsModel?.orderDetails,
+            id,
+            SingletonBrandData.getInstance()
+                .brandVersionModel
+                .brand
+                .currencyAbbr)
         .then((response) {
       CreateOrderData model = response;
       if (model != null) {

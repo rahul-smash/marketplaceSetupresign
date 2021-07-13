@@ -77,234 +77,232 @@ class _SubscribedPlanScreenState extends State<SubscribedPlanScreen> {
                 ),
                 isApiLoading
                     ? CircularProgressIndicator()
-                    : Column(children: [
-                        SizedBox(height: 20),
-                        Image(
-                            image: AssetImage('images/offergraphic1.png'),
-                            height: 250,
-                            width: 300),
-                        Flexible(
-                          child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(colors: [
-                                Colors.white,
-                                appTheme.withOpacity(0.1),
-                                Colors.white
-                              ])),
-                              child: Center(
-                                  child: Text(
-                                      _membershipPlanResponse.data.planName,
-                                      style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold)))),
-                        ),
-                        Flexible(
-                            flex: 1,
-                            child: Container(
-                                height: 40,
+                    : Container(
+                        height: MediaQuery.of(context).size.height,
+                        child: SingleChildScrollView(
+                          child: Column(children: [
+                            SizedBox(height: 50),
+                            Image(
+                                image: AssetImage('images/graphic1.png'),
+                                height: 220,
+                                width: 270),
+                            Container(
+                                padding: EdgeInsets.only(top: 20,bottom: 20),
+                                width: 260,
                                 decoration: BoxDecoration(
                                     gradient: LinearGradient(colors: [
                                   Colors.white,
-                                  appTheme.withOpacity(0.1),
+                                  Colors.grey.withOpacity(0.2),
                                   Colors.white
                                 ])),
-                                child: Center(
-                                    child: RichText(
-                                  text: TextSpan(children: [
-                                    WidgetSpan(
-                                      child: Transform.translate(
-                                        offset: const Offset(0.0, -4.0),
-                                        child: Text(
-                                          '${AppConstant.currency}',
-                                          style: TextStyle(
-                                              fontSize: 19,
-                                              fontWeight: FontWeight.bold),
+                                child: Column(children: [
+
+                                  Text(
+                                      '${_membershipPlanResponse.data.planName}',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold)),
+                                  Center(
+                                      child: RichText(
+                                    text: TextSpan(children: [
+                                      WidgetSpan(
+                                        child: Transform.translate(
+                                          offset: const Offset(0.0, -4.0),
+                                          child: Text(
+                                            '${AppConstant.currency}',
+                                            style: TextStyle(
+                                                fontSize: 19,
+                                                fontWeight:
+                                                    FontWeight.bold),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    TextSpan(
+                                      TextSpan(
+                                          text:
+                                              '${_membershipPlanResponse.data.planTotalCharges}',
+                                          style: TextStyle(
+                                              fontSize: 26,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black)),
+                                      WidgetSpan(
+                                        child: Transform.translate(
+                                          offset: const Offset(0.0, -7.0),
+                                          child: Text(
+                                            '*',
+                                            style: TextStyle(
+                                                fontSize: 19,
+                                                fontWeight:
+                                                    FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                    ]),
+                                  )),
+                                ])),
+                            SizedBox(height: 30),
+                            Row(children: [
+                              Container(
+                                  margin: EdgeInsets.only(left: 60, right: 10),
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              'images/tickstarbg.png'),
+                                          fit: BoxFit.cover)),
+                                  height: 60,
+                                  width: 60,
+                                  child: Align(
+                                      alignment: Alignment.center,
+                                      child: Image(
+                                        image:
+                                            AssetImage('images/startick.png'),
+                                        height: 30,
+                                        width: 20,
+                                      ))),
+                              Expanded(
+                                flex: 2,
+                                child: RichText(
+                                    text: TextSpan(
                                         text:
-                                            '${_membershipPlanResponse.data.planTotalCharges}',
-                                        style: TextStyle(
-                                            fontSize: 26,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black)),
-                                    WidgetSpan(
-                                      child: Transform.translate(
-                                        offset: const Offset(0.0, -7.0),
-                                        child: Text(
-                                          '*',
-                                          style: TextStyle(
-                                              fontSize: 19,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
-                                )))),
-                        SizedBox(height: 30),
-                        Row(children: [
-                          Container(
-                            alignment: Alignment.centerRight,
-                            margin: EdgeInsets.only(right: 10),
-                            height: 60,
-                            width: 120,
-                            child: CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Colors.white,
-                              backgroundImage:
-                                  AssetImage('images/tickstarbg.png'),
-                              child: Image(
-                                image: AssetImage('images/startick.png'),
-                                height: 25,
-                                width: 25,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: RichText(
-                                text: TextSpan(
-                                    text:
-                                        '${convertSubscriptionDate(SingletonBrandData.getInstance().userPurchaseMembershipResponse.data.startDate)}',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 18,
-                                    ),
-                                    children: [
-                                  WidgetSpan(
-                                    child: Transform.translate(
-                                      offset: const Offset(0.0, -6.0),
-                                      child: Text(
-                                        '_ ',
+                                            '${convertSubscriptionDate(SingletonBrandData.getInstance().userPurchaseMembershipResponse.data.startDate)}',
                                         style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 18,
                                         ),
+                                        children: [
+                                      WidgetSpan(
+                                        child: Transform.translate(
+                                          offset: const Offset(0.0, -6.0),
+                                          child: Text(
+                                            '_ ',
+                                            style: TextStyle(
+                                              color: Colors.grey[600],
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text:
-                                        '${convertSubscriptionDate(SingletonBrandData.getInstance().userPurchaseMembershipResponse.data.endDate)}',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 18,
-                                    ),
-                                  )
-                                ])),
-                          )
-                        ]),
+                                      TextSpan(
+                                        text:
+                                            '${convertSubscriptionDate(SingletonBrandData.getInstance().userPurchaseMembershipResponse.data.endDate)}',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 18,
+                                        ),
+                                      )
+                                    ])),
+                              )
+                            ]),
 
-                        Visibility(
-                          visible: SingletonBrandData.getInstance()
-                              .userPurchaseMembershipResponse
-                              .data
-                              .status,
-                          child: Wrap(
-                            alignment: WrapAlignment.center,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              RichText(
-                                  text: TextSpan(
-                                text: 'Cancel',
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    color: Colors.black,
-                                    decoration: TextDecoration.underline,
-                                    fontWeight: FontWeight.bold),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    showCancelSubscriptionDialog(
-                                        context, _cancelSubscriptionPlan);
-                                  },
-                              )),
-                            ],
-                          ),
-                        ),
-                        Divider(
-                          height: 50,
-                          thickness: 2,
-                          color: Colors.grey[300],
-                          indent: 110,
-                          endIndent: 110,
-                        ),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Checkbox(
-                              activeColor: appTheme,
-                              value: agree,
-                              onChanged: (value) {
-                                setState(() {
-                                  agree = value;
-                                });
-                              },
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                text: 'I accept ',
-                                style: TextStyle(
-                                    fontSize: 15, color: Colors.black),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: 'Terms & Conditions',
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SubscriptionTermsAndConditionsScreen(
-                                                        AdditionItemsConstants
-                                                            .TERMS_CONDITIONS,
-                                                        _membershipPlanResponse
-                                                            .data.planTc)),
-                                          );
-                                        },
-                                      style: TextStyle(
-                                          color: appTheme,
-                                          fontWeight: FontWeight.bold,
-                                          decoration: TextDecoration.underline,
-                                          fontSize: 15)),
+                            Visibility(
+                              visible: SingletonBrandData.getInstance()
+                                  .userPurchaseMembershipResponse
+                                  .data
+                                  .status,
+                              child: Wrap(
+                                alignment: WrapAlignment.center,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  RichText(
+                                      text: TextSpan(
+                                    text: 'Cancel',
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        color: Colors.black,
+                                        decoration: TextDecoration.underline,
+                                        fontWeight: FontWeight.bold),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        showCancelSubscriptionDialog(
+                                            context, _cancelSubscriptionPlan);
+                                      },
+                                  )),
                                 ],
                               ),
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Container(
-                          width: 170,
-                          height: 40,
-                          child: MaterialButton(
-                              color: appThemeSecondary,
-                              onPressed: () {
-                                if (agree == true) {
-                                  UserPurchaseMembershipResponse response =
-                                      SingletonBrandData.getInstance()
-                                          ?.userPurchaseMembershipResponse;
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              SubscriptionTypeSelection(
-                                                  _membershipPlanResponse,
-                                                  MemberShipType.RENEW)));
-                                } else {
-                                  Utils.showToast(
-                                      'Please check terms and conditions',
-                                      false);
-                                }
-                              },
-                              child: Text('Renew Now',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17,
-                                      color: appTheme))),
-                        ),
-                        SizedBox(height: 20),
+                            ),
+                            Divider(
+                              height: 50,
+                              thickness: 2,
+                              color: Colors.grey[300],
+                              indent: 110,
+                              endIndent: 110,
+                            ),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Checkbox(
+                                  activeColor: appTheme,
+                                  value: agree,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      agree = value;
+                                    });
+                                  },
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    text: 'I accept ',
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.black),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                          text: 'Terms & Conditions',
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        SubscriptionTermsAndConditionsScreen(
+                                                            AdditionItemsConstants
+                                                                .TERMS_CONDITIONS,
+                                                            _membershipPlanResponse
+                                                                .data.planTc)),
+                                              );
+                                            },
+                                          style: TextStyle(
+                                              color: appTheme,
+                                              fontWeight: FontWeight.bold,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              fontSize: 15)),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                            Container(
+                              width: 170,
+                              height: 40,
+                              child: MaterialButton(
+                                  color: appThemeSecondary,
+                                  onPressed: () {
+                                    if (agree == true) {
+                                      UserPurchaseMembershipResponse response =
+                                          SingletonBrandData.getInstance()
+                                              ?.userPurchaseMembershipResponse;
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SubscriptionTypeSelection(
+                                                      _membershipPlanResponse,
+                                                      MemberShipType.RENEW)));
+                                    } else {
+                                      Utils.showToast(
+                                          'Please check terms and conditions',
+                                          false);
+                                    }
+                                  },
+                                  child: Text('Renew Now',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17,
+                                          color: Colors.white))),
+                            ),
+                            SizedBox(height: 20),
 //              RichText(
 //                  text: TextSpan(
 //                      text: '(Food - Rs 99 per day, Delivery - Rs 25 per day)',
@@ -321,7 +319,9 @@ class _SubscribedPlanScreenState extends State<SubscribedPlanScreen> {
 //                      ),
 //                    ),
 //                  ])),
-                      ]),
+                          ]),
+                        ),
+                      ),
               ],
             )));
   }

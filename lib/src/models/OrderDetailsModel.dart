@@ -28,17 +28,39 @@ class OrderDetailsModel {
   String encodedtaxDetail = "[]";
   String encodedtaxLabel = "[]";
   String encodedFixedTax = "[]";
+  String posBranchCode = '';
+  String membershipPlanDetailId = '';
+  String membershipId = '';
+  String additionalInfo = '';
+  String isMembershipCouponEnabled = '0';
 
-
-  OrderDetailsModel(this.shipping_charges, this.note, this.totalPrice,
-      this.paymentMethod, this.taxModel, this.address,
-      this.isComingFromPickUpScreen, this.areaId, this.deliveryType,
-      this.razorpay_order_id, this.razorpay_payment_id, this.deviceId,
-      this.online_method, this.userId, this.deviceToken, this.storeAddress,
-      this.selectedDeliverSlotValue, this.cart_saving){
+  OrderDetailsModel(
+      this.shipping_charges,
+      this.note,
+      this.totalPrice,
+      this.paymentMethod,
+      this.taxModel,
+      this.address,
+      this.isComingFromPickUpScreen,
+      this.areaId,
+      this.deliveryType,
+      this.razorpay_order_id,
+      this.razorpay_payment_id,
+      this.deviceId,
+      this.online_method,
+      this.userId,
+      this.deviceToken,
+      this.storeAddress,
+      this.selectedDeliverSlotValue,
+      this.cart_saving,
+      {this.posBranchCode = '',
+      this.membershipPlanDetailId = '',
+      this.membershipId = '',
+      this.additionalInfo = '',
+      this.isMembershipCouponEnabled = '0'}) {
     try {
       List jsonfixedTaxList =
-      taxModel.fixedTax.map((fixedTax) => fixedTax.toJson()).toList();
+          taxModel.fixedTax.map((fixedTax) => fixedTax.toJson()).toList();
       encodedFixedTax = jsonEncode(jsonfixedTaxList);
       //print("encodedFixedTax= ${encodedFixedTax}");
     } catch (e) {
@@ -47,7 +69,7 @@ class OrderDetailsModel {
 
     try {
       List jsontaxDetailList =
-      taxModel.taxDetail.map((taxDetail) => taxDetail.toJson()).toList();
+          taxModel.taxDetail.map((taxDetail) => taxDetail.toJson()).toList();
       encodedtaxDetail = jsonEncode(jsontaxDetailList);
       //print("encodedtaxDetail= ${encodedtaxDetail}");
     } catch (e) {
@@ -56,7 +78,7 @@ class OrderDetailsModel {
 
     try {
       List jsontaxLabelList =
-      taxModel.taxLabel.map((taxLabel) => taxLabel.toJson()).toList();
+          taxModel.taxLabel.map((taxLabel) => taxLabel.toJson()).toList();
       encodedtaxLabel = jsonEncode(jsontaxLabelList);
       //print("encodedtaxLabel= ${encodedtaxLabel}");
     } catch (e) {
@@ -81,7 +103,8 @@ class OrderDetailsModel {
         "total": '${taxModel.total}',
         "user_id": userId,
         "device_token": deviceToken,
-        "delivery_type": this.deliveryType==OrderType.Delivery?'Delivery':'PickUp',
+        "delivery_type":
+            this.deliveryType == OrderType.Delivery ? 'Delivery' : this.deliveryType==OrderType.PickUp? 'PickUp':'DineIn',
         "user_address_id":
             isComingFromPickUpScreen == true ? areaId : address.id,
         "checkout": /*totalPrice*/ "${taxModel.itemSubTotal}",
@@ -95,7 +118,14 @@ class OrderDetailsModel {
         "store_tax_rate_detail": encodedtaxLabel,
         "calculated_tax_detail": encodedtaxDetail,
         "cart_saving": cart_saving,
+        "pos_branch_code": posBranchCode,
+        "membership_plan_detail_id": membershipPlanDetailId,
+        "membership_id": membershipId,
+        "additional_info": additionalInfo,
+        "is_membership_coupon_enabled": isMembershipCouponEnabled,
+        "shipping_tax_rate": taxModel != null ? taxModel.shipping_tax_rate : '',
+        "shipping_tax": taxModel != null ? taxModel.shipping_tax : '',
       };
 
-   get orderDetails => json.encode(toJson());
+  get orderDetails => json.encode(toJson());
 }

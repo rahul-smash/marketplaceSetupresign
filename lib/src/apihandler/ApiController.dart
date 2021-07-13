@@ -12,6 +12,7 @@ import 'package:restroapp/src/apihandler/ApiConstants.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/AdminLoginModel.dart';
+import 'package:restroapp/src/models/BannerResponse.dart';
 import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CancelOrderModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
@@ -26,7 +27,10 @@ import 'package:restroapp/src/models/DynamicResponse.dart';
 import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
 import 'package:restroapp/src/models/HtmlModelResponse.dart';
+import 'package:restroapp/src/models/LogoutResponse.dart';
 import 'package:restroapp/src/models/LoyalityPointsModel.dart';
+import 'package:restroapp/src/models/PeachPayCheckOutResponse.dart';
+import 'package:restroapp/src/models/PeachPayVerifyResponse.dart';
 import 'package:restroapp/src/models/StorelatlngsResponse.dart';
 import 'package:restroapp/src/models/MembershipPlanResponse.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
@@ -728,8 +732,8 @@ class ApiController {
     }
   }
 
-  static Future<StoreOffersResponse> storeOffersApiRequest(
-      String areaId) async {
+  static Future<StoreOffersResponse> storeOffersApiRequest(String areaId,
+      {bool isComingFromPickUpScreen = false}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
 
@@ -741,7 +745,7 @@ class ApiController {
       request.fields.addAll({
         "store_id": store.id,
         "user_id": user.id,
-        "order_facility": "Delivery"
+        "order_facility": isComingFromPickUpScreen ? "PickUp" : "Delivery"
       });
 
       if (areaId != null) {
@@ -764,7 +768,8 @@ class ApiController {
       String couponCode,
       String paymentMode,
       String orderJson,
-      String coupon_type) async {
+      String coupon_type,
+      String orderFacilities) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -782,6 +787,7 @@ class ApiController {
         "user_id": user.id,
         "device_token": deviceToken,
         "orders": "$orderJson",
+        "order_facilities": orderFacilities,
         "payment_method": paymentMode,
         "platform": Platform.isIOS ? "IOS" : "Android"
       });
@@ -868,12 +874,17 @@ class ApiController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
     String deviceToken = prefs.getString(AppConstant.deviceToken);
-
+    String orderFacility = deliveryType == OrderType.Delivery
+        ? 'Delivery'
+        : deliveryType == OrderType.PickUp
+            ? 'PickUp'
+            : 'DineIn';
     var url;
     if (deliveryType == OrderType.Delivery) {
       url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
           ApiConstants.placeOrder;
-    } else {
+    } else if (deliveryType == OrderType.PickUp ||
+        deliveryType == OrderType.DineIn) {
       url = ApiConstants.baseUrl3.replaceAll("storeId", store.id) +
           ApiConstants.pickupPlaceOrder;
     }
@@ -928,10 +939,10 @@ class ApiController {
       print(e);
     }
     String checkOutPrice =
-        double.parse(taxModel.itemSubTotal) > 0 && posBranchCode.isNotEmpty
+        double.parse(taxModel.itemSubTotal) > 0 || posBranchCode.isNotEmpty
             ? taxModel.itemSubTotal
             : '0';
-    String total = double.parse(taxModel.total) > 0 && posBranchCode.isNotEmpty
+    String total = double.parse(taxModel.total) > 0 || posBranchCode.isNotEmpty
         ? taxModel.total
         : '0';
     try {
@@ -972,6 +983,7 @@ class ApiController {
         "membership_plan_detail_id": membershipPlanDetailId,
         "membership_id": membershipId,
         "additional_info": additionalInfo,
+        "order_facility": orderFacility,
         "is_membership_coupon_enabled": isMembershipCouponEnabled,
         "shipping_tax_rate": taxModel != null ? taxModel.shipping_tax_rate : '',
         "shipping_tax": taxModel != null ? taxModel.shipping_tax : '',
@@ -1331,7 +1343,11 @@ class ApiController {
   }
 
   static Future<CreateOrderData> razorpayCreateOrderApi(
-      String amount, String orderJson, dynamic detailsJson, storeId) async {
+      String amount,
+      String orderJson,
+      dynamic detailsJson,
+      storeId,
+      String currencyAbbr) async {
     var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
         ApiConstants.razorpayCreateOrder;
     print(url);
@@ -1340,7 +1356,7 @@ class ApiController {
     try {
       request.fields.addAll({
         "amount": amount,
-        "currency": "INR",
+        "currency": currencyAbbr.trim(),
         "receipt": "Order",
         "payment_capture": "1",
         "order_info": detailsJson != null ? detailsJson : '',
@@ -1437,17 +1453,15 @@ class ApiController {
     }
   }
 
-  static Future<StripeCheckOutModel> stripePaymentApi(String amount) async {
-    StoreDataObj store = await SharedPrefs.getStoreData();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  static Future<StripeCheckOutModel> stripePaymentApi(String amount, String storeID) async {
     UserModel user = await SharedPrefs.getUser();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+    var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.stripePaymentCheckout;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
       request.fields.addAll(
-          {"customer_email": user.email, "amount": amount, "currency": "usd"});
+          {"customer_email": user.email, "amount": amount, "currency": "usd","store_id":storeID});
       print('--url===  $url');
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
@@ -1464,15 +1478,15 @@ class ApiController {
   }
 
   static Future<StripeVerifyModel> stripeVerifyTransactionApi(
-      String payment_request_id) async {
-    StoreModel store = await SharedPrefs.getStore();
-    var url = ApiConstants.baseUrl.replaceAll("storeId", store.id) +
+      String payment_request_id,String storeID) async {
+    var url = ApiConstants.base.replaceAll("brandId",AppConstant.brandID) +
         ApiConstants.stripeVerifyTransaction;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
       request.fields.addAll({
         "payment_request_id": payment_request_id,
+        "store_id":storeID
       });
       print('--url===  $url');
       print('--payment_request_id===  $payment_request_id');
@@ -1510,15 +1524,14 @@ class ApiController {
     }
   }
 
-  static Future<DeliveryTimeSlotModel> deliveryTimeSlotApi() async {
+  static Future<DeliveryTimeSlotModel> deliveryTimeSlotApi(
+      String storeID) async {
     UserModelMobile user = await SharedPrefs.getUserMobile();
     var url = ApiConstants.baseUrl3.replaceAll("storeId", 'delivery_zones/') +
         ApiConstants.deliveryTimeSlot;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     try {
-      request.fields.addAll({
-        "user_id": user.id,
-      });
+      request.fields.addAll({"user_id": user.id, "store_id": storeID});
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
 
@@ -2322,5 +2335,140 @@ class ApiController {
       print(e);
     }
     return null;
+  }
+
+  static Future<LogoutResponse> getLogout() async {
+    UserModel user = await SharedPrefs.getUser();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+    var url = ApiConstants.base_Url.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.logout;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+    try {
+      request.fields.addAll({
+        "user_id": user.id,
+        "device_id": deviceId,
+        "device_token": deviceToken,
+        "platform": Platform.isIOS ? "IOS" : "Android"
+      });
+      print("${url}");
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print("${respStr}");
+
+      final parsed = json.decode(respStr);
+      LogoutResponse logoutResponse = LogoutResponse.fromJson(parsed);
+      return logoutResponse;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  static Future<BannerResponse> getBannersApi(String city) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String deviceId = prefs.getString(AppConstant.deviceId);
+    String deviceToken = prefs.getString(AppConstant.deviceToken);
+
+    var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.banners;
+
+    print("----url--${url}");
+    try {
+      FormData formData = new FormData.fromMap({
+        "device_id": deviceId,
+        "device_token": "${deviceToken}",
+        "platform": Platform.isIOS ? "IOS" : "Android",
+        "city": city
+      });
+      print(formData.fields.toString());
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      BannerResponse bannerResponse =
+          BannerResponse.fromJson(json.decode(response.data));
+      print("-------tagsApiRequest ---${bannerResponse.success}");
+
+      return bannerResponse;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /*PeachPay payment Gateway*/
+  static Future<PeachPayCheckOutResponse> peachPayCreateOrderApi(
+      String amount,
+      String orderJson,
+      dynamic detailsJson,
+      storeId,
+      String currencyAbr) async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    if (!isNetworkAviable) {
+      return null;
+    }
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
+        ApiConstants.peachPayCreateOrder;
+    print(url);
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+    try {
+      request.fields.addAll({
+        "amount": amount,
+//        "currency": currencyAbr.trim(),
+        "currency": "ZAR",
+        "order_info": detailsJson != null ? detailsJson : '',
+        //JSONObject details
+        "orders": orderJson != null ? orderJson : ''
+        //cart jsonObject
+      });
+      print(request.fields);
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      PeachPayCheckOutResponse model =
+          PeachPayCheckOutResponse.fromJson(parsed);
+      return model;
+    } catch (e) {
+      print('---catch-razorpayCreateOrder-----' + e.toString());
+      //Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
+  static Future<PeachPayVerifyResponse> peachPayVerifyTransactionApi(
+      String checkout_id, String storeID) async {
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
+        ApiConstants.peachpayVerifyTransaction;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    print(url);
+    try {
+      request.fields.addAll({
+        "checkout_id": checkout_id,
+      });
+      print(request.fields.toString());
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      PeachPayVerifyResponse model = PeachPayVerifyResponse.fromJson(parsed);
+      return model;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
   }
 }

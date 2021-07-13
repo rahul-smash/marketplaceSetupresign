@@ -29,6 +29,8 @@ import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:html/parser.dart';
+
 
 import 'DialogUtils.dart';
 
@@ -517,7 +519,7 @@ class Utils {
           status = true;
         }
       } else {
-        if (deliveryType == OrderType.PickUp) {
+        if (deliveryType == OrderType.PickUp||deliveryType==OrderType.DineIn) {
           if (storeObject.is24X7Open == "1") {
             // 1 = means store open 24x7
             // 0 = not open for 24x7
@@ -778,6 +780,16 @@ class Utils {
     }
     DeviceInfo.getInstance(deviceInfo: param);
   }
+  static String removeAllHtmlTags(String htmlText) {
+    try {
+      var document = parse(htmlText);
+      String parsedString = parse(document.body.text).documentElement.text;
+      return parsedString;
+    } catch (e) {
+      print(e);
+      return "";
+    }
+  }
 }
 
 Future<void> share2(String referEarn, BrandData store) async {
@@ -806,7 +818,7 @@ enum HomeScreenEnum {
 
 enum ClassType { CART, SubCategory, Favourites, Home, Search }
 
-enum OrderType { Delivery, PickUp, Menu, SUBSCRIPTION_ORDER }
+enum OrderType { Delivery, PickUp, Menu, SUBSCRIPTION_ORDER ,DineIn}
 
 enum PaymentType { COD, ONLINE, ONLINE_PAYTM, CANCEL }
 

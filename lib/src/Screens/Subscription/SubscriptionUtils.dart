@@ -49,10 +49,13 @@ Future<bool> showSubscriptionSuccessDialog(
                   Container(
                     width: 150,
                     child: ElevatedButton(
-                      child: Text('Ok'),
+                      child: Text(
+                        'Ok',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all<Color>(appTheme),
+                            MaterialStateProperty.all<Color>(appThemeSecondary),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
@@ -103,7 +106,7 @@ Future<void> showSubscriptionFailedDialog(BuildContext _context) async {
                   child: ElevatedButton(
                     child: Text(
                       'Ok',
-                      style: TextStyle(color: appTheme),
+                      style: TextStyle(color: Colors.white),
                     ),
                     style: ButtonStyle(
                       backgroundColor:
@@ -169,7 +172,7 @@ Future<bool> showCancelSubscriptionDialog(
             color: appThemeSecondary,
             child: Text(
               'Proceed to Cancel',
-              style: TextStyle(color: appTheme),
+              style: TextStyle(color: Colors.white),
             ),
             onPressed: _onPressed,
           )
@@ -269,7 +272,7 @@ Future<bool> showOfferAvailDialog(
                       child: ElevatedButton(
                         child: Text(
                           'Proceed',
-                          style: TextStyle(color: appTheme),
+                          style: TextStyle(color: Colors.white),
                         ),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
@@ -285,7 +288,7 @@ Future<bool> showOfferAvailDialog(
 //                          if (isEnable) {
 //                            isEnable = false;
 //                        t.cancel();
-                            _onPressed(context);
+                          _onPressed(context);
 //                          }
                         },
                       ),
@@ -322,7 +325,7 @@ Future<bool> showCanceledSubscriptionDialog(
               color: appThemeSecondary,
               child: Text(
                 'Ok',
-                style: TextStyle(color: appTheme),
+                style: TextStyle(color: Colors.white),
               ),
               onPressed: _onPressed,
             )
@@ -395,9 +398,11 @@ String convertSubscriptionDate(DateTime dateTime) {
 
 String getSubscriptionNextMealDate() {
   DateTime today = DateTime.now();
-  today.add(Duration(days: 1));
-  DateFormat formatter = new DateFormat('dd MMM yyyy');
+  today=today.add(Duration(days: 1));
+//  2021-05-10, 7:30 PM - 8:30 PM
+  DateFormat formatter = new DateFormat('yyyy-MM-dd');
   String formatted = formatter.format(today);
+  print("--------------------------------------------------" + formatted);
   return formatted;
 }
 

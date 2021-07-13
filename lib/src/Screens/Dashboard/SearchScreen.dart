@@ -261,12 +261,12 @@ class _SearchScreenState extends BaseState<SearchScreen> {
                 itemBuilder: (context, index) {
                   if (itemList[index] is StoreData) {
                     StoreData storeDataObj = itemList[index];
-                    return RestroSearchItemCard(
-                        storeDataObj, widget.callback, widget.initialPosition,widget.brandData);
+                    return RestroSearchItemCard(storeDataObj, widget.callback,
+                        widget.initialPosition, widget.brandData,searchKeyword: controller.text,);
                   } else if (itemList[index] is Dish) {
                     Dish dish = itemList[index];
                     return DishTileItem(
-                        dish, widget.callback, widget.initialPosition,dishCallBack: widget.dishCallBack);
+                        dish, widget.callback, widget.initialPosition,dishCallBack: widget.dishCallBack,searchKeyword: controller.text,);
                   } else {
                     return itemList[index];
                   }
