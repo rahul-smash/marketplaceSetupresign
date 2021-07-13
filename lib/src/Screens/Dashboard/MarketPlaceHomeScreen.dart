@@ -70,7 +70,7 @@ class MarketPlaceHomeScreen extends StatefulWidget {
   bool showForceUploadAlert;
 
   MarketPlaceHomeScreen(this.brandData, this.configObject,
-      this.showForceUploadAlert, );
+      this.showForceUploadAlert, this.initialPosition);
 
   @override
   State<StatefulWidget> createState() {
@@ -310,10 +310,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
       return Container();
     } else
       return Visibility(
-        visible:
-        (homeViewOrderMap.length==0)||
-            (homeViewOrderMap[HomeScreenViewHelper.SLIDER]
-                !=null&&homeViewOrderMap[HomeScreenViewHelper.SLIDER].display),
+        visible: (homeViewOrderMap.length == 0) ||
+            (homeViewOrderMap[HomeScreenViewHelper.SLIDER] != null &&
+                homeViewOrderMap[HomeScreenViewHelper.SLIDER].display),
         child: Column(
           children: [
             Center(
@@ -331,25 +330,25 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                   int index = imgList.indexOf(url);
                   return _current == index
                       ? Container(
-                    width: 7.0,
-                    height: 7.0,
-                    margin: EdgeInsets.symmetric(
-                        vertical: 0.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: dotIncreasedColor,
-                    ),
-                  )
+                          width: 7.0,
+                          height: 7.0,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 2.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: dotIncreasedColor,
+                          ),
+                        )
                       : Container(
-                    width: 6.0,
-                    height: 6.0,
-                    margin: EdgeInsets.symmetric(
-                        vertical: 0.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color.fromRGBO(0, 0, 0, 0.4),
-                    ),
-                  );
+                          width: 6.0,
+                          height: 6.0,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 2.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromRGBO(0, 0, 0, 0.4),
+                          ),
+                        );
                 }).toList(),
               ),
             ),
@@ -853,33 +852,13 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     });
   }
 
-  void _getStoreApi({bool isShowLoader=true}) async {
+  void _getStoreApi() async {
     //----------------------------------------------
-
-    bool isNetworkAvailable = await Utils.isNetworkAvailable();
-    if (!isNetworkAvailable) {
-      Utils.showToast("No Internet connection", false);
-      return;
-    }
-    Map<String, dynamic> data = {
-      "lat": widget.initialPosition == null
-          ? '0.0'
-          : widget.initialPosition.latitude,
-      "lng": widget.initialPosition == null
-          ? '0.0'
-          : widget.initialPosition.longitude,
-    };
-//    Utils.showProgressDialog(context);
-    ApiController.getAllStores(params: data).then((storesResponse) {
-//      Utils.hideProgressDialog(context);
-      Utils.hideKeyboard(context);
-      if (storesResponse != null && storesResponse.success) {
-        setState(() {
-          this.storeData = storesResponse;
-        });
-      } else {
-        DialogUtils.displayErrorDialog(context, "${storesResponse.message}");
-      }
+    ApiController.storesApiRequest(widget.initialPosition)
+        .then((storesResponse) {
+      setState(() {
+        this.storeData = storesResponse;
+      });
     });
   }
 
