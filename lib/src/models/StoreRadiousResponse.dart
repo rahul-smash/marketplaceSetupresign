@@ -38,6 +38,7 @@ class Area {
     this.notAllow,
     this.radius,
     this.radiusCircle,
+    this.isShippingMandatory,
   });
 
   String areaId;
@@ -48,6 +49,7 @@ class Area {
   bool notAllow;
   String radius;
   String radiusCircle;
+  String isShippingMandatory;
 
   factory Area.fromJson(Map<String, dynamic> json) => Area(
     areaId: json["area_id"],
@@ -58,6 +60,7 @@ class Area {
     notAllow: json["not_allow"],
     radius: json["radius"],
     radiusCircle: json["radius_circle"],
+    isShippingMandatory: json["is_shipping_mandatory"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -69,5 +72,6 @@ class Area {
     "not_allow": notAllow,
     "radius": radius,
     "radius_circle": radiusCircle,
+    "is_shipping_mandatory": isShippingMandatory,
   };
 }

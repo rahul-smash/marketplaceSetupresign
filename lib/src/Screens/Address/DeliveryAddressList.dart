@@ -326,7 +326,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
   Widget addOperationBar(DeliveryAddressData area, int index) {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 5, 5),
-      child: addressList[index].isSubscriptionOAddress
+      child: addressList[index].isSubscriptionAddress
           ? InkWell(
               onTap: () {
                 DialogUtils.displayCommonDialog(
@@ -460,10 +460,10 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 await DialogUtils.displayLocationNotAvailbleDialog(
                     context, 'We dont\'t serve\nin your area',
                     buttonText1:
-                        addressList[selectedIndex].isSubscriptionOAddress
+                        addressList[selectedIndex].isSubscriptionAddress
                             ? 'OK'
                             : 'Change Location');
-            if (addressList[selectedIndex].isSubscriptionOAddress) {
+            if (addressList[selectedIndex].isSubscriptionAddress) {
               return;
             }
 
@@ -492,6 +492,10 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
               print("---radius-- ${area.radius}-charges.and ${area.charges}--");
               print("minAmount=${addressList[selectedIndex].minAmount}");
               print("notAllow=${addressList[selectedIndex].notAllow}");
+              addressList[selectedIndex].minAmount = area.minOrder;
+              addressList[selectedIndex].notAllow = area.notAllow;
+              addressList[selectedIndex].isShippingMandatory =
+                  area.isShippingMandatory;
               if (area.note.isEmpty) {
                 Navigator.push(
                   context,
@@ -561,7 +565,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
 //        if (defaultAddressID != responses.data[i].id || !isSubscriptionActive)
 //          addressList.add(responsesData.data[i]);
         if (defaultAddressID == responses.data[i].id && isSubscriptionActive) {
-          responsesData.data[i].isSubscriptionOAddress = true;
+          responsesData.data[i].isSubscriptionAddress = true;
         }
         addressList.add(responsesData.data[i]);
       }

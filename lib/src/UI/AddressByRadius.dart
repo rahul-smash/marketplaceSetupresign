@@ -337,8 +337,9 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
 
         setState(() {
 //          address = first.addressLine;
-          cityController.text = first.subAdminArea != null ?first.subAdminArea:'';
-          stateController.text =first.adminArea != null ? first.adminArea:'';
+          cityController.text =
+              first.subAdminArea != null ? first.subAdminArea : '';
+          stateController.text = first.adminArea != null ? first.adminArea : '';
           address =
               '${first.subLocality != null ? first.subLocality : ''}${first.locality != null ? ', ' + first.locality : ''}${first.subAdminArea != null ? ', ' + first.subAdminArea : ''}${first.adminArea != null ? ', ' + first.adminArea : ''}';
           if (address.length > 0)
@@ -542,10 +543,12 @@ class _DragMarkerMapState extends State<DragMarkerMap> {
             await Geocoder.local.findAddressesFromCoordinates(coordinates);
         var first = addresses.first;
 //        localAddress = first.addressLine;
-        localAddress = '${first.subLocality!=null?first.subLocality:''}${first.locality!=null?', '+first.locality:''}${first.subAdminArea!=null?', '+first.subAdminArea:''}${first.adminArea!=null?', '+first.adminArea:''}';
+        localAddress =
+            '${first.subLocality != null ? first.subLocality : ''}${first.locality != null ? ', ' + first.locality : ''}${first.subAdminArea != null ? ', ' + first.subAdminArea : ''}${first.adminArea != null ? ', ' + first.adminArea : ''}';
         if (setState != null)
           setState(() {
-            localAddress = '${first.subLocality!=null?first.subLocality:''}${first.locality!=null?', '+first.locality:''}${first.subAdminArea!=null?', '+first.subAdminArea:''}${first.adminArea!=null?', '+first.adminArea:''}';
+            localAddress =
+                '${first.subLocality != null ? first.subLocality : ''}${first.locality != null ? ', ' + first.locality : ''}${first.subAdminArea != null ? ', ' + first.subAdminArea : ''}${first.adminArea != null ? ', ' + first.adminArea : ''}';
           });
       } catch (e) {
         print(e);
