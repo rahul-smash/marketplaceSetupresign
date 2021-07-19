@@ -31,12 +31,12 @@ class ProductDetailsScreen extends StatefulWidget {
   Product product;
   bool isApiLoading = false, isFav = false;
   Variant passedVariant;
-
+  VoidCallback saveStore;
   String productID = '';
   String storeId = '';
 
   ProductDetailsScreen(this.product, this.passedVariant,
-      {this.productID, this.storeId});
+      {this.productID, this.storeId, this.saveStore});
 
   @override
   State<StatefulWidget> createState() {
@@ -548,6 +548,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                                   insertInCartTable(widget.product, counter);
                                 }
                                 //widget.callback();
+                                widget.saveStore();
                               }
                               eventBus.fire(onCounterUpdate(
                                   counter, widget.product.id, variantId));
@@ -676,10 +677,12 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       if (count == 0) {
         databaseHelper.addProductToCart(row).then((count) {
           //widget.callback();
+          widget.saveStore();
         });
       } else {
         databaseHelper.updateProductInCart(row, variantId).then((count) {
           //widget.callback();
+          widget.saveStore();
         });
       }
     });
@@ -691,6 +694,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       variantId = variant == null ? variant_Id : variant.id;
       databaseHelper.delete(DatabaseHelper.CART_Table, variantId).then((count) {
         //widget.callback();
+        widget.saveStore();
       });
     } catch (e) {
       print(e);
@@ -847,7 +851,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       )
                     : Image.asset(
-                        'images/placeholder.jpg',
+                        'images/img_placeholder.jpg',
                         height: 280,
                         fit: BoxFit.cover,
                       ),

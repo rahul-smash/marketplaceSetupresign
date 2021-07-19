@@ -19,6 +19,7 @@ import 'package:html/parser.dart';
 class ProductTileItem extends StatefulWidget {
   Product product;
   VoidCallback callback;
+  VoidCallback saveStore;
   ClassType classType;
   CustomCallback favCallback;
   List<String> tagsList = List.empty(growable: true);
@@ -26,7 +27,7 @@ class ProductTileItem extends StatefulWidget {
   bool isStoreClosed;
 
   ProductTileItem(this.product, this.callback, this.classType,
-      {this.favCallback, this.isStoreClosed = false});
+      {this.favCallback, this.isStoreClosed = false, this.saveStore});
 
   @override
   _ProductTileItemState createState() => _ProductTileItemState();
@@ -172,32 +173,36 @@ class _ProductTileItemState extends State<ProductTileItem> {
               var result = await Navigator.push(
                   context,
                   new MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        ProductDetailsScreen(widget.product, variant),
+                    builder: (BuildContext context) => ProductDetailsScreen(
+                      widget.product,
+                      variant,
+                      saveStore: widget.saveStore,
+                    ),
                     fullscreenDialog: true,
                   ));
-              setState(() {
-                if (result != null) {
-                  variant = result;
-                  discount = variant.discount.toString();
-                  price = variant.price.toString();
-                  weight = variant.weight;
-                  variantId = variant.id;
-                } else {
-                  variantId =
-                      variant == null ? widget.product.variantId : variant.id;
-                }
-                _checkOutOfStock(findNext: false);
-                databaseHelper
-                    .getProductQuantitiy(variantId)
-                    .then((cartDataObj) {
-                  if (mounted)
-                    setState(() {
-                      cartData = cartDataObj;
-                      counter = int.parse(cartData.QUANTITY);
-                      showAddButton = counter == 0 ? true : false;
-                    });
-                });
+              if (mounted)
+                setState(() {
+                  if (result != null) {
+                    variant = result;
+                    discount = variant.discount.toString();
+                    price = variant.price.toString();
+                    weight = variant.weight;
+                    variantId = variant.id;
+                  } else {
+                    variantId =
+                        variant == null ? widget.product.variantId : variant.id;
+                  }
+                  _checkOutOfStock(findNext: false);
+                  databaseHelper
+                      .getProductQuantitiy(variantId)
+                      .then((cartDataObj) {
+                    if (mounted)
+                      setState(() {
+                        cartData = cartDataObj;
+                        counter = int.parse(cartData.QUANTITY);
+                        showAddButton = counter == 0 ? true : false;
+                      });
+                  });
 //                databaseHelper
 //                    .checkProductsExistInFavTable(
 //                        DatabaseHelper.Favorite_Table, widget.product.id)
@@ -208,9 +213,9 @@ class _ProductTileItemState extends State<ProductTileItem> {
 //                      widget.favCallback(value: widget.product.isFav);
 //                  });
 //                });
-                widget.callback();
-                eventBus.fire(updateCartCount());
-              });
+                  widget.callback();
+                  eventBus.fire(updateCartCount());
+                });
             }
           },
           child: Padding(
@@ -751,6 +756,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                       showAddButton = false;
                       insertInCartTable(widget.product, counter);
                       widget.callback();
+                      widget.saveStore();
                       eventBus.fire(onCounterUpdate(
                           counter, widget.product.id, variantID));
                     }
@@ -807,6 +813,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
                                     insertInCartTable(widget.product, counter);
                                   }
                                   widget.callback();
+                                  widget.saveStore();
                                 } else {
                                   setState(() {
                                     showAddButton = true;
@@ -1018,11 +1025,13 @@ class _ProductTileItemState extends State<ProductTileItem> {
       if (count == 0) {
         databaseHelper.addProductToCart(row).then((count) {
           widget.callback();
+          widget.saveStore();
           eventBus.fire(updateCartCount());
         });
       } else {
         databaseHelper.updateProductInCart(row, variantId).then((count) {
           widget.callback();
+          widget.saveStore();
           eventBus.fire(updateCartCount());
         });
       }
@@ -1036,6 +1045,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
       variantId = variant == null ? variant_Id : variant.id;
       databaseHelper.delete(DatabaseHelper.CART_Table, variantId).then((count) {
         widget.callback();
+        widget.saveStore();
         eventBus.fire(updateCartCount());
       });
     } catch (e) {

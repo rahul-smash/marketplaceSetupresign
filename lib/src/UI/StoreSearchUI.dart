@@ -77,9 +77,15 @@ class _StoreSearchUIState extends State<StoreSearchUI> {
                       }
                     },
                     child: Container(
-                      child: ProductTileItem(product, () {
-                        SharedPrefs.saveStoreData(widget.store);
-                      }, ClassType.Home,isStoreClosed: isStoreClosed,),
+                      child: ProductTileItem(
+                        product,
+                        () {},
+                        ClassType.Home,
+                        isStoreClosed: isStoreClosed,
+                        saveStore: () {
+                          SharedPrefs.saveStoreData(widget.store);
+                        },
+                      ),
                     ),
                   );
                 }),

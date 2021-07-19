@@ -67,7 +67,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     Utils.hideProgressDialog(context);
     getCategoryApi();
     listenEvent();
-    imgList.indexWhere((element) => false);
     try {
       AppConstant.placeholderUrl = store.banner300200;
       if (store.banner300200.isNotEmpty) {
@@ -84,6 +83,17 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       }
       setState(() {});
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!Utils.checkStoreOpenTime(store)) {
+        DialogUtils.displayCommonDialog(
+          context,
+          store.storeName,
+          store.closehoursMessage,
+        );
+        return;
+      }
+    });
+
   }
 
   void listenEvent() {}
@@ -439,10 +449,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                   child: Container(
                     child: ProductTileItem(
                       product,
-                      () {
+                      () {},
+                      ClassType.Home,
+                      saveStore: () {
                         SharedPrefs.saveStoreData(store);
                       },
-                      ClassType.Home,
                       isStoreClosed: isStoreClosed,
                     ),
                   ),
