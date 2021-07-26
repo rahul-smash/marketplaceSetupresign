@@ -93,9 +93,11 @@ class _OffersListDetailState extends State<OffersListDetail> {
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
+                      flex:2,
                         child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -115,8 +117,10 @@ class _OffersListDetailState extends State<OffersListDetail> {
                       ],
                     )),
                     Expanded(
+                      flex:3,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
