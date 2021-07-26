@@ -1702,39 +1702,39 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 return;
               }
 
-//              if (widget.deliveryType == OrderType.Delivery) {
-//                if (storeModel.deliverySlot == "0") {
-//                  selectedDeliverSlotValue = "";
-//                } else {
-//                  //Store provides instant delivery of the orders.
-//                  print(isInstantDelivery);
-//                  if (isDeliveryResponseFalse) {
-//                    selectedDeliverSlotValue = "";
-//                  } else if (storeModel.deliverySlot == "1" &&
-//                      isInstantDelivery) {
-//                    //Store provides instant delivery of the orders.
-//                    selectedDeliverSlotValue = "";
-//                  } else if (storeModel.deliverySlot == "1" &&
-//                      !isSlotSelected &&
-//                      !isInstantDelivery) {
-//                    Utils.showToast("Please select delivery slot", false);
-//                    return;
-//                  } else {
-//                    String slotDate = deliverySlotModel
-//                        .data.dateTimeCollection[selctedTag].label;
-//                    String timeSlot = deliverySlotModel
-//                        .data
-//                        .dateTimeCollection[selctedTag]
-//                        .timeslot[selectedTimeSlot]
-//                        .label;
-//                    selectedDeliverSlotValue =
-//                        "${Utils.convertDateFormat(slotDate)} ${timeSlot}";
-//                    //print("selectedDeliverSlotValue= ${selectedDeliverSlotValue}");
-//                  }
-//                }
-//              } else {
-//                selectedDeliverSlotValue = "";
-//              }
+              if (widget.deliveryType == OrderType.Delivery) {
+                /*if (storeModel.deliverySlot == "0") {
+                  selectedDeliverSlotValue = "";
+                } else*/ {
+                  //Store provides instant delivery of the orders.
+                  print(isInstantDelivery);
+                  if (isDeliveryResponseFalse) {
+                    selectedDeliverSlotValue = "";
+                  } else if (/*storeModel.deliverySlot == "1" &&*/
+                      isInstantDelivery) {
+                    //Store provides instant delivery of the orders.
+                    selectedDeliverSlotValue = "";
+                  } else if (/*storeModel.deliverySlot == "1" &&*/
+                      !isSlotSelected &&
+                      !isInstantDelivery) {
+                    Utils.showToast("Please select delivery slot", false);
+                    return;
+                  } else {
+                    String slotDate = deliverySlotModel
+                        .data.dateTimeCollection[selctedTag].label;
+                    String timeSlot = deliverySlotModel
+                        .data
+                        .dateTimeCollection[selctedTag]
+                        .timeslot[selectedTimeSlot]
+                        .label;
+                    selectedDeliverSlotValue =
+                        "${Utils.convertDateFormat(slotDate)}, ${timeSlot}";
+                    print("selectedDeliverSlotValue= ${selectedDeliverSlotValue}");
+                  }
+                }
+              } else {
+                selectedDeliverSlotValue = "";
+              }
 
 //              if (widget.deliveryType == OrderType.Delivery) {
 //                //The "performPlaceOrderOperation" are called in below method
