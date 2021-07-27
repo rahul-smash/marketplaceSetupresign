@@ -455,6 +455,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                         SharedPrefs.saveStoreData(store);
                       },
                       isStoreClosed: isStoreClosed,
+                      storeID: store.id,
                     ),
                   ),
                 );

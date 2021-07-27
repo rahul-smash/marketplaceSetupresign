@@ -25,9 +25,10 @@ class ProductTileItem extends StatefulWidget {
   List<String> tagsList = List.empty(growable: true);
 
   bool isStoreClosed;
+  String storeID;
 
   ProductTileItem(this.product, this.callback, this.classType,
-      {this.favCallback, this.isStoreClosed = false, this.saveStore});
+      {this.favCallback, this.isStoreClosed = false, this.saveStore,this.storeID});
 
   @override
   _ProductTileItemState createState() => _ProductTileItemState();
@@ -177,6 +178,8 @@ class _ProductTileItemState extends State<ProductTileItem> {
                       widget.product,
                       variant,
                       saveStore: widget.saveStore,
+                      productID: widget.product.id,
+                      storeId: widget.storeID,
                     ),
                     fullscreenDialog: true,
                   ));

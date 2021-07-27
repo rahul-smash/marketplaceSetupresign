@@ -82,6 +82,7 @@ class _StoreSearchUIState extends State<StoreSearchUI> {
                         () {},
                         ClassType.Home,
                         isStoreClosed: isStoreClosed,
+                        storeID: widget.store.id,
                         saveStore: () {
                           SharedPrefs.saveStoreData(widget.store);
                         },
