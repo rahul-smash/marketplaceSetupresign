@@ -45,7 +45,8 @@ class RestroSearchItemCard extends StatelessWidget {
           Utils.hideProgressDialog(context);
           Utils.hideKeyboard(context);
           StoreDataModel storeObject = response;
-          storeObject.store.searchKeyWord = searchKeyword;
+          //TODO: Commented due to store keyword will not searched
+//          storeObject.store.searchKeyWord = searchKeyword;
           callback(value: storeObject);
         });
       },

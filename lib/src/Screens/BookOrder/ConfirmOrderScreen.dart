@@ -115,6 +115,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   String couponType = '';
 
+  bool isOneTimeApiCalled = false;
+
   ConfirmOrderState({this.storeModel});
 
   @override
@@ -1702,39 +1704,40 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 return;
               }
 
-//              if (widget.deliveryType == OrderType.Delivery) {
-//                if (storeModel.deliverySlot == "0") {
-//                  selectedDeliverSlotValue = "";
-//                } else {
-//                  //Store provides instant delivery of the orders.
-//                  print(isInstantDelivery);
-//                  if (isDeliveryResponseFalse) {
-//                    selectedDeliverSlotValue = "";
-//                  } else if (storeModel.deliverySlot == "1" &&
-//                      isInstantDelivery) {
-//                    //Store provides instant delivery of the orders.
-//                    selectedDeliverSlotValue = "";
-//                  } else if (storeModel.deliverySlot == "1" &&
-//                      !isSlotSelected &&
-//                      !isInstantDelivery) {
-//                    Utils.showToast("Please select delivery slot", false);
-//                    return;
-//                  } else {
-//                    String slotDate = deliverySlotModel
-//                        .data.dateTimeCollection[selctedTag].label;
-//                    String timeSlot = deliverySlotModel
-//                        .data
-//                        .dateTimeCollection[selctedTag]
-//                        .timeslot[selectedTimeSlot]
-//                        .label;
-//                    selectedDeliverSlotValue =
-//                        "${Utils.convertDateFormat(slotDate)} ${timeSlot}";
-//                    //print("selectedDeliverSlotValue= ${selectedDeliverSlotValue}");
-//                  }
-//                }
-//              } else {
-//                selectedDeliverSlotValue = "";
-//              }
+              if (widget.deliveryType == OrderType.Delivery) {
+                /*if (storeModel.deliverySlot == "0") {
+                  selectedDeliverSlotValue = "";
+                } else*/ {
+                  //Store provides instant delivery of the orders.
+                  print(isInstantDelivery);
+                  if (isDeliveryResponseFalse) {
+                    selectedDeliverSlotValue = "";
+                  } else if (/*storeModel.deliverySlot == "1" &&*/
+                  isInstantDelivery) {
+                    //Store provides instant delivery of the orders.
+                    selectedDeliverSlotValue = "";
+                  } else if (/*storeModel.deliverySlot == "1" &&*/
+                  !isSlotSelected &&
+                      !isInstantDelivery) {
+                    Utils.showToast("Please select delivery slot", false);
+                    return;
+                  } else {
+                    String slotDate = deliverySlotModel
+                        .data.dateTimeCollection[selctedTag].label;
+                    String timeSlot = deliverySlotModel
+                        .data
+                        .dateTimeCollection[selctedTag]
+                        .timeslot[selectedTimeSlot]
+                        .label;
+                    selectedDeliverSlotValue =
+                    "${Utils.convertDateFormat(slotDate)}, ${timeSlot}";
+                    print(
+                        "selectedDeliverSlotValue= ${selectedDeliverSlotValue}");
+                  }
+                }
+              } else {
+                selectedDeliverSlotValue = "";
+              }
 
 //              if (widget.deliveryType == OrderType.Delivery) {
 //                //The "performPlaceOrderOperation" are called in below method
@@ -2037,7 +2040,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     String mPrice =
     price.toString().substring(0, price.toString().indexOf('.')).trim();
     print("----mPrice----${mPrice}--");
-    ApiController.stripePaymentApi(mPrice,storeModel.id).then((response) {
+    ApiController.stripePaymentApi(mPrice, storeModel.id).then((response) {
       Utils.hideProgressDialog(context);
       print("----stripePaymentApi------");
       if (response != null) {
@@ -2139,7 +2142,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     bool isNetworkAviable = await Utils.isNetworkAvailable();
     if (!isNetworkAviable) {
       Utils.showToast(AppConstant.noInternet, false);
-      return ;
+      return;
     }
     Utils.showProgressDialog(context);
     double price = double.parse(taxModel.total); //totalPrice ;
@@ -2271,6 +2274,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   void placeOrderApiCall(String payment_request_id, String payment_id,
       String onlineMethod) {
+    if (isOneTimeApiCalled) {
+      return;
+    }
+
+    isOneTimeApiCalled=true;
     Utils.hideKeyboard(context);
     Utils.showProgressDialog(context);
     Utils.isNetworkAvailable().then((isNetworkAvailable) async {
@@ -2445,7 +2453,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               response.data.checkoutId, response.data.id, 'PeachPayments');
         } else {
           Utils.showToast("payment failed", true);
-
         }
       } else {
         Utils.showToast("Something went wrong!", true);
@@ -2455,7 +2462,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   void callStripeVerificationApi(String payment_request_id) {
     Utils.showProgressDialog(context);
-    ApiController.stripeVerifyTransactionApi(payment_request_id,storeModel.id)
+    ApiController.stripeVerifyTransactionApi(payment_request_id, storeModel.id)
         .then((response) {
       Utils.hideProgressDialog(context);
       if (response != null) {
@@ -2759,7 +2766,8 @@ class _StripeWebViewState extends State<StripeWebView> {
             onPageFinished: (String url) {
               print('======Page finished loading======: $url');
               if (url
-                  .contains("stripe/stripeVerifyTransaction?response=success")) {
+                  .contains(
+                  "stripe/stripeVerifyTransaction?response=success")) {
                 eventBus.fire(onPageFinished(
                     widget.stripeCheckOutModel.paymentRequestId));
                 Navigator.pop(context);

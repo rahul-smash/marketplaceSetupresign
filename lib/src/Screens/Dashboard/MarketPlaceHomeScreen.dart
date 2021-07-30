@@ -605,12 +605,29 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                         }
                         if (value is StoreDataModel) {
                           Navigator.pop(context);
-                          setState(() {
-                            _selectedSingleStore = value;
-                            _previousSelectedHomeScreen = _selectedHomeScreen;
-                            _selectedHomeScreen =
-                                HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
-                          });
+                          _selectedSingleStore = value;
+                          if (_selectedHomeScreen ==
+                              HomeScreenEnum.HOME_SELECTED_STORE_VIEW) {
+                            setState(() {
+                              _selectedHomeScreen =
+                                  HomeScreenEnum.HOME_BAND_VIEW;
+                            });
+                            Future.delayed(const Duration(seconds: 1), () {
+                              setState(() {
+                                _previousSelectedHomeScreen =
+                                    _selectedHomeScreen;
+                                _selectedHomeScreen =
+                                    HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+                              });
+                            });
+                          } else {
+                            setState(() {
+                              _selectedSingleStore = value;
+                              _previousSelectedHomeScreen = _selectedHomeScreen;
+                              _selectedHomeScreen =
+                                  HomeScreenEnum.HOME_SELECTED_STORE_VIEW;
+                            });
+                          }
                           return;
                         }
                         if (value is StoresModel) {
