@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 import 'package:restroapp/src/UI/StoreSearchUI.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
@@ -243,11 +244,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     return keyboardDismisser(
       context: context,
       child: Stack(
+        alignment: Alignment.bottomCenter,
         children: <Widget>[
           imgList.isNotEmpty
               ? Center(
                   child: SizedBox(
-                    height: 150.0,
+                    height: 180.0,
                     width: Utils.getDeviceWidth(context),
                     child: Carousel(
                       boxFit: BoxFit.cover,
@@ -268,80 +270,102 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                   ),
                 )
               : Container(
-                  height: 150.0,
+                  height: 180.0,
                   width: Utils.getDeviceWidth(context),
                   child: Image.asset(
                     'images/img_placeholder.jpg',
                     fit: BoxFit.cover,
                   ),
                 ),
-          Container(
-            margin: EdgeInsets.only(top: 70),
-            width: Utils.getDeviceWidth(context),
-            height: 80,
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.transparent, Colors.black45],
-            )),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              //margin: EdgeInsets.only(top: 70),
+              width: Utils.getDeviceWidth(context),
+              height: 120,
+             // padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.black45],
+              )),
+            ),
           ),
           Container(
-            height: 150.0,
+            //height: 150.0,
             width: Utils.getDeviceWidth(context),
             padding: EdgeInsets.all(16),
             child: Align(
               alignment: Alignment.bottomLeft,
               child: Container(
                 width: Utils.getDeviceWidth(context),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                        child: Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Text(
-                        store.storeName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    )),
-                    Visibility(
-                        visible: widget.brandData.display_store_rating == '1' &&
-                            store.rating.isNotEmpty &&
-                            store.rating != '0.0' &&
-                            store.rating != '0',
-                        child: Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Row(
-                              children: [
-                                Container(
-                                    margin: EdgeInsets.only(right: 5),
-                                    decoration: BoxDecoration(
-                                      color: appThemeSecondary,
-                                      borderRadius: BorderRadius.circular(5.0),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Text(
+                            store.storeName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        )),
+                        Visibility(
+                            visible: widget.brandData.display_store_rating == '1' &&
+                                store.rating.isNotEmpty &&
+                                store.rating != '0.0' &&
+                                store.rating != '0',
+                            child: Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.only(right: 5),
+                                        decoration: BoxDecoration(
+                                          color: appThemeSecondary,
+                                          borderRadius: BorderRadius.circular(5.0),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(3),
+                                          child: Image.asset('images/staricon.png',
+                                              width: 15,
+                                              fit: BoxFit.scaleDown,
+                                              color: Colors.white),
+                                        )),
+                                    Text(
+                                      store.rating,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500),
                                     ),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(3),
-                                      child: Image.asset('images/staricon.png',
-                                          width: 15,
-                                          fit: BoxFit.scaleDown,
-                                          color: Colors.white),
-                                    )),
-                                Text(
-                                  store.rating,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ))),
+                                  ],
+                                ))),
+                      ],
+                    ),
+                    SizedBox(height: 5,),
+                    Visibility(
+                      visible: store.showAnyLicenceNumber == "1",
+                      child: Text(
+                        "${store.licenceName} : ${store.licenceNumber}",
+                       // maxLines: 2,
+                       // overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
