@@ -7,19 +7,16 @@ class ApiConstants {
   // staging url
   static String base = 'http://devmarketplace.restroapp.com/brandId/v1/';
   //live url
- // static String base = 'https://marketplace.restroapp.com/brandId/v1/';
-
-
+  // static String base = 'https://marketplace.restroapp.com/brandId/v1/';
 
   static String base_Url = '${base}user_authentication/';
   static String baseUrl2 = '${base}marketplace/';
- // live url
- // static String baseUrl3 =
-    //  'https://marketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
+  // live url
+  // static String baseUrl3 =
+  //  'https://marketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 // staging url
   static String baseUrl3 =
       'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
-
 
   static String storeList = 'storeList';
   static String version = 'version';
@@ -123,9 +120,13 @@ class ApiConstants {
   static String cancelUserMembershipPlan =
       'membership_plan/cancelUserMembershipPlan';
 
-  static String peachPayCreateOrder='/peachpay/peachpayCreateOrder';
-  static String processPeachpayPayment='/peachpay/processPeachpayPayment/';
-  static String peachpayVerifyTransaction='/peachpay/peachpayVerifyTransaction';
+  static String peachPayCreateOrder = '/peachpay/peachpayCreateOrder';
+  static String processPeachpayPayment = '/peachpay/processPeachpayPayment/';
+  static String peachpayVerifyTransaction =
+      '/peachpay/peachpayVerifyTransaction';
+
+  static String ipay88CreateOrder = 'ipay88/ipay88CreateOrder';
+  static String ipay88ProcessOrder = 'ipay88/ipay88ProcessOrder';
 
   //new Banner Api
   static String banners = 'homescreen/banners';
