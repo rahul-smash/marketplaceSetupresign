@@ -2375,7 +2375,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     });
     eventBus.on<onIPay88Finished>().listen((event) {
       print("Event Bus called");
-      callIPay88OrderApi(event.url, event.checkoutID, event.resourcePath);
+      callIPay88OrderApi(
+          event.url, event.requestId, event.transId, event.status);
     });
   }
 
@@ -2405,24 +2406,14 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   }
 
 // IPAY 88 Order Api
-  void callIPay88OrderApi(String url, String checkoutID, String resourcePath) {
+  void callIPay88OrderApi(
+      String url, String requestId, String transId, String status) {
     Utils.showProgressDialog(context);
-    ApiController.peachPayVerifyTransactionApi(checkoutID, storeModel.id)
-        .then((response) {
-      Utils.hideProgressDialog(context);
-      //print("----razorpayVerifyTransactionApi----${response}--");
-      if (response != null) {
-        PeachPayVerifyResponse model = response;
-        if (model.success) {
-          placeOrderApiCall(
-              response.data.checkoutId, response.data.id, 'PeachPayments');
-        } else {
-          Utils.showToast("payment failed", true);
-        }
-      } else {
-        Utils.showToast("Something went wrong!", true);
-      }
-    });
+    if (status == '1') {
+      placeOrderApiCall(requestId, transId, 'iPay88');
+    } else {
+      Utils.showToast("Something Went Wrong!", true);
+    }
   }
 
   void callStripeVerificationApi(String payment_request_id) {
@@ -2854,6 +2845,13 @@ class PeachPayWebView extends StatelessWidget {
                 Navigator.pop(context);
               } else if (url.contains("failure")) {
                 Navigator.pop(context);
+                String resourcePath = url.substring(
+                    url.indexOf("&resourcePath=") + "&resourcePath=".length);
+                url = url.replaceAll("&resourcePath=" + resourcePath, "");
+                String checkoutID =
+                    url.substring(url.indexOf("?id=") + "?id=".length);
+                print(resourcePath);
+                print(checkoutID);
                 Utils.showToast("Payment Failed", false);
               }
             },
@@ -2903,20 +2901,42 @@ class IPay88WebView extends StatelessWidget {
             },
             onPageFinished: (String url) {
               print('==2====onLoadStop======: $url');
-              // if (url.contains("/ipay88/iPay88Verify?id=")) {
-              //   String resourcePath = url.substring(
-              //       url.indexOf("&resourcePath=") + "&resourcePath=".length);
-              //   url = url.replaceAll("&resourcePath=" + resourcePath, "");
-              //   String checkoutID =
-              //       url.substring(url.indexOf("?id=") + "?id=".length);
-              //   print(resourcePath);
-              //   print(checkoutID);
-              //   eventBus.fire(onIPay88Finished(url, checkoutID, resourcePath));
-              //   Navigator.pop(context);
-              // } else if (url.contains("failure")) {
-              //   Navigator.pop(context);
-              //   Utils.showToast("Payment Failed", false);
-              // }
+              if (url.contains("ipay88/ipay88ResUrl") &&
+                  url.contains("Status=1")) {
+                String status =
+                    url.substring(url.indexOf("&Status=") + "&Status=".length);
+                url = url.replaceAll("&Status=" + status, "");
+                String transId = url
+                    .substring(url.indexOf("&TransId=") + "&TransId=".length);
+                url = url.replaceAll("&TransId=" + transId, "");
+                String requestId = url.substring(
+                    url.indexOf("payment_request_id=") +
+                        "payment_request_id=".length);
+                print(requestId);
+                print(transId);
+                print(status);
+                eventBus
+                    .fire(onIPay88Finished(url, requestId, transId, status));
+                Navigator.pop(context);
+              } else if (url.contains("ipay88/ipay88ResUrl") &&
+                  url.contains("Status=0")) {
+                Navigator.pop(context);
+                String status =
+                    url.substring(url.indexOf("&Status=") + "&Status=".length);
+                url = url.replaceAll("&Status=" + status, "");
+                String transId = url
+                    .substring(url.indexOf("&TransId=") + "&TransId=".length);
+                url = url.replaceAll("&TransId=" + transId, "");
+                String requestId = url.substring(
+                    url.indexOf("payment_request_id=") +
+                        "payment_request_id=".length);
+                print(requestId);
+                print(transId);
+                print(status);
+                print(
+                    "------------------------Showing TOAST-------------------------------");
+                Utils.showToast("Payment Failed", false);
+              }
             },
             gestureNavigationEnabled: false,
           );

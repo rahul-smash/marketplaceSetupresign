@@ -2494,7 +2494,7 @@ class ApiController {
 
     try {
       request.fields.addAll({
-        "amount": amount,
+        "amount": "1.00",
         "currency": currencyAbbr.trim(),
         //"receipt": "Order",
         "name": fullName,
@@ -2521,6 +2521,4 @@ class ApiController {
       return null;
     }
   }
-
-
 }

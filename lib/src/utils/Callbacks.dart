@@ -92,8 +92,9 @@ class onPeachPayFinished {
 
 class onIPay88Finished {
   String url;
-  String checkoutID;
-  String resourcePath;
+  String requestId;
+  String transId;
+  String status;
 
-  onIPay88Finished(this.url, this.checkoutID, this.resourcePath);
+  onIPay88Finished(this.url, this.requestId, this.transId, this.status);
 }

@@ -126,7 +126,6 @@ class ApiConstants {
       '/peachpay/peachpayVerifyTransaction';
 
   static String ipay88CreateOrder = 'ipay88/ipay88CreateOrder';
-  static String ipay88ProcessOrder = 'ipay88/ipay88ProcessOrder';
 
   //new Banner Api
   static String banners = 'homescreen/banners';
