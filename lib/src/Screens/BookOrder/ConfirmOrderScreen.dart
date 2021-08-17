@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:html';
+import 'dart:io' show Platform;
+
+
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-//import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:restroapp/src/Screens/Offers/AvailableOffersList.dart';
@@ -42,6 +45,8 @@ import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
 
 class ConfirmOrderScreen extends StatefulWidget {
   bool isComingFromPickUpScreen;
@@ -117,6 +122,26 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   bool isOneTimeApiCalled = false;
 
   ConfirmOrderState({this.storeModel});
+  final GlobalKey webViewKey = GlobalKey();
+
+  InAppWebViewController? webViewController;
+  InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
+      crossPlatform: InAppWebViewOptions(
+        useShouldOverrideUrlLoading: true,
+        mediaPlaybackRequiresUserGesture: false,
+      ),
+      android: AndroidInAppWebViewOptions(
+        useHybridComposition: true,
+      ),
+      ios: IOSInAppWebViewOptions(
+        allowsInlineMediaPlayback: true,
+      ));
+
+   PullToRefreshController pullToRefreshController;
+  String url = "";
+  double progress = 0;
+  final urlController = TextEditingController();
+
 
   @override
   void initState() {
@@ -424,10 +449,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           .then((value) async {
         Utils.hideProgressDialog(context);
         if (value != null && value.success) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PaytmWebView(value)),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => PaytmWebView(value)),
+          // );
         } else {
           Utils.showToast("Api Error", false);
         }
@@ -1984,11 +2009,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         StripeCheckOutModel stripeCheckOutModel = response;
         if (stripeCheckOutModel.success) {
           //launchWebView(stripeCheckOutModel);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => StripeWebView(stripeCheckOutModel)),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) => StripeWebView(stripeCheckOutModel)),
+          // );
         } else {
           Utils.showToast("${stripeCheckOutModel.message}!", true);
         }
@@ -2181,12 +2206,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             if (model == null) {
               Utils.showToast(AppConstant.noInternet, false);
             } else if (model != null && response.success) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        PeachPayWebView(model, storeModel.id)),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) =>
+              //           PeachPayWebView(model, storeModel.id)),
+              // );
             } else {
               Utils.showToast("Server Error", true);
             }
@@ -2678,192 +2703,192 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 }
 
 /*Code for ios*/
-class StripeWebView extends StatefulWidget {
-  StripeCheckOutModel stripeCheckOutModel;
+// class StripeWebView extends StatefulWidget {
+//   StripeCheckOutModel stripeCheckOutModel;
+//
+//   StripeWebView(this.stripeCheckOutModel);
+//
+//   @override
+//   _StripeWebViewState createState() {
+//     return _StripeWebViewState();
+//   }
+// }
+//
+// class _StripeWebViewState extends State<StripeWebView> {
+//   Completer<WebViewController> _controller = Completer<WebViewController>();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return WillPopScope(
+//       onWillPop: () {
+//         //print("onWillPop onWillPop");
+//       },
+//       child: Scaffold(
+//         backgroundColor: Colors.white,
+//         appBar: AppBar(
+//           automaticallyImplyLeading: false, // Used for removing back buttoon.
+//           title: Text('Payment'),
+//           centerTitle: true,
+//         ),
+//         body: Builder(builder: (BuildContext context) {
+//           return WebView(
+//             initialUrl: '${widget.stripeCheckOutModel.checkoutUrl}',
+//             javascriptMode: JavascriptMode.unrestricted,
+//             onWebViewCreated: (WebViewController webViewController) {
+//               _controller.complete(webViewController);
+//             },
+//             navigationDelegate: (NavigationRequest request) {
+//               //print('=======NavigationRequest======= $request}');
+//               return NavigationDecision.navigate;
+//             },
+//             onPageStarted: (String url) {
+//               //print('======Page started loading======: $url');
+//             },
+//             onPageFinished: (String url) {
+//               print('======Page finished loading======: $url');
+//               if (url.contains(
+//                   "stripe/stripeVerifyTransaction?response=success")) {
+//                 eventBus.fire(onPageFinished(
+//                     widget.stripeCheckOutModel.paymentRequestId));
+//                 Navigator.pop(context);
+//               }
+//             },
+//             gestureNavigationEnabled: false,
+//           );
+//         }),
+//       ),
+//     );
+//   }
+// }
+//
+// class PaytmWebView extends StatelessWidget {
+//   CreatePaytmTxnTokenResponse stripeCheckOutModel;
+//   Completer<WebViewController> _controller = Completer<WebViewController>();
+//
+//   PaytmWebView(this.stripeCheckOutModel);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return WillPopScope(
+//       onWillPop: () {
+//         //print("onWillPop onWillPop");
+//       },
+//       child: Scaffold(
+//         backgroundColor: Colors.white,
+//         appBar: AppBar(
+//           automaticallyImplyLeading: false, // Used for removing back buttoon.
+//           title: Text('Payment'),
+//           centerTitle: true,
+//         ),
+//         body: Builder(builder: (BuildContext context) {
+//           return WebView(
+//             initialUrl: '${stripeCheckOutModel.url}',
+//             javascriptMode: JavascriptMode.unrestricted,
+//             onWebViewCreated: (WebViewController webViewController) {
+//               _controller.complete(webViewController);
+//             },
+//             navigationDelegate: (NavigationRequest request) {
+//               //print('=======NavigationRequest======= $request}');
+//               return NavigationDecision.navigate;
+//             },
+//             onPageStarted: (String url) {
+//               //print('======Page started loading======: $url');
+//             },
+//             onPageFinished: (String url) {
+//               print('==2====onLoadStop======: $url');
+//               if (url.contains("/api/paytmPaymentResult/orderId:")) {
+//                 String txnId =
+//                     url.substring(url.indexOf("/TxnId:") + "/TxnId:".length);
+//                 url = url.replaceAll("/TxnId:" + txnId, "");
+//                 String orderId = url
+//                     .substring(url.indexOf("/orderId:") + "/orderId:".length);
+//                 print(txnId);
+//                 print(orderId);
+//                 eventBus.fire(
+//                     onPayTMPageFinished(url, orderId = orderId, txnId = txnId));
+//                 Navigator.pop(context);
+//               } else if (url.contains("api/paytmPaymentResult/failure:")) {
+//                 Navigator.pop(context);
+//                 Utils.showToast("Payment Failed", false);
+//               }
+//             },
+//             gestureNavigationEnabled: false,
+//           );
+//         }),
+//       ),
+//     );
+//   }
+// }
+//
+// class PeachPayWebView extends StatelessWidget {
+//   PeachPayCheckOutResponse responseModel;
+//   Completer<WebViewController> _controller = Completer<WebViewController>();
+//   String storeID;
+//
+//   PeachPayWebView(this.responseModel, this.storeID);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return WillPopScope(
+//       onWillPop: () {
+//         //print("onWillPop onWillPop");
+//       },
+//       child: Scaffold(
+//         backgroundColor: Colors.white,
+//         appBar: AppBar(
+//           automaticallyImplyLeading: false, // Used for removing back buttoon.
+//           title: Text('Payment'),
+//           centerTitle: true,
+//         ),
+//         body: Builder(builder: (BuildContext context) {
+//           return WebView(
+//             initialUrl:
+//                 '${ApiConstants.baseUrl3.replaceAll("storeId", storeID)}${ApiConstants.processPeachpayPayment}${responseModel.data.id}',
+//             javascriptMode: JavascriptMode.unrestricted,
+//             onWebViewCreated: (WebViewController webViewController) {
+//               _controller.complete(webViewController);
+//             },
+//             navigationDelegate: (NavigationRequest request) {
+//               //print('=======NavigationRequest======= $request}');
+//               return NavigationDecision.navigate;
+//             },
+//             onPageStarted: (String url) {
+//               print('======Page started loading======: $url');
+//             },
+//             onPageFinished: (String url) {
+//               print('==2====onLoadStop======: $url');
+//               if (url.contains("/peachpay/peachPayVerify?id=")) {
+//                 String resourcePath = url.substring(
+//                     url.indexOf("&resourcePath=") + "&resourcePath=".length);
+//                 url = url.replaceAll("&resourcePath=" + resourcePath, "");
+//                 String checkoutID =
+//                     url.substring(url.indexOf("?id=") + "?id=".length);
+//                 print(resourcePath);
+//                 print(checkoutID);
+//                 eventBus
+//                     .fire(onPeachPayFinished(url, checkoutID, resourcePath));
+//                 Navigator.pop(context);
+//               } else if (url.contains("failure")) {
+//                 Navigator.pop(context);
+//                 String resourcePath = url.substring(
+//                     url.indexOf("&resourcePath=") + "&resourcePath=".length);
+//                 url = url.replaceAll("&resourcePath=" + resourcePath, "");
+//                 String checkoutID =
+//                     url.substring(url.indexOf("?id=") + "?id=".length);
+//                 print(resourcePath);
+//                 print(checkoutID);
+//                 Utils.showToast("Payment Failed", false);
+//               }
+//             },
+//             gestureNavigationEnabled: false,
+//           );
+//         }),
+//       ),
+//     );
+//   }
+// }
 
-  StripeWebView(this.stripeCheckOutModel);
-
-  @override
-  _StripeWebViewState createState() {
-    return _StripeWebViewState();
-  }
-}
-
-class _StripeWebViewState extends State<StripeWebView> {
-  Completer<WebViewController> _controller = Completer<WebViewController>();
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        //print("onWillPop onWillPop");
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          automaticallyImplyLeading: false, // Used for removing back buttoon.
-          title: Text('Payment'),
-          centerTitle: true,
-        ),
-        body: Builder(builder: (BuildContext context) {
-          return WebView(
-            initialUrl: '${widget.stripeCheckOutModel.checkoutUrl}',
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebViewCreated: (WebViewController webViewController) {
-              _controller.complete(webViewController);
-            },
-            navigationDelegate: (NavigationRequest request) {
-              //print('=======NavigationRequest======= $request}');
-              return NavigationDecision.navigate;
-            },
-            onPageStarted: (String url) {
-              //print('======Page started loading======: $url');
-            },
-            onPageFinished: (String url) {
-              print('======Page finished loading======: $url');
-              if (url.contains(
-                  "stripe/stripeVerifyTransaction?response=success")) {
-                eventBus.fire(onPageFinished(
-                    widget.stripeCheckOutModel.paymentRequestId));
-                Navigator.pop(context);
-              }
-            },
-            gestureNavigationEnabled: false,
-          );
-        }),
-      ),
-    );
-  }
-}
-
-class PaytmWebView extends StatelessWidget {
-  CreatePaytmTxnTokenResponse stripeCheckOutModel;
-  Completer<WebViewController> _controller = Completer<WebViewController>();
-
-  PaytmWebView(this.stripeCheckOutModel);
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        //print("onWillPop onWillPop");
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          automaticallyImplyLeading: false, // Used for removing back buttoon.
-          title: Text('Payment'),
-          centerTitle: true,
-        ),
-        body: Builder(builder: (BuildContext context) {
-          return WebView(
-            initialUrl: '${stripeCheckOutModel.url}',
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebViewCreated: (WebViewController webViewController) {
-              _controller.complete(webViewController);
-            },
-            navigationDelegate: (NavigationRequest request) {
-              //print('=======NavigationRequest======= $request}');
-              return NavigationDecision.navigate;
-            },
-            onPageStarted: (String url) {
-              //print('======Page started loading======: $url');
-            },
-            onPageFinished: (String url) {
-              print('==2====onLoadStop======: $url');
-              if (url.contains("/api/paytmPaymentResult/orderId:")) {
-                String txnId =
-                    url.substring(url.indexOf("/TxnId:") + "/TxnId:".length);
-                url = url.replaceAll("/TxnId:" + txnId, "");
-                String orderId = url
-                    .substring(url.indexOf("/orderId:") + "/orderId:".length);
-                print(txnId);
-                print(orderId);
-                eventBus.fire(
-                    onPayTMPageFinished(url, orderId = orderId, txnId = txnId));
-                Navigator.pop(context);
-              } else if (url.contains("api/paytmPaymentResult/failure:")) {
-                Navigator.pop(context);
-                Utils.showToast("Payment Failed", false);
-              }
-            },
-            gestureNavigationEnabled: false,
-          );
-        }),
-      ),
-    );
-  }
-}
-
-class PeachPayWebView extends StatelessWidget {
-  PeachPayCheckOutResponse responseModel;
-  Completer<WebViewController> _controller = Completer<WebViewController>();
-  String storeID;
-
-  PeachPayWebView(this.responseModel, this.storeID);
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        //print("onWillPop onWillPop");
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          automaticallyImplyLeading: false, // Used for removing back buttoon.
-          title: Text('Payment'),
-          centerTitle: true,
-        ),
-        body: Builder(builder: (BuildContext context) {
-          return WebView(
-            initialUrl:
-                '${ApiConstants.baseUrl3.replaceAll("storeId", storeID)}${ApiConstants.processPeachpayPayment}${responseModel.data.id}',
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebViewCreated: (WebViewController webViewController) {
-              _controller.complete(webViewController);
-            },
-            navigationDelegate: (NavigationRequest request) {
-              //print('=======NavigationRequest======= $request}');
-              return NavigationDecision.navigate;
-            },
-            onPageStarted: (String url) {
-              print('======Page started loading======: $url');
-            },
-            onPageFinished: (String url) {
-              print('==2====onLoadStop======: $url');
-              if (url.contains("/peachpay/peachPayVerify?id=")) {
-                String resourcePath = url.substring(
-                    url.indexOf("&resourcePath=") + "&resourcePath=".length);
-                url = url.replaceAll("&resourcePath=" + resourcePath, "");
-                String checkoutID =
-                    url.substring(url.indexOf("?id=") + "?id=".length);
-                print(resourcePath);
-                print(checkoutID);
-                eventBus
-                    .fire(onPeachPayFinished(url, checkoutID, resourcePath));
-                Navigator.pop(context);
-              } else if (url.contains("failure")) {
-                Navigator.pop(context);
-                String resourcePath = url.substring(
-                    url.indexOf("&resourcePath=") + "&resourcePath=".length);
-                url = url.replaceAll("&resourcePath=" + resourcePath, "");
-                String checkoutID =
-                    url.substring(url.indexOf("?id=") + "?id=".length);
-                print(resourcePath);
-                print(checkoutID);
-                Utils.showToast("Payment Failed", false);
-              }
-            },
-            gestureNavigationEnabled: false,
-          );
-        }),
-      ),
-    );
-  }
-}
-
-// IPAY 88 WEB VIEW
+//IPAY 88 WEB VIEW
 
 class IPay88WebView extends StatelessWidget {
   Ipay88OrderData responseModel;
@@ -2886,16 +2911,35 @@ class IPay88WebView extends StatelessWidget {
           centerTitle: true,
         ),
         body: Builder(builder: (BuildContext context) {
-          return WebView(
+          return InAppWebView(
+            initialUrlRequest:
+            URLRequest(url: Uri.parse("${responseModel.data.url}")),
+            initialOptions:
+            pullToRefreshController: pullToRefreshController,
+            onWebViewCreated: (controller) {
+              webViewController = controller;
+            },
+          );
+
+        }),
+      ),
+    );
+  }
+}
+
+/*
+WebView(
             initialUrl: '${responseModel.data.url}',
             javascriptMode: JavascriptMode.unrestricted,
             onWebViewCreated: (WebViewController webViewController) {
               _controller.complete(webViewController);
             },
+
             navigationDelegate: (NavigationRequest request) {
               //print('=======NavigationRequest======= $request}');
               return NavigationDecision.navigate;
             },
+
             onPageStarted: (String url) {
               print('======Page started loading======: $url');
             },
@@ -2940,8 +2984,4 @@ class IPay88WebView extends StatelessWidget {
             },
             gestureNavigationEnabled: false,
           );
-        }),
-      ),
-    );
-  }
-}
+ */
