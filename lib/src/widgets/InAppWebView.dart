@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:restroapp/src/models/IpayOrderData.dart';
+import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/Utils.dart';
 
 class InAppWebViewPage extends StatefulWidget {
   Ipay88OrderData responseModel;
@@ -65,14 +67,60 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
           Expanded(
             child: Container(
               child: InAppWebView(
-                initialUrlRequest: URLRequest(
-                    url: Uri.parse("${widget.responseModel.data.url}")),
+                initialUrl: "${widget.responseModel.data.url}",
                 contextMenu: contextMenu,
                 initialOptions: InAppWebViewGroupOptions(
                   crossPlatform: InAppWebViewOptions(),
                 ),
                 onWebViewCreated: (InAppWebViewController controller) {
                   _webViewController = controller;
+                },
+                onLoadStart: (InAppWebViewController controller, String url) {
+                  print("onLoadStart popup $url");
+                  {
+                    print('==2====onLoadStop======: $url');
+                    if (url.contains("ipay88/ipay88ResUrl") &&
+                        url.contains("Status=1")) {
+                      String status = url.substring(
+                          url.indexOf("&Status=") + "&Status=".length);
+                      url = url.replaceAll("&Status=" + status, "");
+                      String transId = url.substring(
+                          url.indexOf("&TransId=") + "&TransId=".length);
+                      url = url.replaceAll("&TransId=" + transId, "");
+                      String requestId = url.substring(
+                          url.indexOf("payment_request_id=") +
+                              "payment_request_id=".length);
+                      print(requestId);
+                      print(transId);
+                      print(status);
+                      eventBus.fire(
+                          onIPay88Finished(url, requestId, transId, status));
+                      Navigator.pop(context);
+                    } else if (url.contains("ipay88/ipay88ResUrl") &&
+                        url.contains("Status=0")) {
+                      Navigator.pop(context);
+                      String status = url.substring(
+                          url.indexOf("&Status=") + "&Status=".length);
+                      url = url.replaceAll("&Status=" + status, "");
+                      String transId = url.substring(
+                          url.indexOf("&TransId=") + "&TransId=".length);
+                      url = url.replaceAll("&TransId=" + transId, "");
+                      String requestId = url.substring(
+                          url.indexOf("payment_request_id=") +
+                              "payment_request_id=".length);
+                      print(requestId);
+                      print(transId);
+                      print(status);
+                      print(
+                          "------------------------Showing TOAST-------------------------------");
+                      Utils.showToast("Payment Failed", false);
+                    }
+                  }
+                },
+                onLoadStop: (InAppWebViewController controller, String url) {
+                  print("onLoadStop popup $url");
+                  Navigator.pop(context);
+                  Utils.showToast("Payment Failed", false);
                 },
               ),
             ),
