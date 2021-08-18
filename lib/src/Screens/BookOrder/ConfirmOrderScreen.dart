@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'dart:html';
-import 'dart:io' show Platform;
-
-
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+//import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:restroapp/src/Screens/Offers/AvailableOffersList.dart';
@@ -43,10 +40,9 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+import 'package:restroapp/src/widgets/InAppWebView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-
 
 class ConfirmOrderScreen extends StatefulWidget {
   bool isComingFromPickUpScreen;
@@ -122,26 +118,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   bool isOneTimeApiCalled = false;
 
   ConfirmOrderState({this.storeModel});
-  final GlobalKey webViewKey = GlobalKey();
-
-  InAppWebViewController? webViewController;
-  InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
-      crossPlatform: InAppWebViewOptions(
-        useShouldOverrideUrlLoading: true,
-        mediaPlaybackRequiresUserGesture: false,
-      ),
-      android: AndroidInAppWebViewOptions(
-        useHybridComposition: true,
-      ),
-      ios: IOSInAppWebViewOptions(
-        allowsInlineMediaPlayback: true,
-      ));
-
-   PullToRefreshController pullToRefreshController;
-  String url = "";
-  double progress = 0;
-  final urlController = TextEditingController();
-
 
   @override
   void initState() {
@@ -151,15 +127,15 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       //selecting delivery slots
       selectedDeliverSlotValue = getSubscriptionNextMealDate();
       if (SingletonBrandData.getInstance()
-              ?.userPurchaseMembershipResponse
-              ?.data
-              ?.additionalInfo !=
+          ?.userPurchaseMembershipResponse
+          ?.data
+          ?.additionalInfo !=
           null) {
         if (SingletonBrandData.getInstance()
-                .userPurchaseMembershipResponse
-                .data
-                .additionalInfo
-                .toLowerCase() ==
+            .userPurchaseMembershipResponse
+            .data
+            .additionalInfo
+            .toLowerCase() ==
             'lunch') {
           selectedDeliverSlotValue =
               selectedDeliverSlotValue + ", 11:30 AM - 12:30 PM";
@@ -193,8 +169,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   "deliverySlotModel.data.is24X7Open =${deliverySlotModel.data.is24X7Open}");
               isInstantDelivery = deliverySlotModel.data.is24X7Open == "1";
               for (int i = 0;
-                  i < deliverySlotModel.data.dateTimeCollection.length;
-                  i++) {
+              i < deliverySlotModel.data.dateTimeCollection.length;
+              i++) {
                 timeslotList =
                     deliverySlotModel.data.dateTimeCollection[i].timeslot;
                 for (int j = 0; j < timeslotList.length; j++) {
@@ -280,39 +256,39 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 child: isLoading
                     ? Utils.getIndicatorView()
                     : widget.cartList == null
-                        ? Text("")
-                        : ListView(
-                            children: <Widget>[
-                              addCommentWidget(context),
-                              showDeliverySlot(),
-                              ListView.separated(
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
-                                  if (widget.cartList[index].taxDetail ==
-                                          null ||
-                                      widget.cartList[index].taxDetail ==
-                                          null) {
-                                    return Divider(
-                                        color: Colors.black12, height: 2);
-                                  } else {
-                                    return Divider(
-                                        color: Colors.white, height: 1);
-                                  }
-                                },
-                                shrinkWrap: true,
-                                physics: ScrollPhysics(),
-                                itemCount: widget.cartList.length + 1,
-                                itemBuilder: (context, index) {
-                                  if (index == widget.cartList.length) {
-                                    return addItemPrice();
-                                  } else {
-                                    return addProductCart(
-                                        widget.cartList[index]);
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
+                    ? Text("")
+                    : ListView(
+                  children: <Widget>[
+                    addCommentWidget(context),
+                    showDeliverySlot(),
+                    ListView.separated(
+                      separatorBuilder:
+                          (BuildContext context, int index) {
+                        if (widget.cartList[index].taxDetail ==
+                            null ||
+                            widget.cartList[index].taxDetail ==
+                                null) {
+                          return Divider(
+                              color: Colors.black12, height: 2);
+                        } else {
+                          return Divider(
+                              color: Colors.white, height: 1);
+                        }
+                      },
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      itemCount: widget.cartList.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == widget.cartList.length) {
+                          return addItemPrice();
+                        } else {
+                          return addProductCart(
+                              widget.cartList[index]);
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
             ]),
           ),
@@ -379,7 +355,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
     print(
         "amount ${databaseHelper.roundOffPrice(taxModel == null ? totalPrice : double.parse(taxModel.total), 2).toStringAsFixed(2)}"
-        " address $address zipCode $pin");
+            " address $address zipCode $pin");
     double amount = databaseHelper.roundOffPrice(
         taxModel == null ? totalPrice : double.parse(taxModel.total), 2);
     Utils.showProgressDialog(context);
@@ -390,8 +366,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     String deviceToken = prefs.getString(AppConstant.deviceToken);
     //new changes
     Utils.getCartItemsListToJson(
-            isOrderVariations: isOrderVariations,
-            responseOrderDetail: responseOrderDetail)
+        isOrderVariations: isOrderVariations,
+        responseOrderDetail: responseOrderDetail)
         .then((orderJson) {
       if (orderJson == null) {
         print("--orderjson == null-orderjson == null-");
@@ -427,32 +403,32 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           totalSavingsText,
           posBranchCode: widget.subscriptionOrderType != null
               ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.posBranchCode ??
-                  ''
+              ''
               : '',
           membershipId: widget.subscriptionOrderType != null
               ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.id ??
-                  ''
+              ''
               : '',
           membershipPlanDetailId: widget.subscriptionOrderType != null
               ? SingletonBrandData.getInstance()
-                      ?.userPurchaseMembershipResponse
-                      ?.data
-                      ?.membershipPlanDetailId ??
-                  ''
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.membershipPlanDetailId ??
+              ''
               : '',
           additionalInfo: widget.subscriptionOrderType != null
               ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.additionalInfo ?? ''
               : '',
           isMembershipCouponEnabled: widget.subscriptionOrderType != null ? '1' : '0');
       ApiController.createPaytmTxnToken(
-              address, pin, amount, orderJson, detailsModel.orderDetails)
+          address, pin, amount, orderJson, detailsModel.orderDetails)
           .then((value) async {
         Utils.hideProgressDialog(context);
         if (value != null && value.success) {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => PaytmWebView(value)),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PaytmWebView(value)),
+          );
         } else {
           Utils.showToast("Api Error", false);
         }
@@ -475,12 +451,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         : '';
 
     String charges =
-        widget.subscriptionOrderType != null ? '0' : shippingCharges;
+    widget.subscriptionOrderType != null ? '0' : shippingCharges;
     databaseHelper.getCartItemsListToJson().then((json) {
       ApiController.multipleTaxCalculationRequest(
-              couponCode, discount, "$charges", json,
-              isMembershipCouponEnabled:
-                  widget.subscriptionOrderType != null ? '1' : '0')
+          couponCode, discount, "$charges", json,
+          isMembershipCouponEnabled:
+          widget.subscriptionOrderType != null ? '1' : '0')
           .then((response) async {
         //{"success":false,"message":"Some products are not available."}
         TaxCalculationResponse model = response;
@@ -504,12 +480,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             isOrderVariations = model.taxCalculation.isChanged;
             for (int i = 0; i < responseOrderDetail.length; i++) {
               if (responseOrderDetail[i]
-                          .productStatus
-                          .compareTo('out_of_stock') ==
-                      0 ||
+                  .productStatus
+                  .compareTo('out_of_stock') ==
+                  0 ||
                   responseOrderDetail[i]
-                          .productStatus
-                          .compareTo('price_changed') ==
+                      .productStatus
+                      .compareTo('price_changed') ==
                       0) {
                 someProductsUpdated = true;
                 break;
@@ -582,11 +558,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                     height: 50.0,
                     child: ListView.builder(
                       itemCount:
-                          deliverySlotModel.data.dateTimeCollection.length,
+                      deliverySlotModel.data.dateTimeCollection.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         DateTimeCollection slotsObject =
-                            deliverySlotModel.data.dateTimeCollection[index];
+                        deliverySlotModel.data.dateTimeCollection[index];
                         if (selctedTag == index) {
                           selectedSlotColor = Color(0xFFEEEEEE);
                           textColor = Color(0xFFff4600);
@@ -705,21 +681,21 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         }
       }
     Color containerColor =
-        detail != null && detail.productStatus.contains('out_of_stock')
-            ? Colors.black12
-            : Colors.transparent;
+    detail != null && detail.productStatus.contains('out_of_stock')
+        ? Colors.black12
+        : Colors.transparent;
     String mrpPrice =
-        detail != null && detail.productStatus.contains('price_changed')
-            ? detail.newMrpPrice
-            : product.mrpPrice;
+    detail != null && detail.productStatus.contains('price_changed')
+        ? detail.newMrpPrice
+        : product.mrpPrice;
     String price =
-        detail != null && detail.productStatus.contains('price_changed')
-            ? detail.newPrice
-            : product.price;
+    detail != null && detail.productStatus.contains('price_changed')
+        ? detail.newPrice
+        : product.price;
     String imageUrl = product.imageType == "0"
         ? product.image == null
-            ? product.image10080
-            : product.image
+        ? product.image10080
+        : product.image
         : product.imageUrl;
     if (product.taxDetail != null) {
       return Container(
@@ -733,23 +709,23 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   style: TextStyle(color: Colors.black54)),
               detail != null && detail.productStatus.contains('out_of_stock')
                   ? Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.red, width: 1),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Padding(
-                        padding: EdgeInsets.all(3),
-                        child: Text(
-                          "Out of Stock",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ))
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.red, width: 1),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Padding(
+                    padding: EdgeInsets.all(3),
+                    child: Text(
+                      "Out of Stock",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ))
                   : Text("${AppConstant.currency}${product.taxDetail.tax}",
-                      style: TextStyle(
-                          color: detail != null &&
-                                  detail.productStatus.contains('out_of_stock')
-                              ? Colors.red
-                              : Colors.black54)),
+                  style: TextStyle(
+                      color: detail != null &&
+                          detail.productStatus.contains('out_of_stock')
+                          ? Colors.red
+                          : Colors.black54)),
             ],
           ),
         ),
@@ -766,24 +742,24 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   style: TextStyle(color: Colors.black54)),
               detail != null && detail.productStatus.contains('out_of_stock')
                   ? Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.red, width: 1),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Padding(
-                        padding: EdgeInsets.all(3),
-                        child: Text(
-                          "Out of Stock",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ))
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.red, width: 1),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Padding(
+                    padding: EdgeInsets.all(3),
+                    child: Text(
+                      "Out of Stock",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ))
                   : Text(
-                      "${AppConstant.currency}${product.fixedTax.fixedTaxAmount}",
-                      style: TextStyle(
-                          color: detail != null &&
-                                  detail.productStatus.contains('out_of_stock')
-                              ? Colors.red
-                              : Colors.black54)),
+                  "${AppConstant.currency}${product.fixedTax.fixedTaxAmount}",
+                  style: TextStyle(
+                      color: detail != null &&
+                          detail.productStatus.contains('out_of_stock')
+                          ? Colors.red
+                          : Colors.black54)),
             ],
           ),
         ),
@@ -798,36 +774,36 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             imageUrl == ""
                 ? Container(
 //              padding: EdgeInsets.fromLTRB(0,5,0,5),
-                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    width: 80.0,
-                    height: 80.0,
-                    child: Utils.getImgPlaceHolder(),
-                  )
+              margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+              width: 80.0,
+              height: 80.0,
+              child: Utils.getImgPlaceHolder(),
+            )
                 : Padding(
-                    padding: EdgeInsets.only(left: 5, right: 20),
-                    child: Container(
+                padding: EdgeInsets.only(left: 5, right: 20),
+                child: Container(
 //                  padding: EdgeInsets.fromLTRB(0,5,0,5),
-                      margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
 //                  decoration: BoxDecoration(border: Border.all(color: Colors.black38,width: 1)),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: .5,
-                        ),
-                      ),
-                      width: 80,
-                      height: 80,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5.0),
-                          child: CachedNetworkImage(
-                              imageUrl: "${imageUrl}", fit: BoxFit.cover
-                              //placeholder: (context, url) => CircularProgressIndicator(),
-                              //errorWidget: (context, url, error) => Icon(Icons.error),
-                              )),
-                      /*child: Image.network(imageUrl,width: 60.0,height: 60.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: .5,
+                    ),
+                  ),
+                  width: 80,
+                  height: 80,
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5.0),
+                      child: CachedNetworkImage(
+                          imageUrl: "${imageUrl}", fit: BoxFit.cover
+                        //placeholder: (context, url) => CircularProgressIndicator(),
+                        //errorWidget: (context, url, error) => Icon(Icons.error),
+                      )),
+                  /*child: Image.network(imageUrl,width: 60.0,height: 60.0,
                                           fit: BoxFit.cover),*/
-                    )),
+                )),
             Expanded(
                 flex: 4,
                 child: Column(
@@ -867,25 +843,25 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 )),
             detail != null && detail.productStatus.contains('out_of_stock')
                 ? Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.red, width: 1),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Padding(
-                      padding: EdgeInsets.all(3),
-                      child: Text(
-                        "Out of Stock",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ))
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.red, width: 1),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5)),
+                child: Padding(
+                  padding: EdgeInsets.all(3),
+                  child: Text(
+                    "Out of Stock",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ))
                 : Text(
-                    "${AppConstant.currency}${databaseHelper.roundOffPrice(int.parse(product.quantity) * double.parse(price), 2).toStringAsFixed(2)}",
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: detail != null &&
-                                detail.productStatus.contains('out_of_stock')
-                            ? Colors.red
-                            : Colors.black45)),
+                "${AppConstant.currency}${databaseHelper.roundOffPrice(int.parse(product.quantity) * double.parse(price), 2).toStringAsFixed(2)}",
+                style: TextStyle(
+                    fontSize: 16,
+                    color: detail != null &&
+                        detail.productStatus.contains('out_of_stock')
+                        ? Colors.red
+                        : Colors.black45)),
           ],
         ),
       );
@@ -901,9 +877,9 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //            width: MediaQuery.of(context).size.width),
         Visibility(
           visible:
-              widget.address != null && widget.subscriptionOrderType == null
-                  ? true
-                  : false,
+          widget.address != null && widget.subscriptionOrderType == null
+              ? true
+              : false,
           child: Padding(
             padding: EdgeInsets.fromLTRB(15, 10, 20, 10),
             child: Row(
@@ -969,12 +945,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               children: [
                 Text("Total",
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 //TODO: recheck this
                 Text(
                     "${AppConstant.currency}${databaseHelper.roundOffPrice(taxModel == null ? totalPrice : double.parse(taxModel.total) > 0 ? double.parse(taxModel.total) : 0, 2).toStringAsFixed(2)}",
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ],
             ))
       ]),
@@ -1049,25 +1025,25 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             InnnerFor:
             for (int i = 0; i < responseOrderDetail.length; i++) {
               if (responseOrderDetail[i]
-                          .productStatus
-                          .compareTo('out_of_stock') ==
-                      0 &&
+                  .productStatus
+                  .compareTo('out_of_stock') ==
+                  0 &&
                   responseOrderDetail[i].productId.compareTo(product.id) == 0 &&
                   responseOrderDetail[i]
-                          .variantId
-                          .compareTo(product.variantId) ==
+                      .variantId
+                      .compareTo(product.variantId) ==
                       0) {
                 isProductOutOfStock = true;
                 break InnnerFor;
               }
               if (responseOrderDetail[i]
-                          .productStatus
-                          .compareTo('price_changed') ==
-                      0 &&
+                  .productStatus
+                  .compareTo('price_changed') ==
+                  0 &&
                   responseOrderDetail[i].productId.compareTo(product.id) == 0 &&
                   responseOrderDetail[i]
-                          .variantId
-                          .compareTo(product.variantId) ==
+                      .variantId
+                      .compareTo(product.variantId) ==
                       0) {
                 detail = responseOrderDetail[i];
                 break InnnerFor;
@@ -1077,17 +1053,17 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
           if (!isProductOutOfStock) {
             String mrpPrice =
-                detail != null && detail.productStatus.contains('price_changed')
-                    ? detail.newMrpPrice
-                    : product.mrpPrice;
+            detail != null && detail.productStatus.contains('price_changed')
+                ? detail.newMrpPrice
+                : product.mrpPrice;
             String price =
-                detail != null && detail.productStatus.contains('price_changed')
-                    ? detail.newPrice
-                    : product.price;
+            detail != null && detail.productStatus.contains('price_changed')
+                ? detail.newPrice
+                : product.price;
             totalSavings += (double.parse(mrpPrice) - double.parse(price)) *
                 double.parse(product.quantity);
             totalMRpPrice +=
-                (double.parse(mrpPrice) * double.parse(product.quantity));
+            (double.parse(mrpPrice) * double.parse(product.quantity));
           }
         }
       }
@@ -1097,7 +1073,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       double totalSavedPercentage = (totalSavings / totalMRpPrice) * 100;
       totalSavingsText =
 //          "${databaseHelper.roundOffPrice(totalSavings, 2).toStringAsFixed(2)} (${totalSavedPercentage.toStringAsFixed(2)}%)";
-          "${databaseHelper.roundOffPrice(totalSavings, 2).toStringAsFixed(2)}";
+      "${databaseHelper.roundOffPrice(totalSavings, 2).toStringAsFixed(2)}";
       setState(() {});
     }
   }
@@ -1180,8 +1156,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                               fontWeight: FontWeight.w600,
                               color: appliedCouponCodeList.isEmpty
                                   ? isCouponsApplied
-                                      ? appTheme.withOpacity(0.5)
-                                      : appTheme
+                                  ? appTheme.withOpacity(0.5)
+                                  : appTheme
                                   : appTheme.withOpacity(0.5)),
                         ),
                       ),
@@ -1223,7 +1199,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                       widget.paymentMode,
                       widget.isComingFromPickUpScreen,
                       widget.areaId,
-                      (model) async {
+                          (model) async {
                         await updateTaxDetails(model);
                         setState(() {
                           hideRemoveCouponFirstTime = false;
@@ -1268,8 +1244,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                               fontWeight: FontWeight.w600,
                               color: appliedReddemPointsCodeList.isEmpty
                                   ? isCouponsApplied
-                                      ? appTheme.withOpacity(0.5)
-                                      : appTheme
+                                  ? appTheme.withOpacity(0.5)
+                                  : appTheme
                                   : appTheme.withOpacity(0.5))),
                     ),
                   ),
@@ -1472,29 +1448,29 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                       Utils.hideKeyboard(context);
                       databaseHelper
                           .getCartItemsListToJson(
-                              isOrderVariations: isOrderVariations,
-                              responseOrderDetail: responseOrderDetail)
+                          isOrderVariations: isOrderVariations,
+                          responseOrderDetail: responseOrderDetail)
                           .then((json) async {
                         ValidateCouponResponse couponModel =
-                            await ApiController.validateOfferApiRequest(
-                                couponCodeController.text,
-                                widget.paymentMode,
-                                json,
-                                couponType,
-                                widget.isComingFromPickUpScreen ? '1' : '2');
+                        await ApiController.validateOfferApiRequest(
+                            couponCodeController.text,
+                            widget.paymentMode,
+                            json,
+                            couponType,
+                            widget.isComingFromPickUpScreen ? '1' : '2');
                         if (couponModel.success) {
                           print("---success----");
                           Utils.showToast("${couponModel.message}", false);
                           TaxCalculationResponse model =
-                              await ApiController.multipleTaxCalculationRequest(
-                                  couponCodeController.text,
-                                  couponModel.discountAmount,
-                                  "0",
-                                  json,
-                                  isMembershipCouponEnabled:
-                                      widget.subscriptionOrderType != null
-                                          ? '1'
-                                          : '0');
+                          await ApiController.multipleTaxCalculationRequest(
+                              couponCodeController.text,
+                              couponModel.discountAmount,
+                              "0",
+                              json,
+                              isMembershipCouponEnabled:
+                              widget.subscriptionOrderType != null
+                                  ? '1'
+                                  : '0');
                           Utils.hideProgressDialog(context);
                           if (model != null && !model.success) {
                             Utils.showToast(model.message, true);
@@ -1518,15 +1494,15 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                               isOrderVariations =
                                   model.taxCalculation.isChanged;
                               for (int i = 0;
-                                  i < responseOrderDetail.length;
-                                  i++) {
+                              i < responseOrderDetail.length;
+                              i++) {
                                 if (responseOrderDetail[i]
-                                            .productStatus
-                                            .compareTo('out_of_stock') ==
-                                        0 ||
+                                    .productStatus
+                                    .compareTo('out_of_stock') ==
+                                    0 ||
                                     responseOrderDetail[i]
-                                            .productStatus
-                                            .compareTo('price_changed') ==
+                                        .productStatus
+                                        .compareTo('price_changed') ==
                                         0) {
                                   someProductsUpdated = true;
                                   break;
@@ -1674,11 +1650,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   if (isDeliveryResponseFalse) {
                     selectedDeliverSlotValue = "";
                   } else if (/*storeModel.deliverySlot == "1" &&*/
-                      isInstantDelivery) {
+                  isInstantDelivery) {
                     //Store provides instant delivery of the orders.
                     selectedDeliverSlotValue = "";
                   } else if (/*storeModel.deliverySlot == "1" &&*/
-                      !isSlotSelected && !isInstantDelivery) {
+                  !isSlotSelected && !isInstantDelivery) {
                     Utils.showToast("Please select delivery slot", false);
                     return;
                   } else {
@@ -1690,7 +1666,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                         .timeslot[selectedTimeSlot]
                         .label;
                     selectedDeliverSlotValue =
-                        "${Utils.convertDateFormat(slotDate)}, ${timeSlot}";
+                    "${Utils.convertDateFormat(slotDate)}, ${timeSlot}";
                     print(
                         "selectedDeliverSlotValue= ${selectedDeliverSlotValue}");
                   }
@@ -1781,8 +1757,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               callPaymentGateWay(paymentGateway);
             } else {
               String result =
-                  await DialogUtils.displayMultipleOnlinePaymentMethodDialog(
-                      context, _brandData);
+              await DialogUtils.displayMultipleOnlinePaymentMethodDialog(
+                  context, _brandData);
               if (result.isEmpty) {
                 Utils.hideProgressDialog(context);
                 return;
@@ -1832,13 +1808,13 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     Utils.showProgressDialog(context);
     databaseHelper
         .getCartItemsListToJson(
-            isOrderVariations: isOrderVariations,
-            responseOrderDetail: responseOrderDetail)
+        isOrderVariations: isOrderVariations,
+        responseOrderDetail: responseOrderDetail)
         .then((json) {
       ApiController.multipleTaxCalculationRequest(
-              "", "0", "${shippingCharges}", json,
-              isMembershipCouponEnabled:
-                  widget.subscriptionOrderType != null ? '1' : '0')
+          "", "0", "${shippingCharges}", json,
+          isMembershipCouponEnabled:
+          widget.subscriptionOrderType != null ? '1' : '0')
           .then((response) async {
         Utils.hideProgressDialog(context);
         Utils.hideKeyboard(context);
@@ -1859,12 +1835,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             isOrderVariations = response.taxCalculation.isChanged;
             for (int i = 0; i < responseOrderDetail.length; i++) {
               if (responseOrderDetail[i]
-                          .productStatus
-                          .compareTo('out_of_stock') ==
-                      0 ||
+                  .productStatus
+                  .compareTo('out_of_stock') ==
+                  0 ||
                   responseOrderDetail[i]
-                          .productStatus
-                          .compareTo('price_changed') ==
+                      .productStatus
+                      .compareTo('price_changed') ==
                       0) {
                 someProductsUpdated = true;
                 break;
@@ -1954,7 +1930,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   Future<void> checkMinOrderPickAmount() async {
     if ((widget.deliveryType == OrderType.PickUp ||
-            widget.deliveryType == OrderType.DineIn) &&
+        widget.deliveryType == OrderType.DineIn) &&
         widget.areaObject != null) {
       print("----minAmount=${widget.areaObject.minOrder}");
       print("----notAllow=${widget.areaObject.notAllow}");
@@ -2000,7 +1976,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     price = price * 100;
     print("----taxModel.total----${taxModel.total}--");
     String mPrice =
-        price.toString().substring(0, price.toString().indexOf('.')).trim();
+    price.toString().substring(0, price.toString().indexOf('.')).trim();
     print("----mPrice----${mPrice}--");
     ApiController.stripePaymentApi(mPrice, storeModel.id).then((response) {
       Utils.hideProgressDialog(context);
@@ -2009,11 +1985,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         StripeCheckOutModel stripeCheckOutModel = response;
         if (stripeCheckOutModel.success) {
           //launchWebView(stripeCheckOutModel);
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //       builder: (context) => StripeWebView(stripeCheckOutModel)),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => StripeWebView(stripeCheckOutModel)),
+          );
         } else {
           Utils.showToast("${stripeCheckOutModel.message}!", true);
         }
@@ -2070,7 +2046,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     //Fluttertoast.showToast(msg: "SUCCESS: " + response.paymentId, timeInSecForIos: 4);
     Utils.showProgressDialog(context);
     ApiController.razorpayVerifyTransactionApi(
-            responseObj.orderId, storeModel.id)
+        responseObj.orderId, storeModel.id)
         .then((response) {
       //print("----razorpayVerifyTransactionApi----${response}--");
       if (response != null) {
@@ -2112,7 +2088,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     price = price * 100;
     print("=======2===${price}===========");
     String mPrice =
-        price.toString().substring(0, price.toString().indexOf('.'));
+    price.toString().substring(0, price.toString().indexOf('.'));
     print("=======mPrice===${mPrice}===========");
     UserModelMobile user = await SharedPrefs.getUserMobile();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -2120,8 +2096,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     String deviceToken = prefs.getString(AppConstant.deviceToken);
     //new changes
     Utils.getCartItemsListToJson(
-            isOrderVariations: isOrderVariations,
-            responseOrderDetail: responseOrderDetail)
+        isOrderVariations: isOrderVariations,
+        responseOrderDetail: responseOrderDetail)
         .then((orderJson) {
       if (orderJson == null) {
         print("--orderjson == null-orderjson == null-");
@@ -2157,18 +2133,18 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           totalSavingsText,
           posBranchCode: widget.subscriptionOrderType != null
               ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.posBranchCode ??
-                  ''
+              ''
               : '',
           membershipId: widget.subscriptionOrderType != null
               ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.id ??
-                  ''
+              ''
               : '',
           membershipPlanDetailId: widget.subscriptionOrderType != null
               ? SingletonBrandData.getInstance()
-                      ?.userPurchaseMembershipResponse
-                      ?.data
-                      ?.membershipPlanDetailId ??
-                  ''
+              ?.userPurchaseMembershipResponse
+              ?.data
+              ?.membershipPlanDetailId ??
+              ''
               : '',
           additionalInfo: widget.subscriptionOrderType != null
               ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.additionalInfo ?? ''
@@ -2177,11 +2153,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       switch (paymentGateWay) {
         case "Razorpay":
           ApiController.razorpayCreateOrderApi(
-                  mPrice,
-                  orderJson,
-                  detailsModel.orderDetails,
-                  storeModel.id,
-                  _brandData.currencyAbbr)
+              mPrice,
+              orderJson,
+              detailsModel.orderDetails,
+              storeModel.id,
+              _brandData.currencyAbbr)
               .then((response) {
             CreateOrderData model = response;
             if (model != null && response.success) {
@@ -2195,23 +2171,23 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           break;
         case "Peachpay":
           ApiController.peachPayCreateOrderApi(
-                  double.parse(taxModel.total).toStringAsFixed(2),
-                  orderJson,
-                  detailsModel.orderDetails,
-                  storeModel.id,
-                  _brandData.currencyAbbr)
+              double.parse(taxModel.total).toStringAsFixed(2),
+              orderJson,
+              detailsModel.orderDetails,
+              storeModel.id,
+              _brandData.currencyAbbr)
               .then((response) {
             Utils.hideProgressDialog(context);
             PeachPayCheckOutResponse model = response;
             if (model == null) {
               Utils.showToast(AppConstant.noInternet, false);
             } else if (model != null && response.success) {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) =>
-              //           PeachPayWebView(model, storeModel.id)),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        PeachPayWebView(model, storeModel.id)),
+              );
             } else {
               Utils.showToast("Server Error", true);
             }
@@ -2219,14 +2195,14 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           break;
         case "iPay88":
           ApiController.ipay88CreateOrderApi(
-                  double.parse(taxModel.total).toStringAsFixed(2),
-                  orderJson,
-                  user.fullName,
-                  user.email,
-                  user.phone,
-                  detailsModel.orderDetails,
-                  AppConstant.brandID,
-                  _brandData.currencyAbbr)
+              double.parse(taxModel.total).toStringAsFixed(2),
+              orderJson,
+              user.fullName,
+              user.email,
+              user.phone,
+              detailsModel.orderDetails,
+              AppConstant.brandID,
+              _brandData.currencyAbbr)
               .then((response) {
             Utils.hideProgressDialog(context);
             Ipay88OrderData model = response;
@@ -2236,7 +2212,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => IPay88WebView(model, storeModel.id)),
+                    builder: (context) => InAppWebViewPage(model, storeModel.id)),
               );
             } else {
               Utils.showToast("Server Error", true);
@@ -2264,8 +2240,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 responseOrderDetail: responseOrderDetail)
             .then((json) {*/
         Utils.getCartItemsListToJson(
-                isOrderVariations: isOrderVariations,
-                responseOrderDetail: responseOrderDetail)
+            isOrderVariations: isOrderVariations,
+            responseOrderDetail: responseOrderDetail)
             .then((json) {
           if (json == null) {
             print("--json == null-json == null-");
@@ -2282,46 +2258,46 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           print("-paymentMode-${widget.paymentMode}");
 
           ApiController.placeOrderRequest(
-                  shippingCharges,
-                  comment,
-                  totalPrice.toString(),
-                  widget.paymentMode,
-                  taxModel,
-                  widget.address,
-                  json,
-                  widget.isComingFromPickUpScreen,
-                  widget.areaId,
-                  widget.deliveryType,
-                  payment_request_id,
-                  payment_id,
-                  onlineMethod,
-                  selectedDeliverSlotValue,
-                  cart_saving: totalSavings.toStringAsFixed(2),
-                  posBranchCode: widget.subscriptionOrderType != null
-                      ? SingletonBrandData.getInstance()
-                              ?.userPurchaseMembershipResponse
-                              ?.data
-                              ?.posBranchCode ??
-                          ''
-                      : '',
-                  membershipId: widget.subscriptionOrderType != null
-                      ? SingletonBrandData.getInstance()
-                              ?.userPurchaseMembershipResponse
-                              ?.data
-                              ?.id ??
-                          ''
-                      : '',
-                  membershipPlanDetailId: widget.subscriptionOrderType != null
-                      ? SingletonBrandData.getInstance()
-                              ?.userPurchaseMembershipResponse
-                              ?.data
-                              ?.membershipPlanDetailId ??
-                          ''
-                      : '',
-                  additionalInfo: widget.subscriptionOrderType != null
-                      ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.additionalInfo ?? ''
-                      : '',
-                  isMembershipCouponEnabled: widget.subscriptionOrderType != null ? '1' : '0')
+              shippingCharges,
+              comment,
+              totalPrice.toString(),
+              widget.paymentMode,
+              taxModel,
+              widget.address,
+              json,
+              widget.isComingFromPickUpScreen,
+              widget.areaId,
+              widget.deliveryType,
+              payment_request_id,
+              payment_id,
+              onlineMethod,
+              selectedDeliverSlotValue,
+              cart_saving: totalSavings.toStringAsFixed(2),
+              posBranchCode: widget.subscriptionOrderType != null
+                  ? SingletonBrandData.getInstance()
+                  ?.userPurchaseMembershipResponse
+                  ?.data
+                  ?.posBranchCode ??
+                  ''
+                  : '',
+              membershipId: widget.subscriptionOrderType != null
+                  ? SingletonBrandData.getInstance()
+                  ?.userPurchaseMembershipResponse
+                  ?.data
+                  ?.id ??
+                  ''
+                  : '',
+              membershipPlanDetailId: widget.subscriptionOrderType != null
+                  ? SingletonBrandData.getInstance()
+                  ?.userPurchaseMembershipResponse
+                  ?.data
+                  ?.membershipPlanDetailId ??
+                  ''
+                  : '',
+              additionalInfo: widget.subscriptionOrderType != null
+                  ? SingletonBrandData.getInstance()?.userPurchaseMembershipResponse?.data?.additionalInfo ?? ''
+                  : '',
+              isMembershipCouponEnabled: widget.subscriptionOrderType != null ? '1' : '0')
               .then((response) async {
             Utils.hideProgressDialog(context);
             if (response == null) {
@@ -2487,40 +2463,40 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   Widget addCommentWidget(BuildContext context) {
     return !isCommentAdded
         ? InkWell(
-            onTap: () async {
-              String result =
-                  await DialogUtils.displayCommentDialog(context, comment);
-              comment = result;
-              if (comment != "") {
-                setState(() {
-                  isCommentAdded = !isCommentAdded;
-                });
-              }
-            },
-            child: Container(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  children: <Widget>[
-                    Padding(
-                      child: Icon(Icons.add, size: 18.0),
-                      padding: EdgeInsets.only(right: 3),
-                    ),
-                    new Text(
-                      "Add Comment",
-                      style: new TextStyle(
-                          fontSize: 16.0,
-                          fontFamily: 'Medium',
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700),
-                    )
-                  ],
-                ),
-                color: grayLightColor),
-          )
+      onTap: () async {
+        String result =
+        await DialogUtils.displayCommentDialog(context, comment);
+        comment = result;
+        if (comment != "") {
+          setState(() {
+            isCommentAdded = !isCommentAdded;
+          });
+        }
+      },
+      child: Container(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            children: <Widget>[
+              Padding(
+                child: Icon(Icons.add, size: 18.0),
+                padding: EdgeInsets.only(right: 3),
+              ),
+              new Text(
+                "Add Comment",
+                style: new TextStyle(
+                    fontSize: 16.0,
+                    fontFamily: 'Medium',
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700),
+              )
+            ],
+          ),
+          color: grayLightColor),
+    )
         : Container(
-            padding: const EdgeInsets.all(20.0),
-            child: getCommentedView(context),
-            color: grayLightColor);
+        padding: const EdgeInsets.all(20.0),
+        child: getCommentedView(context),
+        color: grayLightColor);
   }
 
   Widget getCommentedView(BuildContext context) {
@@ -2534,17 +2510,17 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             children: <Widget>[
               Expanded(
                   child: new Text(
-                "Your Comment",
-                style: new TextStyle(
-                    fontFamily: 'bold',
-                    fontSize: 16.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              )),
+                    "Your Comment",
+                    style: new TextStyle(
+                        fontFamily: 'bold',
+                        fontSize: 16.0,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  )),
               InkWell(
                 onTap: () async {
                   String result =
-                      await DialogUtils.displayCommentDialog(context, comment);
+                  await DialogUtils.displayCommentDialog(context, comment);
                   comment = result;
                   setState(() {
                     if (comment != "") {
@@ -2645,8 +2621,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       if (widget.deliveryType == OrderType.PickUp) {
         databaseHelper
             .getTotalPrice(
-                isOrderVariations: isOrderVariations,
-                responseOrderDetail: responseOrderDetail)
+            isOrderVariations: isOrderVariations,
+            responseOrderDetail: responseOrderDetail)
             .then((mTotalPrice) {
           setState(() {
             totalPrice = mTotalPrice;
@@ -2703,192 +2679,192 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 }
 
 /*Code for ios*/
-// class StripeWebView extends StatefulWidget {
-//   StripeCheckOutModel stripeCheckOutModel;
-//
-//   StripeWebView(this.stripeCheckOutModel);
-//
-//   @override
-//   _StripeWebViewState createState() {
-//     return _StripeWebViewState();
-//   }
-// }
-//
-// class _StripeWebViewState extends State<StripeWebView> {
-//   Completer<WebViewController> _controller = Completer<WebViewController>();
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return WillPopScope(
-//       onWillPop: () {
-//         //print("onWillPop onWillPop");
-//       },
-//       child: Scaffold(
-//         backgroundColor: Colors.white,
-//         appBar: AppBar(
-//           automaticallyImplyLeading: false, // Used for removing back buttoon.
-//           title: Text('Payment'),
-//           centerTitle: true,
-//         ),
-//         body: Builder(builder: (BuildContext context) {
-//           return WebView(
-//             initialUrl: '${widget.stripeCheckOutModel.checkoutUrl}',
-//             javascriptMode: JavascriptMode.unrestricted,
-//             onWebViewCreated: (WebViewController webViewController) {
-//               _controller.complete(webViewController);
-//             },
-//             navigationDelegate: (NavigationRequest request) {
-//               //print('=======NavigationRequest======= $request}');
-//               return NavigationDecision.navigate;
-//             },
-//             onPageStarted: (String url) {
-//               //print('======Page started loading======: $url');
-//             },
-//             onPageFinished: (String url) {
-//               print('======Page finished loading======: $url');
-//               if (url.contains(
-//                   "stripe/stripeVerifyTransaction?response=success")) {
-//                 eventBus.fire(onPageFinished(
-//                     widget.stripeCheckOutModel.paymentRequestId));
-//                 Navigator.pop(context);
-//               }
-//             },
-//             gestureNavigationEnabled: false,
-//           );
-//         }),
-//       ),
-//     );
-//   }
-// }
-//
-// class PaytmWebView extends StatelessWidget {
-//   CreatePaytmTxnTokenResponse stripeCheckOutModel;
-//   Completer<WebViewController> _controller = Completer<WebViewController>();
-//
-//   PaytmWebView(this.stripeCheckOutModel);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return WillPopScope(
-//       onWillPop: () {
-//         //print("onWillPop onWillPop");
-//       },
-//       child: Scaffold(
-//         backgroundColor: Colors.white,
-//         appBar: AppBar(
-//           automaticallyImplyLeading: false, // Used for removing back buttoon.
-//           title: Text('Payment'),
-//           centerTitle: true,
-//         ),
-//         body: Builder(builder: (BuildContext context) {
-//           return WebView(
-//             initialUrl: '${stripeCheckOutModel.url}',
-//             javascriptMode: JavascriptMode.unrestricted,
-//             onWebViewCreated: (WebViewController webViewController) {
-//               _controller.complete(webViewController);
-//             },
-//             navigationDelegate: (NavigationRequest request) {
-//               //print('=======NavigationRequest======= $request}');
-//               return NavigationDecision.navigate;
-//             },
-//             onPageStarted: (String url) {
-//               //print('======Page started loading======: $url');
-//             },
-//             onPageFinished: (String url) {
-//               print('==2====onLoadStop======: $url');
-//               if (url.contains("/api/paytmPaymentResult/orderId:")) {
-//                 String txnId =
-//                     url.substring(url.indexOf("/TxnId:") + "/TxnId:".length);
-//                 url = url.replaceAll("/TxnId:" + txnId, "");
-//                 String orderId = url
-//                     .substring(url.indexOf("/orderId:") + "/orderId:".length);
-//                 print(txnId);
-//                 print(orderId);
-//                 eventBus.fire(
-//                     onPayTMPageFinished(url, orderId = orderId, txnId = txnId));
-//                 Navigator.pop(context);
-//               } else if (url.contains("api/paytmPaymentResult/failure:")) {
-//                 Navigator.pop(context);
-//                 Utils.showToast("Payment Failed", false);
-//               }
-//             },
-//             gestureNavigationEnabled: false,
-//           );
-//         }),
-//       ),
-//     );
-//   }
-// }
-//
-// class PeachPayWebView extends StatelessWidget {
-//   PeachPayCheckOutResponse responseModel;
-//   Completer<WebViewController> _controller = Completer<WebViewController>();
-//   String storeID;
-//
-//   PeachPayWebView(this.responseModel, this.storeID);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return WillPopScope(
-//       onWillPop: () {
-//         //print("onWillPop onWillPop");
-//       },
-//       child: Scaffold(
-//         backgroundColor: Colors.white,
-//         appBar: AppBar(
-//           automaticallyImplyLeading: false, // Used for removing back buttoon.
-//           title: Text('Payment'),
-//           centerTitle: true,
-//         ),
-//         body: Builder(builder: (BuildContext context) {
-//           return WebView(
-//             initialUrl:
-//                 '${ApiConstants.baseUrl3.replaceAll("storeId", storeID)}${ApiConstants.processPeachpayPayment}${responseModel.data.id}',
-//             javascriptMode: JavascriptMode.unrestricted,
-//             onWebViewCreated: (WebViewController webViewController) {
-//               _controller.complete(webViewController);
-//             },
-//             navigationDelegate: (NavigationRequest request) {
-//               //print('=======NavigationRequest======= $request}');
-//               return NavigationDecision.navigate;
-//             },
-//             onPageStarted: (String url) {
-//               print('======Page started loading======: $url');
-//             },
-//             onPageFinished: (String url) {
-//               print('==2====onLoadStop======: $url');
-//               if (url.contains("/peachpay/peachPayVerify?id=")) {
-//                 String resourcePath = url.substring(
-//                     url.indexOf("&resourcePath=") + "&resourcePath=".length);
-//                 url = url.replaceAll("&resourcePath=" + resourcePath, "");
-//                 String checkoutID =
-//                     url.substring(url.indexOf("?id=") + "?id=".length);
-//                 print(resourcePath);
-//                 print(checkoutID);
-//                 eventBus
-//                     .fire(onPeachPayFinished(url, checkoutID, resourcePath));
-//                 Navigator.pop(context);
-//               } else if (url.contains("failure")) {
-//                 Navigator.pop(context);
-//                 String resourcePath = url.substring(
-//                     url.indexOf("&resourcePath=") + "&resourcePath=".length);
-//                 url = url.replaceAll("&resourcePath=" + resourcePath, "");
-//                 String checkoutID =
-//                     url.substring(url.indexOf("?id=") + "?id=".length);
-//                 print(resourcePath);
-//                 print(checkoutID);
-//                 Utils.showToast("Payment Failed", false);
-//               }
-//             },
-//             gestureNavigationEnabled: false,
-//           );
-//         }),
-//       ),
-//     );
-//   }
-// }
+class StripeWebView extends StatefulWidget {
+  StripeCheckOutModel stripeCheckOutModel;
 
-//IPAY 88 WEB VIEW
+  StripeWebView(this.stripeCheckOutModel);
+
+  @override
+  _StripeWebViewState createState() {
+    return _StripeWebViewState();
+  }
+}
+
+class _StripeWebViewState extends State<StripeWebView> {
+  Completer<WebViewController> _controller = Completer<WebViewController>();
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () {
+        //print("onWillPop onWillPop");
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          automaticallyImplyLeading: false, // Used for removing back buttoon.
+          title: Text('Payment'),
+          centerTitle: true,
+        ),
+        body: Builder(builder: (BuildContext context) {
+          return WebView(
+            initialUrl: '${widget.stripeCheckOutModel.checkoutUrl}',
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (WebViewController webViewController) {
+              _controller.complete(webViewController);
+            },
+            navigationDelegate: (NavigationRequest request) {
+              //print('=======NavigationRequest======= $request}');
+              return NavigationDecision.navigate;
+            },
+            onPageStarted: (String url) {
+              //print('======Page started loading======: $url');
+            },
+            onPageFinished: (String url) {
+              print('======Page finished loading======: $url');
+              if (url.contains(
+                  "stripe/stripeVerifyTransaction?response=success")) {
+                eventBus.fire(onPageFinished(
+                    widget.stripeCheckOutModel.paymentRequestId));
+                Navigator.pop(context);
+              }
+            },
+            gestureNavigationEnabled: false,
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class PaytmWebView extends StatelessWidget {
+  CreatePaytmTxnTokenResponse stripeCheckOutModel;
+  Completer<WebViewController> _controller = Completer<WebViewController>();
+
+  PaytmWebView(this.stripeCheckOutModel);
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () {
+        //print("onWillPop onWillPop");
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          automaticallyImplyLeading: false, // Used for removing back buttoon.
+          title: Text('Payment'),
+          centerTitle: true,
+        ),
+        body: Builder(builder: (BuildContext context) {
+          return WebView(
+            initialUrl: '${stripeCheckOutModel.url}',
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (WebViewController webViewController) {
+              _controller.complete(webViewController);
+            },
+            navigationDelegate: (NavigationRequest request) {
+              //print('=======NavigationRequest======= $request}');
+              return NavigationDecision.navigate;
+            },
+            onPageStarted: (String url) {
+              //print('======Page started loading======: $url');
+            },
+            onPageFinished: (String url) {
+              print('==2====onLoadStop======: $url');
+              if (url.contains("/api/paytmPaymentResult/orderId:")) {
+                String txnId =
+                url.substring(url.indexOf("/TxnId:") + "/TxnId:".length);
+                url = url.replaceAll("/TxnId:" + txnId, "");
+                String orderId = url
+                    .substring(url.indexOf("/orderId:") + "/orderId:".length);
+                print(txnId);
+                print(orderId);
+                eventBus.fire(
+                    onPayTMPageFinished(url, orderId = orderId, txnId = txnId));
+                Navigator.pop(context);
+              } else if (url.contains("api/paytmPaymentResult/failure:")) {
+                Navigator.pop(context);
+                Utils.showToast("Payment Failed", false);
+              }
+            },
+            gestureNavigationEnabled: false,
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class PeachPayWebView extends StatelessWidget {
+  PeachPayCheckOutResponse responseModel;
+  Completer<WebViewController> _controller = Completer<WebViewController>();
+  String storeID;
+
+  PeachPayWebView(this.responseModel, this.storeID);
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () {
+        //print("onWillPop onWillPop");
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          automaticallyImplyLeading: false, // Used for removing back buttoon.
+          title: Text('Payment'),
+          centerTitle: true,
+        ),
+        body: Builder(builder: (BuildContext context) {
+          return WebView(
+            initialUrl:
+            '${ApiConstants.baseUrl3.replaceAll("storeId", storeID)}${ApiConstants.processPeachpayPayment}${responseModel.data.id}',
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (WebViewController webViewController) {
+              _controller.complete(webViewController);
+            },
+            navigationDelegate: (NavigationRequest request) {
+              //print('=======NavigationRequest======= $request}');
+              return NavigationDecision.navigate;
+            },
+            onPageStarted: (String url) {
+              print('======Page started loading======: $url');
+            },
+            onPageFinished: (String url) {
+              print('==2====onLoadStop======: $url');
+              if (url.contains("/peachpay/peachPayVerify?id=")) {
+                String resourcePath = url.substring(
+                    url.indexOf("&resourcePath=") + "&resourcePath=".length);
+                url = url.replaceAll("&resourcePath=" + resourcePath, "");
+                String checkoutID =
+                url.substring(url.indexOf("?id=") + "?id=".length);
+                print(resourcePath);
+                print(checkoutID);
+                eventBus
+                    .fire(onPeachPayFinished(url, checkoutID, resourcePath));
+                Navigator.pop(context);
+              } else if (url.contains("failure")) {
+                Navigator.pop(context);
+                String resourcePath = url.substring(
+                    url.indexOf("&resourcePath=") + "&resourcePath=".length);
+                url = url.replaceAll("&resourcePath=" + resourcePath, "");
+                String checkoutID =
+                url.substring(url.indexOf("?id=") + "?id=".length);
+                print(resourcePath);
+                print(checkoutID);
+                Utils.showToast("Payment Failed", false);
+              }
+            },
+            gestureNavigationEnabled: false,
+          );
+        }),
+      ),
+    );
+  }
+}
+
+// IPAY 88 WEB VIEW
 
 class IPay88WebView extends StatelessWidget {
   Ipay88OrderData responseModel;
@@ -2911,35 +2887,16 @@ class IPay88WebView extends StatelessWidget {
           centerTitle: true,
         ),
         body: Builder(builder: (BuildContext context) {
-          return InAppWebView(
-            initialUrlRequest:
-            URLRequest(url: Uri.parse("${responseModel.data.url}")),
-            initialOptions:
-            pullToRefreshController: pullToRefreshController,
-            onWebViewCreated: (controller) {
-              webViewController = controller;
-            },
-          );
-
-        }),
-      ),
-    );
-  }
-}
-
-/*
-WebView(
+          return WebView(
             initialUrl: '${responseModel.data.url}',
             javascriptMode: JavascriptMode.unrestricted,
             onWebViewCreated: (WebViewController webViewController) {
               _controller.complete(webViewController);
             },
-
             navigationDelegate: (NavigationRequest request) {
               //print('=======NavigationRequest======= $request}');
               return NavigationDecision.navigate;
             },
-
             onPageStarted: (String url) {
               print('======Page started loading======: $url');
             },
@@ -2948,7 +2905,7 @@ WebView(
               if (url.contains("ipay88/ipay88ResUrl") &&
                   url.contains("Status=1")) {
                 String status =
-                    url.substring(url.indexOf("&Status=") + "&Status=".length);
+                url.substring(url.indexOf("&Status=") + "&Status=".length);
                 url = url.replaceAll("&Status=" + status, "");
                 String transId = url
                     .substring(url.indexOf("&TransId=") + "&TransId=".length);
@@ -2966,7 +2923,7 @@ WebView(
                   url.contains("Status=0")) {
                 Navigator.pop(context);
                 String status =
-                    url.substring(url.indexOf("&Status=") + "&Status=".length);
+                url.substring(url.indexOf("&Status=") + "&Status=".length);
                 url = url.replaceAll("&Status=" + status, "");
                 String transId = url
                     .substring(url.indexOf("&TransId=") + "&TransId=".length);
@@ -2984,4 +2941,8 @@ WebView(
             },
             gestureNavigationEnabled: false,
           );
- */
+        }),
+      ),
+    );
+  }
+}
