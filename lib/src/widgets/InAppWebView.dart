@@ -61,7 +61,8 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("InAppWebView")),
+        appBar: AppBar(title: Text("Payment"),
+        centerTitle: true,),
         body: Container(
             child: Column(children: <Widget>[
           Expanded(
