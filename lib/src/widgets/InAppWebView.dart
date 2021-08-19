@@ -92,7 +92,7 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
                     String requestId = url.substring(
                         url.indexOf("payment_request_id=") +
                             "payment_request_id=".length);
-                    print(requestId);
+                    print("*************${requestId}");
                     print(transId);
                     print(status);
                     eventBus.fire(
