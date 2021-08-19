@@ -1177,8 +1177,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                                   hideRemoveCouponFirstTime = false;
                                   taxModel = model;
                                   double taxModelTotal =
-                                      double.parse(taxModel.total) +
-                                          int.parse(shippingCharges);
+                                      double.parse(taxModel.total) ;
                                   taxModel.total = taxModelTotal.toString();
                                   appliedReddemPointsCodeList.add(
                                       model.couponCode);
@@ -1265,8 +1264,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                               hideRemoveCouponFirstTime = false;
                               taxModel = model;
                               double taxModelTotal = double.parse(
-                                  taxModel.total) +
-                                  int.parse(shippingCharges);
+                                  taxModel.total) ;
                               taxModel.total = taxModelTotal.toString();
                               appliedCouponCodeList.add(model.couponCode);
                               couponType = model.couponType;
@@ -1529,7 +1527,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                           await ApiController.multipleTaxCalculationRequest(
                               couponCodeController.text,
                               couponModel.discountAmount,
-                              "0",
+                              "${shippingCharges}",
                               json,
                               isMembershipCouponEnabled:
                               widget.subscriptionOrderType != null
@@ -1672,6 +1670,31 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //                  return;
 //                }
 //              }
+             if (widget.deliveryType == OrderType.Delivery &&
+                 widget.areaObject.notAllow) {
+               print("abb***************");
+               double totalItemPrice = double.parse(taxModel.itemSubTotal);
+               double minOrderChecking = double.parse(widget.areaObject.minOrder);
+               print("abb*************** ${totalItemPrice} and ${minOrderChecking}");
+               if (minOrderChecking > totalItemPrice ) {
+                 Utils.showToast(
+                     "Your order amount is too low. Minimum order amount is ${widget.areaObject.minOrder}",
+                     false);
+                 return;
+               }
+             }
+             if (widget.deliveryType == OrderType.PickUp &&
+                 widget.areaObject != null) {
+               //  !minOrderCheck
+               double totalItemPrice = double.parse(taxModel.itemSubTotal);
+               double minOrderChecking = double.parse(widget.areaObject.minOrder);
+               if (minOrderChecking > totalItemPrice) {
+                 Utils.showToast(
+                     "Your order amount is too low. Minimum order amount is ${widget.areaObject.minOrder}",
+                     false);
+                 return;
+               }
+             }
               if (checkThatItemIsInStocks()) {
                 DialogUtils.displayCommonDialog(
                     context,
