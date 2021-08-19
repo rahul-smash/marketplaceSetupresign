@@ -62,7 +62,7 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Payment"),
+          title: Text("Payment iP88"),
           centerTitle: true,
         ),
         body: Container(
@@ -79,7 +79,11 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
                   _webViewController = controller;
                 },
                 onLoadStart: (InAppWebViewController controller, String url) {
-                  print("onLoadStart popup $url");
+                  print("onLoadStart popup ---------------$url");
+                },
+                onLoadStop: (InAppWebViewController controller, String url) {
+                  print("onLoadStop popup ----*****$url");
+
                   {
                     print('==2====onLoadStop======: $url');
                     if (url.contains("ipay88/ipay88ResUrl") &&
@@ -102,6 +106,7 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
                     } else if (url.contains("ipay88/ipay88ResUrl") &&
                         url.contains("Status=0")) {
                       Navigator.pop(context);
+                      Utils.showToast("Payment Failed", false);
                       String status = url.substring(
                           url.indexOf("&Status=") + "&Status=".length);
                       url = url.replaceAll("&Status=" + status, "");
@@ -116,14 +121,8 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
                       print(status);
                       print(
                           "------------------------Showing TOAST-------------------------------");
-                      Utils.showToast("Payment Failed", false);
                     }
                   }
-                },
-                onLoadStop: (InAppWebViewController controller, String url) {
-                  print("onLoadStop popup $url");
-                  Navigator.pop(context);
-                  Utils.showToast("Payment Failed", false);
                 },
               ),
             ),
