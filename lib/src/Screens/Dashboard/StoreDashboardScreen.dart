@@ -84,6 +84,14 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       setState(() {});
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (store.storeStatus == "0") {
+        DialogUtils.displayCommonDialog(
+          context,
+          store.storeName,
+          store.storeMsg,
+        );
+        return;
+      }
       if (!Utils.checkStoreOpenTime(store)) {
         DialogUtils.displayCommonDialog(
           context,
@@ -93,7 +101,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
         return;
       }
     });
-
   }
 
   void listenEvent() {}
@@ -320,10 +327,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                           ),
                         )),
                         Visibility(
-                            visible: widget.brandData.display_store_rating == '1' &&
-                                store.rating.isNotEmpty &&
-                                store.rating != '0.0' &&
-                                store.rating != '0',
+                            visible:
+                                widget.brandData.display_store_rating == '1' &&
+                                    store.rating.isNotEmpty &&
+                                    store.rating != '0.0' &&
+                                    store.rating != '0',
                             child: Align(
                                 alignment: Alignment.bottomLeft,
                                 child: Row(
@@ -332,11 +340,13 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                         margin: EdgeInsets.only(right: 5),
                                         decoration: BoxDecoration(
                                           color: appThemeSecondary,
-                                          borderRadius: BorderRadius.circular(5.0),
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
                                         ),
                                         child: Padding(
                                           padding: EdgeInsets.all(3),
-                                          child: Image.asset('images/staricon.png',
+                                          child: Image.asset(
+                                              'images/staricon.png',
                                               width: 15,
                                               fit: BoxFit.scaleDown,
                                               color: Colors.white),
@@ -352,13 +362,15 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                 ))),
                       ],
                     ),
-                    SizedBox(height: 5,),
+                    SizedBox(
+                      height: 5,
+                    ),
                     Visibility(
                       visible: store.showAnyLicenceNumber == "1",
                       child: Text(
                         "${store.licenceName} : ${store.licenceNumber}",
-                       // maxLines: 2,
-                       // overflow: TextOverflow.ellipsis,
+                        // maxLines: 2,
+                        // overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -371,7 +383,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
             ),
           ),
           Visibility(
-            visible: !Utils.checkStoreOpenTime(store),
+            visible:
+                !Utils.checkStoreOpenTime(store) || store.storeStatus == "0",
             child: Container(
               height: 150.0,
               color: Colors.black45,
@@ -399,7 +412,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                       padding: EdgeInsets.only(
                           left: 15, top: 5, bottom: 10, right: 15),
                       child: Text(
-                        "${store.closehoursMessage}",
+                        store.storeStatus == "0"
+                            ? "${store.storeMsg}"
+                            : "${store.closehoursMessage}",
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
