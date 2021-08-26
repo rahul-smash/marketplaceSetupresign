@@ -129,7 +129,7 @@ class RestroCardItem extends StatelessWidget {
                                         child: Padding(
                                           padding: EdgeInsets.all(3),
                                           child: Image.asset(
-                                              'images/staricon.png',
+                                              'images/starIcon.png',
                                               width: 15,
                                               fit: BoxFit.scaleDown,
                                               color: Colors.white),
@@ -228,10 +228,10 @@ class RestroCardItem extends StatelessWidget {
                               padding: EdgeInsets.all(5),
                               child: Text(
                                 "Store Closed",
-                                style: TextStyle(color: Colors.red, fontSize: 18),
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 18),
                               ),
                             )),
-
                       ],
                     ),
                     Container(

@@ -4,19 +4,18 @@ class ApiConstants {
   //Place Api key: AIzaSyDIrOUg5njtkZcWcnpfoMht1Ol1l7Q8Bys
 // unused url
   static String baseUrl = 'https://app.restroapp.com/storeId/api/';
-  // staging url
-  static String base = 'https://devmarketplace.restroapp.com/brandId/v1/';
-  //live url
-  // static String base = 'https://marketplace.restroapp.com/brandId/v1/';
-
+// used url
   static String base_Url = '${base}user_authentication/';
   static String baseUrl2 = '${base}marketplace/';
-  // live url
-  // static String baseUrl3 =
-  //  'https://marketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
-// staging url
+
+  // staging url
+  // static String base = 'http://devmarketplace.restroapp.com/brandId/v1/';
+  // static String baseUrl3 = 'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
+
+  //live url
+  static String base = 'https://marketplace.restroapp.com/brandId/v1/';
   static String baseUrl3 =
-      'https://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
+      'https://marketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 
   static String storeList = 'storeList';
   static String version = 'version';

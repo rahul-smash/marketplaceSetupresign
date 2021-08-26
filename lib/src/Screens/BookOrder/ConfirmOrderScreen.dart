@@ -1706,7 +1706,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     String discount = taxModel == null ? "0" : taxModel.discount;
     if (widget.deliveryType == OrderType.PickUp ||
         widget.deliveryType == OrderType.DineIn)
-      Utils.showProgressDialog(context);
+      {
+
+      }
+    //
 
     Map<String, dynamic> attributeMap = new Map<String, dynamic>();
     attributeMap["ScreenName"] = "Order Confirm Screen";
@@ -2200,7 +2203,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   user.email,
                   user.phone,
                   detailsModel.orderDetails,
-                  AppConstant.brandID,
+                  storeModel.id,
                   _brandData.currencyAbbr)
               .then((response) {
             Utils.hideProgressDialog(context);
@@ -2215,6 +2218,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                         InAppWebViewPage(model, storeModel.id)),
               );
             } else {
+              Utils.hideProgressDialog(context);
               Utils.showToast("Server Error", true);
             }
           });
@@ -2304,46 +2308,50 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               print("--response == null-response == null-");
               return;
             }
-            if (response.success == false) {
-              DialogUtils.displayCommonDialog(
+            if (response.success == false ) {
+              if(response.statusCode == 409){
+                _PaymentSuccessProcess(response);
+              }
+              else DialogUtils.displayCommonDialog(
                   context, _brandData.name, response.message);
               return;
             }
-            if (AppConstant.isLoggedIn)
-              ApiController.getUserMembershipPlanApi();
-            eventBus.fire(updateCartCount());
-            print("${widget.deliveryType}");
-            //print("Location = ${storeModel.lat},${storeModel.lng}");
-            if (widget.deliveryType == OrderType.PickUp ||
-                widget.deliveryType == OrderType.DineIn) {
-              bool result = await DialogUtils.displayPickUpDialog(context);
-              if (result == true) {
-                //print("==result== ${result}");
-                await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                eventBus.fire(updateCartCount());
-                eventBus.fire(onCartRemoved());
-                DialogUtils.openMap(storeModel, double.parse(storeModel.lat),
-                    double.parse(storeModel.lng));
-              } else {
-                //print("==result== ${result}");
-                await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-                eventBus.fire(updateCartCount());
-                eventBus.fire(onCartRemoved());
-                eventBus.fire(openHome());
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              }
-            } else {
-              bool result = await DialogUtils.displayThankYouDialog(context,
-                  response.success ? AppConstant.orderAdded : response.message);
-              if (result == true) {
-                await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                eventBus.fire(onCartRemoved());
-                eventBus.fire(updateCartCount());
-                eventBus.fire(openHome());
-              }
-            }
+            _PaymentSuccessProcess(response);
+            // if (AppConstant.isLoggedIn)
+            //   ApiController.getUserMembershipPlanApi();
+            // eventBus.fire(updateCartCount());
+            // print("${widget.deliveryType}");
+            // //print("Location = ${storeModel.lat},${storeModel.lng}");
+            // if (widget.deliveryType == OrderType.PickUp ||
+            //     widget.deliveryType == OrderType.DineIn) {
+            //   bool result = await DialogUtils.displayPickUpDialog(context);
+            //   if (result == true) {
+            //     //print("==result== ${result}");
+            //     await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
+            //     Navigator.of(context).popUntil((route) => route.isFirst);
+            //     eventBus.fire(updateCartCount());
+            //     eventBus.fire(onCartRemoved());
+            //     DialogUtils.openMap(storeModel, double.parse(storeModel.lat),
+            //         double.parse(storeModel.lng));
+            //   } else {
+            //     //print("==result== ${result}");
+            //     await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
+            //     eventBus.fire(updateCartCount());
+            //     eventBus.fire(onCartRemoved());
+            //     eventBus.fire(openHome());
+            //     Navigator.of(context).popUntil((route) => route.isFirst);
+            //   }
+            // } else {
+            //   bool result = await DialogUtils.displayThankYouDialog(context,
+            //       response.success ? AppConstant.orderAdded : response.message);
+            //   if (result == true) {
+            //     await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
+            //     Navigator.of(context).popUntil((route) => route.isFirst);
+            //     eventBus.fire(onCartRemoved());
+            //     eventBus.fire(updateCartCount());
+            //     eventBus.fire(openHome());
+            //   }
+            // }
           });
         });
       } else {
@@ -2675,6 +2683,44 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       }
     }
     return productOutOfStock;
+  }
+
+  void _PaymentSuccessProcess(ResponseModel response) async{
+    if (AppConstant.isLoggedIn)
+      ApiController.getUserMembershipPlanApi();
+    eventBus.fire(updateCartCount());
+    print("${widget.deliveryType}");
+    print("Location =${storeModel.storeName} ${storeModel.lat},${storeModel.lng}");
+    if (widget.deliveryType == OrderType.PickUp ||
+        widget.deliveryType == OrderType.DineIn) {
+      bool result = await DialogUtils.displayPickUpDialog(context);
+      if (result == true) {
+        //print("==result== ${result}");
+        await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        eventBus.fire(updateCartCount());
+        eventBus.fire(onCartRemoved());
+        DialogUtils.openMap(storeModel, double.parse(storeModel.lat),
+            double.parse(storeModel.lng));
+      } else {
+        //print("==result== ${result}");
+        await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
+        eventBus.fire(updateCartCount());
+        eventBus.fire(onCartRemoved());
+        eventBus.fire(openHome());
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+    } else {
+      bool result = await DialogUtils.displayThankYouDialog(context,
+          response.success ? AppConstant.orderAdded : response.message);
+      if (result == true) {
+        await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        eventBus.fire(onCartRemoved());
+        eventBus.fire(updateCartCount());
+        eventBus.fire(openHome());
+      }
+    }
   }
 }
 

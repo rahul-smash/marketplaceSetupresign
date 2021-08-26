@@ -142,7 +142,7 @@ flutter:
     - images/empty_cart.png
     - images/gifticon.png
     - images/whatsapp.png
-    #- images/starIcon.png
+    - images/starIcon.png
     - images/tickicon.png
     - images/homeicon.png
     - images/unselectedcarticon.png
