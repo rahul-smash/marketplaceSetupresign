@@ -20,6 +20,8 @@ import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+import 'package:flutter_switch/flutter_switch.dart';
+import 'package:flutter/src/material/switch.dart';
 
 class StoreDashboardScreen extends StatefulWidget {
   final StoreDataModel store;
@@ -40,7 +42,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   bool isStoreClosed;
   final DatabaseHelper databaseHelper = new DatabaseHelper();
   bool isLoading = true;
-
+  bool vegNonVeg = false;
   CategoryResponse categoryResponse;
 
   CategoryModel selectedCategory;
@@ -581,6 +583,16 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700),
                               ),
+                              Switch(
+                                value: vegNonVeg,
+                                onChanged: (val) {
+                                  setState(() {
+                                    vegNonVeg = val;
+                                  });
+                                },
+                                activeTrackColor: Colors.lightGreenAccent,
+                                activeColor: Colors.green,
+                              )
                             ],
                           ),
                         ),
