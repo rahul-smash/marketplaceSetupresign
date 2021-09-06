@@ -1,13 +1,13 @@
 import 'dart:collection';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/painting.dart';
-import 'package:restroapp/src/UI/StoreSearchUI.dart';
-import 'package:restroapp/src/models/VersionModel.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/src/material/switch.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
+import 'package:restroapp/src/UI/StoreSearchUI.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -15,13 +15,13 @@ import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
-import 'package:flutter_switch/flutter_switch.dart';
-import 'package:flutter/src/material/switch.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class StoreDashboardScreen extends StatefulWidget {
   final StoreDataModel store;
@@ -584,8 +584,13 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                     fontWeight: FontWeight.w700),
                               ),
                               Switch(
-                                onChanged: toggleSwitch,
                                 value: vegNonVeg,
+                                onChanged: (value) {
+                                  setState(() {
+                                    vegNonVeg = value;
+                                    print(vegNonVeg);
+                                  });
+                                },
                                 activeTrackColor: Colors.lightGreenAccent,
                                 activeColor: Colors.green,
                               ),
