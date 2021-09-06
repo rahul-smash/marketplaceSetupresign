@@ -584,15 +584,11 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                     fontWeight: FontWeight.w700),
                               ),
                               Switch(
+                                onChanged: toggleSwitch,
                                 value: vegNonVeg,
-                                onChanged: (val) {
-                                  setState(() {
-                                    vegNonVeg = val;
-                                  });
-                                },
                                 activeTrackColor: Colors.lightGreenAccent,
                                 activeColor: Colors.green,
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -843,5 +839,19 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     }
     eventBus.fire(updateStoreSearch(searchedProductList));
     setState(() {});
+  }
+
+  void toggleSwitch(bool value) {
+    if (vegNonVeg == false) {
+      setState(() {
+        vegNonVeg = true;
+      });
+      print('Switch Button is ON');
+    } else {
+      setState(() {
+        vegNonVeg = false;
+      });
+      print('Switch Button is OFF');
+    }
   }
 }
