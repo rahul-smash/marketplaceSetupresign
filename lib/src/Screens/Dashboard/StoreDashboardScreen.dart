@@ -588,6 +588,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                 onChanged: (value) {
                                   setState(() {
                                     vegNonVeg = value;
+                                    getHomeCategoryProductApi();
                                     print(vegNonVeg);
                                   });
                                 },
@@ -761,7 +762,29 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           for (int i = 0; i < response.subCategories.length; i++) {
             if (response.subCategories[i].products.isNotEmpty) {
               products.add(response.subCategories[i]);
-              products.addAll(response.subCategories[i].products);
+              if (vegNonVeg) {
+                bool anyItemAdded = false;
+                for (int productCounter = 0;
+                    productCounter < response.subCategories[i].products.length;
+                    productCounter++) {
+                  if (response.subCategories[i].products[productCounter]
+                              .nutrient !=
+                          'Non Veg' ||
+                      response.subCategories[i].products[productCounter]
+                              .nutrient
+                              .toLowerCase() !=
+                          'non veg') {
+                    products.add(
+                        response.subCategories[i].products[productCounter]);
+                    anyItemAdded = true;
+                  }
+                }
+                if (!anyItemAdded) {
+                  products.removeLast();
+                }
+              } else {
+                products.addAll(response.subCategories[i].products);
+              }
             }
           }
 
