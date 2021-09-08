@@ -583,18 +583,24 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700),
                               ),
-                              Switch(
-                                value: vegNonVeg,
-                                onChanged: (value) {
-                                  setState(() {
-                                    vegNonVeg = value;
-                                    getHomeCategoryProductApi();
-                                    print(vegNonVeg);
-                                  });
-                                },
-                                activeTrackColor: Colors.lightGreenAccent,
-                                activeColor: Colors.green,
-                              ),
+                              Row(children: [
+                                Text(
+                                  "Veg Only",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                Switch(
+                                  value: vegNonVeg,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      vegNonVeg = value;
+                                      getHomeCategoryProductApi();
+                                      print(vegNonVeg);
+                                    });
+                                  },
+                                  activeTrackColor: Colors.grey[400],
+                                  activeColor: appTheme,
+                                ),
+                              ]),
                             ],
                           ),
                         ),
