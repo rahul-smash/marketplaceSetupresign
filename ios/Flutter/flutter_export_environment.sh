@@ -1,8 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\flutter_windows_2.2.3-stable\flutter"
-export "FLUTTER_APPLICATION_PATH=D:\Signity_WorkSpace\marketplace_setup"
-export "COCOAPODS_PARALLEL_CODE_SIGN=true"
+export "FLUTTER_ROOT=C:\src\flutter"
+export "FLUTTER_APPLICATION_PATH=C:\Users\dell\AndroidStudioProjects\marketplace_setup"
 export "FLUTTER_TARGET=lib\main.dart"
 export "FLUTTER_BUILD_DIR=build"
 export "SYMROOT=${SOURCE_ROOT}/../build\ios"
