@@ -126,6 +126,9 @@ class StoreDataObj {
     this.display_prepration_time,
     this.display_store_location,
     this.dineIn,
+    this.showAnyLicenceNumber,
+    this.licenceName,
+    this.licenceNumber,
   });
 
   String id;
@@ -211,6 +214,9 @@ class StoreDataObj {
   String display_prepration_time;
   String display_store_location;
   String dineIn;
+  String showAnyLicenceNumber;
+  String licenceName;
+  String licenceNumber;
 
   //optional
   Dish dish;
@@ -300,6 +306,9 @@ class StoreDataObj {
     String display_prepration_time,
     String display_store_location,
     String dineIn,
+    String showAnyLicenceNumber,
+    String licenceName,
+    String licenceNumber,
   }) =>
       StoreDataObj(
         id: id ?? this.id,
@@ -391,6 +400,9 @@ class StoreDataObj {
         display_store_location:
             display_store_location ?? this.display_store_location,
         dineIn: display_store_location ?? this.dineIn,
+        showAnyLicenceNumber: showAnyLicenceNumber ?? this.showAnyLicenceNumber,
+        licenceName: licenceName ?? this.licenceName,
+        licenceNumber: licenceNumber ?? this.licenceNumber,
       );
 
   factory StoreDataObj.fromRawJson(String str) =>
@@ -593,6 +605,16 @@ class StoreDataObj {
             ? null
             : json["display_store_location"].toString(),
         dineIn: json["dine_in"] == null ? null : json["dine_in"].toString(),
+        showAnyLicenceNumber: json["show_any_licence_number"] == null
+            ? null
+            : json["show_any_licence_number"].toString(),
+        licenceName: json["licence_name"] == null
+            ? null
+            : json["licence_name"].toString(),
+        licenceNumber: json["licence_number"] == null
+            ? null
+            : json["licence_number"].toString(),
+
       );
 
   Map<String, dynamic> toJson() => {
@@ -706,5 +728,9 @@ class StoreDataObj {
         "display_store_location":
             display_store_location == null ? null : display_store_location,
         "dine_in": dineIn == null ? null : dineIn,
+        "show_any_licence_number":
+            showAnyLicenceNumber == null ? null : showAnyLicenceNumber,
+        "licence_name": licenceName == null ? null : licenceName,
+        "licence_number": licenceNumber == null ? null : licenceNumber,
       };
 }

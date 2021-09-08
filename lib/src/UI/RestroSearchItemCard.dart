@@ -26,6 +26,14 @@ class RestroSearchItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
+        if (storeDataObj.storeStatus == "0") {
+          DialogUtils.displayCommonDialog(
+            context,
+            storeDataObj.storeName,
+            storeDataObj.storeMsg,
+          );
+          return;
+        }
         if (!Utils.checkStoreOpenTiming(storeDataObj)) {
           DialogUtils.displayCommonDialog(
             context,
@@ -76,7 +84,10 @@ class RestroSearchItemCard extends StatelessWidget {
                                           left: 7, right: 20, top: 5),
                                       child: Container(
                                           padding: EdgeInsets.only(
-                                              left: 2, top: 2, right: 2, bottom: 2),
+                                              left: 2,
+                                              top: 2,
+                                              right: 2,
+                                              bottom: 2),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(5.0)),
@@ -107,7 +118,8 @@ class RestroSearchItemCard extends StatelessWidget {
                                 child: Padding(
                                     padding: EdgeInsets.only(top: 4),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           mainAxisAlignment:
@@ -117,7 +129,8 @@ class RestroSearchItemCard extends StatelessWidget {
                                               child: Text(
                                                   "${storeDataObj.storeName}",
                                                   maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   style: TextStyle(
                                                     fontSize: 18.0,
                                                     color: productHeadingColor,
@@ -127,9 +140,9 @@ class RestroSearchItemCard extends StatelessWidget {
                                           ],
                                         ),
                                         Visibility(
-                                          visible:
-                                              brandData.display_store_location ==
-                                                  '1',
+                                          visible: brandData
+                                                  .display_store_location ==
+                                              '1',
                                           child: Container(
                                               child: Row(
                                             mainAxisAlignment:
@@ -138,16 +151,20 @@ class RestroSearchItemCard extends StatelessWidget {
                                               Expanded(
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
-                                                      right: 10, top: 5, bottom: 5),
+                                                      right: 10,
+                                                      top: 5,
+                                                      bottom: 5),
                                                   child: Text(
                                                     "${storeDataObj.location}, ${storeDataObj.city}, ${storeDataObj.state}",
                                                     style: TextStyle(
                                                         fontSize: 14,
                                                         color:
                                                             staticHomeDescriptionColor,
-                                                        fontWeight: FontWeight.w400),
+                                                        fontWeight:
+                                                            FontWeight.w400),
                                                     maxLines: 2,
-                                                    overflow: TextOverflow.ellipsis,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 ),
                                               ),
@@ -158,7 +175,8 @@ class RestroSearchItemCard extends StatelessWidget {
                                           height: 2,
                                           width: 40,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
                                             color: listingBorderColor,
                                           ),
                                         ),
@@ -172,14 +190,17 @@ class RestroSearchItemCard extends StatelessWidget {
                                                 "Order Now",
                                                 style: TextStyle(
                                                     fontSize: 14,
-                                                    color:
-                                                        appThemeSecondary,
-                                                    fontWeight: FontWeight.w400),
+                                                    color: appThemeSecondary,
+                                                    fontWeight:
+                                                        FontWeight.w400),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
-                                            Icon(Icons.arrow_right,color: appThemeSecondary,)
+                                            Icon(
+                                              Icons.arrow_right,
+                                              color: appThemeSecondary,
+                                            )
                                           ],
                                         )),
                                         Visibility(
@@ -189,15 +210,17 @@ class RestroSearchItemCard extends StatelessWidget {
                                                 alignment: Alignment.topLeft,
                                                 child: Container(
                                                   padding: EdgeInsets.fromLTRB(
-                                                      0,0, 5, 3),
+                                                      0, 0, 5, 3),
                                                   decoration: BoxDecoration(
                                                       color: whiteWith70Opacity,
                                                       borderRadius:
-                                                          BorderRadius.circular(5)),
+                                                          BorderRadius.circular(
+                                                              5)),
                                                   child: Text(
                                                     'Delivery in ${storeDataObj.preparationTime} mins',
                                                     style: TextStyle(
-                                                        color: staticHomeDescriptionColor,
+                                                        color:
+                                                            staticHomeDescriptionColor,
                                                         fontSize: 12),
                                                   ),
                                                 )))
@@ -207,10 +230,10 @@ class RestroSearchItemCard extends StatelessWidget {
                         )),
                       ])),
               Visibility(
-                visible: !Utils.checkStoreOpenTiming(storeDataObj),
+                visible: !Utils.checkStoreOpenTiming(storeDataObj) ||
+                    storeDataObj.storeStatus == "0",
                 child: Padding(
-                  padding: EdgeInsets.only(
-                      left: 7, right: 20, top: 5),
+                  padding: EdgeInsets.only(left: 7, right: 20, top: 5),
                   child: Container(
                     height: 80.0,
                     color: Colors.white.withOpacity(0.9),
@@ -220,32 +243,32 @@ class RestroSearchItemCard extends StatelessWidget {
                         children: [
                           Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.red, width: 1),
+                                  border:
+                                      Border.all(color: Colors.red, width: 1),
                                   color: Colors.white,
-                                  borderRadius:
-                                  BorderRadius.circular(5)),
+                                  borderRadius: BorderRadius.circular(5)),
                               child: Padding(
                                 padding: EdgeInsets.all(2),
                                 child: Text(
                                   "Store Closed",
                                   style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 12),
+                                      color: Colors.red, fontSize: 12),
                                 ),
                               )),
                           Container(
                               child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: 15, top: 5, bottom: 10, right: 15),
-                                child: Text(
-                                  "${storeDataObj.timimg.closehoursMessage}",
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.red, fontSize: 14),
-                                ),
-                              )),
+                            padding: EdgeInsets.only(
+                                left: 15, top: 5, bottom: 10, right: 15),
+                            child: Text(
+                              storeDataObj.storeStatus == "0"
+                                  ? "${storeDataObj.storeMsg}"
+                                  : "${storeDataObj.timimg.closehoursMessage}",
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: Colors.red, fontSize: 14),
+                            ),
+                          )),
                         ],
                       ),
                     ),
