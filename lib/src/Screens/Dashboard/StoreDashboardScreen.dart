@@ -4,9 +4,13 @@ import 'package:restroapp/src/UI/StoreSearchUI.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/src/material/switch.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
+import 'package:restroapp/src/UI/StoreSearchUI.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -14,11 +18,13 @@ import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class StoreDashboardScreen extends StatefulWidget {
   final StoreDataModel store;
@@ -39,7 +45,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   bool isStoreClosed;
   final DatabaseHelper databaseHelper = new DatabaseHelper();
   bool isLoading = true;
-
+  bool vegNonVeg = false;
   CategoryResponse categoryResponse;
 
   CategoryModel selectedCategory;
@@ -289,7 +295,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
               //margin: EdgeInsets.only(top: 70),
               width: Utils.getDeviceWidth(context),
               height: 120,
-             // padding: EdgeInsets.all(16),
+              // padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                   gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -591,6 +597,27 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700),
                               ),
+                              Visibility(
+                                visible: store.enableVegNonveg == "1",
+                                child: Row(children: [
+                                  Text(
+                                    "Veg Only",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  Switch(
+                                    value: vegNonVeg,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        vegNonVeg = value;
+                                        getHomeCategoryProductApi();
+                                        print(vegNonVeg);
+                                      });
+                                    },
+                                    activeTrackColor: Colors.grey[400],
+                                    activeColor: appTheme,
+                                  ),
+                                ]),
+                              ),
                             ],
                           ),
                         ),
@@ -758,7 +785,29 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           for (int i = 0; i < response.subCategories.length; i++) {
             if (response.subCategories[i].products.isNotEmpty) {
               products.add(response.subCategories[i]);
-              products.addAll(response.subCategories[i].products);
+              if (vegNonVeg) {
+                bool anyItemAdded = false;
+                for (int productCounter = 0;
+                    productCounter < response.subCategories[i].products.length;
+                    productCounter++) {
+                  if (response.subCategories[i].products[productCounter]
+                              .nutrient !=
+                          'Non Veg' ||
+                      response.subCategories[i].products[productCounter]
+                              .nutrient
+                              .toLowerCase() !=
+                          'non veg') {
+                    products.add(
+                        response.subCategories[i].products[productCounter]);
+                    anyItemAdded = true;
+                  }
+                }
+                if (!anyItemAdded) {
+                  products.removeLast();
+                }
+              } else {
+                products.addAll(response.subCategories[i].products);
+              }
             }
           }
 
@@ -841,5 +890,19 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     }
     eventBus.fire(updateStoreSearch(searchedProductList));
     setState(() {});
+  }
+
+  void toggleSwitch(bool value) {
+    if (vegNonVeg == false) {
+      setState(() {
+        vegNonVeg = true;
+      });
+      print('Switch Button is ON');
+    } else {
+      setState(() {
+        vegNonVeg = false;
+      });
+      print('Switch Button is OFF');
+    }
   }
 }

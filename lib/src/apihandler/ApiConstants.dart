@@ -9,9 +9,9 @@ class ApiConstants {
   static String baseUrl2 = '${base}marketplace/';
 
   // staging url
-  static String base = 'http://devmarketplace.restroapp.com/brandId/v1/';
+  static String base = 'https://devmarketplace.restroapp.com/brandId/v1/';
   static String baseUrl3 =
-      'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
+      'https://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 
   //live url
   // static String base = 'https://marketplace.restroapp.com/brandId/v1/';
