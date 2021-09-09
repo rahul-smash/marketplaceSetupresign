@@ -4,9 +4,9 @@ class AppConstant {
   static bool isLoggedIn = false;
   static bool isShowStaticPlaceHolder = false;
 
-  static String currency = "₹";//\u20B9
+  static String currency = "₹"; //\u20B9
   //restro
-  static String brandID = "22";
+  static String brandID = "2";
   //grocer
 //  static String brandID = "3";
   static String appThemeColor = "appThemeColor";
@@ -46,10 +46,13 @@ class AppConstant {
   static final String pleaseLogin = "Please login to proceed further";
   static final String selectLocation = "Select Location";
   static final String selectAddress = "Please select delivery address";
-  static final String deleteAddress = "Are you sure you want to delete this address?";
-  static final String cancelOrder = "Are you sure you want to Cancel this order?";
+  static final String deleteAddress =
+      "Are you sure you want to delete this address?";
+  static final String cancelOrder =
+      "Are you sure you want to Cancel this order?";
   static final String emptyCartMsg = "Are you sure you want to clear cart?";
-  static final String orderAdded = "Thank you for placing the order.\nWe will confirm your order soon.";
+  static final String orderAdded =
+      "Thank you for placing the order.\nWe will confirm your order soon.";
   static final String enterAddress = 'Enter Complete Address';
   static final String selectArea = 'Please select area';
   static final String selectCity = 'Please select city';
@@ -64,22 +67,16 @@ class AppConstant {
   static final String pickup = "PickUP";
   static final String dine = "dine";
 
-
-
-  static final String txt_OTP = "Please enter your One Time Password.We\nhave sent the same to your number.";
+  static final String txt_OTP =
+      "Please enter your One Time Password.We\nhave sent the same to your number.";
 
   static final String enterOtp = "Please enter otp number";
 
-
-
-
-
   static final String enterEmailAddress = "Please enter a valid Email address";
 
-
-  static final String entertxForgotPssword = "Please enter your registered email id and we will email you the password.";
+  static final String entertxForgotPssword =
+      "Please enter your registered email id and we will email you the password.";
   static final String appName = "appName";
-
 
   static final String is24x7Open = 'is24x7Open';
   static final String DeliverySlot = 'deliverySlot';
@@ -101,10 +98,7 @@ class AppConstant {
 
   static final String txt_terms_condition = 'Terms n Condition :';
 
-
   static final String txt_code = 'Code :';
-
-
 
   static final String favsAdded = "Added to favourites";
   static final String favsRemoved = "Removed from favourites";
@@ -121,17 +115,17 @@ class AppConstant {
 
   static final String txt_code_value = "Code";
 
-  static final String txt_sharing_content = "Share Our App among your Friends and \n Relative.They will recieve the Coupon and you will get one too.";
-
+  static final String txt_sharing_content =
+      "Share Our App among your Friends and \n Relative.They will recieve the Coupon and you will get one too.";
 
   static final String txt_share = "SHARE";
 
   static DynamicResponse dynamicResponse;
 
-  static String getCartReplaceMsg(String oldStoreName1, newStoreName2){
+  static String getCartReplaceMsg(String oldStoreName1, newStoreName2) {
 //    String replaceCartMsg = "Your cart contains dishes from ${oldStoreName1}. Do you want to discard the selection and add dishes from ${newStoreName2}?";
-    String replaceCartMsg = "We will remove items of ${oldStoreName1} from your cart";
+    String replaceCartMsg =
+        "We will remove items of ${oldStoreName1} from your cart";
     return replaceCartMsg;
   }
-
 }
