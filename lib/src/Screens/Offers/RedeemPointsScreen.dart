@@ -293,7 +293,7 @@ class RedeemPointsScreenState extends State<RedeemPointsScreen> {
     print("----couponCode-----=>${loyalityData.amount}");
     Utils.showProgressDialog(context);
     ApiController.multipleTaxCalculationRequest(
-            loyalityData.couponCode, loyalityData.amount, "0", json)
+            loyalityData.couponCode, loyalityData.amount, widget.taxModel.shipping, json)
         .then((response) async {
       Utils.hideProgressDialog(context);
       if (response.success) {

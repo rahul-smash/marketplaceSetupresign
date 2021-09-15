@@ -1,5 +1,8 @@
 import 'dart:collection';
-
+import 'package:flutter/painting.dart';
+import 'package:restroapp/src/UI/StoreSearchUI.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -87,6 +90,14 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
       setState(() {});
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (store.storeStatus == "0") {
+        DialogUtils.displayCommonDialog(
+          context,
+          store.storeName,
+          store.storeMsg,
+        );
+        return;
+      }
       if (!Utils.checkStoreOpenTime(store)) {
         DialogUtils.displayCommonDialog(
           context,
@@ -341,7 +352,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                         child: Padding(
                                           padding: EdgeInsets.all(3),
                                           child: Image.asset(
-                                              'images/starIcon.png',
+                                              'images/staricon.png',
                                               width: 15,
                                               fit: BoxFit.scaleDown,
                                               color: Colors.white),
@@ -378,7 +389,8 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
             ),
           ),
           Visibility(
-            visible: !Utils.checkStoreOpenTime(store),
+            visible:
+                !Utils.checkStoreOpenTime(store) || store.storeStatus == "0",
             child: Container(
               height: 150.0,
               color: Colors.black45,
@@ -406,7 +418,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                       padding: EdgeInsets.only(
                           left: 15, top: 5, bottom: 10, right: 15),
                       child: Text(
-                        "${store.closehoursMessage}",
+                        store.storeStatus == "0"
+                            ? "${store.storeMsg}"
+                            : "${store.closehoursMessage}",
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -583,24 +597,27 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700),
                               ),
-                              Row(children: [
-                                Text(
-                                  "Veg Only",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                Switch(
-                                  value: vegNonVeg,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      vegNonVeg = value;
-                                      getHomeCategoryProductApi();
-                                      print(vegNonVeg);
-                                    });
-                                  },
-                                  activeTrackColor: Colors.grey[400],
-                                  activeColor: appTheme,
-                                ),
-                              ]),
+                              Visibility(
+                                visible: store.enableVegNonveg == "1",
+                                child: Row(children: [
+                                  Text(
+                                    "Veg Only",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  Switch(
+                                    value: vegNonVeg,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        vegNonVeg = value;
+                                        getHomeCategoryProductApi();
+                                        print(vegNonVeg);
+                                      });
+                                    },
+                                    activeTrackColor: Colors.grey[400],
+                                    activeColor: appTheme,
+                                  ),
+                                ]),
+                              ),
                             ],
                           ),
                         ),

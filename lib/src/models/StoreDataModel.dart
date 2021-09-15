@@ -130,6 +130,7 @@ class StoreDataObj {
     this.showAnyLicenceNumber,
     this.licenceName,
     this.licenceNumber,
+    this.enableVegNonveg,
   });
 
   String id;
@@ -219,6 +220,7 @@ class StoreDataObj {
   String showAnyLicenceNumber;
   String licenceName;
   String licenceNumber;
+  String enableVegNonveg;
 
   //optional
   Dish dish;
@@ -311,6 +313,7 @@ class StoreDataObj {
     String showAnyLicenceNumber,
     String licenceName,
     String licenceNumber,
+    String enableVegNonveg,
   }) =>
       StoreDataObj(
         id: id ?? this.id,
@@ -405,6 +408,7 @@ class StoreDataObj {
         showAnyLicenceNumber: showAnyLicenceNumber ?? this.showAnyLicenceNumber,
         licenceName: licenceName ?? this.licenceName,
         licenceNumber: licenceNumber ?? this.licenceNumber,
+        enableVegNonveg: enableVegNonveg ?? this.enableVegNonveg,
       );
 
   factory StoreDataObj.fromRawJson(String str) =>
@@ -619,7 +623,9 @@ class StoreDataObj {
         licenceNumber: json["licence_number"] == null
             ? null
             : json["licence_number"].toString(),
-
+        enableVegNonveg: json["enable_veg_nonveg"] == null
+            ? null
+            : json["enable_veg_nonveg"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -738,5 +744,6 @@ class StoreDataObj {
             showAnyLicenceNumber == null ? null : showAnyLicenceNumber,
         "licence_name": licenceName == null ? null : licenceName,
         "licence_number": licenceNumber == null ? null : licenceNumber,
+        "enable_veg_nonveg": enableVegNonveg == null ? null : enableVegNonveg,
       };
 }
