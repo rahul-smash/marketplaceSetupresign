@@ -26,6 +26,7 @@ class ApiConstants {
 
   static String getAddressArea = 'deliveryAreas/Area';
   static String getStoreRadius = '/storeRadius';
+  static String getStoreRadiusv2 = '/storeRadiusV2';
   static String getStoreArea = 'storearea';
 
 //  static String validateCoupon = 'validateAllCoupons';
