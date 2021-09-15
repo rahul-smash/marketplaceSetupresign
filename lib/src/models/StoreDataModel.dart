@@ -51,6 +51,7 @@ class StoreDataObj {
     this.state,
     this.country,
     this.timezone,
+    this.operatingZoneId,
     this.zipcode,
     this.lat,
     this.lng,
@@ -139,6 +140,7 @@ class StoreDataObj {
   String state;
   String country;
   String timezone;
+  String operatingZoneId;
   String zipcode;
   String lat;
   String lng;
@@ -420,6 +422,9 @@ class StoreDataObj {
         state: json["state"] == null ? null : json["state"].toString(),
         country: json["country"] == null ? null : json["country"].toString(),
         timezone: json["timezone"] == null ? null : json["timezone"].toString(),
+        operatingZoneId: json["operating_zone_id"] == null
+            ? null
+            : json["operating_zone_id"],
         zipcode: json["zipcode"] == null ? null : json["zipcode"].toString(),
         lat: json["lat"] == null ? null : json["lat"].toString(),
         lng: json["lng"] == null ? null : json["lng"].toString(),
@@ -626,6 +631,7 @@ class StoreDataObj {
         "state": state == null ? null : state,
         "country": country == null ? null : country,
         "timezone": timezone == null ? null : timezone,
+        "operating_zone_id": operatingZoneId == null ? null : operatingZoneId,
         "zipcode": zipcode == null ? null : zipcode,
         "lat": lat == null ? null : lat,
         "lng": lng == null ? null : lng,

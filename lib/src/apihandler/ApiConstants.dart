@@ -9,13 +9,14 @@ class ApiConstants {
   static String baseUrl2 = '${base}marketplace/';
 
   // staging url
-  // static String base = 'http://devmarketplace.restroapp.com/brandId/v1/';
-  // static String baseUrl3 = 'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
+  static String base = 'http://devmarketplace.restroapp.com/brandId/v1/';
+  static String baseUrl3 =
+      'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 
   //live url
-  static String base = 'https://marketplace.restroapp.com/brandId/v1/';
-  static String baseUrl3 =
-      'https://marketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
+  // static String base = 'https://marketplace.restroapp.com/brandId/v1/';
+  // static String baseUrl3 =
+  //     'https://marketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 
   static String storeList = 'storeList';
   static String version = 'version';
