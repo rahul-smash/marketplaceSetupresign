@@ -1,29 +1,32 @@
+import 'dart:io';
+
 import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geocoder/model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:restroapp/src/Screens/BookOrder/SubCategoryProductScreen.dart';
+import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart'
+    as permission_handler;
 import 'package:restroapp/src/Screens/BookOrder/MyCartScreen.dart';
+import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeCategoryView.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeFiltersView.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeStoresView.dart';
 import 'package:restroapp/src/Screens/Dashboard/MarketPlaceHomeTagsView.dart';
-import 'package:restroapp/src/Screens/Dashboard/ProductDetailScreen.dart';
+//import 'package:google_maps_webservice/places.dart';
+import 'package:restroapp/src/Screens/Dashboard/StoreDashboardScreen.dart';
 import 'package:restroapp/src/Screens/Notification/NotificationScreen.dart';
-import 'package:restroapp/src/Screens/Dashboard/HomeSearchView.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreenVersion2.dart';
-import 'package:restroapp/src/Screens/SideMenu/AdditionalInformation.dart';
-import 'package:restroapp/src/UI/CartBottomView.dart';
-import 'package:restroapp/src/UI/OffersList.dart';
 import 'package:restroapp/src/Screens/SideMenu/SideMenu.dart';
-import 'package:restroapp/src/UI/CategoryView.dart';
+import 'package:restroapp/src/UI/OffersList.dart';
 import 'package:restroapp/src/UI/OffersListDetail.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
@@ -32,10 +35,8 @@ import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/Categorys.dart';
 import 'package:restroapp/src/models/ConfigModel.dart';
-import 'package:restroapp/src/models/MembershipPlanResponse.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
-import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/TagsModel.dart';
@@ -48,19 +49,11 @@ import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/HomeScreenContentText.dart';
 import 'package:restroapp/src/utils/LogicalStack.dart';
 import 'package:restroapp/src/utils/Utils.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:restroapp/src/widgets/AutoSearch.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import 'RestroLIstScreen.dart';
 import 'SearchScreen.dart';
-import 'dart:io';
-import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
-import 'package:location/location.dart';
-
-//import 'package:google_maps_webservice/places.dart';
-import 'package:restroapp/src/Screens/Dashboard/StoreDashboardScreen.dart';
-import 'package:permission_handler/permission_handler.dart'
-    as permission_handler;
 
 class MarketPlaceHomeScreen extends StatefulWidget {
   //final StoreModel store;

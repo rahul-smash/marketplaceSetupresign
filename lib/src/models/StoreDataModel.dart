@@ -51,6 +51,7 @@ class StoreDataObj {
     this.state,
     this.country,
     this.timezone,
+    this.operatingZoneId,
     this.zipcode,
     this.lat,
     this.lng,
@@ -129,6 +130,7 @@ class StoreDataObj {
     this.showAnyLicenceNumber,
     this.licenceName,
     this.licenceNumber,
+    this.enableVegNonveg,
   });
 
   String id;
@@ -139,6 +141,7 @@ class StoreDataObj {
   String state;
   String country;
   String timezone;
+  String operatingZoneId;
   String zipcode;
   String lat;
   String lng;
@@ -217,6 +220,7 @@ class StoreDataObj {
   String showAnyLicenceNumber;
   String licenceName;
   String licenceNumber;
+  String enableVegNonveg;
 
   //optional
   Dish dish;
@@ -309,6 +313,7 @@ class StoreDataObj {
     String showAnyLicenceNumber,
     String licenceName,
     String licenceNumber,
+    String enableVegNonveg,
   }) =>
       StoreDataObj(
         id: id ?? this.id,
@@ -403,6 +408,7 @@ class StoreDataObj {
         showAnyLicenceNumber: showAnyLicenceNumber ?? this.showAnyLicenceNumber,
         licenceName: licenceName ?? this.licenceName,
         licenceNumber: licenceNumber ?? this.licenceNumber,
+        enableVegNonveg: enableVegNonveg ?? this.enableVegNonveg,
       );
 
   factory StoreDataObj.fromRawJson(String str) =>
@@ -420,6 +426,9 @@ class StoreDataObj {
         state: json["state"] == null ? null : json["state"].toString(),
         country: json["country"] == null ? null : json["country"].toString(),
         timezone: json["timezone"] == null ? null : json["timezone"].toString(),
+        operatingZoneId: json["operating_zone_id"] == null
+            ? null
+            : json["operating_zone_id"],
         zipcode: json["zipcode"] == null ? null : json["zipcode"].toString(),
         lat: json["lat"] == null ? null : json["lat"].toString(),
         lng: json["lng"] == null ? null : json["lng"].toString(),
@@ -614,7 +623,9 @@ class StoreDataObj {
         licenceNumber: json["licence_number"] == null
             ? null
             : json["licence_number"].toString(),
-
+        enableVegNonveg: json["enable_veg_nonveg"] == null
+            ? null
+            : json["enable_veg_nonveg"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -626,6 +637,7 @@ class StoreDataObj {
         "state": state == null ? null : state,
         "country": country == null ? null : country,
         "timezone": timezone == null ? null : timezone,
+        "operating_zone_id": operatingZoneId == null ? null : operatingZoneId,
         "zipcode": zipcode == null ? null : zipcode,
         "lat": lat == null ? null : lat,
         "lng": lng == null ? null : lng,
@@ -732,5 +744,6 @@ class StoreDataObj {
             showAnyLicenceNumber == null ? null : showAnyLicenceNumber,
         "licence_name": licenceName == null ? null : licenceName,
         "licence_number": licenceNumber == null ? null : licenceNumber,
+        "enable_veg_nonveg": enableVegNonveg == null ? null : enableVegNonveg,
       };
 }

@@ -65,6 +65,9 @@ import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/ValidateCouponsResponse.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/models/forgotPassword/GetForgotPwdData.dart';
+import 'package:restroapp/src/models/storeRadiusV2response.dart';
+import 'package:restroapp/src/models/storeRadiusV2response.dart';
+import 'package:restroapp/src/models/storeRadiusV2response.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1334,6 +1337,30 @@ class ApiController {
       final parsed = json.decode(respStr);
 
       StoreRadiousResponse res = StoreRadiousResponse.fromJson(parsed);
+      return res;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
+  static Future<StoreRadiusV2> storeRadiusV2Api(String operatingZone) async {
+    //StoreModel store = await SharedPrefs.getStore();
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
+        ApiConstants.getStoreRadiusv2;
+
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    print('@@url=${url}');
+
+    try {
+      request.fields.addAll({"operating_zone_id": operatingZone});
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('@@respStr' + respStr);
+      final parsed = json.decode(respStr);
+
+      StoreRadiusV2 res = StoreRadiusV2.fromJson(parsed);
       return res;
     } catch (e) {
       Utils.showToast(e.toString(), true);
