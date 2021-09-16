@@ -1741,14 +1741,16 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
               ? locationAddress.replaceFirst(',', '')
               : locationAddress;
         //banners reload
-        _getBannersApi(
-            city: (first.subAdminArea != null && first.subAdminArea.isNotEmpty)
-                ? first.subAdminArea
-                : "");
+        _getBannersApi(city: getCity(first));
         //ReloadApi
         _getStoreApi();
       });
     }
+  }
+
+  String getCity(Address address) {
+    return '${(address.subAdminArea != null && address.subAdminArea.isNotEmpty) ? address.subAdminArea : ""}' +
+        ',${(address.adminArea != null && address.adminArea.isNotEmpty) ? address.adminArea : ""}';
   }
 
   void _getContentApi() {
