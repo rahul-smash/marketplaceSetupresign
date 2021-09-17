@@ -2611,7 +2611,13 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           if (responseOrderDetail.isNotEmpty && checkThatItemIsInStocks())
             shippingCharges = '0';
           else {
-            shippingCharges = widget.areaObject.charges;
+            print(
+                "-------------Shipping Charges----------${widget.areaObject.charges}-----${totalPrice}----${widget.areaObject.minOrder}");
+            if (totalPrice <= int.parse(widget.areaObject.minOrder)) {
+              shippingCharges = widget.areaObject.charges;
+            } else {
+              shippingCharges = "0";
+            }
           }
         }
         //print("----minAmount=${widget.address.minAmount}");
