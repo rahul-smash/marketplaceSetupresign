@@ -9,8 +9,6 @@ import 'package:restroapp/src/models/BrandModel.dart';
 import 'package:restroapp/src/models/DeliveryAddressResponse.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
-import 'package:restroapp/src/models/storeRadiusV2response.dart';
-import 'package:restroapp/src/models/storeRadiusV2response.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
@@ -446,13 +444,14 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
           print("==distanceInKm==${distanceInKms}");
           print(store.operatingZoneId);
 
-          StoreRadiusV2 storeRadiusV2Response =
+          StoreRadiousResponse storeRadiusV2Response =
               await ApiController.storeRadiusV2Api(store.operatingZoneId);
+          print(store.operatingZoneId);
 
           Area area;
           //print("---${areaList.length}---and-- ${distanceInKms}---");
           for (int i = 0; i < storeRadiusV2Response.data.length; i++) {
-            Area areaObject = storeRadiusV2Response.data[i] as Area;
+            Area areaObject = storeRadiusV2Response.data[i];
             int radius = int.parse(areaObject.radius);
             if (distanceInKms < radius && areaObject.radiusCircle == "Within") {
               area = areaObject;

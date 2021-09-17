@@ -65,9 +65,6 @@ import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/ValidateCouponsResponse.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/models/forgotPassword/GetForgotPwdData.dart';
-import 'package:restroapp/src/models/storeRadiusV2response.dart';
-import 'package:restroapp/src/models/storeRadiusV2response.dart';
-import 'package:restroapp/src/models/storeRadiusV2response.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1344,7 +1341,8 @@ class ApiController {
     }
   }
 
-  static Future<StoreRadiusV2> storeRadiusV2Api(String operatingZone) async {
+  static Future<StoreRadiousResponse> storeRadiusV2Api(
+      String operatingZone) async {
     //StoreModel store = await SharedPrefs.getStore();
 
     var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
@@ -1360,7 +1358,7 @@ class ApiController {
       print('@@respStr' + respStr);
       final parsed = json.decode(respStr);
 
-      StoreRadiusV2 res = StoreRadiusV2.fromJson(parsed);
+      StoreRadiousResponse res = StoreRadiousResponse.fromJson(parsed);
       return res;
     } catch (e) {
       Utils.showToast(e.toString(), true);
