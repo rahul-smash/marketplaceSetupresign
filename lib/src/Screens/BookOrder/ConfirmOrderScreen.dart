@@ -27,6 +27,7 @@ import 'package:restroapp/src/models/OrderDetailsModel.dart';
 import 'package:restroapp/src/models/PeachPayCheckOutResponse.dart';
 import 'package:restroapp/src/models/PeachPayVerifyResponse.dart';
 import 'package:restroapp/src/models/PhonePeResponse.dart';
+import 'package:restroapp/src/models/PhonePeVerifyResponse.dart';
 import 'package:restroapp/src/models/RazorpayOrderData.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
@@ -2327,10 +2328,13 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
         case "Phonepe":
           ApiController.phonepeCreateOrderApi(
-              double.parse(taxModel.total).toStringAsFixed(2), orderJson,
+            // double.parse(taxModel.total).toStringAsFixed(2), orderJson,
+              double.parse(
+                  '1'
+              ).toStringAsFixed(2), orderJson,
               detailsModel.orderDetails,
               storeModel.id,
-              _brandData.currencyAbbr,merchantUserId: userId)
+              _brandData.currencyAbbr, merchantUserId: userId)
               .then((response) {
             Utils.hideProgressDialog(context);
             PhonePeResponse model = response;
@@ -2443,7 +2447,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               print("--response == null-response == null-");
               return;
             }
-            if (response.success == false) {
+            if (onlineMethod == 'Phonepe' && response.success == false
+                && response.message.contains(
+                    'Record has already been saved successfully!')) {
+
+            } else if (response.success == false) {
               DialogUtils.displayCommonDialog(
                   context, _brandData.name, response.message);
               return;
@@ -2474,7 +2482,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               }
             } else {
               bool result = await DialogUtils.displayThankYouDialog(context,
-                  response.success ? AppConstant.orderAdded : response.message);
+                  response.success ? AppConstant.orderAdded :
+                  (onlineMethod == 'Phonepe' && response.success == false
+                      && response.message.contains(
+                          AppConstant.record_already_exist_msg))
+                      ? AppConstant.orderAdded : response.message);
               if (result == true) {
                 await databaseHelper.deleteTable(DatabaseHelper.CART_Table);
                 Navigator.of(context).popUntil((route) => route.isFirst);
@@ -2513,6 +2525,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       callPeachPayPaytmOrderApi(
           event.url, event.checkoutID, event.resourcePath);
     });
+    eventBus.on<onPhonePeFinished>().listen((event) {
+      callPhonePeFinishedOrderApi(
+          event.paymentRequestId, event.transId);
+    });
   }
 
   void callPaytmApi(String url, String orderId, String txnID) {
@@ -2532,6 +2548,29 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         if (model.success) {
           placeOrderApiCall(
               response.data.checkoutId, response.data.id, 'PeachPayments');
+        } else {
+          Utils.showToast("payment failed", true);
+        }
+      } else {
+        Utils.showToast("Something went wrong!", true);
+      }
+    });
+  }
+
+  void callPhonePeFinishedOrderApi(String paymentRequestId,
+      String transId) {
+    Utils.showProgressDialog(context);
+    ApiController.phonePeVerifyTransactionApi(
+        paymentRequestId, storeModel.id)
+        .then((response) {
+      Utils.hideProgressDialog(context);
+      print("----phonePeVerifyTransactionApi----${response}--");
+      if (response != null) {
+        PhonePeVerifyResponse model = response;
+        if (model.success) {
+          placeOrderApiCall(
+              response.paymentRequestId, response.data.data.providerReferenceId,
+              'Phonepe');
         } else {
           Utils.showToast("payment failed", true);
         }

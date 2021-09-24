@@ -126,6 +126,8 @@ class AppConstant {
 
   static final String txt_share = "SHARE";
 
+  static final String record_already_exist_msg = 'Record has already been saved successfully!';
+
   static DynamicResponse dynamicResponse;
 
   static String getCartReplaceMsg(String oldStoreName1, newStoreName2){

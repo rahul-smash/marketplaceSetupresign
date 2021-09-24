@@ -82,4 +82,10 @@ class onPeachPayFinished {
 
   onPeachPayFinished(this.url, this.checkoutID, this.resourcePath);
 }
+class onPhonePeFinished {
+  String paymentRequestId;
+  String transId;
+
+  onPhonePeFinished( this.paymentRequestId, this.transId);
+}
 

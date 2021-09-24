@@ -32,6 +32,7 @@ import 'package:restroapp/src/models/LoyalityPointsModel.dart';
 import 'package:restroapp/src/models/PeachPayCheckOutResponse.dart';
 import 'package:restroapp/src/models/PeachPayVerifyResponse.dart';
 import 'package:restroapp/src/models/PhonePeResponse.dart';
+import 'package:restroapp/src/models/PhonePeVerifyResponse.dart';
 import 'package:restroapp/src/models/StorelatlngsResponse.dart';
 import 'package:restroapp/src/models/MembershipPlanResponse.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
@@ -2511,6 +2512,31 @@ class ApiController {
     } catch (e) {
       print('---catch-phonepeCreateOrderApi-----' + e.toString());
       //Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
+  static Future<PhonePeVerifyResponse> phonePeVerifyTransactionApi(
+      String paymentRequestId, String storeID) async {
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
+        ApiConstants.checkPhonepeTransactionStatus;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    print(url);
+    try {
+      request.fields.addAll({
+        "payment_request_id": paymentRequestId,
+      });
+      print(request.fields.toString());
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      PhonePeVerifyResponse model = PhonePeVerifyResponse.fromJson(parsed);
+      return model;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
       return null;
     }
   }
