@@ -1640,6 +1640,13 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             textColor: Colors.white,
             color: appTheme,
             onPressed: () async {
+
+              bool isNetworkAvailable = await Utils.isNetworkAvailable();
+              if (!isNetworkAvailable) {
+                Utils.showToast(AppConstant.noInternet, false);
+                return;
+              }
+
               print("Butttin is pressed9***************");
               Utils.showProgressDialog(context);
               var response = await ApiController.getStoreVersionData(
@@ -1751,12 +1758,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //              }
 
               print("----paymentMod----${widget.paymentMode}--");
-
-              bool isNetworkAvailable = await Utils.isNetworkAvailable();
-              if (!isNetworkAvailable) {
-                Utils.showToast(AppConstant.noInternet, false);
-                return;
-              }
 
               if (widget.deliveryType == OrderType.Delivery) {
                 /*if (storeModel.deliverySlot == "0") {

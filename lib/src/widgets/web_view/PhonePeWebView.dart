@@ -67,7 +67,7 @@ class PhonePeWebView extends StatelessWidget {
                   Navigator.pop(context);
                 }
 
-              } else if (url.toLowerCase().contains("failure")) {
+              } else if (url.toLowerCase().contains("failure")||url.toLowerCase().contains("error")){
                 Navigator.pop(context);
                 Utils.showToast("Payment Failed", false);
               }
