@@ -13,7 +13,7 @@
     if (@available(iOS 10.0, *)) {
          [UNUserNotificationCenter currentNotificationCenter].delegate =  self;
        }
-    [GMSServices provideAPIKey: @"AIzaSyBB1QThVluIt-PzfhPs3ZUWV_CZq8H4qXA"];
+    [GMSServices provideAPIKey: @"AIzaSyCwKXvgsBElyhqwj03ro9e-Lnu3fmRmpJI"];
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 

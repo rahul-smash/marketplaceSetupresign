@@ -55,6 +55,8 @@ class StoreData {
     this.distance,
     this.timimg,
     this.rating,
+    this.storeStatus,
+    this.storeMsg,
   });
 
   String id;
@@ -74,44 +76,50 @@ class StoreData {
   String distance;
   String rating;
   Timimg timimg;
+  String storeStatus;
+  String storeMsg;
 
   factory StoreData.fromJson(Map<String, dynamic> json) => StoreData(
-    id: json["id"],
-    storeName: json["store_name"],
-    location: json["location"],
-    city: json["city"],
-    state: json["state"],
-    lat: json["lat"],
-    lng: json["lng"],
-    contactNumber: json["contact_number"],
-    contactPerson: json["contact_person"],
-    contactEmail: json["contact_email"],
-    image: json["image"],
-    image10080: json["image_100_80"],
-    image300200: json["image_300_200"],
-    preparationTime: json["preparation_time"],
-    distance: json["distance"],
-    rating: json["rating"],
-    timimg: json["timimg"] == null ? null : Timimg.fromJson(json["timimg"]),
-  );
+        id: json["id"],
+        storeName: json["store_name"],
+        location: json["location"],
+        city: json["city"],
+        state: json["state"],
+        lat: json["lat"],
+        lng: json["lng"],
+        contactNumber: json["contact_number"],
+        contactPerson: json["contact_person"],
+        contactEmail: json["contact_email"],
+        image: json["image"],
+        image10080: json["image_100_80"],
+        image300200: json["image_300_200"],
+        preparationTime: json["preparation_time"],
+        distance: json["distance"],
+        rating: json["rating"],
+        timimg: json["timimg"] == null ? null : Timimg.fromJson(json["timimg"]),
+        storeStatus: json["store_status"],
+        storeMsg: json["store_msg"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "store_name": storeName,
-    "location": location,
-    "city": city,
-    "state": state,
-    "lat": lat,
-    "lng": lng,
-    "contact_number": contactNumber,
-    "contact_person": contactPerson,
-    "contact_email": contactEmail,
-    "image": image,
-    "image_100_80": image10080,
-    "image_300_200": image300200,
-    "preparation_time": preparationTime,
-    "distance": distance,
-    "rating": rating,
+        "id": id,
+        "store_name": storeName,
+        "location": location,
+        "city": city,
+        "state": state,
+        "lat": lat,
+        "lng": lng,
+        "contact_number": contactNumber,
+        "contact_person": contactPerson,
+        "contact_email": contactEmail,
+        "image": image,
+        "image_100_80": image10080,
+        "image_300_200": image300200,
+        "preparation_time": preparationTime,
+        "distance": distance,
+        "rating": rating,
+        "store_status": storeStatus,
+        "store_msg": storeMsg,
   };
 }
 

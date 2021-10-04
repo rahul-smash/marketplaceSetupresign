@@ -31,12 +31,12 @@ class ProductDetailsScreen extends StatefulWidget {
   Product product;
   bool isApiLoading = false, isFav = false;
   Variant passedVariant;
-
+  VoidCallback saveStore;
   String productID = '';
   String storeId = '';
 
   ProductDetailsScreen(this.product, this.passedVariant,
-      {this.productID, this.storeId});
+      {this.productID, this.storeId, this.saveStore});
 
   @override
   State<StatefulWidget> createState() {
@@ -88,6 +88,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       counter = int.parse(cartData.QUANTITY);
       showAddButton = counter == 0 ? true : false;
       setState(() {});
+      getProductDetail(widget.productID, widget.storeId);
     });
 //    databaseHelper
 //        .checkProductsExistInFavTable(
@@ -548,6 +549,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                                   insertInCartTable(widget.product, counter);
                                 }
                                 //widget.callback();
+                                widget.saveStore();
                               }
                               eventBus.fire(onCounterUpdate(
                                   counter, widget.product.id, variantId));
@@ -676,10 +678,12 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       if (count == 0) {
         databaseHelper.addProductToCart(row).then((count) {
           //widget.callback();
+          widget.saveStore();
         });
       } else {
         databaseHelper.updateProductInCart(row, variantId).then((count) {
           //widget.callback();
+          widget.saveStore();
         });
       }
     });
@@ -691,6 +695,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       variantId = variant == null ? variant_Id : variant.id;
       databaseHelper.delete(DatabaseHelper.CART_Table, variantId).then((count) {
         //widget.callback();
+        widget.saveStore();
       });
     } catch (e) {
       print(e);
@@ -719,7 +724,6 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
       if (widget.product == null) {
         widget.product = product;
       }
-      getDataFromDB();
       setState(() {
         widget.product.productImages = product.productImages;
         widget.product.description = product.description;
@@ -771,7 +775,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                   carouselController: _carouselController,
                   options: CarouselOptions(
 //                    aspectRatio: 16 / 9,
-                    height: 280,
+//                    height: 280,
                     initialPage: 0,
                     enableInfiniteScroll: false,
                     reverse: false,
@@ -847,7 +851,7 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       )
                     : Image.asset(
-                        'images/placeholder.jpg',
+                        'images/img_placeholder.jpg',
                         height: 280,
                         fit: BoxFit.cover,
                       ),
@@ -857,13 +861,13 @@ class _ProductDetailsState extends State<ProductDetailsScreen> {
 
   Widget _makeBanner(BuildContext context, int _index) {
     return Container(
-        height: 280,
+//        height: 280,
+        margin: EdgeInsets.only(left: 10,right: 10),
         child: Center(
           child: CachedNetworkImage(
             imageUrl: "${widget.product.productImages[_index].url}",
-            height: 280,
             fit: BoxFit.scaleDown,
-            placeholder: (context, url) => CircularProgressIndicator(),
+//            placeholder: (context, url) => CircularProgressIndicator(),
             errorWidget: (context, url, error) => Icon(Icons.error),
           ),
         ));

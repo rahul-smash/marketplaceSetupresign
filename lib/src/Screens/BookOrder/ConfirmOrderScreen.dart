@@ -88,7 +88,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   int selctedTag, selectedTimeSlot;
   List<Timeslot> timeslotList;
   bool isSlotSelected = false;
-
+  StoreDataModel storeCheckData;
   //Store provides instant delivery of the orders.
   bool isInstantDelivery = false;
   bool minOrderCheck = true;
@@ -114,6 +114,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   BrandData _brandData;
 
   String couponType = '';
+
+  bool isOneTimeApiCalled = false;
 
   ConfirmOrderState({this.storeModel});
 
@@ -1176,8 +1178,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                                   hideRemoveCouponFirstTime = false;
                                   taxModel = model;
                                   double taxModelTotal =
-                                      double.parse(taxModel.total) +
-                                          int.parse(shippingCharges);
+                                      double.parse(taxModel.total) ;
                                   taxModel.total = taxModelTotal.toString();
                                   appliedReddemPointsCodeList.add(
                                       model.couponCode);
@@ -1264,8 +1265,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                               hideRemoveCouponFirstTime = false;
                               taxModel = model;
                               double taxModelTotal = double.parse(
-                                  taxModel.total) +
-                                  int.parse(shippingCharges);
+                                  taxModel.total) ;
                               taxModel.total = taxModelTotal.toString();
                               appliedCouponCodeList.add(model.couponCode);
                               couponType = model.couponType;
@@ -1528,7 +1528,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                           await ApiController.multipleTaxCalculationRequest(
                               couponCodeController.text,
                               couponModel.discountAmount,
-                              "0",
+                              "${shippingCharges}",
                               json,
                               isMembershipCouponEnabled:
                               widget.subscriptionOrderType != null
@@ -1637,6 +1637,19 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             textColor: Colors.white,
             color: appTheme,
             onPressed: () async {
+              print("Butttin is pressed9***************");
+              Utils.showProgressDialog(context);
+            var response = await ApiController.getStoreVersionData(storeModel.id);
+
+                Utils.hideProgressDialog(context);
+                Utils.hideKeyboard(context);
+                StoreDataModel storeCheckData = response;
+                  if(response.success == true){
+                  if (storeCheckData != null && storeCheckData.success)
+                    setState(() {
+                      storeModel = storeCheckData.store ;
+                    });
+                };
               if (Utils.isRedundentClick(DateTime.now())) {
                 return;
               }
@@ -1644,7 +1657,15 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               bool status = Utils.checkStoreOpenTime(storeModel,
                   deliveryType: widget.deliveryType);
               print("----checkStoreOpenTime----${status}--");
-
+              print("${storeModel.storeStatus}*********");
+              if (storeModel.storeStatus == "0") {
+                DialogUtils.displayCommonDialog(
+                  context,
+                  storeModel.storeName,
+                  storeModel.storeMsg,
+                );
+                return;
+              }
               if (!status) {
                 DialogUtils.displayCommonDialog(
                   context,
@@ -1672,6 +1693,31 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //                  return;
 //                }
 //              }
+             if (widget.deliveryType == OrderType.Delivery &&
+                 widget.areaObject.notAllow) {
+               print("abb***************");
+               double totalItemPrice = double.parse(taxModel.itemSubTotal);
+               double minOrderChecking = double.parse(widget.areaObject.minOrder);
+               print("abb*************** ${totalItemPrice} and ${minOrderChecking}");
+               if (minOrderChecking > totalItemPrice ) {
+                 Utils.showToast(
+                     "Your order amount is too low. Minimum order amount is ${widget.areaObject.minOrder}",
+                     false);
+                 return;
+               }
+             }
+             if (widget.deliveryType == OrderType.PickUp &&
+                 widget.areaObject != null) {
+               //  !minOrderCheck
+               double totalItemPrice = double.parse(taxModel.itemSubTotal);
+               double minOrderChecking = double.parse(widget.areaObject.minOrder);
+               if (minOrderChecking > totalItemPrice) {
+                 Utils.showToast(
+                     "Your order amount is too low. Minimum order amount is ${widget.areaObject.minOrder}",
+                     false);
+                 return;
+               }
+             }
               if (checkThatItemIsInStocks()) {
                 DialogUtils.displayCommonDialog(
                     context,
@@ -1704,39 +1750,40 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 return;
               }
 
-//              if (widget.deliveryType == OrderType.Delivery) {
-//                if (storeModel.deliverySlot == "0") {
-//                  selectedDeliverSlotValue = "";
-//                } else {
-//                  //Store provides instant delivery of the orders.
-//                  print(isInstantDelivery);
-//                  if (isDeliveryResponseFalse) {
-//                    selectedDeliverSlotValue = "";
-//                  } else if (storeModel.deliverySlot == "1" &&
-//                      isInstantDelivery) {
-//                    //Store provides instant delivery of the orders.
-//                    selectedDeliverSlotValue = "";
-//                  } else if (storeModel.deliverySlot == "1" &&
-//                      !isSlotSelected &&
-//                      !isInstantDelivery) {
-//                    Utils.showToast("Please select delivery slot", false);
-//                    return;
-//                  } else {
-//                    String slotDate = deliverySlotModel
-//                        .data.dateTimeCollection[selctedTag].label;
-//                    String timeSlot = deliverySlotModel
-//                        .data
-//                        .dateTimeCollection[selctedTag]
-//                        .timeslot[selectedTimeSlot]
-//                        .label;
-//                    selectedDeliverSlotValue =
-//                        "${Utils.convertDateFormat(slotDate)} ${timeSlot}";
-//                    //print("selectedDeliverSlotValue= ${selectedDeliverSlotValue}");
-//                  }
-//                }
-//              } else {
-//                selectedDeliverSlotValue = "";
-//              }
+              if (widget.deliveryType == OrderType.Delivery) {
+                /*if (storeModel.deliverySlot == "0") {
+                  selectedDeliverSlotValue = "";
+                } else*/ {
+                  //Store provides instant delivery of the orders.
+                  print(isInstantDelivery);
+                  if (isDeliveryResponseFalse) {
+                    selectedDeliverSlotValue = "";
+                  } else if (/*storeModel.deliverySlot == "1" &&*/
+                  isInstantDelivery) {
+                    //Store provides instant delivery of the orders.
+                    selectedDeliverSlotValue = "";
+                  } else if (/*storeModel.deliverySlot == "1" &&*/
+                  !isSlotSelected &&
+                      !isInstantDelivery) {
+                    Utils.showToast("Please select delivery slot", false);
+                    return;
+                  } else {
+                    String slotDate = deliverySlotModel
+                        .data.dateTimeCollection[selctedTag].label;
+                    String timeSlot = deliverySlotModel
+                        .data
+                        .dateTimeCollection[selctedTag]
+                        .timeslot[selectedTimeSlot]
+                        .label;
+                    selectedDeliverSlotValue =
+                    "${Utils.convertDateFormat(slotDate)}, ${timeSlot}";
+                    print(
+                        "selectedDeliverSlotValue= ${selectedDeliverSlotValue}");
+                  }
+                }
+              } else {
+                selectedDeliverSlotValue = "";
+              }
 
 //              if (widget.deliveryType == OrderType.Delivery) {
 //                //The "performPlaceOrderOperation" are called in below method
@@ -2284,6 +2331,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   void placeOrderApiCall(String payment_request_id, String payment_id,
       String onlineMethod) {
+    if (isOneTimeApiCalled) {
+      return;
+    }
+
+    isOneTimeApiCalled=true;
     Utils.hideKeyboard(context);
     Utils.showProgressDialog(context);
     Utils.isNetworkAvailable().then((isNetworkAvailable) async {

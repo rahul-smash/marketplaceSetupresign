@@ -4,7 +4,10 @@ import 'package:restroapp/src/UI/StoreSearchUI.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/src/material/switch.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
@@ -39,7 +42,7 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
   bool isStoreClosed;
   final DatabaseHelper databaseHelper = new DatabaseHelper();
   bool isLoading = true;
-
+  bool vegNonVeg = false;
   CategoryResponse categoryResponse;
 
   CategoryModel selectedCategory;
@@ -67,7 +70,6 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     Utils.hideProgressDialog(context);
     getCategoryApi();
     listenEvent();
-    imgList.indexWhere((element) => false);
     try {
       AppConstant.placeholderUrl = store.banner300200;
       if (store.banner300200.isNotEmpty) {
@@ -83,6 +85,24 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
         isMenuVisible = true;
       }
       setState(() {});
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (store.storeStatus == "0") {
+        DialogUtils.displayCommonDialog(
+          context,
+          store.storeName,
+          store.storeMsg,
+        );
+        return;
+      }
+      if (!Utils.checkStoreOpenTime(store)) {
+        DialogUtils.displayCommonDialog(
+          context,
+          store.storeName,
+          store.closehoursMessage,
+        );
+        return;
+      }
     });
   }
 
@@ -233,11 +253,12 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     return keyboardDismisser(
       context: context,
       child: Stack(
+        alignment: Alignment.bottomCenter,
         children: <Widget>[
           imgList.isNotEmpty
               ? Center(
                   child: SizedBox(
-                    height: 150.0,
+                    height: 180.0,
                     width: Utils.getDeviceWidth(context),
                     child: Carousel(
                       boxFit: BoxFit.cover,
@@ -258,87 +279,115 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                   ),
                 )
               : Container(
-                  height: 150.0,
+                  height: 180.0,
                   width: Utils.getDeviceWidth(context),
                   child: Image.asset(
                     'images/img_placeholder.jpg',
                     fit: BoxFit.cover,
                   ),
                 ),
-          Container(
-            margin: EdgeInsets.only(top: 70),
-            width: Utils.getDeviceWidth(context),
-            height: 80,
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.transparent, Colors.black45],
-            )),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              //margin: EdgeInsets.only(top: 70),
+              width: Utils.getDeviceWidth(context),
+              height: 120,
+              // padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.black45],
+              )),
+            ),
           ),
           Container(
-            height: 150.0,
+            //height: 150.0,
             width: Utils.getDeviceWidth(context),
             padding: EdgeInsets.all(16),
             child: Align(
               alignment: Alignment.bottomLeft,
               child: Container(
                 width: Utils.getDeviceWidth(context),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                        child: Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Text(
-                        store.storeName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    )),
-                    Visibility(
-                        visible: widget.brandData.display_store_rating == '1' &&
-                            store.rating.isNotEmpty &&
-                            store.rating != '0.0' &&
-                            store.rating != '0',
-                        child: Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Row(
-                              children: [
-                                Container(
-                                    margin: EdgeInsets.only(right: 5),
-                                    decoration: BoxDecoration(
-                                      color: appThemeSecondary,
-                                      borderRadius: BorderRadius.circular(5.0),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Text(
+                            store.storeName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        )),
+                        Visibility(
+                            visible:
+                                widget.brandData.display_store_rating == '1' &&
+                                    store.rating.isNotEmpty &&
+                                    store.rating != '0.0' &&
+                                    store.rating != '0',
+                            child: Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.only(right: 5),
+                                        decoration: BoxDecoration(
+                                          color: appThemeSecondary,
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(3),
+                                          child: Image.asset(
+                                              'images/staricon.png',
+                                              width: 15,
+                                              fit: BoxFit.scaleDown,
+                                              color: Colors.white),
+                                        )),
+                                    Text(
+                                      store.rating,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500),
                                     ),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(3),
-                                      child: Image.asset('images/staricon.png',
-                                          width: 15,
-                                          fit: BoxFit.scaleDown,
-                                          color: Colors.white),
-                                    )),
-                                Text(
-                                  store.rating,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ))),
+                                  ],
+                                ))),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Visibility(
+                      visible: store.showAnyLicenceNumber == "1",
+                      child: Text(
+                        "${store.licenceName} : ${store.licenceNumber}",
+                        // maxLines: 2,
+                        // overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
           ),
           Visibility(
-            visible: !Utils.checkStoreOpenTime(store),
+            visible:
+                !Utils.checkStoreOpenTime(store) || store.storeStatus == "0",
             child: Container(
               height: 150.0,
               color: Colors.black45,
@@ -366,7 +415,9 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                       padding: EdgeInsets.only(
                           left: 15, top: 5, bottom: 10, right: 15),
                       child: Text(
-                        "${store.closehoursMessage}",
+                        store.storeStatus == "0"
+                            ? "${store.storeMsg}"
+                            : "${store.closehoursMessage}",
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -439,11 +490,13 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                   child: Container(
                     child: ProductTileItem(
                       product,
-                      () {
+                      () {},
+                      ClassType.Home,
+                      saveStore: () {
                         SharedPrefs.saveStoreData(store);
                       },
-                      ClassType.Home,
                       isStoreClosed: isStoreClosed,
+                      storeID: store.id,
                     ),
                   ),
                 );
@@ -540,6 +593,27 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
                                     color: staticHomeDescriptionColor,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700),
+                              ),
+                              Visibility(
+                                visible: store.enableVegNonveg == "1",
+                                child: Row(children: [
+                                  Text(
+                                    "Veg Only",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  Switch(
+                                    value: vegNonVeg,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        vegNonVeg = value;
+                                        getHomeCategoryProductApi();
+                                        print(vegNonVeg);
+                                      });
+                                    },
+                                    activeTrackColor: Colors.grey[400],
+                                    activeColor: appTheme,
+                                  ),
+                                ]),
                               ),
                             ],
                           ),
@@ -708,7 +782,29 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
           for (int i = 0; i < response.subCategories.length; i++) {
             if (response.subCategories[i].products.isNotEmpty) {
               products.add(response.subCategories[i]);
-              products.addAll(response.subCategories[i].products);
+              if (vegNonVeg) {
+                bool anyItemAdded = false;
+                for (int productCounter = 0;
+                    productCounter < response.subCategories[i].products.length;
+                    productCounter++) {
+                  if (response.subCategories[i].products[productCounter]
+                              .nutrient !=
+                          'Non Veg' ||
+                      response.subCategories[i].products[productCounter]
+                              .nutrient
+                              .toLowerCase() !=
+                          'non veg') {
+                    products.add(
+                        response.subCategories[i].products[productCounter]);
+                    anyItemAdded = true;
+                  }
+                }
+                if (!anyItemAdded) {
+                  products.removeLast();
+                }
+              } else {
+                products.addAll(response.subCategories[i].products);
+              }
             }
           }
 
