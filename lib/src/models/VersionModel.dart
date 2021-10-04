@@ -122,7 +122,7 @@ class BrandData {
   List<Banner> banners;
   List<Banner> webBanners;
   List<dynamic> footerBanners;
-  List<dynamic> aboutusBanner;
+  List<Banner> aboutusBanner;
   List<ForceDownload> forceDownload;
   String logo10080;
   String logo300200;
@@ -185,8 +185,8 @@ class BrandData {
           List<Banner>.from(json["web_banners"].map((x) => Banner.fromJson(x))),
           footerBanners: List<dynamic>.from(
               json["footer_banners"].map((x) => x)),
-          aboutusBanner: List<dynamic>.from(
-              json["aboutus_banner"].map((x) => x)),
+          aboutusBanner: List<Banner>.from(
+              json["aboutus_banner"].map((x) => Banner.fromJson(x))),
           forceDownload: List<ForceDownload>.from(
               json["force_download"].map((x) => ForceDownload.fromJson(x))),
           logo10080: json["logo_100_80"],

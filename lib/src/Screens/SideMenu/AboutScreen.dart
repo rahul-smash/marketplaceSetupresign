@@ -32,7 +32,6 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   void initState() {
-    getuser();
     super.initState();
     try {
       print("aboutusBanner=${widget.store.aboutusBanner[0].image}");
@@ -53,11 +52,12 @@ class _AboutScreenState extends State<AboutScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
+              aboutUsBanner.isNotEmpty?
               Visibility(
                 child: CachedNetworkImage(
                     imageUrl: aboutUsBanner, fit: BoxFit.fitWidth),
                 visible: widget.store.aboutusBanner == null ? false : true,
-              ),
+              ):Container(),
               widget.store.about_us == null
                   ? Container()
                   : Html(

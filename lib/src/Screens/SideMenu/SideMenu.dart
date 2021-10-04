@@ -61,7 +61,8 @@ class NavDrawerMenu extends StatefulWidget {
 }
 
 class _NavDrawerMenuState extends State<NavDrawerMenu> {
-  List<dynamic> _drawerItems = List();
+  List<dynamic> _drawerItemsSectionFirst = List.empty(growable: true);
+  List<dynamic> _drawerItemsSectionSecond = List.empty(growable: true);
   SocialModel socialModel;
   double iconHeight = 25;
   GoogleSignIn _googleSignIn;
@@ -77,38 +78,58 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       ],
     );
     //print("isRefererFnEnable=${widget.store.isRefererFnEnable}");
-    _drawerItems
-        .add(DrawerChildItem(DrawerChildConstants.HOME, "images/home.png"));
-    _drawerItems.add(DrawerChildItem(
-        DrawerChildConstants.MY_PROFILE, "images/myprofile.png"));
+    _drawerItemsSectionFirst.add(DrawerChildItem(
+        DrawerChildConstants.HOME, "images/side_menu/home.png"));
+    _drawerItemsSectionFirst.add(DrawerChildItem(
+        DrawerChildConstants.MY_PROFILE, "images/side_menu/profile.png"));
+    _drawerItemsSectionFirst.add(DrawerChildItem(
+        DrawerChildConstants.MY_ORDERS, "images/side_menu/order.png"));
+    if (widget.brandData.loyality == "1")
+      _drawerItemsSectionFirst.add(DrawerChildItem(
+          DrawerChildConstants.LOYALITY_POINTS,
+          "images/side_menu/loyality.png"));
     //Subscription
     if (widget.brandData.isMembershipOn == '1')
-      _drawerItems.add(DrawerChildItem(
+      _drawerItemsSectionFirst.add(DrawerChildItem(
           DrawerChildConstants.SUBSCRIBE, "images/sunscriptionicon.png"));
-    _drawerItems.add(DrawerChildItem(
-        DrawerChildConstants.DELIVERY_ADDRESS, "images/deliveryaddress.png"));
-    _drawerItems
-        .add(DrawerChildItem(DrawerChildConstants.Cart, "images/carticon.png"));
-    _drawerItems.add(
-        DrawerChildItem(DrawerChildConstants.MY_ORDERS, "images/my_order.png"));
-    if (widget.brandData.loyality == "1")
-      _drawerItems.add(DrawerChildItem(
-          DrawerChildConstants.LOYALITY_POINTS, "images/loyality.png"));
-//    _drawerItems.add(
-//        DrawerChildItem(DrawerChildConstants.MY_FAVORITES, "images/myfav.png"));
-//    _drawerItems.add(
-//        DrawerChildItem(DrawerChildConstants.ABOUT_US, "images/about_image.png"));
-    _drawerItems.add(DrawerChildItem(
+    _drawerItemsSectionFirst.add(DrawerChildItem(
+        DrawerChildConstants.Cart, "images/side_menu/cart.png"));
+
+    _drawerItemsSectionFirst.add(DrawerChildItem(
         widget.brandData.isRefererFnEnable && AppConstant.isLoggedIn
             ? DrawerChildConstants.ReferEarn
             : DrawerChildConstants.SHARE,
-        "images/refer.png"));
-    _drawerItems.add(DrawerChildItem(
-        DrawerChildConstants.ADDITION_INFORMATION, "images/about.png"));
-//    _drawerItems
-//        .add(DrawerChildItem(DrawerChildConstants.FAQ, "images/about.png"));
-    _drawerItems
-        .add(DrawerChildItem(DrawerChildConstants.LOGIN, "images/sign_in.png"));
+        "images/side_menu/share.png"));
+
+/* static const ABOUT_US = "About Us";
+  static const CONTACT_US = "Contact Us";
+  static const SELL = "Sell";
+  static const TERMS_CONDITIONS = "Terms and Conditions";
+  static const PRIVACY_POLICY = "Privacy Policy";
+  static const SHIPPING_POLICY = "Shipping Policy";
+  static const REFUND_POLICY = "Refund Policy";
+  static const FAQ = "FAQ";
+  static const LOGIN = "Login";
+  static const LOGOUT = "Logout";*/
+    _drawerItemsSectionSecond.add(DrawerChildItem(
+        DrawerChildConstants.ABOUT_US, "images/side_menu/about.png"));
+    _drawerItemsSectionSecond.add(DrawerChildItem(
+        DrawerChildConstants.CONTACT_US, "images/side_menu/contact.png"));
+    _drawerItemsSectionSecond.add(DrawerChildItem(
+        DrawerChildConstants.SELL, "images/side_menu/sell.png"));
+    _drawerItemsSectionSecond.add(DrawerChildItem(
+        DrawerChildConstants.TERMS_CONDITIONS, "images/side_menu/terms.png"));
+    _drawerItemsSectionSecond.add(DrawerChildItem(
+        DrawerChildConstants.PRIVACY_POLICY, "images/side_menu/privacy.png"));
+    _drawerItemsSectionSecond.add(DrawerChildItem(
+        DrawerChildConstants.SHIPPING_POLICY, "images/side_menu/shipping.png"));
+    _drawerItemsSectionSecond.add(DrawerChildItem(
+        DrawerChildConstants.REFUND_POLICY, "images/side_menu/refund.png"));
+    _drawerItemsSectionSecond.add(
+        DrawerChildItem(DrawerChildConstants.FAQ, "images/side_menu/faq.png"));
+    if (AppConstant.isLoggedIn)
+      _drawerItemsSectionSecond.add(
+          DrawerChildItem(DrawerChildConstants.LOGOUT, "images/side_menu/logout.png"));
     try {
       _setSetUserId();
     } catch (e) {
@@ -131,14 +152,40 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
           canvasColor: left_menu_background_color,
         ),
         child: Drawer(
-          child: ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: _drawerItems.length + 1,
-              itemBuilder: (BuildContext context, int index) {
-                return (index == 0
-                    ? createHeaderInfoItem()
-                    : createDrawerItem(index - 1, context));
-              }),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                createHeaderInfoItem(),
+                ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: _drawerItemsSectionFirst.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return (createDrawerItem(
+                          _drawerItemsSectionFirst[index], context));
+                    }),
+                SizedBox(
+                  height: 20,
+                ),
+                Divider(
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: _drawerItemsSectionSecond.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return (createDrawerItem(
+                          _drawerItemsSectionSecond[index], context));
+                    }),
+              ],
+            ),
+          ),
         ));
   }
 
@@ -181,8 +228,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
             ]));
   }
 
-  Widget createDrawerItem(int index, BuildContext context) {
-    var item = _drawerItems[index];
+  Widget createDrawerItem(var item, BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(left: 20),
         child: ListTile(
@@ -191,7 +237,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
                       item.title == DrawerChildConstants.LOGOUT
                   ? AppConstant.isLoggedIn == false
                       ? 'images/sign_in.png'
-                      : 'images/sign_out.png'
+                      : 'images/side_menu/logout.png'
                   : item.icon,
               color: left_menu_icon_colors,
               width: 30),
@@ -207,12 +253,12 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
                   style:
                       TextStyle(color: leftMenuLabelTextColors, fontSize: 15)),
           onTap: () {
-            _openPageForIndex(item, index, context);
+            _openPageForIndex(item, context);
           },
         ));
   }
 
-  _openPageForIndex(DrawerChildItem item, int pos, BuildContext context) async {
+  _openPageForIndex(DrawerChildItem item, BuildContext context) async {
     switch (item.title) {
       case DrawerChildConstants.HOME:
         widget.callback();
@@ -240,8 +286,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                  checkIsPlanPurchased()
+                  builder: (context) => checkIsPlanPurchased()
                       ? SubscribedPlanScreen()
                       : SubscriptionBuyScreen()));
         } else {
@@ -337,7 +382,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         Utils.sendAnalyticsEvent("Clicked AboutScreen", attributeMap);
         break;
 
-      case DrawerChildConstants.ADDITION_INFORMATION:
+      /*  case DrawerChildConstants.ADDITION_INFORMATION:
         Navigator.pop(context);
         Navigator.push(
           context,
@@ -347,7 +392,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
         attributeMap["ScreenName"] = "AdditionalInformation";
         Utils.sendAnalyticsEvent("Clicked AdditionalInformation", attributeMap);
-        break;
+        break;*/
       case DrawerChildConstants.ReferEarn:
       case DrawerChildConstants.SHARE:
         if (AppConstant.isLoggedIn) {
@@ -524,8 +569,6 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       } else {
         Utils.showToast('Something went wrong!', false);
       }
-
-
     } catch (e) {
       print(e);
     }
@@ -558,23 +601,27 @@ class DrawerChildItem {
 }
 
 class DrawerChildConstants {
+  //section first
   static const HOME = "Home";
   static const MY_PROFILE = "My Profile";
-  static const SUBSCRIBE = "Subscription";
-  static const DELIVERY_ADDRESS = "Delivery Address";
   static const MY_ORDERS = "My Orders";
-  static const Cart = "Cart";
-  static const Categories = "Categories";
   static const LOYALITY_POINTS = "Loyality Points";
-  static const MY_FAVORITES = "My Favorites";
-  static const ABOUT_US = "About Us";
-  static const ADDITION_INFORMATION = "Additional \nInformation";
+  static const SUBSCRIBE = "Subscription";
+  static const Cart = "My Cart";
   static const SHARE = "Share";
-  static const FAQ = "FAQ";
+  static const ReferEarn = "Refer & Earn";
+
+  //section second
+  static const ABOUT_US = "About Us";
+  static const CONTACT_US = "Contact Us";
+  static const SELL = "Sell";
   static const TERMS_CONDITIONS = "Terms and Conditions";
   static const PRIVACY_POLICY = "Privacy Policy";
+  static const SHIPPING_POLICY = "Shipping Policy";
   static const REFUND_POLICY = "Refund Policy";
-  static const ReferEarn = "Refer & Earn";
+  static const FAQ = "FAQ";
   static const LOGIN = "Login";
   static const LOGOUT = "Logout";
+
+  static const DELIVERY_ADDRESS = "Delivery Address";
 }
