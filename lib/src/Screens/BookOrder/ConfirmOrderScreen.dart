@@ -88,7 +88,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   int selctedTag, selectedTimeSlot;
   List<Timeslot> timeslotList;
   bool isSlotSelected = false;
-
+  StoreDataModel storeCheckData;
   //Store provides instant delivery of the orders.
   bool isInstantDelivery = false;
   bool minOrderCheck = true;
@@ -1636,6 +1636,19 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             textColor: Colors.white,
             color: appTheme,
             onPressed: () async {
+              print("Butttin is pressed9***************");
+              Utils.showProgressDialog(context);
+            var response = await ApiController.getStoreVersionData(storeModel.id);
+
+                Utils.hideProgressDialog(context);
+                Utils.hideKeyboard(context);
+                StoreDataModel storeCheckData = response;
+                  if(response.success == true){
+                  if (storeCheckData != null && storeCheckData.success)
+                    setState(() {
+                      storeModel = storeCheckData.store ;
+                    });
+                };
               if (Utils.isRedundentClick(DateTime.now())) {
                 return;
               }
@@ -1643,7 +1656,15 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               bool status = Utils.checkStoreOpenTime(storeModel,
                   deliveryType: widget.deliveryType);
               print("----checkStoreOpenTime----${status}--");
-
+              print("${storeModel.storeStatus}*********");
+              if (storeModel.storeStatus == "0") {
+                DialogUtils.displayCommonDialog(
+                  context,
+                  storeModel.storeName,
+                  storeModel.storeMsg,
+                );
+                return;
+              }
               if (!status) {
                 DialogUtils.displayCommonDialog(
                   context,

@@ -24,6 +24,14 @@ class RestroCardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
+        if (storeDataObj.storeStatus == "0") {
+          DialogUtils.displayCommonDialog(
+            context,
+            storeDataObj.storeName,
+            storeDataObj.storeMsg,
+          );
+          return;
+        }
         if (!Utils.checkStoreOpenTiming(storeDataObj)) {
           DialogUtils.displayCommonDialog(
             context,
@@ -209,7 +217,8 @@ class RestroCardItem extends StatelessWidget {
                     width: 70,
                   ))),
           Visibility(
-            visible: !Utils.checkStoreOpenTiming(storeDataObj),
+            visible: storeDataObj.storeStatus == "0" ||
+                !Utils.checkStoreOpenTiming(storeDataObj),
             child: Container(
               height: 170.0,
               color: Colors.white54,
@@ -228,10 +237,10 @@ class RestroCardItem extends StatelessWidget {
                               padding: EdgeInsets.all(5),
                               child: Text(
                                 "Store Closed",
-                                style: TextStyle(color: Colors.red, fontSize: 18),
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 18),
                               ),
                             )),
-
                       ],
                     ),
                     Container(
@@ -239,7 +248,9 @@ class RestroCardItem extends StatelessWidget {
                       padding: EdgeInsets.only(
                           left: 15, top: 5, bottom: 10, right: 15),
                       child: Text(
-                        "${storeDataObj.timimg.closehoursMessage}",
+                        storeDataObj.storeStatus == "0"
+                            ? "${storeDataObj.storeMsg}"
+                            : "${storeDataObj.timimg.closehoursMessage}",
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
