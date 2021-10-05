@@ -15,6 +15,7 @@ import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginEmailScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/FAQScreen.dart';
+import 'package:restroapp/src/Screens/SideMenu/HtmlDisplayScreen.dart';
 import 'package:restroapp/src/Screens/Subscription/SubscriptionBuyScreen.dart';
 import 'package:restroapp/src/Screens/Subscription/SubscriptionPurchasedScreen.dart';
 import 'package:restroapp/src/Screens/Subscription/SubscriedPlanScreen.dart';
@@ -91,7 +92,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
     //Subscription
     if (widget.brandData.isMembershipOn == '1')
       _drawerItemsSectionFirst.add(DrawerChildItem(
-          DrawerChildConstants.SUBSCRIBE, "images/sunscriptionicon.png"));
+          DrawerChildConstants.SUBSCRIBE, "images/side_menu/subscription.png"));
     _drawerItemsSectionFirst.add(DrawerChildItem(
         DrawerChildConstants.Cart, "images/side_menu/cart.png"));
 
@@ -100,17 +101,6 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
             ? DrawerChildConstants.ReferEarn
             : DrawerChildConstants.SHARE,
         "images/side_menu/share.png"));
-
-/* static const ABOUT_US = "About Us";
-  static const CONTACT_US = "Contact Us";
-  static const SELL = "Sell";
-  static const TERMS_CONDITIONS = "Terms and Conditions";
-  static const PRIVACY_POLICY = "Privacy Policy";
-  static const SHIPPING_POLICY = "Shipping Policy";
-  static const REFUND_POLICY = "Refund Policy";
-  static const FAQ = "FAQ";
-  static const LOGIN = "Login";
-  static const LOGOUT = "Logout";*/
     _drawerItemsSectionSecond.add(DrawerChildItem(
         DrawerChildConstants.ABOUT_US, "images/side_menu/about.png"));
     _drawerItemsSectionSecond.add(DrawerChildItem(
@@ -354,21 +344,6 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
           Navigator.pop(context);
           Utils.showLoginDialog(context);
         }
-
-        break;
-//      case DrawerChildConstants.MY_FAVORITES:
-//        if (AppConstant.isLoggedIn) {
-//          Navigator.pop(context);
-//          Navigator.push(
-//            context,
-//            MaterialPageRoute(builder: (context) => Favourites(() {})),
-//          );
-//          Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-//          attributeMap["ScreenName"] = "Favourites";
-//          Utils.sendAnalyticsEvent("Clicked Favourites", attributeMap);
-//        } else {
-//          Utils.showLoginDialog(context);
-//        }
         break;
       case DrawerChildConstants.ABOUT_US:
         Navigator.pop(context);
@@ -381,18 +356,54 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         attributeMap["ScreenName"] = "AboutScreen";
         Utils.sendAnalyticsEvent("Clicked AboutScreen", attributeMap);
         break;
-
-      /*  case DrawerChildConstants.ADDITION_INFORMATION:
+      case DrawerChildConstants.TERMS_CONDITIONS:
         Navigator.pop(context);
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => AdditionalInformation(widget.brandData)),
+              builder: (context) =>
+                  HtmlDisplayScreen(AdditionItemsConstants.TERMS_CONDITIONS)),
         );
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-        attributeMap["ScreenName"] = "AdditionalInformation";
-        Utils.sendAnalyticsEvent("Clicked AdditionalInformation", attributeMap);
-        break;*/
+        attributeMap["ScreenName"] = "TERMS_CONDITIONS";
+        Utils.sendAnalyticsEvent("Clicked TERMS_CONDITIONS", attributeMap);
+        break;
+      case DrawerChildConstants.PRIVACY_POLICY:
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  HtmlDisplayScreen(AdditionItemsConstants.PRIVACY_POLICY)),
+        );
+        Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+        attributeMap["ScreenName"] = "PRIVACY_POLICY";
+        Utils.sendAnalyticsEvent("Clicked PRIVACY_POLICY", attributeMap);
+        break;
+      case DrawerChildConstants.REFUND_POLICY:
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  HtmlDisplayScreen(AdditionItemsConstants.REFUND_POLICY)),
+        );
+        Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+        attributeMap["ScreenName"] = "REFUND_POLICY";
+        Utils.sendAnalyticsEvent("Clicked REFUND_POLICY", attributeMap);
+        break;
+
+      case DrawerChildConstants.FAQ:
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => FAQScreen(widget.brandData)),
+        );
+        Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+        attributeMap["ScreenName"] = "FAQ";
+        Utils.sendAnalyticsEvent("Clicked FAQ", attributeMap);
+        break;
+
       case DrawerChildConstants.ReferEarn:
       case DrawerChildConstants.SHARE:
         if (AppConstant.isLoggedIn) {
@@ -423,7 +434,6 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         Utils.sendAnalyticsEvent("Clicked share", attributeMap);
 
         //DialogUtils.showInviteEarnAlert2(context);
-
         break;
       case DrawerChildConstants.LOGIN:
       case DrawerChildConstants.LOGOUT:
