@@ -260,22 +260,6 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
                               ],
                             ),
                           ),
-                          Visibility(
-                              visible: Platform.isIOS ? false : false,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(5)),
-                                margin: EdgeInsets.only(bottom: 60),
-                                padding: EdgeInsets.all(10),
-                                child: Center(
-                                  child: AppleSignInButton(
-                                    onPressed: appleLogIn,
-                                  ),
-                                ),
-                              )),
                           Wrap(
                             alignment: WrapAlignment.center,
                             crossAxisAlignment: WrapCrossAlignment.center,
@@ -461,77 +445,6 @@ class _LoginMobileScreen extends State<LoginMobileScreen> {
       case FacebookLoginStatus.error:
         Utils.showToast("Something went wrong ${result.errorMessage}", false);
         break;
-    }
-  }
-
-  appleLogIn() async {
-    if (await AppleSignIn.isAvailable()) {
-      final AuthorizationResult result = await AppleSignIn.performRequests([
-        AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
-      ]);
-      switch (result.status) {
-        case AuthorizationStatus.authorized:
-          var credential = result.credential;
-          var id = credential.user;
-          print("this is iddd $id");
-          print(result.credential.email);
-          print(result.credential.fullName.givenName);
-          print(result.credential.fullName.familyName);
-          String email = result.credential.email ?? "";
-          String name =
-              "${result.credential.fullName.givenName} ${result.credential.fullName.familyName}";
-
-          if (email == "") {
-            email = await SharedPrefs.getappleId();
-          } else {
-            SharedPrefs.setAppleId(email);
-          }
-
-          if (email == "") {
-            Utils.showToast("Email id require for sign in", false);
-          } else {
-            MobileVerified verifyEmailModel =
-                await ApiController.verifyEmail(email);
-            Utils.hideProgressDialog(context);
-            if (verifyEmailModel.userExists == 0) {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProfileScreen(
-                          true,
-                          "",
-                          "${name}",
-                          null,
-                          null,
-                          appleMail: email,
-                          isAppleLogin: true,
-                        )),
-              );
-            } else if (verifyEmailModel.userExists == 1) {
-              SharedPrefs.setUserLoggedIn(true);
-              SharedPrefs.saveUserMobile(verifyEmailModel.user);
-
-              UserModel user = UserModel();
-              user.fullName = verifyEmailModel.user.fullName;
-              user.email = verifyEmailModel.user.email;
-              user.phone = verifyEmailModel.user.phone;
-              user.id = verifyEmailModel.user.id;
-              SharedPrefs.saveUser(user);
-              ApiController.getUserMembershipPlanApi();
-              Navigator.pop(context);
-            }
-          }
-          break; //All the required credentials
-        case AuthorizationStatus.error:
-          Utils.showToast(result.error.localizedDescription, false);
-          break;
-        case AuthorizationStatus.cancelled:
-          print('User cancelled');
-          break;
-      }
-    } else {
-      Utils.showToast('Apple SignIn is not available for your device', false);
     }
   }
 
