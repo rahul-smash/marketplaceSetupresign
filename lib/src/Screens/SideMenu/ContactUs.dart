@@ -7,6 +7,8 @@ import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
+import 'package:restroapp/src/database/SharedPrefs.dart';
+import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
@@ -16,9 +18,9 @@ import 'package:permission_handler/permission_handler.dart'
     as permission_handler;
 
 class ContactUs extends StatefulWidget {
-  UserModel model;
+  UserModelMobile model;
 
-  ContactUs(this.model);
+  ContactUs();
 
   @override
   _ContactUsState createState() => _ContactUsState();
@@ -48,17 +50,29 @@ class _ContactUsState extends State<ContactUs> {
   void initState() {
     super.initState();
     try {
-      firstNameController.text = widget.model.fullName;
-      lastNameController.text = widget.model.lastName;
-      mobileNameController.text = widget.model.phone;
-      emailNameController.text = widget.model.email;
+      if (widget.model != null) {
+        fillDetails();
+      } else {
+        getUser();
+      }
     } catch (e) {
       print(e);
     }
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getCurrentLocation();
     });
+  }
+
+  void getUser() async {
+    widget.model = await SharedPrefs.getUserMobile();
+    fillDetails();
+  }
+
+  void fillDetails() {
+    firstNameController.text = widget.model.fullName;
+    lastNameController.text = widget.model.lastName;
+    mobileNameController.text = widget.model.phone;
+    emailNameController.text = widget.model.email;
   }
 
   Future<void> getCurrentLocation() async {

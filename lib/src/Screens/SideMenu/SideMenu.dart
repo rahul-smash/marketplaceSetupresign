@@ -14,6 +14,7 @@ import 'package:restroapp/src/Screens/SideMenu/AboutScreen.dart';
 import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginEmailScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
+import 'package:restroapp/src/Screens/SideMenu/ContactUs.dart';
 import 'package:restroapp/src/Screens/SideMenu/FAQScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/HtmlDisplayScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/WalletHistory.dart';
@@ -436,6 +437,18 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         attributeMap["ScreenName"] = "TERMS_CONDITIONS";
         Utils.sendAnalyticsEvent("Clicked TERMS_CONDITIONS", attributeMap);
         break;
+      case DrawerChildConstants.SHIPPING_POLICY:
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  HtmlDisplayScreen(AdditionItemsConstants.Shipping_Charge)),
+        );
+        Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+        attributeMap["ScreenName"] = "Shipping_Charge";
+        Utils.sendAnalyticsEvent("Clicked TERMS_CONDITIONS", attributeMap);
+        break;
       case DrawerChildConstants.PRIVACY_POLICY:
         Navigator.pop(context);
         Navigator.push(
@@ -532,20 +545,16 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
             attributeMap["ScreenName"] = "LoginEmailScreen";
             Utils.sendAnalyticsEvent("Clicked LoginEmailScreen", attributeMap);
           }
-
-          /*SharedPrefs.getStore().then((storeData) {
-
-          });*/
         }
         break;
-      case DrawerChildConstants.FAQ:
+        case DrawerChildConstants.CONTACT_US:
         Navigator.pop(context);
-        /*Navigator.push(
+        Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => FAQScreen(widget.store)),
-        );*/
+          MaterialPageRoute(builder: (context) => ContactUs()),
+        );
         Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-        attributeMap["ScreenName"] = "FAQ";
+        attributeMap["ScreenName"] = "Contact_us";
         Utils.sendAnalyticsEvent("Clicked AboutScreen", attributeMap);
         break;
     }

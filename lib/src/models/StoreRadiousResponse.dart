@@ -63,10 +63,10 @@ class Area {
         notAllow: json["not_allow"],
         isShippingMandatory: json["is_shipping_mandatory"] == null
             ? null
-            : json["is_shipping_mandatory"],radius: json["radius"],
-    radiusCircle: json["radius_circle"],
-    isShippingMandatory: json["is_shipping_mandatory"],
-  );
+            : json["is_shipping_mandatory"].toString(),
+        radius: json["radius"],
+        radiusCircle: json["radius_circle"],
+      );
 
   Map<String, dynamic> toJson() => {
         "area_id": areaId,
@@ -78,7 +78,7 @@ class Area {
         "is_shipping_mandatory":
             isShippingMandatory == null ? null : isShippingMandatory,
         "radius": radius,
-    "radius_circle": radiusCircle,
-    "is_shipping_mandatory": isShippingMandatory,
-  };
+        "radius_circle": radiusCircle,
+        "is_shipping_mandatory": isShippingMandatory,
+      };
 }

@@ -112,6 +112,17 @@ class _AdditionalInformationState extends State<AdditionalInformation> {
         attributeMap["ScreenName"] = "TERMS_CONDITIONS";
         Utils.sendAnalyticsEvent("Clicked TERMS_CONDITIONS", attributeMap);
         break;
+        case AdditionItemsConstants.Shipping_Charge:
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    HtmlDisplayScreen(AdditionItemsConstants.Shipping_Charge)),
+          );
+          Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+          attributeMap["ScreenName"] = "Shipping_Charge";
+          Utils.sendAnalyticsEvent("Clicked TERMS_CONDITIONS", attributeMap);
+        break;
       case AdditionItemsConstants.PRIVACY_POLICY:
         Navigator.push(
           context,

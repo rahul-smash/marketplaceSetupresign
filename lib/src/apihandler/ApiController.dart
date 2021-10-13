@@ -2039,6 +2039,10 @@ class ApiController {
             url = ApiConstants.baseUrl3.replaceAll("storeId", "static_pages/") +
                 ApiConstants.refundPolicy;
             break;
+            case AdditionItemsConstants.Shipping_Charge:
+            url = ApiConstants.baseUrl3.replaceAll("storeId", "static_pages/") +
+                ApiConstants.shippingCharge;
+            break;
         }
         var request = new http.MultipartRequest("POST", Uri.parse(url));
         request.fields.addAll({

@@ -103,7 +103,7 @@ class TaxCalculationModel {
     }
     model.isChanged = json['is_changed'] == null ? false : json['is_changed'];
     model.walletRefund =
-        json['wallet_refund'] == null ? false : json['wallet_refund'];
+        json['wallet_refund'] == null ? false : json['wallet_refund'].toString();
     return model;
   }
 

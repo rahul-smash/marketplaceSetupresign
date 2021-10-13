@@ -164,7 +164,7 @@ flutter:
     - images/premiumbg.png
     - images/purevegbg.png
     - images/safetybg.png
-    - images/images/staricon.png
+    - images/staricon.png
     - images/trendingbg.png
     - images/img1.png
     - images/img2.png
@@ -206,6 +206,10 @@ flutter:
     - images/walletbalancegreaphics.png
     - images/walleticon.png
     - images/emptywalletbalancegreaphics.png
+    - images/order_place.png
+    - images/orderrefund.png
+    - images/cashbackicon.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

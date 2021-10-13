@@ -1923,6 +1923,12 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         double.parse(taxModel.total) <= 0) {
       Utils.hideProgressDialog(context);
       placeOrderApiCall('0', '0', "Razorpay");
+    } else if (
+    widget.paymentMode == "3" &&
+        taxModel != null && double.parse(taxModel.walletRefund) > 0 &&
+        double.parse(taxModel.total) <= 0) {
+      Utils.hideProgressDialog(context);
+      placeOrderApiCall('0', '0', "Razorpay");
     } else if (widget.paymentMode == "3") {
       Utils.hideProgressDialog(context);
       if (ispaytmSelected) {

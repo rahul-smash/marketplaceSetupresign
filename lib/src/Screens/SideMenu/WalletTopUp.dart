@@ -11,6 +11,10 @@ import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/CreateOrderData.dart';
+import 'package:restroapp/src/models/MobileVerified.dart';
+import 'package:restroapp/src/models/PeachPayCheckOutResponse.dart';
+import 'package:restroapp/src/models/PhonePeResponse.dart';
+import 'package:restroapp/src/models/PhonePeVerifyResponse.dart';
 import 'package:restroapp/src/models/RazorpayError.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/models/WalletOnlineTopUp.dart';
@@ -21,7 +25,9 @@ import 'package:restroapp/src/models/WalletModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
+import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+import 'package:restroapp/src/widgets/web_view/PhonePeWebView.dart';
 
 class WalletTopUp extends StatefulWidget {
   WalletModel walleModel;
@@ -49,7 +55,7 @@ class _WalletTopUpState extends State<WalletTopUp> {
     this.walleModel,
   );
 
-  StreamSubscription onPayTMPageFinishedStream;
+  StreamSubscription onPayTMPageFinishedStream, onPhonePePageFinishedStream;
 
   @override
   void initState() {
@@ -67,12 +73,19 @@ class _WalletTopUpState extends State<WalletTopUp> {
         eventBus.on<onPayTMPageFinished>().listen((event) {
       callWalletOnlineTopApi(event.orderId, event.txnId, event.amount, 'paytm');
     });
+
+    onPhonePePageFinishedStream =
+        eventBus.on<onPhonePeFinished>().listen((event) {
+      callPhonePeFinishedOrderApi(event.paymentRequestId, event.transId);
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     if (onPayTMPageFinishedStream != null) onPayTMPageFinishedStream.cancel();
+    if (onPhonePePageFinishedStream != null)
+      onPhonePePageFinishedStream.cancel();
     _razorpay.clear();
   }
 
@@ -365,7 +378,8 @@ class _WalletTopUpState extends State<WalletTopUp> {
             ),
             height: 170,
             child: ListView.builder(
-                itemCount: widget.store.paymentGatewaySettings.length,
+                itemCount: 1,
+                shrinkWrap: true,
                 itemBuilder: (context, index) {
                   PaymentGatewaySettings paymentGatewaySettings =
                       widget.store.paymentGatewaySettings[index];
@@ -380,21 +394,30 @@ class _WalletTopUpState extends State<WalletTopUp> {
                     ),
                     margin: EdgeInsets.only(left: 10, right: 10, top: 20),
                     child: ListTile(
-                      onTap: () {
-                        if (paymentGatewaySettings.paymentGateway
-                            .toLowerCase()
-                            .contains('paytm')) {
-                          Navigator.pop(context);
-                          // callPayTmApi(amount, storeObject);
-                        } else if (paymentGatewaySettings.paymentGateway
-                            .toLowerCase()
-                            .contains('razorpay')) {
-                          Navigator.pop(context);
-                          callRazorPayToken(amount, widget.store);
+                      onTap: () async {
+                        Navigator.pop(context);
+                        String result = await DialogUtils
+                            .displayMultipleOnlinePaymentMethodDialog(
+                                context, widget.store);
+                        if (result.isEmpty) {
+                          return;
                         }
+                        callPaymentGateWay(result, amount);
+                        // if (paymentGatewaySettings.paymentGateway
+                        //     .toLowerCase()
+                        //     .contains('paytm')) {
+                        //   Navigator.pop(context);
+                        //   // callPayTmApi(amount, storeObject);
+                        // } else if (paymentGatewaySettings.paymentGateway
+                        //     .toLowerCase()
+                        //     .contains('razorpay')) {
+                        //   Navigator.pop(context);
+                        //   callRazorPayToken(amount, widget.store);
+                        // }
                       },
                       title: Text(
-                        '* ${paymentGatewaySettings.paymentGateway}',
+                        // '* ${paymentGatewaySettings.paymentGateway}',
+                        '* Online',
                         style: TextStyle(
                             fontSize: 18,
                             color: Colors.white,
@@ -406,6 +429,86 @@ class _WalletTopUpState extends State<WalletTopUp> {
           );
         },
       );
+    }
+  }
+
+  callPaymentGateWay(String paymentGateway, String amount) async {
+    UserModelMobile user = await SharedPrefs.getUserMobile();
+    String userId = user.id;
+    switch (paymentGateway) {
+      case "Razorpay":
+        callRazorPayToken(amount, widget.store);
+        break;
+      case "Stripe":
+        Utils.showToast("Under Development", false);
+        // callStripeApi();
+        break;
+      case "Paytmpay":
+        Utils.showToast("Under Development", false);
+        break;
+      case "Phonepe":
+        Utils.showToast("Under Development", false);
+        // Utils.showProgressDialog(context);
+        // ApiController.phonepeCreateOrderApi(
+        //         // double.parse(taxModel.total).toStringAsFixed(2), orderJson,
+        //         double.parse('1').toStringAsFixed(2),
+        //         '',
+        //         '',
+        //         widget.store.walletSettings.storeId,
+        //         widget.store.currencyAbbr,
+        //         merchantUserId: userId)
+        //     .then((response) {
+        //   PhonePeResponse model = response;
+        //   if (model != null && response.success) {
+        //     // Hit createOnlineTopUpApi
+        //     ApiController.createOnlineTopUPApi(amount, model.paymentRequestId)
+        //         .then((response) {
+        //       RazorPayTopUP modelPay = response;
+        //       Utils.hideProgressDialog(context);
+        //       if (modelPay != null && response.success) {
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //               builder: (context) => PhonePeWebView(
+        //                     model,
+        //                     widget.store.walletSettings.storeId,
+        //                   )),
+        //         );
+        //       } else {
+        //         Utils.showToast("Error", true);
+        //         Utils.hideProgressDialog(context);
+        //       }
+        //     });
+        //   }
+        // });
+        break;
+      case "PeachPayments":
+        Utils.showToast("Under Development", false);
+        // ApiController.peachPayCreateOrderApi(
+        //         amount,
+        //         '',
+        //         '',
+        //         widget.store.walletSettings.storeId,
+        //         widget.store.currencyAbbr.trim())
+        //     .then((response) {
+        //   Utils.hideProgressDialog(context);
+        //   PeachPayCheckOutResponse model = response;
+        //   if (model == null) {
+        //     Utils.showToast(AppConstant.noInternet, false);
+        //   } else if (model != null && response.success) {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => PeachPayWebView(
+        //                 model,
+        //                 widget.store.walletSettings.storeId,
+        //               )),
+        //     );
+        //   } else {
+        //     Utils.showToast("Server Error", true);
+        //   }
+        // });
+        break;
     }
   }
 
@@ -452,8 +555,16 @@ class _WalletTopUpState extends State<WalletTopUp> {
     Utils.hideProgressDialog(context);
     UserModel user = await SharedPrefs.getUser();
     print('${double.parse(mprice) * 100}');
+    //find razor pay key
+    String key = '';
+    for (var pgs in storeObject.paymentGatewaySettings) {
+      if (pgs.paymentGateway.contains('Razorpay')) {
+        key = pgs.apiKey;
+        break;
+      }
+    }
     var options = {
-      'key': '${storeObject.paymentGatewaySettings.first.apiKey}',
+      'key': '${key}',
       'currency': 'INR',
       'order_id': razorPayID,
       'amount': (double.parse(mprice).round() * 100),
@@ -643,6 +754,24 @@ class _WalletTopUpState extends State<WalletTopUp> {
     });
   }
 
+  void callPhonePeFinishedOrderApi(String paymentRequestId, String transId) {
+    Utils.showProgressDialog(context);
+    ApiController.phonePeVerifyTransactionApi(paymentRequestId, '0')
+        .then((response) {
+      Utils.hideProgressDialog(context);
+      print("----phonePeVerifyTransactionApi----${response}--");
+      if (response != null) {
+        PhonePeVerifyResponse model = response;
+        if (model.success) {
+          // callWalletOnlineTopApi(event.orderId, event.txnId, event.amount, 'paytm');
+        } else {
+          Utils.showToast("payment failed", true);
+        }
+      } else {
+        Utils.showToast("Something went wrong!", true);
+      }
+    });
+  }
 //Razor Code End
 //-----------------------------------------------------------------------------------------------
 //Paytm Api

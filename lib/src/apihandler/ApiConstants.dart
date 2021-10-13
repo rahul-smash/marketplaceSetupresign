@@ -68,6 +68,7 @@ class ApiConstants {
   static String termCondition = 'getHtmlPages/term_condition';
   static String privacyPolicy = 'getHtmlPages/privacy_policy';
   static String refundPolicy = 'getHtmlPages/refund_policy';
+  static String shippingCharge = 'getHtmlPages/shipping_charges_policy';
 
   static String otp = 'verifyOtp';
 

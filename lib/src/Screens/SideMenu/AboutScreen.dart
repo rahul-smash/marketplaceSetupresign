@@ -90,7 +90,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     if (AppConstant.isLoggedIn) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ContactUs(user)),
+                        MaterialPageRoute(builder: (context) => ContactUs()),
                       );
                     } else {
                       Utils.showToast(AppConstant.pleaseLogin, true);
