@@ -95,3 +95,11 @@ class onPhonePeFinished {
 
   onPhonePeFinished( this.paymentRequestId, this.transId);
 }
+class onIPay88Finished {
+  String url;
+  String requestId;
+  String transId;
+  String status;
+
+  onIPay88Finished(this.url, this.requestId, this.transId, this.status);
+}

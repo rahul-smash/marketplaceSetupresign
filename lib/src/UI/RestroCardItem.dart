@@ -137,7 +137,7 @@ class RestroCardItem extends StatelessWidget {
                                         child: Padding(
                                           padding: EdgeInsets.all(3),
                                           child: Image.asset(
-                                              'images/staricon.png',
+                                              'images/starIcon.png',
                                               width: 15,
                                               fit: BoxFit.scaleDown,
                                               color: Colors.white),

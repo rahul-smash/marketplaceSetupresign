@@ -1,13 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:compressimage/compressimage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 import 'package:restroapp/src/Screens/LoginSignUp/ForgotPasswordScreen.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginMobileScreen.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/OtpScreen.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/RegisterScreen.dart';
-import 'package:restroapp/src/Screens/SideMenu/AboutScreen.dart';
 import 'package:restroapp/src/apihandler/ApiConstants.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -26,7 +29,9 @@ import 'package:restroapp/src/models/DeviceInfo.dart';
 import 'package:restroapp/src/models/DynamicResponse.dart';
 import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
+import 'package:restroapp/src/models/GetOrderHistory.dart';
 import 'package:restroapp/src/models/HtmlModelResponse.dart';
+import 'package:restroapp/src/models/IpayOrderData.dart';
 import 'package:restroapp/src/models/LogoutResponse.dart';
 import 'package:restroapp/src/models/LoyalityPointsModel.dart';
 import 'package:restroapp/src/models/PeachPayCheckOutResponse.dart';
@@ -38,6 +43,9 @@ import 'package:restroapp/src/models/MembershipPlanResponse.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/NotificationResponseModel.dart';
 import 'package:restroapp/src/models/OTPVerified.dart';
+import 'package:restroapp/src/models/OnlineMembershipResponse.dart';
+import 'package:restroapp/src/models/PeachPayCheckOutResponse.dart';
+import 'package:restroapp/src/models/PeachPayVerifyResponse.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/ProductRatingResponse.dart';
 import 'package:restroapp/src/models/RazorpayOrderData.dart';
@@ -49,11 +57,17 @@ import 'package:restroapp/src/models/SocialModel.dart';
 import 'package:restroapp/src/models/StoreAreaResponse.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
+import 'package:restroapp/src/models/StoreDeliveryAreasResponse.dart';
+import 'package:restroapp/src/models/StoreOffersResponse.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
+import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/StorelatlngsResponse.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/StripeCheckOutModel.dart';
 import 'package:restroapp/src/models/StripeVerifyModel.dart';
+import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/TagsModel.dart';
+import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/models/UserPurchaseMembershipResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/StoreDeliveryAreasResponse.dart';
@@ -70,9 +84,6 @@ import 'package:restroapp/src/models/forgotPassword/GetForgotPwdData.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:io';
 
 class ApiController {
   static final int timeout = 18;
@@ -131,7 +142,7 @@ class ApiController {
     try {
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
-
+      print("----url---${url}");
       print("----respStr---${respStr}");
       final parsed = json.decode(respStr);
       BrandVersionModel storeArea = BrandVersionModel.fromJson(parsed);
@@ -1350,6 +1361,31 @@ class ApiController {
     }
   }
 
+  static Future<StoreRadiousResponse> storeRadiusV2Api(
+      String operatingZone) async {
+    //StoreModel store = await SharedPrefs.getStore();
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
+        ApiConstants.getStoreRadiusv2;
+
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    print('@@url=${url}');
+
+    try {
+      request.fields.addAll({"operating_zone_id": operatingZone});
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('@@respStr' + respStr);
+      final parsed = json.decode(respStr);
+
+      StoreRadiousResponse res = StoreRadiousResponse.fromJson(parsed);
+      return res;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
   static Future<CreateOrderData> razorpayCreateOrderApi(
       String amount,
       String orderJson,
@@ -2479,6 +2515,54 @@ class ApiController {
       return model;
     } catch (e) {
       Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
+// ipay88 Create order Api
+
+  static Future<Ipay88OrderData> ipay88CreateOrderApi(
+      String amount,
+      String orderJson,
+      String fullName,
+      String username,
+      String contact,
+      dynamic detailsJson,
+      storeId,
+      String currencyAbbr) async {
+    var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
+        storeId +
+        '/' +
+        ApiConstants.ipay88CreateOrder;
+    print(url);
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+    try {
+      request.fields.addAll({
+        "amount": "1.00",
+        "currency": currencyAbbr.trim(),
+        //"receipt": "Order",
+        "name": fullName,
+        "email": username,
+        "contact": contact,
+        //"payment_capture": "1",
+        "order_info": detailsJson != null ? detailsJson : '',
+        //JSONObject details
+        "orders": orderJson != null ? orderJson : ''
+        //cart jsonObject
+      });
+      print(request.fields);
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      Ipay88OrderData model = Ipay88OrderData.fromJson(parsed);
+      return model;
+    } catch (e) {
+      print('---catch-ipay88CreateOrder-----' + e.toString());
+      //Utils.showToast(e.toString(), true);
       return null;
     }
   }

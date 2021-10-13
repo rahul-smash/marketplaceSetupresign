@@ -10,13 +10,14 @@ class ApiConstants {
   static String baseUrl2 = '${base}marketplace/';
 
   // staging url
-  // static String base = 'http://devmarketplace.restroapp.com/brandId/v1/';
-  // static String baseUrl3 = 'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
-
-  //live url
   static String base = 'https://devmarketplace.restroapp.com/brandId/v1/';
   static String baseUrl3 =
       'https://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
+
+  //live url
+  // static String base = 'https://marketplace.restroapp.com/brandId/v1/';
+  // static String baseUrl3 =
+  //     'https://marketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 
   static String storeList = 'storeList';
   static String version = 'version';
@@ -26,6 +27,7 @@ class ApiConstants {
 
   static String getAddressArea = 'deliveryAreas/Area';
   static String getStoreRadius = '/storeRadius';
+  static String getStoreRadiusv2 = '/storeRadiusV2';
   static String getStoreArea = 'storearea';
 
 //  static String validateCoupon = 'validateAllCoupons';
@@ -124,6 +126,8 @@ class ApiConstants {
   static String processPeachpayPayment = '/peachpay/processPeachpayPayment/';
   static String peachpayVerifyTransaction =
       '/peachpay/peachpayVerifyTransaction';
+
+  static String ipay88CreateOrder = 'ipay88/ipay88CreateOrder';
 
   //phonepe payment
   static String phonepeCreateOrder='/phonepe/phonepeCreateOrder';

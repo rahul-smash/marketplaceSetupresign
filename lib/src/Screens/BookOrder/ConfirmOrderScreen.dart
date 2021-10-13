@@ -31,7 +31,6 @@ import 'package:restroapp/src/models/PhonePeVerifyResponse.dart';
 import 'package:restroapp/src/models/RazorpayOrderData.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
-import 'package:restroapp/src/models/StoreResponseModel.dart';
 import 'package:restroapp/src/models/StripeCheckOutModel.dart';
 import 'package:restroapp/src/models/StripeVerifyModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
@@ -52,12 +51,12 @@ import 'package:webview_flutter/webview_flutter.dart';
 class ConfirmOrderScreen extends StatefulWidget {
   bool isComingFromPickUpScreen;
   DeliveryAddressData address;
+  StoreRadiousResponse storeRadius;
   String paymentMode = "2"; // 2 = COD, 3 = Online Payment
   String areaId;
   OrderType deliveryType;
   OrderType subscriptionOrderType;
   Area areaObject;
-
   StoreDataObj storeModel;
   List<Product> cartList = new List();
   PaymentType _character = PaymentType.COD;
@@ -165,7 +164,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     hideRemoveCouponFirstTime = true;
     print("You are on confirm order screen");
     //print("-deliveryType--${widget.deliveryType}---");
-    constraints();
     try {
       checkLoyalityPointsOption();
       if (widget.deliveryType == OrderType.Delivery) {
@@ -1605,6 +1603,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                         if (couponModel.success) {
                           print("---success----");
                           Utils.showToast("${couponModel.message}", false);
+                          print("------------2---------${shippingCharges}");
                           TaxCalculationResponse model =
                           await ApiController.multipleTaxCalculationRequest(
                               couponCodeController.text,
@@ -1726,8 +1725,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
               print("Butttin is pressed9***************");
               Utils.showProgressDialog(context);
-              var response = await ApiController.getStoreVersionData(
-                  storeModel.id);
+              var response =
+              await ApiController.getStoreVersionData(storeModel.id);
 
               Utils.hideProgressDialog(context);
               Utils.hideKeyboard(context);
@@ -1737,7 +1736,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   setState(() {
                     storeModel = storeCheckData.store;
                   });
-              };
+              }
+              ;
               if (Utils.isRedundentClick(DateTime.now())) {
                 return;
               }
@@ -1785,7 +1785,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   widget.areaObject.notAllow) {
                 print("abb***************");
                 double totalItemPrice = double.parse(taxModel.itemSubTotal);
-                double minOrderChecking = double.parse(
+                double minOrderChecking =
+                double.parse(
                     widget.areaObject.minOrder);
                 print(
                     "abb*************** ${totalItemPrice} and ${minOrderChecking}");
@@ -1801,7 +1802,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                   widget.areaObject != null) {
                 //  !minOrderCheck
                 double totalItemPrice = double.parse(taxModel.itemSubTotal);
-                double minOrderChecking = double.parse(
+                double minOrderChecking =
+                double.parse(
                     widget.areaObject.minOrder);
                 if (minOrderChecking > totalItemPrice) {
                   Utils.showToast(
@@ -1840,7 +1842,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               if (widget.deliveryType == OrderType.Delivery) {
                 /*if (storeModel.deliverySlot == "0") {
                   selectedDeliverSlotValue = "";
-                } else*/ {
+                } else*/
+                {
                   //Store provides instant delivery of the orders.
                   print(isInstantDelivery);
                   if (isDeliveryResponseFalse) {
@@ -1850,8 +1853,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                     //Store provides instant delivery of the orders.
                     selectedDeliverSlotValue = "";
                   } else if (/*storeModel.deliverySlot == "1" &&*/
-                  !isSlotSelected &&
-                      !isInstantDelivery) {
+                  !isSlotSelected && !isInstantDelivery) {
                     Utils.showToast("Please select delivery slot", false);
                     return;
                   } else {
@@ -1921,13 +1923,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         double.parse(taxModel.total) <= 0) {
       Utils.hideProgressDialog(context);
       placeOrderApiCall('0', '0', "Razorpay");
-    }
-    else if (widget.paymentMode == "3") {
+    } else if (widget.paymentMode == "3") {
       Utils.hideProgressDialog(context);
       if (ispaytmSelected) {
         callPaymentGateWay("Paytmpay");
-      }
-      else {
+      } else {
         String paymentGateway = _brandData.paymentGateway;
         if (_brandData.paymentGatewaySettings != null &&
             _brandData.paymentGatewaySettings.isNotEmpty) {
@@ -2005,6 +2005,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       return;
     }
     Utils.showProgressDialog(context);
+    print("------------3---------${shippingCharges}");
     databaseHelper
         .getCartItemsListToJson(
         isOrderVariations: isOrderVariations,
@@ -2077,7 +2078,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       int minAmount = 0;
       try {
         try {
-          minAmount = double.parse(widget.address.minAmount).toInt();
+          minAmount = double.parse(widget.areaObject.minOrder).toInt();
         } catch (e) {
           print(e);
         }
@@ -2092,7 +2093,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         print("----widget.areaObject.isShippingMandatory=${widget.areaObject
             .isShippingMandatory}");
 
-        if (widget.address.notAllow) {
+        if (widget.areaObject.notAllow) {
           if (mtotalPrice <= minAmount) {
             print("---Cart-totalPrice is less than min amount----}");
             // then Store will charge shipping charges.
@@ -2140,7 +2141,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
   Future<void> checkMinOrderPickAmount() async {
     if ((widget.deliveryType == OrderType.PickUp ||
-        widget.deliveryType == OrderType.DineIn) && widget.areaObject != null) {
+        widget.deliveryType == OrderType.DineIn) &&
+        widget.areaObject != null) {
       print("----minAmount=${widget.areaObject.minOrder}");
       print("----notAllow=${widget.areaObject.notAllow}");
       print("--------------------------------------------");
@@ -2378,7 +2380,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       switch (paymentGateWay) {
         case "Razorpay":
           ApiController.razorpayCreateOrderApi(
-              mPrice, orderJson, detailsModel.orderDetails, storeModel.id,
+              mPrice,
+              orderJson,
+              detailsModel.orderDetails,
+              storeModel.id,
               _brandData.currencyAbbr)
               .then((response) {
             CreateOrderData model = response;
@@ -2393,7 +2398,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
           break;
         case "Peachpay":
           ApiController.peachPayCreateOrderApi(
-              double.parse(taxModel.total).toStringAsFixed(2), orderJson,
+              double.parse(taxModel.total).toStringAsFixed(2),
+              orderJson,
               detailsModel.orderDetails,
               storeModel.id,
               _brandData.currencyAbbr)
@@ -2402,8 +2408,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             PeachPayCheckOutResponse model = response;
             if (model == null) {
               Utils.showToast(AppConstant.noInternet, false);
-            }
-            else if (model != null && response.success) {
+            } else if (model != null && response.success) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -2633,8 +2638,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   void callPeachPayPaytmOrderApi(String url, String checkoutID,
       String resourcePath) {
     Utils.showProgressDialog(context);
-    ApiController.peachPayVerifyTransactionApi(
-        checkoutID, storeModel.id)
+    ApiController.peachPayVerifyTransactionApi(checkoutID, storeModel.id)
         .then((response) {
       Utils.hideProgressDialog(context);
       //print("----razorpayVerifyTransactionApi----${response}--");
@@ -2871,7 +2875,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         //print("----notAllow=${widget.address.notAllow}");
         await checkMinOrderAmount();
       }
-      checkMinOrderPickAmount();
+      await checkMinOrderPickAmount();
     } catch (e) {
       print(e);
     }
@@ -2981,8 +2985,7 @@ class _StripeWebViewState extends State<StripeWebView> {
             },
             onPageFinished: (String url) {
               print('======Page finished loading======: $url');
-              if (url
-                  .contains(
+              if (url.contains(
                   "stripe/stripeVerifyTransaction?response=success")) {
                 eventBus.fire(onPageFinished(
                     widget.stripeCheckOutModel.paymentRequestId));
@@ -3078,7 +3081,8 @@ class PeachPayWebView extends StatelessWidget {
         ),
         body: Builder(builder: (BuildContext context) {
           return WebView(
-            initialUrl: '${ApiConstants.baseUrl3.replaceAll(
+            initialUrl:
+            '${ApiConstants.baseUrl3.replaceAll(
                 "storeId", storeID)}${ApiConstants
                 .processPeachpayPayment}${responseModel.data.id}',
             javascriptMode: JavascriptMode.unrestricted,
@@ -3095,16 +3099,15 @@ class PeachPayWebView extends StatelessWidget {
             onPageFinished: (String url) {
               print('==2====onLoadStop======: $url');
               if (url.contains("/peachpay/peachPayVerify?id=")) {
-                String resourcePath =
-                url.substring(
+                String resourcePath = url.substring(
                     url.indexOf("&resourcePath=") + "&resourcePath=".length);
                 url = url.replaceAll("&resourcePath=" + resourcePath, "");
-                String checkoutID = url
-                    .substring(url.indexOf("?id=") + "?id=".length);
+                String checkoutID =
+                url.substring(url.indexOf("?id=") + "?id=".length);
                 print(resourcePath);
                 print(checkoutID);
-                eventBus.fire(
-                    onPeachPayFinished(url, checkoutID, resourcePath));
+                eventBus
+                    .fire(onPeachPayFinished(url, checkoutID, resourcePath));
                 Navigator.pop(context);
               } else if (url.contains("failure")) {
                 Navigator.pop(context);
@@ -3118,5 +3121,3 @@ class PeachPayWebView extends StatelessWidget {
     );
   }
 }
-
-

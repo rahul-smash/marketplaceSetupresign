@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:location/location.dart';
 import 'package:restroapp/src/UI/AddressByRadius.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -12,8 +13,8 @@ import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+
 import '../BookOrder/ConfirmOrderScreen.dart';
-import 'package:location/location.dart';
 
 class DeliveryAddressList extends StatefulWidget {
   final bool showProceedBar;
@@ -441,14 +442,16 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
           int distanceInKms = distanceInKm.toInt();
 
           print("==distanceInKm==${distanceInKms}");
+          print(store.operatingZoneId);
 
-          StoreRadiousResponse storeRadiousResponse =
-              await ApiController.storeRadiusApi();
+          StoreRadiousResponse storeRadiusV2Response =
+              await ApiController.storeRadiusV2Api(store.operatingZoneId);
+          print(store.operatingZoneId);
 
           Area area;
           //print("---${areaList.length}---and-- ${distanceInKms}---");
-          for (int i = 0; i < storeRadiousResponse.data.length; i++) {
-            Area areaObject = storeRadiousResponse.data[i];
+          for (int i = 0; i < storeRadiusV2Response.data.length; i++) {
+            Area areaObject = storeRadiusV2Response.data[i];
             int radius = int.parse(areaObject.radius);
             if (distanceInKms < radius && areaObject.radiusCircle == "Within") {
               area = areaObject;
