@@ -257,7 +257,6 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         ));
   }
 
-  _openPageForIndex(DrawerChildItem item, BuildContext context) async {
   Widget showUserWalletView() {
     return Visibility(
       visible: widget.brandData.walletSetting == "1" ? true : false,
@@ -317,7 +316,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
     );
   }
 
-  _openPageForIndex(DrawerChildItem item,  BuildContext context) async {
+  _openPageForIndex(DrawerChildItem item, BuildContext context) async {
     switch (item.title) {
       case DrawerChildConstants.HOME:
         widget.callback();

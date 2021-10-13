@@ -1020,7 +1020,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                           Text(
                               taxModel == null
                                   ? "Remaining Balance: ${AppConstant.currency}"
-                                  : "Remaining Balance: ${AppConstant.currency} ${getUserRemaningWallet()}",
+                                  : "Remaining Balance: ${AppConstant
+                                  .currency} ${getUserRemaningWallet()}",
                               style:
                               TextStyle(color: Colors.black, fontSize: 15)),
                         ],
@@ -1035,7 +1036,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                               style:
                               TextStyle(color: Colors.black, fontSize: 16)),
                           Text(
-                              "${AppConstant.currency} ${taxModel == null ? "0.00" : databaseHelper.roundOffPrice(double.parse(taxModel.walletRefund), 2).toStringAsFixed(2)}",
+                              "${AppConstant.currency} ${taxModel == null
+                                  ? "0.00"
+                                  : databaseHelper.roundOffPrice(
+                                  double.parse(taxModel.walletRefund), 2)
+                                  .toStringAsFixed(2)}",
                               style: TextStyle(color: appTheme, fontSize: 15)),
                         ],
                       ),
@@ -1713,7 +1718,6 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             textColor: Colors.white,
             color: appTheme,
             onPressed: () async {
-
               bool isNetworkAvailable = await Utils.isNetworkAvailable();
               if (!isNetworkAvailable) {
                 Utils.showToast(AppConstant.noInternet, false);
@@ -2493,6 +2497,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
               onlineMethod,
               selectedDeliverSlotValue,
               cart_saving: totalSavings.toStringAsFixed(2),
+              walletRefund: _brandData.walletSetting == "0"
+                  ? ""
+                  : taxModel == null
+                  ? "0"
+                  : "${taxModel.walletRefund}",
               posBranchCode: widget.subscriptionOrderType != null
                   ? SingletonBrandData
                   .getInstance()

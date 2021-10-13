@@ -875,7 +875,7 @@ class ApiController {
       String membershipPlanDetailId = '',
       String membershipId = '',
       String additionalInfo = '',
-      String isMembershipCouponEnabled = '0'}) async {
+      String isMembershipCouponEnabled = '0',String walletRefund="0"}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -957,6 +957,7 @@ class ApiController {
         "shipping_charges": "${taxModel.shipping}",
         "note": note,
         "calculated_tax_detail": "",
+        "wallet_refund": walletRefund,
         "coupon_code": taxModel == null ? "" : '${taxModel.couponCode}',
         "device_id": deviceId,
         "user_address": isComingFromPickUpScreen == true
