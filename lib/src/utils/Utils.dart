@@ -732,6 +732,23 @@ class Utils {
     loginClickTime = currentTime;
     return false;
   }
+  static convertWalletDate(String date) {
+    String formatted = date;
+    try {
+      DateFormat format = new DateFormat("yyyy-MM-dd hh:mm:ss");
+      //UTC time true
+      DateTime time = format.parse(date, true);
+      time = time.toLocal();
+      //print("time.toLocal()=   ${time.toLocal()}");
+      DateFormat formatter = new DateFormat(
+          'dd MMM, yyyy hh:mm aa'); // Change hh:mm:aa to hh:mm aa
+      formatted = formatter.format(time.toLocal());
+    } catch (e) {
+      print(e);
+    }
+
+    return formatted;
+  }
 
   static void getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = await DeviceInfoPlugin();

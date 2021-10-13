@@ -44,6 +44,7 @@ class TaxCalculationModel {
   List<FixedTax> fixedTax;
   List<OrderDetail> orderDetail;
   bool isChanged;
+  String walletRefund;
 
   TaxCalculationModel(
       {this.total,
@@ -60,7 +61,8 @@ class TaxCalculationModel {
       this.taxLabel,
       this.fixedTax,
       this.orderDetail,
-      this.isChanged});
+      this.isChanged,
+      this.walletRefund});
 
   factory TaxCalculationModel.fromJson(
       String couponCode, String couponType, Map<String, dynamic> json) {
@@ -100,6 +102,8 @@ class TaxCalculationModel {
           json["order_detail"].map((x) => OrderDetail.fromJson(x)));
     }
     model.isChanged = json['is_changed'] == null ? false : json['is_changed'];
+    model.walletRefund =
+        json['wallet_refund'] == null ? false : json['wallet_refund'];
     return model;
   }
 
@@ -126,6 +130,7 @@ class TaxCalculationModel {
       data["order_detail"] = this.orderDetail.map((v) => v.toJson()).toList();
     }
     data['is_changed'] = this.isChanged;
+    data['wallet_refund'] = this.walletRefund;
     return data;
   }
 }

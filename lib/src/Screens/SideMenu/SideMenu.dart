@@ -15,6 +15,7 @@ import 'package:restroapp/src/Screens/Address/DeliveryAddressList.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginEmailScreen.dart';
 import 'package:restroapp/src/Screens/Offers/MyOrderScreen.dart';
 import 'package:restroapp/src/Screens/SideMenu/FAQScreen.dart';
+import 'package:restroapp/src/Screens/SideMenu/WalletHistory.dart';
 import 'package:restroapp/src/Screens/Subscription/SubscriptionBuyScreen.dart';
 import 'package:restroapp/src/Screens/Subscription/SubscriptionPurchasedScreen.dart';
 import 'package:restroapp/src/Screens/Subscription/SubscriedPlanScreen.dart';
@@ -29,6 +30,7 @@ import 'package:restroapp/src/models/ReferEarnData.dart';
 import 'package:restroapp/src/models/SocialModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
+import 'package:restroapp/src/models/WalletModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -47,12 +49,10 @@ class NavDrawerMenu extends StatefulWidget {
   final String userName;
   VoidCallback callback;
   bool isPWAThemeEnable = true;
+  WalletModel walleModel;
 
-  NavDrawerMenu(
-    this.brandData,
-    this.userName,
-    this.callback,
-  );
+  NavDrawerMenu(this.brandData, this.userName, this.callback,
+      {this.walleModel});
 
   @override
   _NavDrawerMenuState createState() {
@@ -65,8 +65,9 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
   SocialModel socialModel;
   double iconHeight = 25;
   GoogleSignIn _googleSignIn;
+  WalletModel walleModel;
 
-  _NavDrawerMenuState();
+  _NavDrawerMenuState({this.walleModel});
 
   @override
   void initState() {
@@ -122,6 +123,13 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       leftMenuLabelTextColors = Colors.black;
       leftMenuWelcomeTextColors = Colors.black;
     }
+    if (AppConstant.isLoggedIn) {
+      ApiController.getUserWallet().then((response) {
+        setState(() {
+          this.walleModel = response;
+        });
+      });
+    }
   }
 
   @override
@@ -136,7 +144,12 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
               itemCount: _drawerItems.length + 1,
               itemBuilder: (BuildContext context, int index) {
                 return (index == 0
-                    ? createHeaderInfoItem()
+                    ? Column(
+                      children: [
+                        createHeaderInfoItem(),
+                        showUserWalletView(),
+                      ],
+                    )
                     : createDrawerItem(index - 1, context));
               }),
         ));
@@ -212,6 +225,65 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         ));
   }
 
+  Widget showUserWalletView() {
+    return Visibility(
+      visible: widget.brandData.walletSetting == "1" ? true : false,
+      child: InkWell(
+        onTap: () async {
+          print("showUserWalletView");
+          bool isNetworkAvailable = await Utils.isNetworkAvailable();
+          if (!isNetworkAvailable) {
+            Utils.showToast(AppConstant.noInternet, false);
+            return;
+          }
+          if (AppConstant.isLoggedIn) {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => WalletHistoryScreen(widget.brandData)),
+            );
+            Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+            attributeMap["WalletHistory"] = "WalletHistoryScreen";
+            Utils.sendAnalyticsEvent("Clicked ProfileScreen", attributeMap);
+          } else {
+            Navigator.pop(context);
+            Utils.showLoginDialog(context);
+          }
+        },
+        child: Container(
+          child: Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: ListTile(
+                //leading: Icon(Icons.account_balance_wallet,color: left_menu_icon_colors, size: 30),
+                leading: Image.asset(
+                  "images/walleticon.png",
+                  color: left_menu_icon_colors,
+                  height: 30,
+                  width: 30,
+                ),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Wallet Balance",
+                        style: TextStyle(
+                            color: leftMenuLabelTextColors, fontSize: 16)),
+                    Text(
+                        AppConstant.isLoggedIn
+                            ? walleModel == null
+                                ? "${AppConstant.currency}"
+                                : "${AppConstant.currency} ${walleModel.data.userWallet}"
+                            : "",
+                        style: TextStyle(
+                            color: leftMenuLabelTextColors, fontSize: 15)),
+                  ],
+                ),
+              )),
+        ),
+      ),
+    );
+  }
+
   _openPageForIndex(DrawerChildItem item, int pos, BuildContext context) async {
     switch (item.title) {
       case DrawerChildConstants.HOME:
@@ -240,8 +312,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                  checkIsPlanPurchased()
+                  builder: (context) => checkIsPlanPurchased()
                       ? SubscribedPlanScreen()
                       : SubscriptionBuyScreen()));
         } else {
@@ -524,8 +595,6 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       } else {
         Utils.showToast('Something went wrong!', false);
       }
-
-
     } catch (e) {
       print(e);
     }

@@ -12,28 +12,36 @@ EventBus eventBus = EventBus();
 class onViewAllSelected {
   bool isViewAllSelected;
   StoresModel allStoreData;
-  HomeScreenEnum selectedScreen=HomeScreenEnum.HOME_BAND_VIEW;
-  onViewAllSelected(this.isViewAllSelected,this.allStoreData,{this.selectedScreen});
+  HomeScreenEnum selectedScreen = HomeScreenEnum.HOME_BAND_VIEW;
+
+  onViewAllSelected(this.isViewAllSelected, this.allStoreData,
+      {this.selectedScreen});
 }
 
 class updateCartCount {
   updateCartCount();
 }
+
 class updateStoreSearch {
   List<Product> searchedProductList;
+
   updateStoreSearch(this.searchedProductList);
 }
 
 class onCartRemoved {
   onCartRemoved();
 }
+
 class onHomeSearch {
   StoresModel allStoreData;
+
   onHomeSearch(this.allStoreData);
 }
+
 class openHome {
   openHome();
 }
+
 class OnProductTileDbRefresh {
   OnProductTileDbRefresh();
 }
@@ -49,8 +57,10 @@ class onCounterUpdate {
 class onOpenMenu {
   onOpenMenu();
 }
+
 class onLocationChanged {
   LatLng latLng;
+
   onLocationChanged(this.latLng);
 }
 
@@ -72,9 +82,11 @@ class onPayTMPageFinished {
   String url;
   String orderId;
   String txnId;
+  String amount;
 
-  onPayTMPageFinished(this.url, this.orderId, this.txnId);
+  onPayTMPageFinished(this.url, this.orderId, this.txnId, {this.amount = ''});
 }
+
 class onPeachPayFinished {
   String url;
   String checkoutID;
@@ -82,4 +94,3 @@ class onPeachPayFinished {
 
   onPeachPayFinished(this.url, this.checkoutID, this.resourcePath);
 }
-

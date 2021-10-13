@@ -27,8 +27,7 @@ class BrandVersionModel {
         brand: BrandData.fromJson(json["brand"]),
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "success": success,
         "brand": brand.toJson(),
       };
@@ -37,7 +36,8 @@ class BrandVersionModel {
 class BrandData {
   String allowCustomerForGst;
 
-  BrandData({this.id,
+  BrandData({
+    this.id,
     this.name,
     this.userId,
     this.address,
@@ -88,7 +88,9 @@ class BrandData {
     this.display_store_rating,
     this.display_prepration_time,
     this.display_store_location,
-    this.isMembershipOn
+    this.isMembershipOn,
+    this.walletSetting,
+    this.walletSettings,
   });
 
   String id;
@@ -142,87 +144,90 @@ class BrandData {
   String display_prepration_time;
   String display_store_location;
   String isMembershipOn;
+  String walletSetting;
+  WalletSettings walletSettings;
 
-  factory BrandData.fromJson(Map<String, dynamic> json) =>
-      BrandData(
-          id: json["id"],
-          name: json["name"],
-          userId: json["user_id"],
-          address: json["address"],
-          city: json["city"],
-          state: json["state"],
-          loyality: json["loyality"],
-          about_us: json["about_us"],
-          country: json["country"],
-          timeZone: json["time_zone"],
-          zipcode: json["zipcode"],
-          logo: json["logo"],
-          currency: json["currency"],
-          currencyAbbr: json["currency_abbr"],
-          otpSkip: json['otp_skip'],
-          social_login: json['social_login'],
-          deliveryFacility: json['delivery_facility'],
-          showCurrency: json["show_currency"],
-          favIcon: json["fav_icon"],
-          appIcon: json["app_icon"],
-          appShareLink: json["app_share_link"],
-          androidShareLink: json["android_share_link"],
-          iphoneShareLink: json["iphone_share_link"],
-          currencyUnicode: json["currency_unicode"],
-          internationalOtp: json["international_otp"],
-          onlinePayment: json["online_payment"],
-          reviewRatingDisplay: json["review_rating_display"],
-          cod: json["cod"],
-          isMembershipOn: json["is_membership_on"],
-          paymentGatewaySettings: json["payment_gateway_settings"] == null
-              ? null
-              : List<PaymentGatewaySettings>.from(
-              json["payment_gateway_settings"]
-                  .map((x) => PaymentGatewaySettings.fromJson(x))),
-          banners:
-          List<Banner>.from(json["banners"].map((x) => Banner.fromJson(x))),
-          webBanners:
-          List<Banner>.from(json["web_banners"].map((x) => Banner.fromJson(x))),
-          footerBanners: List<dynamic>.from(
-              json["footer_banners"].map((x) => x)),
-          aboutusBanner: List<dynamic>.from(
-              json["aboutus_banner"].map((x) => x)),
-          forceDownload: List<ForceDownload>.from(
-              json["force_download"].map((x) => ForceDownload.fromJson(x))),
-          logo10080: json["logo_100_80"],
-          logo300200: json["logo_300_200"],
-          appThemeIcons: AppThemeIcons.fromJson(json["app_theme_icons"]),
-          domain: json["domain"],
-          poweredByText: json["powered_by_text"],
-          poweredByLink: json["powered_by_link"],
-          blDeviceIdUnique: json["bl_device_id_unique"],
-          isRefererFnEnable: json["is_referer_fn_enable"],
-          allowCustomerForGst: json["allow_customer_for_gst"],
-          paymentGateway: json["payment_gateway"],
-          display_distance: json["display_distance"] == null
-              ? null
-              : json["display_distance"].toString(),
-          display_store_rating: json["display_store_rating"] == null
-              ? null
-              : json["display_store_rating"].toString(),
-          display_prepration_time: json["display_prepration_time"] == null
-              ? null
-              : json["display_prepration_time"].toString(),
-          display_store_location: json["display_store_location"] == null
-              ? null
-              : json["display_store_location"].toString(),
-          homeScreenSection: json["home_screen_section"] == null ? null : List<
-              HomeScreenSection>.from(json["home_screen_section"].map((x) =>
-              HomeScreenSection.fromJson(x))),
-          filters:
-          List<Filter>.from(json["filters"].map((x) => Filter.fromJson(x))),
-          webAppThemeColors: json["web_app_theme_colors"] == null
-              ? null
-              : WebAppThemeColors.fromJson(json["web_app_theme_colors"]));
+  factory BrandData.fromJson(Map<String, dynamic> json) => BrandData(
+        id: json["id"],
+        name: json["name"],
+        userId: json["user_id"],
+        address: json["address"],
+        city: json["city"],
+        state: json["state"],
+        loyality: json["loyality"],
+        about_us: json["about_us"],
+        country: json["country"],
+        timeZone: json["time_zone"],
+        zipcode: json["zipcode"],
+        logo: json["logo"],
+        currency: json["currency"],
+        currencyAbbr: json["currency_abbr"],
+        otpSkip: json['otp_skip'],
+        social_login: json['social_login'],
+        deliveryFacility: json['delivery_facility'],
+        showCurrency: json["show_currency"],
+        favIcon: json["fav_icon"],
+        appIcon: json["app_icon"],
+        appShareLink: json["app_share_link"],
+        androidShareLink: json["android_share_link"],
+        iphoneShareLink: json["iphone_share_link"],
+        currencyUnicode: json["currency_unicode"],
+        internationalOtp: json["international_otp"],
+        onlinePayment: json["online_payment"],
+        reviewRatingDisplay: json["review_rating_display"],
+        cod: json["cod"],
+        isMembershipOn: json["is_membership_on"],
+        paymentGatewaySettings: json["payment_gateway_settings"] == null
+            ? null
+            : List<PaymentGatewaySettings>.from(json["payment_gateway_settings"]
+                .map((x) => PaymentGatewaySettings.fromJson(x))),
+        banners:
+            List<Banner>.from(json["banners"].map((x) => Banner.fromJson(x))),
+        webBanners: List<Banner>.from(
+            json["web_banners"].map((x) => Banner.fromJson(x))),
+        footerBanners: List<dynamic>.from(json["footer_banners"].map((x) => x)),
+        aboutusBanner: List<dynamic>.from(json["aboutus_banner"].map((x) => x)),
+        forceDownload: List<ForceDownload>.from(
+            json["force_download"].map((x) => ForceDownload.fromJson(x))),
+        logo10080: json["logo_100_80"],
+        logo300200: json["logo_300_200"],
+        appThemeIcons: AppThemeIcons.fromJson(json["app_theme_icons"]),
+        domain: json["domain"],
+        poweredByText: json["powered_by_text"],
+        poweredByLink: json["powered_by_link"],
+        blDeviceIdUnique: json["bl_device_id_unique"],
+        isRefererFnEnable: json["is_referer_fn_enable"],
+        allowCustomerForGst: json["allow_customer_for_gst"],
+        paymentGateway: json["payment_gateway"],
+        display_distance: json["display_distance"] == null
+            ? null
+            : json["display_distance"].toString(),
+        display_store_rating: json["display_store_rating"] == null
+            ? null
+            : json["display_store_rating"].toString(),
+        display_prepration_time: json["display_prepration_time"] == null
+            ? null
+            : json["display_prepration_time"].toString(),
+        display_store_location: json["display_store_location"] == null
+            ? null
+            : json["display_store_location"].toString(),
+        homeScreenSection: json["home_screen_section"] == null
+            ? null
+            : List<HomeScreenSection>.from(json["home_screen_section"]
+                .map((x) => HomeScreenSection.fromJson(x))),
+        filters:
+            List<Filter>.from(json["filters"].map((x) => Filter.fromJson(x))),
+        webAppThemeColors: json["web_app_theme_colors"] == null
+            ? null
+            : WebAppThemeColors.fromJson(json["web_app_theme_colors"]),
+        walletSetting:
+            json["wallet_setting"] == null ? null : json["wallet_setting"],
+        walletSettings: json["wallet_settings"] == null
+            ? null
+            : WalletSettings.fromJson(json["wallet_settings"]),
+      );
 
-
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "user_id": userId,
@@ -251,13 +256,13 @@ class BrandData {
         "cod": cod,
         "online_payment": onlinePayment,
         "payment_gateway_settings":
-        paymentGatewaySettings.map((v) => v.toJson()).toList(),
+            paymentGatewaySettings.map((v) => v.toJson()).toList(),
         "banners": List<dynamic>.from(banners.map((x) => x.toJson())),
         "web_banners": List<dynamic>.from(webBanners.map((x) => x.toJson())),
         "footer_banners": List<dynamic>.from(footerBanners.map((x) => x)),
         "aboutus_banner": List<dynamic>.from(aboutusBanner.map((x) => x)),
         "force_download":
-        List<dynamic>.from(forceDownload.map((x) => x.toJson())),
+            List<dynamic>.from(forceDownload.map((x) => x.toJson())),
         "logo_100_80": logo10080,
         "logo_300_200": logo300200,
         "app_theme_icons": appThemeIcons.toJson(),
@@ -270,19 +275,20 @@ class BrandData {
         "allow_customer_for_gst": allowCustomerForGst,
         "payment_gateway": paymentGateway,
         "is_membership_on": isMembershipOn,
-        "home_screen_section": homeScreenSection == null ? null : List<
-            dynamic>.from(homeScreenSection.map((x) => x.toJson())),
+        "home_screen_section": homeScreenSection == null
+            ? null
+            : List<dynamic>.from(homeScreenSection.map((x) => x.toJson())),
         "filters": List<dynamic>.from(filters.map((x) => x.toJson())),
         "display_distance": display_distance == null ? null : display_distance,
-        "display_store_rating": display_store_rating == null
-            ? null
-            : display_store_rating,
-        "display_prepration_time": display_prepration_time == null
-            ? null
-            : display_prepration_time,
-        "display_store_location": display_store_location == null
-            ? null
-            : display_store_location,
+        "display_store_rating":
+            display_store_rating == null ? null : display_store_rating,
+        "display_prepration_time":
+            display_prepration_time == null ? null : display_prepration_time,
+        "display_store_location":
+            display_store_location == null ? null : display_store_location,
+        "wallet_setting": walletSetting == null ? null : walletSetting,
+        "wallet_settings":
+            walletSettings == null ? null : walletSettings.toJson(),
       };
 }
 
@@ -295,14 +301,12 @@ class Filter {
   String lable;
   String value;
 
-  factory Filter.fromJson(Map<String, dynamic> json) =>
-      Filter(
+  factory Filter.fromJson(Map<String, dynamic> json) => Filter(
         lable: json["lable"],
         value: json["value"],
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "lable": lable,
         "value": value,
       };
@@ -331,8 +335,7 @@ class AppThemeIcons {
   String icon384384;
   String icon512512;
 
-  factory AppThemeIcons.fromJson(Map<String, dynamic> json) =>
-      AppThemeIcons(
+  factory AppThemeIcons.fromJson(Map<String, dynamic> json) => AppThemeIcons(
         id: json["id"],
         icon7272: json["icon_72_72"],
         icon9696: json["icon_96_96"],
@@ -344,8 +347,7 @@ class AppThemeIcons {
         icon512512: json["icon_512_512"],
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "icon_72_72": icon7272,
         "icon_96_96": icon9696,
@@ -391,8 +393,7 @@ class Banner {
   String type;
   String platform;
 
-  factory Banner.fromJson(Map<String, dynamic> json) =>
-      Banner(
+  factory Banner.fromJson(Map<String, dynamic> json) => Banner(
         id: json["id"],
         storeId: json["store_id"],
         link: json["link"],
@@ -409,8 +410,7 @@ class Banner {
         platform: json["platform"],
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "store_id": storeId,
         "link": link,
@@ -443,8 +443,7 @@ class ForceDownload {
   String forceDownload;
   String forceDownloadMessage;
 
-  factory ForceDownload.fromJson(Map<String, dynamic> json) =>
-      ForceDownload(
+  factory ForceDownload.fromJson(Map<String, dynamic> json) => ForceDownload(
         iosAppVersion: json["ios_app_version"],
         androidAppVerison: json["android_app_verison"],
         windowAppVersion: json["window_app_version"],
@@ -452,8 +451,7 @@ class ForceDownload {
         forceDownloadMessage: json["force_download_message"],
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "ios_app_version": iosAppVersion,
         "android_app_verison": androidAppVerison,
         "window_app_version": windowAppVersion,
@@ -538,16 +536,16 @@ class WebAppThemeColors {
         storeId: storeId ?? this.storeId,
         webThemePrimaryColor: webThemePrimaryColor ?? this.webThemePrimaryColor,
         webThemeSecondaryColor:
-        webThemeSecondaryColor ?? this.webThemeSecondaryColor,
+            webThemeSecondaryColor ?? this.webThemeSecondaryColor,
         webThemeCategoryOpenColor:
-        webThemeCategoryOpenColor ?? this.webThemeCategoryOpenColor,
+            webThemeCategoryOpenColor ?? this.webThemeCategoryOpenColor,
         stripsColor: stripsColor ?? this.stripsColor,
         footerColor: footerColor ?? this.footerColor,
         listingBackgroundColor:
-        listingBackgroundColor ?? this.listingBackgroundColor,
+            listingBackgroundColor ?? this.listingBackgroundColor,
         listingBorderColor: listingBorderColor ?? this.listingBorderColor,
         listingBoxBackgroundColor:
-        listingBoxBackgroundColor ?? this.listingBoxBackgroundColor,
+            listingBoxBackgroundColor ?? this.listingBoxBackgroundColor,
         homeSubHeadingColor: homeSubHeadingColor ?? this.homeSubHeadingColor,
         homeDescriptionColor: homeDescriptionColor ?? this.homeDescriptionColor,
         categoryListingButtonBorderColor: categoryListingButtonBorderColor ??
@@ -592,47 +590,46 @@ class WebAppThemeColors {
             ? null
             : json["home_description_color"],
         categoryListingButtonBorderColor:
-        json["category_listing_button_border_color"] == null
-            ? null
-            : json["category_listing_button_border_color"],
+            json["category_listing_button_border_color"] == null
+                ? null
+                : json["category_listing_button_border_color"],
         categoryListingBoxBackgroundColor:
-        json["category_listing_box_background_color"] == null
-            ? null
-            : json["category_listing_box_background_color"],
+            json["category_listing_box_background_color"] == null
+                ? null
+                : json["category_listing_box_background_color"],
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "id": id == null ? null : id,
         "store_id": storeId == null ? null : storeId,
         "web_theme_primary_color":
-        webThemePrimaryColor == null ? null : webThemePrimaryColor,
+            webThemePrimaryColor == null ? null : webThemePrimaryColor,
         "web_theme_secondary_color":
-        webThemeSecondaryColor == null ? null : webThemeSecondaryColor,
+            webThemeSecondaryColor == null ? null : webThemeSecondaryColor,
         "web_theme_category_open_color": webThemeCategoryOpenColor == null
             ? null
             : webThemeCategoryOpenColor,
         "strips_color": stripsColor == null ? null : stripsColor,
         "footer_color": footerColor == null ? null : footerColor,
         "listing_background_color":
-        listingBackgroundColor == null ? null : listingBackgroundColor,
+            listingBackgroundColor == null ? null : listingBackgroundColor,
         "listing_border_color":
-        listingBorderColor == null ? null : listingBorderColor,
+            listingBorderColor == null ? null : listingBorderColor,
         "listing_box_background_color": listingBoxBackgroundColor == null
             ? null
             : listingBoxBackgroundColor,
         "home_sub_heading_color":
-        homeSubHeadingColor == null ? null : homeSubHeadingColor,
+            homeSubHeadingColor == null ? null : homeSubHeadingColor,
         "home_description_color":
-        homeDescriptionColor == null ? null : homeDescriptionColor,
+            homeDescriptionColor == null ? null : homeDescriptionColor,
         "category_listing_button_border_color":
-        categoryListingButtonBorderColor == null
-            ? null
-            : categoryListingButtonBorderColor,
+            categoryListingButtonBorderColor == null
+                ? null
+                : categoryListingButtonBorderColor,
         "category_listing_box_background_color":
-        categoryListingBoxBackgroundColor == null
-            ? null
-            : categoryListingBoxBackgroundColor,
+            categoryListingBoxBackgroundColor == null
+                ? null
+                : categoryListingBoxBackgroundColor,
       };
 }
 
@@ -670,11 +667,133 @@ class HomeScreenSection {
         position: json["position"] == null ? null : json["position"],
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "section": section == null ? null : section,
         "display": display == null ? null : display,
         "position": position == null ? null : position,
       };
 }
 
+class WalletSettings {
+  WalletSettings({
+    this.id,
+    this.brandId,
+    this.storeId,
+    this.status,
+    this.customerWalletTopUpStatus,
+    this.adminWalletTopUpStatus,
+    this.minTopUpAmount,
+    this.maxTopUpAmount,
+    this.minTopUpHoldAmount,
+    this.maxTopUpHoldAmount,
+    this.defaultTopUpAmount,
+    this.created,
+    this.modified,
+  });
+
+  String id;
+  String brandId;
+  String storeId;
+  String status;
+  String customerWalletTopUpStatus;
+  String adminWalletTopUpStatus;
+  String minTopUpAmount;
+  String maxTopUpAmount;
+  String minTopUpHoldAmount;
+  String maxTopUpHoldAmount;
+  String defaultTopUpAmount;
+  DateTime created;
+  DateTime modified;
+
+  WalletSettings copyWith({
+    String id,
+    String brandId,
+    String storeId,
+    String status,
+    String customerWalletTopUpStatus,
+    String adminWalletTopUpStatus,
+    String minTopUpAmount,
+    String maxTopUpAmount,
+    String minTopUpHoldAmount,
+    String maxTopUpHoldAmount,
+    String defaultTopUpAmount,
+    DateTime created,
+    DateTime modified,
+  }) =>
+      WalletSettings(
+        id: id ?? this.id,
+        brandId: brandId ?? this.brandId,
+        storeId: storeId ?? this.storeId,
+        status: status ?? this.status,
+        customerWalletTopUpStatus:
+            customerWalletTopUpStatus ?? this.customerWalletTopUpStatus,
+        adminWalletTopUpStatus:
+            adminWalletTopUpStatus ?? this.adminWalletTopUpStatus,
+        minTopUpAmount: minTopUpAmount ?? this.minTopUpAmount,
+        maxTopUpAmount: maxTopUpAmount ?? this.maxTopUpAmount,
+        minTopUpHoldAmount: minTopUpHoldAmount ?? this.minTopUpHoldAmount,
+        maxTopUpHoldAmount: maxTopUpHoldAmount ?? this.maxTopUpHoldAmount,
+        defaultTopUpAmount: defaultTopUpAmount ?? this.defaultTopUpAmount,
+        created: created ?? this.created,
+        modified: modified ?? this.modified,
+      );
+
+  factory WalletSettings.fromRawJson(String str) =>
+      WalletSettings.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory WalletSettings.fromJson(Map<String, dynamic> json) => WalletSettings(
+        id: json["id"] == null ? null : json["id"],
+        brandId: json["brand_id"] == null ? null : json["brand_id"],
+        storeId: json["store_id"] == null ? null : json["store_id"],
+        status: json["status"] == null ? null : json["status"],
+        customerWalletTopUpStatus: json["customer_wallet_top_up_status"] == null
+            ? null
+            : json["customer_wallet_top_up_status"],
+        adminWalletTopUpStatus: json["admin_wallet_top_up_status"] == null
+            ? null
+            : json["admin_wallet_top_up_status"],
+        minTopUpAmount: json["min_top_up_amount"] == null
+            ? null
+            : json["min_top_up_amount"],
+        maxTopUpAmount: json["max_top_up_amount"] == null
+            ? null
+            : json["max_top_up_amount"],
+        minTopUpHoldAmount: json["min_top_up_hold_amount"] == null
+            ? null
+            : json["min_top_up_hold_amount"],
+        maxTopUpHoldAmount: json["max_top_up_hold_amount"] == null
+            ? null
+            : json["max_top_up_hold_amount"],
+        defaultTopUpAmount: json["default_top_up_amount"] == null
+            ? null
+            : json["default_top_up_amount"],
+        created:
+            json["created"] == null ? null : DateTime.parse(json["created"]),
+        modified:
+            json["modified"] == null ? null : DateTime.parse(json["modified"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id == null ? null : id,
+        "brand_id": brandId == null ? null : brandId,
+        "store_id": storeId == null ? null : storeId,
+        "status": status == null ? null : status,
+        "customer_wallet_top_up_status": customerWalletTopUpStatus == null
+            ? null
+            : customerWalletTopUpStatus,
+        "admin_wallet_top_up_status":
+            adminWalletTopUpStatus == null ? null : adminWalletTopUpStatus,
+        "min_top_up_amount": minTopUpAmount == null ? null : minTopUpAmount,
+        "max_top_up_amount": maxTopUpAmount == null ? null : maxTopUpAmount,
+        "min_top_up_hold_amount":
+            minTopUpHoldAmount == null ? null : minTopUpHoldAmount,
+        "max_top_up_hold_amount":
+            maxTopUpHoldAmount == null ? null : maxTopUpHoldAmount,
+        "default_top_up_amount":
+            defaultTopUpAmount == null ? null : defaultTopUpAmount,
+        "created": created == null ? null : created.toIso8601String(),
+        "modified": modified == null ? null : modified.toIso8601String(),
+      };
+}

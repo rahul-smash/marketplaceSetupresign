@@ -42,6 +42,7 @@ import 'package:restroapp/src/models/RazorpayOrderData.dart';
 import 'package:restroapp/src/models/RecommendedProductsResponse.dart';
 import 'package:restroapp/src/models/ReferEarnData.dart';
 import 'package:restroapp/src/models/SearchTagsModel.dart';
+import 'package:restroapp/src/models/RazorPayTopUP.dart';
 import 'package:restroapp/src/models/SocialModel.dart';
 import 'package:restroapp/src/models/StoreAreaResponse.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
@@ -61,6 +62,8 @@ import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/models/ValidateCouponsResponse.dart';
 import 'package:restroapp/src/models/GetOrderHistory.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
+import 'package:restroapp/src/models/WalletModel.dart';
+import 'package:restroapp/src/models/WalletOnlineTopUp.dart';
 import 'package:restroapp/src/models/forgotPassword/GetForgotPwdData.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
@@ -2468,6 +2471,104 @@ class ApiController {
     } catch (e) {
       Utils.showToast(e.toString(), true);
       return null;
+    }
+  }
+
+  static Future<WalletModel> getUserWallet() async {
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    try {
+      if (isNetworkAvailable) {
+        UserModel user = await SharedPrefs.getUser();
+
+        var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.brandID) +
+            ApiConstants.userWallet;
+
+        var request = new http.MultipartRequest("POST", Uri.parse(url));
+        request.fields.addAll({
+          "user_id": user.id,
+          "brand_id": AppConstant.brandID,
+        });
+        print("fields=${request.fields.toString()}");
+        print("${url}");
+        final response =
+        await request.send().timeout(Duration(seconds: timeout));
+        final respStr = await response.stream.bytesToString();
+        print("${respStr}");
+        final parsed = json.decode(respStr);
+        WalletModel welletModel = WalletModel.fromJson(parsed);
+        SharedPrefs.saveUserWallet(welletModel);
+        return welletModel;
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<RazorPayTopUP> createOnlineTopUPApi(
+      String price, dynamic Id) async {
+    UserModel user = await SharedPrefs.getUser();
+    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.branch_id) +
+        ApiConstants.createOnlineTopUP;
+    print(url);
+    try {
+      FormData formData = new FormData.fromMap({
+        "amount": price,
+        "user_id": user.id,
+        "payment_request_id": Id,
+        "payment_type": "razorpay",
+        "currency": 'INR',
+        "platform": Platform.isIOS ? "IOS" : "android",
+      });
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      RazorPayTopUP razorTopStore =
+      RazorPayTopUP.fromJson(json.decode(response.data));
+      RazorPayTopUP.fromJson(json.decode(response.data));
+      print("-----RazortopUpData---${razorTopStore.success}");
+      return razorTopStore;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static Future<WalletOnlineTopUp> onlineTopUP(String paymentId,
+      String paymentRequestId, String amount, String paymentType) async {
+    UserModel user = await SharedPrefs.getUser();
+    var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.branch_id) +
+        ApiConstants.onlineTopUP;
+    print(url);
+    try {
+      FormData formData = new FormData.fromMap({
+        "price": amount,
+        "user_id": user.id,
+        "payment_request_id": paymentRequestId,
+        "online_method": paymentType,
+        "payment_id": paymentId,
+        "platform": Platform.isIOS ? "IOS" : "android",
+      });
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      WalletOnlineTopUp razorTopStore =
+      WalletOnlineTopUp.fromJson(json.decode(response.data));
+      print("-----RazortopUpData---${razorTopStore.success}");
+      return razorTopStore;
+    } catch (e) {
+      print(e);
     }
   }
 }

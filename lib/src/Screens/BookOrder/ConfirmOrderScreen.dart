@@ -37,6 +37,7 @@ import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/ValidateCouponsResponse.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
+import 'package:restroapp/src/models/WalletModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -116,6 +117,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   String couponType = '';
 
   bool isOneTimeApiCalled = false;
+
+  WalletModel userWalleModel;
 
   ConfirmOrderState({this.storeModel});
 
@@ -468,6 +471,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
       return;
     }
     isLoading = true;
+    userWalleModel = await ApiController.getUserWallet();
+
     String discount = widget.subscriptionOrderType != null
         ? getSubscriptionCouponDiscountPlan()
         : '0';
@@ -702,6 +707,21 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         return Container();
       }
     }
+  }
+
+  String getUserRemaningWallet() {
+    double balance = (double.parse(userWalleModel.data.userWallet) -
+        double.parse(taxModel.walletRefund) -
+        double.parse(taxModel.shipping));
+    //print("balance=${balance}");
+    if (balance > 0.0) {
+      // USer balance is greater than zero.
+      return databaseHelper.roundOffPrice(balance, 2).toStringAsFixed(2);
+    } else {
+      // USer balance is less than or equal to zero.
+      return "0.00";
+    }
+    //return "${userWalleModel == null ? "" : userWalleModel.data.userWallet}";
   }
 
   Widget addProductCart(Product product) {
@@ -968,8 +988,60 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             ],
           ),
         ),
+        Visibility(
+          visible: _brandData.walletSetting == "1" ? true : false,
+          child: Container(
+            child: Padding(
+                padding: EdgeInsets.only(left: 0, top: 10, bottom: 10),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10, 0, 5, 0),
+                      child: Icon(
+                        Icons.done,
+                        color: appTheme,
+                        size: 30,
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("My Wallet",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
+                          Text(
+                              taxModel == null
+                                  ? "Remaining Balance: ${AppConstant.currency}"
+                                  : "Remaining Balance: ${AppConstant.currency} ${getUserRemaningWallet()}",
+                              style:
+                              TextStyle(color: Colors.black, fontSize: 15)),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 5, top: 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text("You Used",
+                              style:
+                              TextStyle(color: Colors.black, fontSize: 16)),
+                          Text(
+                              "${AppConstant.currency} ${taxModel == null ? "0.00" : databaseHelper.roundOffPrice(double.parse(taxModel.walletRefund), 2).toStringAsFixed(2)}",
+                              style: TextStyle(color: appTheme, fontSize: 15)),
+                        ],
+                      ),
+                    ),
+                  ],
+                )),
+          ),
+        ),
         addMRPPrice(),
         addTotalSavingPrice(),
+
       ]),
     );
   }

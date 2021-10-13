@@ -41,6 +41,7 @@ import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/TagsModel.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
+import 'package:restroapp/src/models/WalletModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
@@ -124,6 +125,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
   StoresModel storeData;
   DateTime currentBackPressTime;
 
+  WalletModel welletModel;
+
   _MarketPlaceHomeScreenState(this.store);
 
   Map<String, HomeScreenSection> homeViewOrderMap = Map();
@@ -146,6 +149,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     _getStoreApi();
     //fetching Subscription plan
     _getSubscriptionPlan();
+    _getWellet();
     homeScreenStack = new LogicalStack();
 
     for (HomeScreenSection item in store.homeScreenSection) {
@@ -217,6 +221,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
     });
   }
 
+  void _getWellet() async {
+    welletModel= await ApiController.getUserWallet();
+  }
   void listenEvent() {
     eventBus.on<updateCartCount>().listen((event) {
       getCartCount();
@@ -266,7 +273,8 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
                 _selectedHomeScreen = HomeScreenEnum.HOME_BAND_VIEW;
               }
               setState(() {});
-            }),
+            },walleModel: welletModel,
+            ),
             bottomNavigationBar: SafeArea(
               child: addBottomBar(),
             ),
