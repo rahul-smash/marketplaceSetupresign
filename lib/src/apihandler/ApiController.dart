@@ -815,6 +815,7 @@ class ApiController {
       {String couponType = '', String isMembershipCouponEnabled = '0'}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
+    WalletModel userWallet = await SharedPrefs.getUserWallet();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
 
@@ -831,6 +832,7 @@ class ApiController {
         "user_id": user.id,
         "discount": "0",
         "shipping": shipping,
+        "user_wallet": userWallet == null ? "0" : userWallet.data.userWallet,
         "order_detail": orderJson,
         "device_id": deviceId,
         "coupon_code": couponCode.toString(),
@@ -2580,7 +2582,7 @@ class ApiController {
   static Future<RazorPayTopUP> createOnlineTopUPApi(
       String price, dynamic Id) async {
     UserModel user = await SharedPrefs.getUser();
-    var url = ApiConstants.baseUrl2.replaceAll("brandId",AppConstant.branch_id) +
+    var url = ApiConstants.base.replaceAll("brandId",AppConstant.brandID) +
         ApiConstants.createOnlineTopUP;
     print(url);
     try {
@@ -2613,7 +2615,7 @@ class ApiController {
   static Future<WalletOnlineTopUp> onlineTopUP(String paymentId,
       String paymentRequestId, String amount, String paymentType) async {
     UserModel user = await SharedPrefs.getUser();
-    var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.branch_id) +
+    var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.onlineTopUP;
     print(url);
     try {

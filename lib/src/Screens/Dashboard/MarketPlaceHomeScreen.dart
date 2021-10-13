@@ -223,6 +223,9 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
 
   void _getWellet() async {
     welletModel= await ApiController.getUserWallet();
+    setState(() {
+
+    });
   }
   void listenEvent() {
     eventBus.on<updateCartCount>().listen((event) {

@@ -134,8 +134,8 @@ class ApiConstants {
 
   //user wallet
   static String userWallet = 'homescreen/user_wallet';
-  static String createOnlineTopUP = 'createOnlineTopUP';
-  static String onlineTopUP = 'onlineTopUP';
+  static String createOnlineTopUP = 'online_topups/createOnlineTopUP';
+  static String onlineTopUP = 'online_topups/onlineTopUP';
 
 // get peach pay details
 // http://devmarketplace.restroapp.com/2/v1/marketplace/homescreen/version?ip=124.253.110.23
