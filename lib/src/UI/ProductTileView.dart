@@ -1110,7 +1110,7 @@ class _ProductTileItemState extends State<ProductTileItem> {
             Visibility(
               visible: true,
               child: Image.asset(
-                "images/starIcon.png",
+                "images/staricon.png",
                 width: 20,
                 height: 20,
                 color: index % 2 != 0 ? yellow : appTheme,

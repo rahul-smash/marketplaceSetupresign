@@ -469,6 +469,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
   }
 
   Future<void> multiTaxCalculationApi() async {
+    await constraints();
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
     if (!isNetworkAvailable) {
       Utils.showToast(AppConstant.noInternet, false);
@@ -1757,15 +1758,16 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
                 );
                 return;
               }
-//              if (widget.deliveryType == OrderType.Delivery &&
-//                  widget.address.notAllow) {
-//                if (!minOrderCheck) {
-//                  Utils.showToast(
-//                      "Your order amount is too low. Minimum order amount is ${widget.address.minAmount}",
-//                      false);
-//                  return;
-//                }
-//              }
+              if (widget.deliveryType == OrderType.Delivery &&
+                  widget.address.notAllow) {
+                if (!minOrderCheck) {
+                  Utils.showToast(
+                      "Your order amount is too low. Minimum order amount is ${widget
+                          .address.minAmount}",
+                      false);
+                  return;
+                }
+              }
 //              if (widget.deliveryType == OrderType.PickUp &&
 //                  widget.areaObject != null) {
 //                if (!minOrderCheck) {
@@ -2083,6 +2085,8 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         print("----minAmount=${minAmount}");
         print("--Cart--mtotalPrice=${mtotalPrice}");
         print("----shippingCharges=${shippingCharges}");
+        print("----widget.areaObject.isShippingMandatory=${widget.areaObject
+            .isShippingMandatory}");
 
         if (widget.address.notAllow) {
           if (mtotalPrice <= minAmount) {
@@ -2094,8 +2098,14 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             });
           } else {
             minOrderCheck = true;
+            print("---Cart-totalPrice is greater than min amount----}");
             setState(() {
               this.totalPrice = mtotalPrice.toDouble();
+              if (widget.areaObject.isShippingMandatory == '0') {
+                shippingCharges = "0";
+                widget.address.areaCharges = "0";
+                widget.areaObject.charges = "0";
+              }
             });
           }
         } else {
@@ -2110,8 +2120,11 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
             //then Store will not charge shipping.
             setState(() {
               this.totalPrice = totalPrice;
-              shippingCharges = "0";
-              widget.address.areaCharges = "0";
+              if (widget.areaObject.isShippingMandatory == '0') {
+                shippingCharges = "0";
+                widget.address.areaCharges = "0";
+                widget.areaObject.charges = "0";
+              }
             });
           }
         }
@@ -2835,7 +2848,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 //    }
   }
 
-  void constraints() {
+  Future<bool> constraints() async {
     try {
       if (widget.areaObject != null) {
         if (widget.areaObject.charges != null) {
@@ -2847,7 +2860,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
         }
         //print("----minAmount=${widget.address.minAmount}");
         //print("----notAllow=${widget.address.notAllow}");
-        checkMinOrderAmount();
+        await checkMinOrderAmount();
       }
       checkMinOrderPickAmount();
     } catch (e) {
@@ -2878,6 +2891,7 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
     if (mounted) {
       setState(() {});
     }
+    return Future(() => true);
   }
 
   bool checkThatItemIsInStocks() {

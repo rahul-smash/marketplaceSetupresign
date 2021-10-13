@@ -127,10 +127,11 @@ class ApiController {
         ApiConstants.brandVersion;
 
     var request = new http.MultipartRequest("GET", Uri.parse(url));
+    print("----url---${url}");
     try {
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
-      print("----url---${url}");
+
       print("----respStr---${respStr}");
       final parsed = json.decode(respStr);
       BrandVersionModel storeArea = BrandVersionModel.fromJson(parsed);

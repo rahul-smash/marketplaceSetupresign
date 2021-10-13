@@ -84,7 +84,7 @@ class _SubscriptionTypeSelectionState
 //        if (defaultAddressID != responses.data[i].id || !isSubscriptionActive)
 //          addressList.add(responsesData.data[i]);
         if (defaultAddressID == responses.data[i].id && isSubscriptionActive) {
-          responsesData.data[i].isSubscriptionOAddress = true;
+          responsesData.data[i].isSubscriptionAddress = true;
         }
 
         addressList.add(responsesData.data[i]);
@@ -569,7 +569,7 @@ class _SubscriptionTypeSelectionState
   Widget addOperationBar(DeliveryAddressData area, int index) {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 5, 5),
-      child: addressList[index].isSubscriptionOAddress
+      child: addressList[index].isSubscriptionAddress
           ? InkWell(
               onTap: () {
                 DialogUtils.displayCommonDialog(

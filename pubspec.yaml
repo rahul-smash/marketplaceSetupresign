@@ -143,7 +143,6 @@ flutter:
     - images/empty_cart.png
     - images/gifticon.png
     - images/whatsapp.png
-    - images/starIcon.png
     - images/tickicon.png
     - images/homeicon.png
     - images/unselectedcarticon.png
@@ -202,6 +201,7 @@ flutter:
     - images/runner-location.png
     - images/user-location.png
     - images/dine_in.png
+    - images/side_menu/
     - images/walletbalancegreaphics.png
     - images/walleticon.png
     - images/emptywalletbalancegreaphics.png
