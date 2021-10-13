@@ -125,6 +125,10 @@ class ApiConstants {
   static String peachpayVerifyTransaction =
       '/peachpay/peachpayVerifyTransaction';
 
+  //phonepe payment
+  static String phonepeCreateOrder='/phonepe/phonepeCreateOrder';
+  static String checkPhonepeTransactionStatus='/phonepe/checkPhonepeTransactionStatus';
+
   //new Banner Api
   static String banners = 'homescreen/banners';
 

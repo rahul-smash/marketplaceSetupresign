@@ -31,6 +31,8 @@ import 'package:restroapp/src/models/LogoutResponse.dart';
 import 'package:restroapp/src/models/LoyalityPointsModel.dart';
 import 'package:restroapp/src/models/PeachPayCheckOutResponse.dart';
 import 'package:restroapp/src/models/PeachPayVerifyResponse.dart';
+import 'package:restroapp/src/models/PhonePeResponse.dart';
+import 'package:restroapp/src/models/PhonePeVerifyResponse.dart';
 import 'package:restroapp/src/models/StorelatlngsResponse.dart';
 import 'package:restroapp/src/models/MembershipPlanResponse.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
@@ -1455,15 +1457,20 @@ class ApiController {
     }
   }
 
-  static Future<StripeCheckOutModel> stripePaymentApi(String amount, String storeID) async {
+  static Future<StripeCheckOutModel> stripePaymentApi(
+      String amount, String storeID) async {
     UserModel user = await SharedPrefs.getUser();
     var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.stripePaymentCheckout;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
-      request.fields.addAll(
-          {"customer_email": user.email, "amount": amount, "currency": "usd","store_id":storeID});
+      request.fields.addAll({
+        "customer_email": user.email,
+        "amount": amount,
+        "currency": "usd",
+        "store_id": storeID
+      });
       print('--url===  $url');
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
@@ -1480,16 +1487,14 @@ class ApiController {
   }
 
   static Future<StripeVerifyModel> stripeVerifyTransactionApi(
-      String payment_request_id,String storeID) async {
-    var url = ApiConstants.base.replaceAll("brandId",AppConstant.brandID) +
+      String payment_request_id, String storeID) async {
+    var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.stripeVerifyTransaction;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
-      request.fields.addAll({
-        "payment_request_id": payment_request_id,
-        "store_id":storeID
-      });
+      request.fields.addAll(
+          {"payment_request_id": payment_request_id, "store_id": storeID});
       print('--url===  $url');
       print('--payment_request_id===  $payment_request_id');
       final response = await request.send().timeout(Duration(seconds: timeout));
@@ -2467,6 +2472,71 @@ class ApiController {
       final parsed = json.decode(respStr);
 
       PeachPayVerifyResponse model = PeachPayVerifyResponse.fromJson(parsed);
+      return model;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
+  /*Phonepe*/
+  static Future<PhonePeResponse> phonepeCreateOrderApi(String amount,
+      String orderJson, dynamic detailsJson, storeId, String currencyAbr,
+      {String merchantUserId = ''}) async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    if (!isNetworkAviable) {
+      return null;
+    }
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
+        ApiConstants.phonepeCreateOrder;
+    print(url);
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+    try {
+      request.fields.addAll({
+        "amount": amount,
+        "merchantUserId": merchantUserId,
+        "currency": currencyAbr.trim(),
+        "order_info": detailsJson != null ? detailsJson : '',
+        //JSONObject details
+        "orders": orderJson != null ? orderJson : ''
+        //cart jsonObject
+      });
+      print(request.fields);
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      PhonePeResponse model =
+          PhonePeResponse.fromJson(parsed);
+      return model;
+    } catch (e) {
+      print('---catch-phonepeCreateOrderApi-----' + e.toString());
+      //Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
+  static Future<PhonePeVerifyResponse> phonePeVerifyTransactionApi(
+      String paymentRequestId, String storeID) async {
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
+        ApiConstants.checkPhonepeTransactionStatus;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    print(url);
+    try {
+      request.fields.addAll({
+        "payment_request_id": paymentRequestId,
+      });
+      print(request.fields.toString());
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      PhonePeVerifyResponse model = PhonePeVerifyResponse.fromJson(parsed);
       return model;
     } catch (e) {
       Utils.showToast(e.toString(), true);

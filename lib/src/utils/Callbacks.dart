@@ -34,14 +34,11 @@ class onCartRemoved {
 
 class onHomeSearch {
   StoresModel allStoreData;
-
   onHomeSearch(this.allStoreData);
 }
-
 class openHome {
   openHome();
 }
-
 class OnProductTileDbRefresh {
   OnProductTileDbRefresh();
 }
@@ -57,10 +54,8 @@ class onCounterUpdate {
 class onOpenMenu {
   onOpenMenu();
 }
-
 class onLocationChanged {
   LatLng latLng;
-
   onLocationChanged(this.latLng);
 }
 
@@ -93,4 +88,10 @@ class onPeachPayFinished {
   String resourcePath;
 
   onPeachPayFinished(this.url, this.checkoutID, this.resourcePath);
+}
+class onPhonePeFinished {
+  String paymentRequestId;
+  String transId;
+
+  onPhonePeFinished( this.paymentRequestId, this.transId);
 }
