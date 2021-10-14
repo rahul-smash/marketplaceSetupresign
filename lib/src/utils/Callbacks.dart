@@ -86,14 +86,16 @@ class onPeachPayFinished {
   String url;
   String checkoutID;
   String resourcePath;
+  String amount;
 
-  onPeachPayFinished(this.url, this.checkoutID, this.resourcePath);
+  onPeachPayFinished(this.url, this.checkoutID, this.resourcePath,{this.amount});
 }
 class onPhonePeFinished {
   String paymentRequestId;
   String transId;
+  String amount;
 
-  onPhonePeFinished( this.paymentRequestId, this.transId);
+  onPhonePeFinished( this.paymentRequestId, this.transId,{this.amount});
 }
 class onIPay88Finished {
   String url;

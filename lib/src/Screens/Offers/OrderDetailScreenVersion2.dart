@@ -682,7 +682,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Visibility(
-                          visible: orderHistoryData.walletRefundAmount!=null&&orderHistoryData.walletRefundAmount == "0.00"
+                          visible: orderHistoryData.walletRefund!=null&&orderHistoryData.walletRefund == "0.00"
                               ? false
                               : true,
                           child: Padding(
@@ -702,7 +702,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
                                         )),
                                   ),
                                   Text(
-                                      "${AppConstant.currency} ${orderHistoryData.walletRefundAmount}",
+                                      "${AppConstant.currency} ${orderHistoryData.walletRefund}",
                                       style: TextStyle(
                                           color: Color(0xff74BA33),
                                           fontSize: 14,

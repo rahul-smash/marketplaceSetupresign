@@ -54,6 +54,7 @@ import 'package:restroapp/src/models/ReferEarnData.dart';
 import 'package:restroapp/src/models/SearchTagsModel.dart';
 import 'package:restroapp/src/models/RazorPayTopUP.dart';
 import 'package:restroapp/src/models/SocialModel.dart';
+import 'package:restroapp/src/models/SellOptionResponse.dart';
 import 'package:restroapp/src/models/StoreAreaResponse.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
@@ -2635,6 +2636,42 @@ class ApiController {
       return null;
     }
   }
+  static Future<SellOptionResponse> sellOptionsApi(
+      String name,
+      String email,
+      String phone,
+      String store_name,
+      String address,
+      String additional_detail,
+      String business_type) async {
+    var url =
+        "https://devmarketplace.restroapp.com/2/v1/static_pages/partnerRequests";
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    print(url);
+    try {
+      request.fields.addAll({
+        "name": name,
+        "email": email,
+        "phone": phone,
+        "store_name": store_name,
+        "address": address,
+        "additional_detail": additional_detail,
+        "business_type": business_type
+      });
+      print(request.fields.toString());
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      SellOptionResponse model = SellOptionResponse.fromJson(parsed);
+      return model;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
 
   static Future<WalletModel> getUserWallet() async {
     bool isNetworkAvailable = await Utils.isNetworkAvailable();
@@ -2670,7 +2707,7 @@ class ApiController {
   }
 
   static Future<RazorPayTopUP> createOnlineTopUPApi(
-      String price, dynamic Id) async {
+      String price, dynamic Id,String payment_type) async {
     UserModel user = await SharedPrefs.getUser();
     var url = ApiConstants.base.replaceAll("brandId",AppConstant.brandID) +
         ApiConstants.createOnlineTopUP;
@@ -2680,7 +2717,7 @@ class ApiController {
         "amount": price,
         "user_id": user.id,
         "payment_request_id": Id,
-        "payment_type": "razorpay",
+        "payment_type": payment_type,
         "currency": 'INR',
         "platform": Platform.isIOS ? "IOS" : "android",
       });

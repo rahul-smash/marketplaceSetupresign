@@ -11,9 +11,10 @@ class PhonePeWebView extends StatelessWidget {
   PhonePeResponse responseModel;
   Completer<WebViewController> _controller = Completer<WebViewController>();
   String storeID;
-  bool isUrlLoadFinished=false;
+  bool isUrlLoadFinished = false;
+  String amount;
 
-  PhonePeWebView(this.responseModel, this.storeID);
+  PhonePeWebView(this.responseModel, this.storeID, {this.amount = ''});
 
   @override
   Widget build(BuildContext context) {
@@ -47,27 +48,25 @@ class PhonePeWebView extends StatelessWidget {
               //https://devmarketplace.restroapp.com/2/v1/5/phonepe/phonepeResUrl?payment_request_id=TXN_phonepe_456911632473278&TransId=T2109241419501796650551&Status=PAYMENT_SUCCESS
 
               if (url.contains("Status=PAYMENT_SUCCESS")) {
-                if(!isUrlLoadFinished){
-                  isUrlLoadFinished=true;
-                  String status =
-                  url.substring(
-                      url.indexOf("&Status=") + "&Status=".length);
+                if (!isUrlLoadFinished) {
+                  isUrlLoadFinished = true;
+                  String status = url
+                      .substring(url.indexOf("&Status=") + "&Status=".length);
                   url = url.replaceAll("&Status=" + status, "");
 
-                  String transId =
-                  url.substring(
-                      url.indexOf("&TransId=") + "&TransId=".length);
+                  String transId = url
+                      .substring(url.indexOf("&TransId=") + "&TransId=".length);
                   url = url.replaceAll("&TransId=" + transId, "");
 
-                  String payment_request_id = url
-                      .substring(url.indexOf("?payment_request_id=") + "?payment_request_id=".length);
+                  String payment_request_id = url.substring(
+                      url.indexOf("?payment_request_id=") +
+                          "?payment_request_id=".length);
 
-                  eventBus.fire(
-                      onPhonePeFinished(payment_request_id, transId));
+                  eventBus.fire(onPhonePeFinished(payment_request_id, transId,amount:amount));
                   Navigator.pop(context);
                 }
-
-              } else if (url.toLowerCase().contains("failure")||url.toLowerCase().contains("error")){
+              } else if (url.toLowerCase().contains("failure") ||
+                  url.toLowerCase().contains("error")) {
                 Navigator.pop(context);
                 Utils.showToast("Payment Failed", false);
               }

@@ -91,6 +91,13 @@ class BrandData {
     this.isMembershipOn,
     this.walletSetting,
     this.walletSettings,
+    this.homePageTitleStatus,
+    this.homePageTitle,
+    this.homePageSubtitleStatus,
+    this.homePageSubtitle,
+    this.homePageHeaderRight,
+    this.homePageDisplayNumber,
+    this.homePageDisplayNumberType
   });
 
   String id;
@@ -146,6 +153,13 @@ class BrandData {
   String isMembershipOn;
   String walletSetting;
   WalletSettings walletSettings;
+  bool homePageTitleStatus;
+  String homePageTitle;
+  bool homePageSubtitleStatus;
+  String homePageSubtitle;
+  String homePageHeaderRight;
+  String homePageDisplayNumber;
+  String homePageDisplayNumberType;
 
   factory BrandData.fromJson(Map<String, dynamic> json) => BrandData(
         id: json["id"],
@@ -225,6 +239,23 @@ class BrandData {
         walletSettings: json["wallet_settings"] == null
             ? null
             : WalletSettings.fromJson(json["wallet_settings"]),
+    homePageTitleStatus: json["home_page_title_status"] == null
+        ? null
+        : json["home_page_title_status"],
+    homePageTitle: json["home_page_title"] == null
+        ? null
+        : json["home_page_title"].toString(),
+    homePageSubtitleStatus: json["home_page_subtitle_status"] == null
+        ? null
+        : json["home_page_subtitle_status"],
+    homePageSubtitle: json["home_page_subtitle"] == null
+        ? null
+        : json["home_page_subtitle"],
+    homePageHeaderRight: json["home_page_header_right"] == null
+        ? null
+        : json["home_page_header_right"],
+    homePageDisplayNumber: json["home_page_display_number"] == null ? null : json["home_page_display_number"],
+    homePageDisplayNumberType: json["home_page_display_number_type"] == null ? null : json["home_page_display_number_type"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -289,6 +320,20 @@ class BrandData {
         "wallet_setting": walletSetting == null ? null : walletSetting,
         "wallet_settings":
             walletSettings == null ? null : walletSettings.toJson(),
+    "home_page_title_status":
+    homePageTitleStatus == null ? null : homePageTitleStatus,
+    "home_page_title": homePageTitle == null ? null : homePageTitle,
+    "home_page_subtitle_status":
+    homePageSubtitleStatus == null ? null : homePageSubtitleStatus,
+    "home_page_subtitle":
+    homePageSubtitle == null ? null : homePageSubtitle,
+    "home_page_header_right":
+    homePageHeaderRight == null ? null : homePageHeaderRight,
+    "home_page_display_number":
+    homePageDisplayNumber == null ? null : homePageDisplayNumber,
+    "home_page_display_number_type": homePageDisplayNumberType == null
+        ? null
+        : homePageDisplayNumberType,
       };
 }
 

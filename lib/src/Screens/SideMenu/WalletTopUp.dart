@@ -13,6 +13,7 @@ import 'package:restroapp/src/database/SharedPrefs.dart';
 import 'package:restroapp/src/models/CreateOrderData.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/PeachPayCheckOutResponse.dart';
+import 'package:restroapp/src/models/PeachPayVerifyResponse.dart';
 import 'package:restroapp/src/models/PhonePeResponse.dart';
 import 'package:restroapp/src/models/PhonePeVerifyResponse.dart';
 import 'package:restroapp/src/models/RazorpayError.dart';
@@ -55,7 +56,9 @@ class _WalletTopUpState extends State<WalletTopUp> {
     this.walleModel,
   );
 
-  StreamSubscription onPayTMPageFinishedStream, onPhonePePageFinishedStream;
+  StreamSubscription onPayTMPageFinishedStream,
+      onPhonePePageFinishedStream,
+      onPeachPayFinishedStream;
 
   @override
   void initState() {
@@ -76,7 +79,14 @@ class _WalletTopUpState extends State<WalletTopUp> {
 
     onPhonePePageFinishedStream =
         eventBus.on<onPhonePeFinished>().listen((event) {
-      callPhonePeFinishedOrderApi(event.paymentRequestId, event.transId);
+      callPhonePeFinishedOrderApi(
+          event.paymentRequestId, event.transId, event.amount);
+    });
+    onPeachPayFinishedStream =
+        eventBus.on<onPeachPayFinished>().listen((event) {
+      print("Event Bus called");
+      callPeachPayPaytmOrderApi(
+          event.url, event.checkoutID, event.resourcePath, event.amount);
     });
   }
 
@@ -86,6 +96,7 @@ class _WalletTopUpState extends State<WalletTopUp> {
     if (onPayTMPageFinishedStream != null) onPayTMPageFinishedStream.cancel();
     if (onPhonePePageFinishedStream != null)
       onPhonePePageFinishedStream.cancel();
+    if (onPeachPayFinishedStream != null) onPeachPayFinishedStream.cancel();
     _razorpay.clear();
   }
 
@@ -341,29 +352,21 @@ class _WalletTopUpState extends State<WalletTopUp> {
     double maxWalletHoldingLimit =
         double.parse(widget.store.walletSettings.maxTopUpHoldAmount);
 //minTopUpLimit
-    if (topupAmount < 1) {
+    if (topupAmount < minTopUpLimit) {
       print("Min top Up amount is ${minTopUpLimit}");
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'Min top Up amount is ${widget.store.walletSettings.minTopUpAmount}'),
-        ),
-      );
+
+      Utils.showToast(
+          'Min top Up amount is ${widget.store.walletSettings.minTopUpAmount}',
+          false);
     } else if (topupAmount > maxTopUpLimit) {
       print("Maximum topup limit is ${maxTopUpLimit}");
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'Maximum topup limit is ${widget.store.walletSettings.maxTopUpAmount}'),
-        ),
-      );
+      Utils.showToast(
+          'Maximum topup limit is ${widget.store.walletSettings.maxTopUpAmount}',
+          false);
     } else if (maxWalletHoldingLimit < (topupAmount + wallet_balance)) {
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'Your total wallet holding capacity is ${widget.store.walletSettings.maxTopUpHoldAmount}'),
-        ),
-      );
+      Utils.showToast(
+          'Your total wallet holding capacity is ${widget.store.walletSettings.maxTopUpHoldAmount}',
+          false);
     } else {
       //callRazorPayToken(amount, storeObject);
       showModalBottomSheet<void>(
@@ -402,6 +405,7 @@ class _WalletTopUpState extends State<WalletTopUp> {
                         if (result.isEmpty) {
                           return;
                         }
+
                         callPaymentGateWay(result, amount);
                         // if (paymentGatewaySettings.paymentGateway
                         //     .toLowerCase()
@@ -433,6 +437,11 @@ class _WalletTopUpState extends State<WalletTopUp> {
   }
 
   callPaymentGateWay(String paymentGateway, String amount) async {
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    if (!isNetworkAvailable) {
+      Utils.showToast(AppConstant.noInternet, false);
+      return;
+    }
     UserModelMobile user = await SharedPrefs.getUserMobile();
     String userId = user.id;
     switch (paymentGateway) {
@@ -447,67 +456,76 @@ class _WalletTopUpState extends State<WalletTopUp> {
         Utils.showToast("Under Development", false);
         break;
       case "Phonepe":
-        Utils.showToast("Under Development", false);
-        // Utils.showProgressDialog(context);
-        // ApiController.phonepeCreateOrderApi(
-        //         // double.parse(taxModel.total).toStringAsFixed(2), orderJson,
-        //         double.parse('1').toStringAsFixed(2),
-        //         '',
-        //         '',
-        //         widget.store.walletSettings.storeId,
-        //         widget.store.currencyAbbr,
-        //         merchantUserId: userId)
-        //     .then((response) {
-        //   PhonePeResponse model = response;
-        //   if (model != null && response.success) {
-        //     // Hit createOnlineTopUpApi
-        //     ApiController.createOnlineTopUPApi(amount, model.paymentRequestId)
-        //         .then((response) {
-        //       RazorPayTopUP modelPay = response;
-        //       Utils.hideProgressDialog(context);
-        //       if (modelPay != null && response.success) {
-        //         Navigator.push(
-        //           context,
-        //           MaterialPageRoute(
-        //               builder: (context) => PhonePeWebView(
-        //                     model,
-        //                     widget.store.walletSettings.storeId,
-        //                   )),
-        //         );
-        //       } else {
-        //         Utils.showToast("Error", true);
-        //         Utils.hideProgressDialog(context);
-        //       }
-        //     });
-        //   }
-        // });
+        // Utils.showToast("Under Development", false);
+        Utils.showProgressDialog(context);
+        ApiController.phonepeCreateOrderApi(
+                // double.parse('1').toStringAsFixed(2),
+                double.parse('1').toStringAsFixed(2),
+                '',
+                '',
+                widget.store.walletSettings.storeId,
+                widget.store.currencyAbbr,
+                merchantUserId: userId)
+            .then((response) {
+          PhonePeResponse model = response;
+          if (model != null && response.success) {
+            // Hit createOnlineTopUpApi
+            ApiController.createOnlineTopUPApi(
+                    amount, model.paymentRequestId, "Phonepe")
+                .then((response) {
+              RazorPayTopUP modelPay = response;
+              Utils.hideProgressDialog(context);
+              if (modelPay != null && response.success) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PhonePeWebView(
+                            model,
+                            widget.store.walletSettings.storeId,
+                            amount: amount,
+                          )),
+                );
+              } else {
+                Utils.showToast("Error", true);
+                Utils.hideProgressDialog(context);
+              }
+            });
+          }
+        });
         break;
       case "PeachPayments":
         Utils.showToast("Under Development", false);
-        // ApiController.peachPayCreateOrderApi(
-        //         amount,
-        //         '',
-        //         '',
-        //         widget.store.walletSettings.storeId,
-        //         widget.store.currencyAbbr.trim())
-        //     .then((response) {
-        //   Utils.hideProgressDialog(context);
-        //   PeachPayCheckOutResponse model = response;
-        //   if (model == null) {
-        //     Utils.showToast(AppConstant.noInternet, false);
-        //   } else if (model != null && response.success) {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => PeachPayWebView(
-        //                 model,
-        //                 widget.store.walletSettings.storeId,
-        //               )),
-        //     );
-        //   } else {
-        //     Utils.showToast("Server Error", true);
-        //   }
-        // });
+        ApiController.peachPayCreateOrderApi(
+                amount,
+                '',
+                '',
+                widget.store.walletSettings.storeId,
+                widget.store.currencyAbbr.trim())
+            .then((response) {
+          PeachPayCheckOutResponse model = response;
+          if (model != null && response.success) {
+            ApiController.createOnlineTopUPApi(
+                    amount, model.data.id, "Peachpay")
+                .then((response) {
+              RazorPayTopUP modelPay = response;
+              Utils.hideProgressDialog(context);
+              if (modelPay != null && response.success) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PeachPayWebView(
+                          model, widget.store.walletSettings.storeId,
+                          amount: amount)),
+                );
+              } else {
+                Utils.showToast("Error", true);
+                Utils.hideProgressDialog(context);
+              }
+            });
+          } else {
+            Utils.showToast("Server Error", true);
+          }
+        });
         break;
     }
   }
@@ -530,7 +548,7 @@ class _WalletTopUpState extends State<WalletTopUp> {
         print("----razorpayCreateOrderApi----${response.data.id}--");
         print("----razorpayCreateOrderApi----${response}--");
         // Hit createOnlineTopUpApi
-        ApiController.createOnlineTopUPApi(mPrice, model.data.id)
+        ApiController.createOnlineTopUPApi(mPrice, model.data.id, "razorpay")
             .then((response) {
           RazorPayTopUP modelPay = response;
           Utils.hideProgressDialog(context);
@@ -754,20 +772,46 @@ class _WalletTopUpState extends State<WalletTopUp> {
     });
   }
 
-  void callPhonePeFinishedOrderApi(String paymentRequestId, String transId) {
+  void callPhonePeFinishedOrderApi(
+      String paymentRequestId, String transId, String amount) {
     Utils.showProgressDialog(context);
     ApiController.phonePeVerifyTransactionApi(paymentRequestId, '0')
         .then((response) {
-      Utils.hideProgressDialog(context);
       print("----phonePeVerifyTransactionApi----${response}--");
       if (response != null) {
         PhonePeVerifyResponse model = response;
         if (model.success) {
-          // callWalletOnlineTopApi(event.orderId, event.txnId, event.amount, 'paytm');
+          callWalletOnlineTopApi(paymentRequestId, transId, amount, 'Phonepe');
         } else {
+          Utils.hideProgressDialog(context);
           Utils.showToast("payment failed", true);
         }
       } else {
+        Utils.hideProgressDialog(context);
+        Utils.showToast("Something went wrong!", true);
+      }
+    });
+  }
+
+  void callPeachPayPaytmOrderApi(
+      String url, String checkoutID, String resourcePath, String amount) {
+    Utils.showProgressDialog(context);
+    ApiController.peachPayVerifyTransactionApi(
+            checkoutID, widget.store.walletSettings.storeId)
+        .then((response) {
+      Utils.hideProgressDialog(context);
+      //print("----razorpayVerifyTransactionApi----${response}--");
+      if (response != null) {
+        PeachPayVerifyResponse model = response;
+        if (model.success) {
+          callWalletOnlineTopApi(
+              model.data.checkoutId, model.data.id, amount, 'Phonepe');
+        } else {
+          Utils.hideProgressDialog(context);
+          Utils.showToast("payment failed", true);
+        }
+      } else {
+        Utils.hideProgressDialog(context);
         Utils.showToast("Something went wrong!", true);
       }
     });

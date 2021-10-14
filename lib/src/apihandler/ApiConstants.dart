@@ -127,6 +127,8 @@ class ApiConstants {
   static String processPeachpayPayment = '/peachpay/processPeachpayPayment/';
   static String peachpayVerifyTransaction =
       '/peachpay/peachpayVerifyTransaction';
+// Sell options Api
+  static String sell = 'static_pages/partnerRequests';
 
   static String ipay88CreateOrder = 'ipay88/ipay88CreateOrder';
 

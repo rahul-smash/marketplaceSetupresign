@@ -677,7 +677,7 @@ class _MarketPlaceHomeScreenState extends State<MarketPlaceHomeScreen> {
           Map<String, dynamic> attributeMap = new Map<String, dynamic>();
           attributeMap["ScreenName"] = "OffersListScreen";
           Utils.sendAnalyticsEvent("Clicked OffersListScreen", attributeMap);
-//          } else {
+//          } else {T
 //            Utils.showLoginDialog(context);
 //          }
         }

@@ -3069,8 +3069,9 @@ class PeachPayWebView extends StatelessWidget {
   PeachPayCheckOutResponse responseModel;
   Completer<WebViewController> _controller = Completer<WebViewController>();
   String storeID;
+  String amount;
 
-  PeachPayWebView(this.responseModel, this.storeID);
+  PeachPayWebView(this.responseModel, this.storeID,{this.amount});
 
   @override
   Widget build(BuildContext context) {
@@ -3113,7 +3114,7 @@ class PeachPayWebView extends StatelessWidget {
                 print(resourcePath);
                 print(checkoutID);
                 eventBus
-                    .fire(onPeachPayFinished(url, checkoutID, resourcePath));
+                    .fire(onPeachPayFinished(url, checkoutID, resourcePath,amount:amount));
                 Navigator.pop(context);
               } else if (url.contains("failure")) {
                 Navigator.pop(context);

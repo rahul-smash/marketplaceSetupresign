@@ -6,6 +6,7 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:restroapp/src/Screens/SideMenu/SellOption.dart';
 import 'package:restroapp/src/Screens/BookOrder/MyCartScreen.dart';
 import 'package:restroapp/src/Screens/Favourites/Favourite.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginMobileScreen.dart';
@@ -366,6 +367,18 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         } else {
           Utils.showLoginDialog(context);
         }
+        break;
+
+      case DrawerChildConstants.SELL:
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SellStuff(),
+            ));
+        Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+        attributeMap["ScreenName"] = "SellOption";
+        Utils.sendAnalyticsEvent("Clicked Sell", attributeMap);
         break;
 
       case DrawerChildConstants.DELIVERY_ADDRESS:
