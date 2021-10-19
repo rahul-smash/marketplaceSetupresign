@@ -120,7 +120,7 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         DrawerChildConstants.REFUND_POLICY, "images/side_menu/refund.png"));
     _drawerItemsSectionSecond.add(
         DrawerChildItem(DrawerChildConstants.FAQ, "images/side_menu/faq.png"));
-    if (AppConstant.isLoggedIn)
+    // if (AppConstant.isLoggedIn)
       _drawerItemsSectionSecond.add(
           DrawerChildItem(DrawerChildConstants.LOGOUT, "images/side_menu/logout.png"));
     try {
