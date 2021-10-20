@@ -120,9 +120,9 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         DrawerChildConstants.REFUND_POLICY, "images/side_menu/refund.png"));
     _drawerItemsSectionSecond.add(
         DrawerChildItem(DrawerChildConstants.FAQ, "images/side_menu/faq.png"));
-    // if (AppConstant.isLoggedIn)
-      _drawerItemsSectionSecond.add(
-          DrawerChildItem(DrawerChildConstants.LOGOUT, "images/side_menu/logout.png"));
+    if (AppConstant.isLoggedIn)
+      _drawerItemsSectionSecond.add(DrawerChildItem(
+          DrawerChildConstants.LOGOUT, "images/side_menu/logout.png"));
     try {
       _setSetUserId();
     } catch (e) {
@@ -194,26 +194,33 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
     return Container(
         color: left_menu_header_bkground,
         padding: EdgeInsets.only(top: 40, bottom: 15),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              /*Image.asset('images/profileimg.png',color: Color(0xFFD6D6D6),*/
-              Icon(
-                Icons.account_circle,
-                size: 100,
-                color: Color(0xFFD6D6D6),
-              ),
-              Padding(
-                  padding: EdgeInsets.only(top: 10, left: 16, right: 16),
-                  child: Text(
-                      'Welcome' +
-                          '${AppConstant.isLoggedIn == false ? '' : ' ' + widget.userName}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: leftMenuWelcomeTextColors,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold))),
+        child: InkWell(
+          onTap: () {
+            if (!AppConstant.isLoggedIn) {
+              _showLoginScreen(context);
+            }
+          },
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /*Image.asset('images/profileimg.png',color: Color(0xFFD6D6D6),*/
+                Icon(
+                  Icons.account_circle,
+                  size: 100,
+                  color: Color(0xFFD6D6D6),
+                ),
+                Padding(
+                    padding: EdgeInsets.only(top: 10, left: 16, right: 16),
+                    child: Text(
+                        AppConstant.isLoggedIn == false
+                            ? 'Login'
+                            : 'Welcome ' + '${widget.userName}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: leftMenuWelcomeTextColors,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold))),
 //          Visibility(
 //              visible: AppConstant.isLoggedIn,
 //              child: Column(
@@ -226,7 +233,8 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
 //                          color: leftMenuWelcomeTextColors, fontSize: 15)),
 //                ],
 //              ))
-            ]));
+              ]),
+        ));
   }
 
   Widget createDrawerItem(var item, BuildContext context) {
@@ -261,7 +269,8 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
 
   Widget showUserWalletView() {
     return Visibility(
-      visible: widget.brandData.walletSetting == "1" ? true : false,
+      visible: AppConstant.isLoggedIn &&
+          (widget.brandData.walletSetting == "1" ? true : false),
       child: InkWell(
         onTap: () async {
           print("showUserWalletView");
@@ -534,33 +543,10 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         if (AppConstant.isLoggedIn) {
           _showDialog(context);
         } else {
-          Navigator.pop(context);
-          BrandData model =
-              SingletonBrandData.getInstance().brandVersionModel.brand;
-          print("---internationalOtp--${model.internationalOtp}");
-          //User Login with Mobile and OTP = 0
-          // 1 = email and 0 = ph-no
-          if (model.internationalOtp == "0") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => LoginMobileScreen("menu")),
-            );
-            Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-            attributeMap["ScreenName"] = "LoginMobileScreen";
-            Utils.sendAnalyticsEvent("Clicked LoginMobileScreen", attributeMap);
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginEmailScreen("menu")),
-            );
-            Map<String, dynamic> attributeMap = new Map<String, dynamic>();
-            attributeMap["ScreenName"] = "LoginEmailScreen";
-            Utils.sendAnalyticsEvent("Clicked LoginEmailScreen", attributeMap);
-          }
+          _showLoginScreen(context);
         }
         break;
-        case DrawerChildConstants.CONTACT_US:
+      case DrawerChildConstants.CONTACT_US:
         Navigator.pop(context);
         Navigator.push(
           context,
@@ -689,6 +675,31 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
       }
     } catch (e) {
       print(e);
+    }
+  }
+
+  void _showLoginScreen(BuildContext context) {
+    Navigator.pop(context);
+    BrandData model = SingletonBrandData.getInstance().brandVersionModel.brand;
+    print("---internationalOtp--${model.internationalOtp}");
+    //User Login with Mobile and OTP = 0
+    // 1 = email and 0 = ph-no
+    if (model.internationalOtp == "0") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginMobileScreen("menu")),
+      );
+      Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+      attributeMap["ScreenName"] = "LoginMobileScreen";
+      Utils.sendAnalyticsEvent("Clicked LoginMobileScreen", attributeMap);
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginEmailScreen("menu")),
+      );
+      Map<String, dynamic> attributeMap = new Map<String, dynamic>();
+      attributeMap["ScreenName"] = "LoginEmailScreen";
+      Utils.sendAnalyticsEvent("Clicked LoginEmailScreen", attributeMap);
     }
   }
 }

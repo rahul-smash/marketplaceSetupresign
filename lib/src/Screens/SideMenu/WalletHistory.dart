@@ -124,7 +124,12 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen> {
                                                 20, 20, 0, 10),
                                             child: Align(
                                               alignment: Alignment.centerLeft,
-                                              child: Text("Transactions",
+                                              child: Text(
+                                                  walleModel.data.walletHistory
+                                                              .length >
+                                                          1
+                                                      ? "Transactions"
+                                                      : "Transaction",
                                                   style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14)),
@@ -203,7 +208,7 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen> {
                 width: 0.0,
                 color: _checkItemColor(walletHistory),
               ),
-              color:_checkItemColor(walletHistory) ,
+              color: _checkItemColor(walletHistory),
             ),
             child: Padding(
               padding: EdgeInsets.all(10),
@@ -304,8 +309,7 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen> {
                                         color: Colors.white, fontSize: 16)),
                                 padding: EdgeInsets.fromLTRB(0, 1, 0, 0),
                               ),
-                              Text(
-                                  "${walleModel.data.userWallet}",
+                              Text("${walleModel.data.userWallet}",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 24)),
                             ],
@@ -447,9 +451,7 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen> {
     }
   }
 
- Color _checkItemColor(WalletHistory walletHistory) {
-
-
+  Color _checkItemColor(WalletHistory walletHistory) {
     switch (walletHistory.refund_type) {
       case 'order_payment':
         return Colors.blue[50];

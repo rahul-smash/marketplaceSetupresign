@@ -243,7 +243,7 @@ class _WalletTopUpState extends State<WalletTopUp> {
                                                       FilteringTextInputFormatter
                                                           .digitsOnly,
                                                       new LengthLimitingTextInputFormatter(
-                                                          4),
+                                                          15),
                                                     ],
                                                     onChanged: (text) {
                                                       print(text);
@@ -384,8 +384,6 @@ class _WalletTopUpState extends State<WalletTopUp> {
                 itemCount: 1,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  PaymentGatewaySettings paymentGatewaySettings =
-                      widget.store.paymentGatewaySettings[index];
                   return Container(
                     decoration: BoxDecoration(
                       color: appTheme,
@@ -398,6 +396,8 @@ class _WalletTopUpState extends State<WalletTopUp> {
                     margin: EdgeInsets.only(left: 10, right: 10, top: 20),
                     child: ListTile(
                       onTap: () async {
+                        //TODO: Due to client requirement, we don't show ipay88 and peachpay
+                        removeIpayAndPeachPay();
                         Navigator.pop(context);
                         String result = await DialogUtils
                             .displayMultipleOnlinePaymentMethodDialog(
@@ -815,6 +815,26 @@ class _WalletTopUpState extends State<WalletTopUp> {
         Utils.showToast("Something went wrong!", true);
       }
     });
+  }
+
+  void removeIpayAndPeachPay() {
+    PaymentGatewaySettings iPay88PG, peachPaymentsPG;
+    for (int i = 0; i < widget.store.paymentGatewaySettings.length; i++) {
+      if (widget.store.paymentGatewaySettings[i].paymentGateway
+          .contains('iPay88')) {
+        iPay88PG = widget.store.paymentGatewaySettings[i];
+      }
+      if (widget.store.paymentGatewaySettings[i].paymentGateway
+          .contains('PeachPayments')) {
+        peachPaymentsPG = widget.store.paymentGatewaySettings[i];
+      }
+    }
+    if (peachPaymentsPG != null) {
+      widget.store.paymentGatewaySettings.remove(peachPaymentsPG);
+    }
+    if (iPay88PG != null) {
+      widget.store.paymentGatewaySettings.remove(iPay88PG);
+    }
   }
 //Razor Code End
 //-----------------------------------------------------------------------------------------------

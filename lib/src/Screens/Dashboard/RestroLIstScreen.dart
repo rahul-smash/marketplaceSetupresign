@@ -209,13 +209,45 @@ class _RestroListScreenState extends State<RestroListScreen> {
             },
             child: Container(
               margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-              decoration: BoxDecoration(
+              decoration:/* BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                image: DecorationImage(
+                  image: NetworkImage("${tagObject.image}"),
+                  fit: BoxFit.cover,
+                ),
+              ),*/widget.tagsModel.tagSetting == 2
+                  ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(5.0),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Utils.colorGeneralization(
+                        Colors.transparent,
+                        tagObject.tagGradientColor1,
+                      ),
+                      Utils.colorGeneralization(
+                          Colors.black45, tagObject.tagGradientColor2)
+                    ],
+                  ))
+                  : BoxDecoration(
                 borderRadius: BorderRadius.circular(5.0),
                 image: DecorationImage(
                   image: NetworkImage("${tagObject.image}"),
                   fit: BoxFit.cover,
                 ),
               ),
+              child: widget.tagsModel.tagSetting == 2
+                  ? Center(
+                child: Text(
+                  tagObject.name,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 16,fontWeight: FontWeight.bold),
+                ),
+              )
+                  : Container(),
             ),
           );
         })
