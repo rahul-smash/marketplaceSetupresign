@@ -2949,9 +2949,10 @@ class ConfirmOrderState extends State<ConfirmOrderScreen> {
 
 /*Code for ios*/
 class StripeWebView extends StatefulWidget {
+  String amount;
   StripeCheckOutModel stripeCheckOutModel;
 
-  StripeWebView(this.stripeCheckOutModel);
+  StripeWebView(this.stripeCheckOutModel,{this.amount});
 
   @override
   _StripeWebViewState createState() {
@@ -2994,7 +2995,7 @@ class _StripeWebViewState extends State<StripeWebView> {
               if (url.contains(
                   "stripe/stripeVerifyTransaction?response=success")) {
                 eventBus.fire(onPageFinished(
-                    widget.stripeCheckOutModel.paymentRequestId));
+                    widget.stripeCheckOutModel.paymentRequestId,amount:widget.amount));
                 Navigator.pop(context);
               }
             },

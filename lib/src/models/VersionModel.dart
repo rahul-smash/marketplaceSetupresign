@@ -238,7 +238,7 @@ class BrandData {
             json["wallet_setting"] == null ? null : json["wallet_setting"],
         walletSettings: json["wallet_settings"] == null
             ? null
-            : WalletSettings.fromJson(json["wallet_settings"]),
+            : json["wallet_settings"] is List ?null: (WalletSettings.fromJson(json["wallet_settings"])),
     homePageTitleStatus: json["home_page_title_status"] == null
         ? null
         : json["home_page_title_status"],

@@ -69,8 +69,8 @@ class refreshOrderHistory {
 
 class onPageFinished {
   String url;
-
-  onPageFinished(this.url);
+  String amount;
+  onPageFinished(this.url,{this.amount});
 }
 
 class onPayTMPageFinished {
