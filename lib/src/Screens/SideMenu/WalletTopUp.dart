@@ -17,6 +17,8 @@ import 'package:restroapp/src/models/PeachPayVerifyResponse.dart';
 import 'package:restroapp/src/models/PhonePeResponse.dart';
 import 'package:restroapp/src/models/PhonePeVerifyResponse.dart';
 import 'package:restroapp/src/models/RazorpayError.dart';
+import 'package:restroapp/src/models/StripeCheckOutModel.dart';
+import 'package:restroapp/src/models/StripeVerifyModel.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/models/WalletOnlineTopUp.dart';
 import 'package:restroapp/src/models/RazorPayTopUP.dart';
@@ -33,7 +35,10 @@ import 'package:restroapp/src/widgets/web_view/PhonePeWebView.dart';
 class WalletTopUp extends StatefulWidget {
   WalletModel walleModel;
 
-  WalletTopUp(this.store, this.walleModel, {Key key}) : super(key: key);
+  WalletTopUp(BrandData passedStore, this.walleModel,){
+    store=BrandData.fromJson(jsonDecode(jsonEncode(passedStore)));
+  }
+
   BrandData store;
 
   @override
@@ -58,7 +63,7 @@ class _WalletTopUpState extends State<WalletTopUp> {
 
   StreamSubscription onPayTMPageFinishedStream,
       onPhonePePageFinishedStream,
-      onPeachPayFinishedStream;
+      onPeachPayFinishedStream,onStripeFinishedStream;
 
   @override
   void initState() {
@@ -88,6 +93,11 @@ class _WalletTopUpState extends State<WalletTopUp> {
       callPeachPayPaytmOrderApi(
           event.url, event.checkoutID, event.resourcePath, event.amount);
     });
+    onStripeFinishedStream =
+        eventBus.on<onPageFinished>().listen((event) {
+          print("<---onPageFinished------->");
+          callStripeVerificationApi(event.url,event.amount);
+        });
   }
 
   @override
@@ -97,6 +107,7 @@ class _WalletTopUpState extends State<WalletTopUp> {
     if (onPhonePePageFinishedStream != null)
       onPhonePePageFinishedStream.cancel();
     if (onPeachPayFinishedStream != null) onPeachPayFinishedStream.cancel();
+    if (onStripeFinishedStream != null) onStripeFinishedStream.cancel();
     _razorpay.clear();
   }
 
@@ -449,8 +460,8 @@ class _WalletTopUpState extends State<WalletTopUp> {
         callRazorPayToken(amount, widget.store);
         break;
       case "Stripe":
-        Utils.showToast("Under Development", false);
-        // callStripeApi();
+        // Utils.showToast("Under Development", false);
+        callStripeApi(amount);
         break;
       case "Paytmpay":
         Utils.showToast("Under Development", false);
@@ -563,6 +574,64 @@ class _WalletTopUpState extends State<WalletTopUp> {
       } else {
         print('def123');
         Utils.showToast("${model.message}", true);
+        Utils.hideProgressDialog(context);
+      }
+    });
+  }
+  void callStripeApi(String amount) {
+    Utils.showProgressDialog(context);
+    double price = double.parse(amount);
+    price = price * 100;
+    print("----taxModel.total----${amount}--");
+    String mPrice =
+    price.toString().substring(0, price.toString().indexOf('.')).trim();
+    print("----mPrice----${mPrice}--");
+    ApiController.stripePaymentApi(mPrice, widget.store.walletSettings.brandId,currency: widget.store.currencyAbbr.trim()).then((response) {
+      Utils.hideProgressDialog(context);
+      print("----stripePaymentApi------");
+      if (response != null) {
+        StripeCheckOutModel stripeCheckOutModel = response;
+        if (stripeCheckOutModel.success) {
+          ApiController.createOnlineTopUPApi(mPrice, stripeCheckOutModel.paymentRequestId, "stripe",currency: widget.store.currencyAbbr.trim())
+              .then((response) {
+            RazorPayTopUP modelPay = response;
+            Utils.hideProgressDialog(context);
+            if (modelPay != null && response.success) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => StripeWebView(stripeCheckOutModel,amount: amount,)),
+              );
+            } else {
+              Utils.showToast("${modelPay.message}", true);
+              Utils.hideProgressDialog(context);
+            }
+          });
+
+        } else {
+          Utils.showToast("${stripeCheckOutModel.message}!", true);
+        }
+      } else {
+        Utils.showToast("Something went wrong!", true);
+      }
+    });
+  }
+
+  void callStripeVerificationApi(String payment_request_id,String amount) {
+    Utils.showProgressDialog(context);
+    ApiController.stripeVerifyTransactionApi(payment_request_id, widget.store.walletSettings.brandId)
+        .then((response) {
+      if (response != null) {
+        StripeVerifyModel object = response;
+        if (object.success) {
+          callWalletOnlineTopApi(object.paymentRequestId, object.paymentId, amount, 'Stripe');
+        } else {
+          Utils.showToast(
+              "Transaction is not completed, please try again!", true);
+          Utils.hideProgressDialog(context);
+        }
+      } else {
+        Utils.showToast("Something went wrong!", true);
         Utils.hideProgressDialog(context);
       }
     });
@@ -818,7 +887,7 @@ class _WalletTopUpState extends State<WalletTopUp> {
   }
 
   void removeIpayAndPeachPay() {
-    PaymentGatewaySettings iPay88PG, peachPaymentsPG;
+    PaymentGatewaySettings iPay88PG, peachPaymentsPG,stripePaymentsPG;
     for (int i = 0; i < widget.store.paymentGatewaySettings.length; i++) {
       if (widget.store.paymentGatewaySettings[i].paymentGateway
           .contains('iPay88')) {
@@ -828,6 +897,10 @@ class _WalletTopUpState extends State<WalletTopUp> {
           .contains('PeachPayments')) {
         peachPaymentsPG = widget.store.paymentGatewaySettings[i];
       }
+      if (widget.store.paymentGatewaySettings[i].paymentGateway
+          .contains('Stripe')) {
+        stripePaymentsPG = widget.store.paymentGatewaySettings[i];
+      }
     }
     if (peachPaymentsPG != null) {
       widget.store.paymentGatewaySettings.remove(peachPaymentsPG);
@@ -835,6 +908,9 @@ class _WalletTopUpState extends State<WalletTopUp> {
     if (iPay88PG != null) {
       widget.store.paymentGatewaySettings.remove(iPay88PG);
     }
+    // if (stripePaymentsPG != null) {
+    //   widget.store.paymentGatewaySettings.remove(stripePaymentsPG);
+    // }
   }
 //Razor Code End
 //-----------------------------------------------------------------------------------------------

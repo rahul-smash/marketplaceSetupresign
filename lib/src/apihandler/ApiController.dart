@@ -1499,7 +1499,7 @@ class ApiController {
   }
 
   static Future<StripeCheckOutModel> stripePaymentApi(
-      String amount, String storeID) async {
+      String amount, String storeID,{String currency='usd'}) async {
     UserModel user = await SharedPrefs.getUser();
     var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.stripePaymentCheckout;
@@ -1509,7 +1509,7 @@ class ApiController {
       request.fields.addAll({
         "customer_email": user.email,
         "amount": amount,
-        "currency": "usd",
+        "currency": currency,
         "store_id": storeID
       });
       print('--url===  $url');
@@ -2707,7 +2707,7 @@ class ApiController {
   }
 
   static Future<RazorPayTopUP> createOnlineTopUPApi(
-      String price, dynamic Id,String payment_type) async {
+      String price, dynamic Id,String payment_type,{String currency='INR'}) async {
     UserModel user = await SharedPrefs.getUser();
     var url = ApiConstants.base.replaceAll("brandId",AppConstant.brandID) +
         ApiConstants.createOnlineTopUP;
@@ -2718,7 +2718,7 @@ class ApiController {
         "user_id": user.id,
         "payment_request_id": Id,
         "payment_type": payment_type,
-        "currency": 'INR',
+        "currency": currency,
         "platform": Platform.isIOS ? "IOS" : "android",
       });
       Dio dio = new Dio();
