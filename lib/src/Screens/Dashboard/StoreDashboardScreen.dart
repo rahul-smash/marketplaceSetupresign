@@ -10,6 +10,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/src/material/switch.dart';
 import 'package:restroapp/src/UI/CategoryView.dart';
 import 'package:restroapp/src/UI/ProductTileView.dart';
+import 'package:restroapp/src/UI/StoreSearchUI.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -17,11 +18,13 @@ import 'package:restroapp/src/models/CategoryResponseModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
 import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
+import 'package:restroapp/src/models/VersionModel.dart';
 import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Callbacks.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class StoreDashboardScreen extends StatefulWidget {
   final StoreDataModel store;
@@ -887,5 +890,19 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> {
     }
     eventBus.fire(updateStoreSearch(searchedProductList));
     setState(() {});
+  }
+
+  void toggleSwitch(bool value) {
+    if (vegNonVeg == false) {
+      setState(() {
+        vegNonVeg = true;
+      });
+      print('Switch Button is ON');
+    } else {
+      setState(() {
+        vegNonVeg = false;
+      });
+      print('Switch Button is OFF');
+    }
   }
 }

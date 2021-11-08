@@ -12,21 +12,26 @@ EventBus eventBus = EventBus();
 class onViewAllSelected {
   bool isViewAllSelected;
   StoresModel allStoreData;
-  HomeScreenEnum selectedScreen=HomeScreenEnum.HOME_BAND_VIEW;
-  onViewAllSelected(this.isViewAllSelected,this.allStoreData,{this.selectedScreen});
+  HomeScreenEnum selectedScreen = HomeScreenEnum.HOME_BAND_VIEW;
+
+  onViewAllSelected(this.isViewAllSelected, this.allStoreData,
+      {this.selectedScreen});
 }
 
 class updateCartCount {
   updateCartCount();
 }
+
 class updateStoreSearch {
   List<Product> searchedProductList;
+
   updateStoreSearch(this.searchedProductList);
 }
 
 class onCartRemoved {
   onCartRemoved();
 }
+
 class onHomeSearch {
   StoresModel allStoreData;
   onHomeSearch(this.allStoreData);
@@ -64,22 +69,39 @@ class refreshOrderHistory {
 
 class onPageFinished {
   String url;
-
-  onPageFinished(this.url);
+  String amount;
+  onPageFinished(this.url,{this.amount});
 }
 
 class onPayTMPageFinished {
   String url;
   String orderId;
   String txnId;
+  String amount;
 
-  onPayTMPageFinished(this.url, this.orderId, this.txnId);
+  onPayTMPageFinished(this.url, this.orderId, this.txnId, {this.amount = ''});
 }
+
 class onPeachPayFinished {
   String url;
   String checkoutID;
   String resourcePath;
+  String amount;
 
-  onPeachPayFinished(this.url, this.checkoutID, this.resourcePath);
+  onPeachPayFinished(this.url, this.checkoutID, this.resourcePath,{this.amount});
 }
+class onPhonePeFinished {
+  String paymentRequestId;
+  String transId;
+  String amount;
 
+  onPhonePeFinished( this.paymentRequestId, this.transId,{this.amount});
+}
+class onIPay88Finished {
+  String url;
+  String requestId;
+  String transId;
+  String status;
+
+  onIPay88Finished(this.url, this.requestId, this.transId, this.status);
+}

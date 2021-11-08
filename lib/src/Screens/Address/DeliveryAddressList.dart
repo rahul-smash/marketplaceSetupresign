@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:location/location.dart';
 import 'package:restroapp/src/UI/AddressByRadius.dart';
 import 'package:restroapp/src/apihandler/ApiController.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -12,8 +13,8 @@ import 'package:restroapp/src/utils/AppColor.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/DialogUtils.dart';
 import 'package:restroapp/src/utils/Utils.dart';
+
 import '../BookOrder/ConfirmOrderScreen.dart';
-import 'package:location/location.dart';
 
 class DeliveryAddressList extends StatefulWidget {
   final bool showProceedBar;
@@ -326,7 +327,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
   Widget addOperationBar(DeliveryAddressData area, int index) {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 5, 5),
-      child: addressList[index].isSubscriptionOAddress
+      child: addressList[index].isSubscriptionAddress
           ? InkWell(
               onTap: () {
                 DialogUtils.displayCommonDialog(
@@ -441,14 +442,16 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
           int distanceInKms = distanceInKm.toInt();
 
           print("==distanceInKm==${distanceInKms}");
+          print(store.operatingZoneId);
 
-          StoreRadiousResponse storeRadiousResponse =
-              await ApiController.storeRadiusApi();
+          StoreRadiousResponse storeRadiusV2Response =
+              await ApiController.storeRadiusV2Api(store.operatingZoneId);
+          print(store.operatingZoneId);
 
           Area area;
           //print("---${areaList.length}---and-- ${distanceInKms}---");
-          for (int i = 0; i < storeRadiousResponse.data.length; i++) {
-            Area areaObject = storeRadiousResponse.data[i];
+          for (int i = 0; i < storeRadiusV2Response.data.length; i++) {
+            Area areaObject = storeRadiusV2Response.data[i];
             int radius = int.parse(areaObject.radius);
             if (distanceInKms < radius && areaObject.radiusCircle == "Within") {
               area = areaObject;
@@ -460,10 +463,10 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
                 await DialogUtils.displayLocationNotAvailbleDialog(
                     context, 'We dont\'t serve\nin your area',
                     buttonText1:
-                        addressList[selectedIndex].isSubscriptionOAddress
+                        addressList[selectedIndex].isSubscriptionAddress
                             ? 'OK'
                             : 'Change Location');
-            if (addressList[selectedIndex].isSubscriptionOAddress) {
+            if (addressList[selectedIndex].isSubscriptionAddress) {
               return;
             }
 
@@ -492,6 +495,10 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
               print("---radius-- ${area.radius}-charges.and ${area.charges}--");
               print("minAmount=${addressList[selectedIndex].minAmount}");
               print("notAllow=${addressList[selectedIndex].notAllow}");
+              addressList[selectedIndex].minAmount = area.minOrder;
+              addressList[selectedIndex].notAllow = area.notAllow;
+              addressList[selectedIndex].isShippingMandatory =
+                  area.isShippingMandatory;
               if (area.note.isEmpty) {
                 Navigator.push(
                   context,
@@ -561,7 +568,7 @@ class _AddDeliveryAddressState extends State<DeliveryAddressList> {
 //        if (defaultAddressID != responses.data[i].id || !isSubscriptionActive)
 //          addressList.add(responsesData.data[i]);
         if (defaultAddressID == responses.data[i].id && isSubscriptionActive) {
-          responsesData.data[i].isSubscriptionOAddress = true;
+          responsesData.data[i].isSubscriptionAddress = true;
         }
         addressList.add(responsesData.data[i]);
       }

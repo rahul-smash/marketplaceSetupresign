@@ -18,7 +18,7 @@ import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:permission_handler/permission_handler.dart'
-    as permission_handler;
+as permission_handler;
 import 'src/models/BrandModel.dart';
 import 'src/models/VersionModel.dart';
 import 'src/utils/DialogUtils.dart';
@@ -49,7 +49,7 @@ Future<void> main() async {
   }
 
   String branch_id =
-      await SharedPrefs.getStoreSharedValue(AppConstant.branch_id);
+  await SharedPrefs.getStoreSharedValue(AppConstant.branch_id);
   if (branch_id == null || branch_id.isEmpty) {
   } else if (branch_id.isNotEmpty) {
     configObject.storeId = branch_id;
@@ -83,7 +83,7 @@ class MarketPlaceApp extends StatefulWidget {
   ConfigModel configObject;
   static FirebaseAnalytics analytics = FirebaseAnalytics();
   static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
+  FirebaseAnalyticsObserver(analytics: analytics);
   BrandVersionModel storeData;
   PackageInfo packageInfo;
 
@@ -200,10 +200,10 @@ class _MarketPlaceAppState extends State<MarketPlaceApp> {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
-      (Timer timer) {
+          (Timer timer) {
         //print('--periodic===  $_start');
         setState(
-          () {
+              () {
             if (_start < 1) {
               timer.cancel();
             } else {

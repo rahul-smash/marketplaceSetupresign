@@ -4,20 +4,20 @@ class ApiConstants {
   //Place Api key: AIzaSyDIrOUg5njtkZcWcnpfoMht1Ol1l7Q8Bys
 // unused url
   static String baseUrl = 'https://app.restroapp.com/storeId/api/';
+
 // used url
   static String base_Url = '${base}user_authentication/';
   static String baseUrl2 = '${base}marketplace/';
 
-
   // staging url
-  // static String base = 'http://devmarketplace.restroapp.com/brandId/v1/';
-  // static String baseUrl3 = 'http://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
+  // static String base = 'https://devmarketplace.restroapp.com/brandId/v1/';
+  // static String baseUrl3 =
+  //     'https://devmarketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 
   //live url
   static String base = 'https://marketplace.restroapp.com/brandId/v1/';
-  static String baseUrl3 = 'https://marketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
-
-
+  static String baseUrl3 =
+      'https://marketplace.restroapp.com/${AppConstant.brandID}/v1/storeId';
 
   static String storeList = 'storeList';
   static String version = 'version';
@@ -27,6 +27,7 @@ class ApiConstants {
 
   static String getAddressArea = 'deliveryAreas/Area';
   static String getStoreRadius = '/storeRadius';
+  static String getStoreRadiusv2 = '/storeRadiusV2';
   static String getStoreArea = 'storearea';
 
 //  static String validateCoupon = 'validateAllCoupons';
@@ -67,6 +68,7 @@ class ApiConstants {
   static String termCondition = 'getHtmlPages/term_condition';
   static String privacyPolicy = 'getHtmlPages/privacy_policy';
   static String refundPolicy = 'getHtmlPages/refund_policy';
+  static String shippingCharge = 'getHtmlPages/shipping_charges_policy';
 
   static String otp = 'verifyOtp';
 
@@ -121,12 +123,27 @@ class ApiConstants {
   static String cancelUserMembershipPlan =
       'membership_plan/cancelUserMembershipPlan';
 
-  static String peachPayCreateOrder='/peachpay/peachpayCreateOrder';
-  static String processPeachpayPayment='/peachpay/processPeachpayPayment/';
-  static String peachpayVerifyTransaction='/peachpay/peachpayVerifyTransaction';
+  static String peachPayCreateOrder = '/peachpay/peachpayCreateOrder';
+  static String processPeachpayPayment = '/peachpay/processPeachpayPayment/';
+  static String peachpayVerifyTransaction =
+      '/peachpay/peachpayVerifyTransaction';
+// Sell options Api
+  static String sell = 'static_pages/partnerRequests';
+
+  static String ipay88CreateOrder = 'ipay88/ipay88CreateOrder';
+
+  //phonepe payment
+  static String phonepeCreateOrder='/phonepe/phonepeCreateOrder';
+  static String checkPhonepeTransactionStatus='/phonepe/checkPhonepeTransactionStatus';
 
   //new Banner Api
   static String banners = 'homescreen/banners';
+
+  //user wallet
+  static String userWallet = 'homescreen/user_wallet';
+  static String createOnlineTopUP = 'online_topups/createOnlineTopUP';
+  static String onlineTopUP = 'online_topups/onlineTopUP';
+
 // get peach pay details
 // http://devmarketplace.restroapp.com/2/v1/marketplace/homescreen/version?ip=124.253.110.23
 // detailspeach payament is added

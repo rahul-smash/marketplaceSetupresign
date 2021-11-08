@@ -1,13 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:compressimage/compressimage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 import 'package:restroapp/src/Screens/LoginSignUp/ForgotPasswordScreen.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/LoginMobileScreen.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/OtpScreen.dart';
 import 'package:restroapp/src/Screens/LoginSignUp/RegisterScreen.dart';
-import 'package:restroapp/src/Screens/SideMenu/AboutScreen.dart';
 import 'package:restroapp/src/apihandler/ApiConstants.dart';
 import 'package:restroapp/src/database/DatabaseHelper.dart';
 import 'package:restroapp/src/database/SharedPrefs.dart';
@@ -26,31 +29,46 @@ import 'package:restroapp/src/models/DeviceInfo.dart';
 import 'package:restroapp/src/models/DynamicResponse.dart';
 import 'package:restroapp/src/models/FAQModel.dart';
 import 'package:restroapp/src/models/FacebookModel.dart';
+import 'package:restroapp/src/models/GetOrderHistory.dart';
 import 'package:restroapp/src/models/HtmlModelResponse.dart';
+import 'package:restroapp/src/models/IpayOrderData.dart';
 import 'package:restroapp/src/models/LogoutResponse.dart';
 import 'package:restroapp/src/models/LoyalityPointsModel.dart';
 import 'package:restroapp/src/models/PeachPayCheckOutResponse.dart';
 import 'package:restroapp/src/models/PeachPayVerifyResponse.dart';
+import 'package:restroapp/src/models/PhonePeResponse.dart';
+import 'package:restroapp/src/models/PhonePeVerifyResponse.dart';
 import 'package:restroapp/src/models/StorelatlngsResponse.dart';
 import 'package:restroapp/src/models/MembershipPlanResponse.dart';
 import 'package:restroapp/src/models/MobileVerified.dart';
 import 'package:restroapp/src/models/NotificationResponseModel.dart';
 import 'package:restroapp/src/models/OTPVerified.dart';
+import 'package:restroapp/src/models/OnlineMembershipResponse.dart';
+import 'package:restroapp/src/models/PeachPayCheckOutResponse.dart';
+import 'package:restroapp/src/models/PeachPayVerifyResponse.dart';
 import 'package:restroapp/src/models/PickUpModel.dart';
 import 'package:restroapp/src/models/ProductRatingResponse.dart';
 import 'package:restroapp/src/models/RazorpayOrderData.dart';
 import 'package:restroapp/src/models/RecommendedProductsResponse.dart';
 import 'package:restroapp/src/models/ReferEarnData.dart';
 import 'package:restroapp/src/models/SearchTagsModel.dart';
+import 'package:restroapp/src/models/RazorPayTopUP.dart';
 import 'package:restroapp/src/models/SocialModel.dart';
+import 'package:restroapp/src/models/SellOptionResponse.dart';
 import 'package:restroapp/src/models/StoreAreaResponse.dart';
 import 'package:restroapp/src/models/StoreBranchesModel.dart';
 import 'package:restroapp/src/models/StoreDataModel.dart';
+import 'package:restroapp/src/models/StoreDeliveryAreasResponse.dart';
+import 'package:restroapp/src/models/StoreOffersResponse.dart';
 import 'package:restroapp/src/models/StoreRadiousResponse.dart';
+import 'package:restroapp/src/models/StoreResponseModel.dart';
+import 'package:restroapp/src/models/StorelatlngsResponse.dart';
 import 'package:restroapp/src/models/StoresModel.dart';
 import 'package:restroapp/src/models/StripeCheckOutModel.dart';
 import 'package:restroapp/src/models/StripeVerifyModel.dart';
+import 'package:restroapp/src/models/SubCategoryResponse.dart';
 import 'package:restroapp/src/models/TagsModel.dart';
+import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/models/UserPurchaseMembershipResponse.dart';
 import 'package:restroapp/src/models/UserResponseModel.dart';
 import 'package:restroapp/src/models/StoreDeliveryAreasResponse.dart';
@@ -61,13 +79,12 @@ import 'package:restroapp/src/models/TaxCalulationResponse.dart';
 import 'package:restroapp/src/models/ValidateCouponsResponse.dart';
 import 'package:restroapp/src/models/GetOrderHistory.dart';
 import 'package:restroapp/src/models/VersionModel.dart';
+import 'package:restroapp/src/models/WalletModel.dart';
+import 'package:restroapp/src/models/WalletOnlineTopUp.dart';
 import 'package:restroapp/src/models/forgotPassword/GetForgotPwdData.dart';
 import 'package:restroapp/src/utils/AppConstants.dart';
 import 'package:restroapp/src/utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:io';
 
 class ApiController {
   static final int timeout = 18;
@@ -122,6 +139,7 @@ class ApiController {
         ApiConstants.brandVersion;
 
     var request = new http.MultipartRequest("GET", Uri.parse(url));
+    print("----url---${url}");
     try {
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
@@ -810,6 +828,7 @@ class ApiController {
       {String couponType = '', String isMembershipCouponEnabled = '0'}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModel user = await SharedPrefs.getUser();
+    WalletModel userWallet = await SharedPrefs.getUserWallet();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String deviceId = prefs.getString(AppConstant.deviceId);
 
@@ -826,6 +845,7 @@ class ApiController {
         "user_id": user.id,
         "discount": "0",
         "shipping": shipping,
+        "user_wallet": userWallet == null ? "0" : userWallet.data.userWallet,
         "order_detail": orderJson,
         "device_id": deviceId,
         "coupon_code": couponCode.toString(),
@@ -867,7 +887,7 @@ class ApiController {
       String membershipPlanDetailId = '',
       String membershipId = '',
       String additionalInfo = '',
-      String isMembershipCouponEnabled = '0'}) async {
+      String isMembershipCouponEnabled = '0',String walletRefund="0"}) async {
     StoreDataObj store = await SharedPrefs.getStoreData();
     UserModelMobile user = await SharedPrefs.getUserMobile();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -949,6 +969,7 @@ class ApiController {
         "shipping_charges": "${taxModel.shipping}",
         "note": note,
         "calculated_tax_detail": "",
+        "wallet_refund": walletRefund,
         "coupon_code": taxModel == null ? "" : '${taxModel.couponCode}',
         "device_id": deviceId,
         "user_address": isComingFromPickUpScreen == true
@@ -1341,6 +1362,31 @@ class ApiController {
     }
   }
 
+  static Future<StoreRadiousResponse> storeRadiusV2Api(
+      String operatingZone) async {
+    //StoreModel store = await SharedPrefs.getStore();
+
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", "delivery_zones") +
+        ApiConstants.getStoreRadiusv2;
+
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    print('@@url=${url}');
+
+    try {
+      request.fields.addAll({"operating_zone_id": operatingZone});
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('@@respStr' + respStr);
+      final parsed = json.decode(respStr);
+
+      StoreRadiousResponse res = StoreRadiousResponse.fromJson(parsed);
+      return res;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
   static Future<CreateOrderData> razorpayCreateOrderApi(
       String amount,
       String orderJson,
@@ -1452,15 +1498,20 @@ class ApiController {
     }
   }
 
-  static Future<StripeCheckOutModel> stripePaymentApi(String amount, String storeID) async {
+  static Future<StripeCheckOutModel> stripePaymentApi(
+      String amount, String storeID,{String currency='usd'}) async {
     UserModel user = await SharedPrefs.getUser();
     var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.stripePaymentCheckout;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
-      request.fields.addAll(
-          {"customer_email": user.email, "amount": amount, "currency": "usd","store_id":storeID});
+      request.fields.addAll({
+        "customer_email": user.email,
+        "amount": amount,
+        "currency": currency,
+        "store_id": storeID
+      });
       print('--url===  $url');
       final response = await request.send().timeout(Duration(seconds: timeout));
       final respStr = await response.stream.bytesToString();
@@ -1477,16 +1528,14 @@ class ApiController {
   }
 
   static Future<StripeVerifyModel> stripeVerifyTransactionApi(
-      String payment_request_id,String storeID) async {
-    var url = ApiConstants.base.replaceAll("brandId",AppConstant.brandID) +
+      String payment_request_id, String storeID) async {
+    var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
         ApiConstants.stripeVerifyTransaction;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
 
     try {
-      request.fields.addAll({
-        "payment_request_id": payment_request_id,
-        "store_id":storeID
-      });
+      request.fields.addAll(
+          {"payment_request_id": payment_request_id, "store_id": storeID});
       print('--url===  $url');
       print('--payment_request_id===  $payment_request_id');
       final response = await request.send().timeout(Duration(seconds: timeout));
@@ -1991,6 +2040,10 @@ class ApiController {
             url = ApiConstants.baseUrl3.replaceAll("storeId", "static_pages/") +
                 ApiConstants.refundPolicy;
             break;
+            case AdditionItemsConstants.Shipping_Charge:
+            url = ApiConstants.baseUrl3.replaceAll("storeId", "static_pages/") +
+                ApiConstants.shippingCharge;
+            break;
         }
         var request = new http.MultipartRequest("POST", Uri.parse(url));
         request.fields.addAll({
@@ -2468,6 +2521,253 @@ class ApiController {
     } catch (e) {
       Utils.showToast(e.toString(), true);
       return null;
+    }
+  }
+
+// ipay88 Create order Api
+
+  static Future<Ipay88OrderData> ipay88CreateOrderApi(
+      String amount,
+      String orderJson,
+      String fullName,
+      String username,
+      String contact,
+      dynamic detailsJson,
+      storeId,
+      String currencyAbbr) async {
+    var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
+        storeId +
+        '/' +
+        ApiConstants.ipay88CreateOrder;
+    print(url);
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+    try {
+      request.fields.addAll({
+        "amount": "1.00",
+        "currency": currencyAbbr.trim(),
+        //"receipt": "Order",
+        "name": fullName,
+        "email": username,
+        "contact": contact,
+        //"payment_capture": "1",
+        "order_info": detailsJson != null ? detailsJson : '',
+        //JSONObject details
+        "orders": orderJson != null ? orderJson : ''
+        //cart jsonObject
+      });
+      print(request.fields);
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      Ipay88OrderData model = Ipay88OrderData.fromJson(parsed);
+      return model;
+    } catch (e) {
+      print('---catch-ipay88CreateOrder-----' + e.toString());
+      //Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
+  /*Phonepe*/
+  static Future<PhonePeResponse> phonepeCreateOrderApi(String amount,
+      String orderJson, dynamic detailsJson, storeId, String currencyAbr,
+      {String merchantUserId = ''}) async {
+    bool isNetworkAviable = await Utils.isNetworkAvailable();
+    if (!isNetworkAviable) {
+      return null;
+    }
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeId) +
+        ApiConstants.phonepeCreateOrder;
+    print(url);
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+
+    try {
+      request.fields.addAll({
+        "amount": amount,
+        "merchantUserId": merchantUserId,
+        "currency": currencyAbr.trim(),
+        "order_info": detailsJson != null ? detailsJson : '',
+        //JSONObject details
+        "orders": orderJson != null ? orderJson : ''
+        //cart jsonObject
+      });
+      print(request.fields);
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      PhonePeResponse model =
+          PhonePeResponse.fromJson(parsed);
+      return model;
+    } catch (e) {
+      print('---catch-phonepeCreateOrderApi-----' + e.toString());
+      //Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
+  static Future<PhonePeVerifyResponse> phonePeVerifyTransactionApi(
+      String paymentRequestId, String storeID) async {
+    var url = ApiConstants.baseUrl3.replaceAll("storeId", storeID) +
+        ApiConstants.checkPhonepeTransactionStatus;
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    print(url);
+    try {
+      request.fields.addAll({
+        "payment_request_id": paymentRequestId,
+      });
+      print(request.fields.toString());
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      PhonePeVerifyResponse model = PhonePeVerifyResponse.fromJson(parsed);
+      return model;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+  static Future<SellOptionResponse> sellOptionsApi(
+      String name,
+      String email,
+      String phone,
+      String store_name,
+      String address,
+      String additional_detail,
+      String business_type) async {
+    var url =
+        "https://devmarketplace.restroapp.com/2/v1/static_pages/partnerRequests";
+    var request = new http.MultipartRequest("POST", Uri.parse(url));
+    print(url);
+    try {
+      request.fields.addAll({
+        "name": name,
+        "email": email,
+        "phone": phone,
+        "store_name": store_name,
+        "address": address,
+        "additional_detail": additional_detail,
+        "business_type": business_type
+      });
+      print(request.fields.toString());
+
+      final response = await request.send().timeout(Duration(seconds: timeout));
+      final respStr = await response.stream.bytesToString();
+      print('----respStr-----' + respStr);
+      final parsed = json.decode(respStr);
+
+      SellOptionResponse model = SellOptionResponse.fromJson(parsed);
+      return model;
+    } catch (e) {
+      Utils.showToast(e.toString(), true);
+      return null;
+    }
+  }
+
+  static Future<WalletModel> getUserWallet() async {
+    bool isNetworkAvailable = await Utils.isNetworkAvailable();
+    try {
+      if (isNetworkAvailable) {
+        UserModel user = await SharedPrefs.getUser();
+
+        var url = ApiConstants.baseUrl2.replaceAll("brandId", AppConstant.brandID) +
+            ApiConstants.userWallet;
+
+        var request = new http.MultipartRequest("POST", Uri.parse(url));
+        request.fields.addAll({
+          "user_id": user.id,
+          "brand_id": AppConstant.brandID,
+        });
+        print("fields=${request.fields.toString()}");
+        print("${url}");
+        final response =
+        await request.send().timeout(Duration(seconds: timeout));
+        final respStr = await response.stream.bytesToString();
+        print("${respStr}");
+        final parsed = json.decode(respStr);
+        WalletModel welletModel = WalletModel.fromJson(parsed);
+        SharedPrefs.saveUserWallet(welletModel);
+        return welletModel;
+      } else {
+        Utils.showToast(AppConstant.noInternet, true);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  static Future<RazorPayTopUP> createOnlineTopUPApi(
+      String price, dynamic Id,String payment_type,{String currency='INR'}) async {
+    UserModel user = await SharedPrefs.getUser();
+    var url = ApiConstants.base.replaceAll("brandId",AppConstant.brandID) +
+        ApiConstants.createOnlineTopUP;
+    print(url);
+    try {
+      FormData formData = new FormData.fromMap({
+        "amount": price,
+        "user_id": user.id,
+        "payment_request_id": Id,
+        "payment_type": payment_type,
+        "currency": currency,
+        "platform": Platform.isIOS ? "IOS" : "android",
+      });
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      RazorPayTopUP razorTopStore =
+      RazorPayTopUP.fromJson(json.decode(response.data));
+      RazorPayTopUP.fromJson(json.decode(response.data));
+      print("-----RazortopUpData---${razorTopStore.success}");
+      return razorTopStore;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static Future<WalletOnlineTopUp> onlineTopUP(String paymentId,
+      String paymentRequestId, String amount, String paymentType) async {
+    UserModel user = await SharedPrefs.getUser();
+    var url = ApiConstants.base.replaceAll("brandId", AppConstant.brandID) +
+        ApiConstants.onlineTopUP;
+    print(url);
+    try {
+      FormData formData = new FormData.fromMap({
+        "price": amount,
+        "user_id": user.id,
+        "payment_request_id": paymentRequestId,
+        "online_method": paymentType,
+        "payment_id": paymentId,
+        "platform": Platform.isIOS ? "IOS" : "android",
+      });
+      Dio dio = new Dio();
+      Response response = await dio.post(url,
+          data: formData,
+          options: new Options(
+              contentType: "application/json",
+              responseType: ResponseType.plain));
+      print(response.statusCode);
+      print(response.data);
+      WalletOnlineTopUp razorTopStore =
+      WalletOnlineTopUp.fromJson(json.decode(response.data));
+      print("-----RazortopUpData---${razorTopStore.success}");
+      return razorTopStore;
+    } catch (e) {
+      print(e);
     }
   }
 }

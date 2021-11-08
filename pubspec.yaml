@@ -66,8 +66,9 @@ dependencies:
   flutter_facebook_login: ^3.0.0
   google_sign_in: ^4.5.6
   scrollable_positioned_list: ^0.1.8
-  app_settings: ^4.0.4
+  app_settings: ^4.1.1
   apple_sign_in: ^0.1.0
+  flutter_inappwebview: ^4.0.0+4
   flutter_switch: ^0.3.2
   lite_rolling_switch: ^0.1.1
 
@@ -143,7 +144,6 @@ flutter:
     - images/empty_cart.png
     - images/gifticon.png
     - images/whatsapp.png
-    - images/starIcon.png
     - images/tickicon.png
     - images/homeicon.png
     - images/unselectedcarticon.png
@@ -202,6 +202,14 @@ flutter:
     - images/runner-location.png
     - images/user-location.png
     - images/dine_in.png
+    - images/side_menu/
+    - images/walletbalancegreaphics.png
+    - images/walleticon.png
+    - images/emptywalletbalancegreaphics.png
+    - images/order_place.png
+    - images/orderrefund.png
+    - images/cashbackicon.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

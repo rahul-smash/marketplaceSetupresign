@@ -38,6 +38,7 @@ class OrderData {
   String couponCode;
   String orderRejectionNote;
   String walletRefund;
+  String walletRefundAmount;
   List<Null> storeTaxRateDetail;
   List<Null> calculatedTaxDetail;
   List<Null> storeFixedTaxDetail;
@@ -78,6 +79,7 @@ class OrderData {
     this.deliveryAddress,
     this.orderRejectionNote,
     this.walletRefund,
+    this.walletRefundAmount,
     this.IsMembershipCouponEnabled
   });
 
@@ -105,6 +107,7 @@ class OrderData {
     address = json['address'];
     orderRejectionNote = json['order_rejection_note'];
     walletRefund = json['wallet_refund'];
+    walletRefundAmount = json['wallet_refund_amount']==null?null:json['wallet_refund_amount'].toString();
     IsMembershipCouponEnabled= json['is_membership_coupon_enabled'];
     reviewsHygeineAndPack= json["reviewsHygeineAndPack"] == null ? null : List<ReviewsHygeineAndPack>.from(json["reviewsHygeineAndPack"].map((x) => ReviewsHygeineAndPack.fromJson(x)));
     if (json['order_items'] != null) {
