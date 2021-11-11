@@ -2645,7 +2645,7 @@ class ApiController {
       String additional_detail,
       String business_type) async {
     var url =
-        "https://devmarketplace.restroapp.com/2/v1/static_pages/partnerRequests";
+        ApiConstants.base.replaceAll("brandId", AppConstant.brandID) + ApiConstants.sell;
     var request = new http.MultipartRequest("POST", Uri.parse(url));
     print(url);
     try {

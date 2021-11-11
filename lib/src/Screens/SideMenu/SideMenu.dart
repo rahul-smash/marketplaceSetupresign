@@ -108,8 +108,8 @@ class _NavDrawerMenuState extends State<NavDrawerMenu> {
         DrawerChildConstants.ABOUT_US, "images/side_menu/about.png"));
     _drawerItemsSectionSecond.add(DrawerChildItem(
         DrawerChildConstants.CONTACT_US, "images/side_menu/contact.png"));
-    _drawerItemsSectionSecond.add(DrawerChildItem(
-        DrawerChildConstants.SELL, "images/side_menu/sell.png"));
+    // _drawerItemsSectionSecond.add(DrawerChildItem(
+    //     DrawerChildConstants.SELL, "images/side_menu/sell.png"));
     _drawerItemsSectionSecond.add(DrawerChildItem(
         DrawerChildConstants.TERMS_CONDITIONS, "images/side_menu/terms.png"));
     _drawerItemsSectionSecond.add(DrawerChildItem(
