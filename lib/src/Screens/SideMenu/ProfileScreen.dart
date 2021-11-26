@@ -49,12 +49,13 @@ class _ProfileState extends State<ProfileScreen> {
   bool showReferralCodeView = false;
 
   var controllerStartDate = TextEditingController();
+
 //  var controllerGender = TextEditingController();
-  String gender='Male';
+  String gender = 'Male';
 
   DateTime selectedStartDate;
 
-  List<String> _categories=List();
+  List<String> _categories = List();
 
   @override
   initState() {
@@ -79,8 +80,12 @@ class _ProfileState extends State<ProfileScreen> {
       if (user != null) {
         firstNameController.text = user.fullName;
         lastNameController.text = user.lastName;
-        controllerStartDate.text = user.dob;
-        gender =user.gender!=null? user.gender.trim().isNotEmpty ? user.gender : 'Male':'Male';
+        controllerStartDate.text = getStringConvertedDOB(dob: user.dob);
+        gender = user.gender != null
+            ? user.gender.trim().isNotEmpty
+                ? user.gender
+                : 'Male'
+            : 'Male';
         emailController.text = user.email;
         phoneController.text = user.phone;
       }
@@ -440,11 +445,14 @@ class _ProfileState extends State<ProfileScreen> {
   bool isValidEmail(String input) {
     //Email is opation
     if (input.trim().isEmpty) return true;
-    final RegExp regex = new RegExp(
-        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
-    bool isMatch = regex.hasMatch(input);
-    if (!isMatch) Utils.showToast("Please enter valid email", false);
-    return isMatch;
+    // final RegExp regex = new RegExp(
+    //     r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
+    // bool isMatch = regex.hasMatch(input);
+    bool emailValid = RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(input);
+    if (!emailValid) Utils.showToast("Please enter valid email", false);
+    return emailValid;
   }
 
   bool nameValidation() {
@@ -503,7 +511,7 @@ class _ProfileState extends State<ProfileScreen> {
         UserModel user = UserModel();
         user.fullName = firstNameController.text.trim();
         user.lastName = lastNameController.text.trim();
-        user.dob =controllerStartDate.text!=null? controllerStartDate.text.trim():'';
+        user.dob = controllerStartDate.text != null ? getConvertedDOB() : '';
         user.gender = gender.trim();
         user.email = emailController.text.trim();
         user.phone = phoneController.text.trim();
@@ -522,7 +530,7 @@ class _ProfileState extends State<ProfileScreen> {
                 referCodeController.text.trim(),
                 gstCodeController.text.trim(),
                 lastName: lastNameController.text.trim(),
-                dob: controllerStartDate.text!=null? controllerStartDate.text.trim():'',
+                dob: controllerStartDate.text != null ? getConvertedDOB() : '',
                 gender: gender.trim())
             .then((response) {
           Utils.hideProgressDialog(context);
@@ -531,7 +539,9 @@ class _ProfileState extends State<ProfileScreen> {
               UserModelMobile user = UserModelMobile();
               user.fullName = firstNameController.text.trim();
               user.lastName = lastNameController.text.trim();
-              user.dob = controllerStartDate.text!=null? controllerStartDate.text.trim():'';
+              user.dob = controllerStartDate.text != null
+                  ? getConvertedDOB()
+                  : '';
               user.gender = gender.trim();
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();
@@ -544,7 +554,9 @@ class _ProfileState extends State<ProfileScreen> {
             } else {
               user.fullName = firstNameController.text.trim();
               user.lastName = lastNameController.text.trim();
-              user.dob = controllerStartDate.text!=null? controllerStartDate.text.trim():'';
+              user.dob = controllerStartDate.text != null
+                  ? getConvertedDOB()
+                  : '';
               user.gender = gender.trim();
               user.email = emailController.text.trim();
               user.phone = phoneController.text.trim();
@@ -559,5 +571,27 @@ class _ProfileState extends State<ProfileScreen> {
         });
       }
     }
+  }
+
+  String getConvertedDOB({String pattern = 'yyyy-MM-dd'}) {
+    if (selectedStartDate != null) {
+      String date = DateFormat(pattern).format(selectedStartDate);
+      return date;
+    } else if (controllerStartDate != null &&
+        controllerStartDate.text.trim().isNotEmpty) {
+      DateTime date = DateFormat('dd-MM-yyyy').parse( controllerStartDate.text.trim());
+      String dateString = DateFormat(pattern).format(date);
+      return dateString;
+    } else
+      return '';
+  }
+
+  String getStringConvertedDOB({String pattern = 'dd-MM-yyyy', String dob}) {
+    if (dob != null && dob.isNotEmpty) {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dob);
+      String dateString = DateFormat(pattern).format(date);
+      return dateString;
+    } else
+      return '';
   }
 }
