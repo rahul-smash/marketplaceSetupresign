@@ -280,7 +280,7 @@ class OrderDetail {
         newPrice: json["new_price"] == null ? null : json["new_price"],
         gst_state: json["gst_state"] == null ? null : json["gst_state"],
         gst_tax_rate:
-            json["gst_tax_rate"] == null ? null : json["gst_tax_rate"],
+            json["gst_tax_rate"] == null ? null : json["gst_tax_rate"].toString(),
         cgst: json["cgst"] == null ? 0 : json["cgst"],
         sgst: json["sgst"] == null ? 0 : json["sgst"],
         igst: json["igst"] == null ? 0 : json["igst"],
