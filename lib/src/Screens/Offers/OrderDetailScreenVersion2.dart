@@ -2404,7 +2404,7 @@ class _OrderDetailScreenVersion2State extends State<OrderDetailScreenVersion2> {
     if (orderHistoryData.runnerDetail != null &&
         orderHistoryData.runnerDetail.isNotEmpty) {
       String contact = '${orderHistoryData.runnerDetail.first.phone}';
-      String url = "tel:${contact}";
+      String url = "tel://${contact}";
       if (await canLaunch(url)) {
         await launch(url);
       } else {
